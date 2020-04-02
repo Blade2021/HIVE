@@ -1,0 +1,20 @@
+plugins {
+    id 'java'
+}
+
+group 'roots.systems'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    //compile 'net.dv8tion:JDA:3.5.0_329'
+
+    compile 'net.dv8tion:JDA:4.1.1_127'
+}
