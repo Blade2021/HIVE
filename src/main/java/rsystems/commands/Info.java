@@ -25,8 +25,8 @@ public class Info extends ListenerAdapter {
             info.addField("Notify","Enable/Disable notification channel for stream events",false);
             info.addField("Ping","Grab the latest latency between the bot and Discord servers",false);
             info.addField("Helpdoc","Post a link to the Helpful Documents Page",false);
-            info.addField("Clear","Deletes x amount of lines\nSyntax: " + HiveBot.prefix + "clear [x]",false);
             info.addField("Who","Display information about HIVE",false);
+            info.addField("Admin","Admin Command Menu [RESTRICTED]",false);
             info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
             info.setColor(Color.CYAN);
             event.getChannel().sendTyping().queue();

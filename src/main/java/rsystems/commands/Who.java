@@ -15,7 +15,7 @@ public class Who extends ListenerAdapter {
 
         if((args[0].equalsIgnoreCase((HiveBot.prefix + "who")) || (args[0].equalsIgnoreCase((HiveBot.prefix + "hive"))))){
             event.getMessage().addReaction("\uD83D\uDC4B ").queue();
-            event.getChannel().sendMessage(event.getAuthor().getAsMention() + "I am HIVE! A buzzy little bot that is here to help!\nWanna see a list of commands just type: `" + HiveBot.prefix + "help`  \n\nIf you run into any issues please contact my creator: `Blade2021#8727`").queue();
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am HIVE! A buzzy little bot that is here to help!\nWanna see a list of commands just type: `" + HiveBot.prefix + "help`  \n\nIf you run into any issues please contact my creator: `Blade2021#8727`").queue();
         }
     }
 }

@@ -17,7 +17,5 @@ public class Helpdoc extends ListenerAdapter {
         if(args[0].equalsIgnoreCase(HiveBot.prefix + "helpdoc")){
             event.getChannel().sendMessage("Find great articles on frequently asked questions at https://helpdoc.roots.systems").queue();
         }
-
     }
-
 }
