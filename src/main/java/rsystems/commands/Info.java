@@ -30,7 +30,6 @@ public class Info extends ListenerAdapter {
             info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
             info.setColor(Color.CYAN);
             event.getChannel().sendTyping().queue();
-            //event.getChannel().sendMessage("Hey there, I'm alive.").queue();
             event.getChannel().sendMessage(info.build()).queue();
             info.clear();
         }

@@ -24,7 +24,6 @@ public class Notify extends ListenerAdapter {
                 if(event.getMember().getRoles().toString().contains("Notify")){
                     //User already has role
                     event.getGuild().modifyMemberRoles(event.getMember(),null,event.getGuild().getRolesByName("Notify", false)).queue();
-                    //event.getGuild().getController().removeRolesFromMember(event.getMember(), event.getGuild().getRolesByName("Notify", true)).queue();
                     event.getChannel().sendMessage("Hello " + event.getMessage().getAuthor().getAsMention() + ", I have removed the notify role from you.").queue();
 
                 } else {
