@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
+import java.util.Objects;
+
 
 public class Status extends ListenerAdapter {
 
@@ -24,18 +26,32 @@ public class Status extends ListenerAdapter {
                     return;
                 }
 
-                String statusMessage = event.getMessage().getContentRaw().substring(args[0].length() + 1);
+                /*
+                Activity oldActivity = event.getJDA().getPresence().getActivity();
+                new Thread( new Runnable() {
+                    public void run()  {
+                        try  { Thread.sleep( 10000 ); }
+                        catch (InterruptedException ie)  {}
+                        event.getJDA().getPresence().setActivity(oldActivity);
+                    }
+                } ).start();
+                */
 
-                if (args.length > 2) {
+                if (args.length >= 2) {
+
+                    String statusMessage = event.getMessage().getContentRaw().substring(args[0].length() + 1);
+                    event.getMessage().addReaction("✅").queue();
                     event.getGuild().getJDA().getPresence().setActivity(Activity.playing(statusMessage));
+                    System.out.println("CS| " + statusMessage + " | set by: " + event.getAuthor().getName());
+
                 } else {
                     event.getGuild().getJDA().getPresence().setActivity(Activity.playing("Buzzing around"));
                 }
 
-                System.out.println("CS| " + statusMessage + " | set by: " + event.getAuthor().getName());
             } catch (NullPointerException e) {
                 System.out.println("Null permission detected.");
             }
+
         }
     }
 }

@@ -32,6 +32,9 @@ public class Notify extends ListenerAdapter {
             return;
         }
 
+        // MOVED TO ROLE CLASS
+
+        /*
         try {
             if ((args.length > 1) &&(args[0].equalsIgnoreCase(HiveBot.prefix + "notify")) && ((args[1].equalsIgnoreCase("count")))) {
 
@@ -53,14 +56,17 @@ public class Notify extends ListenerAdapter {
         catch(NullPointerException e){
             System.out.println("Null found on permissions");
         }
+        */
 
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + "notify")){
+        if((args[0].equalsIgnoreCase(HiveBot.prefix + "notify") || (args[0].equalsIgnoreCase("-notify")))){
             try {
                 if(!(event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) && !(event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES))){
                     event.getMessage().addReaction("\uD83D\uDEAB").queue();
                     event.getChannel().sendMessage("Missing permissions | Error 3X95Z").queue();
                     return;  //no point in continuing
                 }
+
+                event.getMessage().addReaction("✅").queue();
 
                 //Check to see if user has notifications role
                 if(event.getMember().getRoles().toString().contains("Notify")){

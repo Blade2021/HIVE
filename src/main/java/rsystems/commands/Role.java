@@ -34,6 +34,7 @@ public class Role extends ListenerAdapter {
                                         for (Member m : event.getGuild().getMembersWithRoles(event.getGuild().getRolesByName(roleName, true))) {
                                             x++;
                                         }
+                                        event.getMessage().addReaction("✅").queue();
                                         event.getChannel().sendMessage("`" + roleName + "` has " + x + " users.").queue();
                                         return;
                                     } catch(Exception e){
