@@ -1,22 +1,60 @@
 package rsystems.commands;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
+import java.awt.*;
+
 public class Notify extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         //Don't accept messages from BOT Accounts
-        if(event.getMessage().getAuthor().isBot()){
+        if (event.getMessage().getAuthor().isBot()) {
             return;
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "notify"))){
+
+        if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + "notify")) || ((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + "notify")) && (args[1].equalsIgnoreCase("??"))))) {
+            EmbedBuilder info = new EmbedBuilder();
+            info.setColor(Color.CYAN);
+            info.setTitle(HiveBot.prefix + "notify");
+            info.setDescription("Use the above command to be alerted via mention notifications when DrZzz's posts new videos and streams");
+            event.getChannel().sendMessage(info.build()).queue();
+            info.clear();
+            return;
+        }
+
+        try {
+            if ((args.length > 1) &&(args[0].equalsIgnoreCase(HiveBot.prefix + "notify")) && ((args[1].equalsIgnoreCase("count")))) {
+
+                if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                    int x = 0;
+                    for(Member m:event.getGuild().getMembersWithRoles(event.getGuild().getRolesByName("Notify", false))){
+                        x++;
+                    }
+
+                    event.getChannel().sendMessage("There are currently: " + x + " users with the Notify role").queue();
+                    return;
+                } else {
+                    event.getMessage().addReaction("\uD83D\uDEAB").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have permissions for that.").queue();
+                    return;
+                }
+            }
+        }
+        catch(NullPointerException e){
+            System.out.println("Null found on permissions");
+        }
+
+        if(args[0].equalsIgnoreCase(HiveBot.prefix + "notify")){
             try {
                 if(!(event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) && !(event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES))){
                     event.getMessage().addReaction("\uD83D\uDEAB").queue();
