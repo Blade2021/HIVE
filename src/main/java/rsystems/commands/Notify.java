@@ -2,8 +2,6 @@ package rsystems.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -61,12 +59,12 @@ public class Notify extends ListenerAdapter {
         if((args[0].equalsIgnoreCase(HiveBot.prefix + "notify") || (args[0].equalsIgnoreCase("-notify")))){
             try {
                 if(!(event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) && !(event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES))){
-                    event.getMessage().addReaction("\uD83D\uDEAB").queue();
+                    //event.getMessage().addReaction("\uD83D\uDEAB").queue();
                     event.getChannel().sendMessage("Missing permissions | Error 3X95Z").queue();
                     return;  //no point in continuing
                 }
 
-                event.getMessage().addReaction("✅").queue();
+                //event.getMessage().addReaction("✅").queue();
 
                 //Check to see if user has notifications role
                 if(event.getMember().getRoles().toString().contains("Notify")){

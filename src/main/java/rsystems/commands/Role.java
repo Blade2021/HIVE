@@ -55,6 +55,7 @@ public class Role extends ListenerAdapter {
             } catch (NullPointerException e) {
                 //todo Add better error description
                 System.out.println("Null found on permissions request");
+                e.printStackTrace();
             }
         }
     }
