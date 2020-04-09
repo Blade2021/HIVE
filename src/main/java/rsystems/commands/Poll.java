@@ -4,11 +4,13 @@ import com.samuelmaddock.strawpollwrapper.DupCheckType;
 import com.samuelmaddock.strawpollwrapper.StrawPoll;
 import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import kotlin.random.Random;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
+import java.awt.*;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,17 +35,46 @@ public class Poll extends ListenerAdapter {
                 if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
 
                     // User has administrator rights
+                    // GET Help with poll command
+
+                    if((args.length < 2) || (args[1].equalsIgnoreCase("help")) || (args[1].equalsIgnoreCase("?"))){
+                        EmbedBuilder info = new EmbedBuilder();
+                        info.setTitle("HIVE Poll Help");
+                        info.setDescription("Poll information");
+                        info.setThumbnail(event.getGuild().getIconUrl());
+                        info.addField("Poll x,y,z","Option 1, Option 2, Option 3 (COMMA SEPARATED!)",false);
+                        info.addField("GetURL","Grab the URL of current Poll",false);
+                        info.addField("SetURL (URL)","Set URL of current Poll",false);
+                        info.addField("GetVotes","Display current vote count from poll",false);
+                        info.addField("Pick","Grab the votes and pick the winner",false);
+                        info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+                        info.setColor(Color.CYAN);
+                        event.getChannel().sendTyping().queue();
+                        event.getChannel().sendMessage(info.build()).queue();
+                        info.clear();
+                        return;
+                    }
+                    /*
                     if (args.length < 2) {
                         // Not enough arguments (nothing to check)
                         event.getMessage().addReaction("\uD83D\uDEAB").queue();
                         event.getChannel().sendMessage(event.getAuthor().getAsMention() + " Not enough arguments supplied").queue();
-                    } else {
+                    }*/ else {
 
+                        // User has administrator permissions
+
+                        // Set URL for Poll
+                        if (args[1].equalsIgnoreCase("seturl")) {
+                            URL=event.getMessage().getContentRaw().substring((args[0].length() + args[1].length())+2);
+                            return;
+                        }
+
+                        //Get votes command
                         if (args[1].equalsIgnoreCase("getvotes")) {
-
+                            //Check if poll is in session
                             if(URL == null){
                                 System.out.println("URL is NULL");
-                                event.getChannel().sendMessage("There is no poll currently in session").queue();
+                                event.getChannel().sendMessage("There is currently no active poll.").queue();
                                 return;
                             } else {
                                 System.out.println("URL is not NULL");
@@ -68,28 +99,24 @@ public class Poll extends ListenerAdapter {
                             }
                             return;
                         }
+
+                        // Poll - Get URL for current Poll in session
                         if (args[1].equalsIgnoreCase("geturl")) {
                             if(URL == null){
-                                event.getChannel().sendMessage("There is no poll in session").queue();
+                                event.getChannel().sendMessage("There is currently no active poll.").queue();
                             } else {
                                 event.getChannel().sendMessage(URL).queue();
                             }
                             return;
                         }
 
-                        if (args[1].equalsIgnoreCase("seturl")) {
-                            URL=event.getMessage().getContentRaw().substring((args[0].length() + args[1].length())+2);
-                            return;
-                        }
-
-                        if (args[1].equalsIgnoreCase("pick")) {
-                            String winningOption = null;
+                        if ((args[1].equalsIgnoreCase("pick")) && (URL != null)) {
 
                             StrawPoll winner = new StrawPoll(URL);
                             try {
                                 ListIterator<String> listItr = winner.getOptions().listIterator();
                                 int x = 0;
-                                int[] voteArray = new int[6];
+                                int[] voteArray = new int[50];
 
                                 while (listItr.hasNext()) {
                                     try {
@@ -174,14 +201,21 @@ public class Poll extends ListenerAdapter {
                             return;
                         }
 
+                        // SET NEW POLL OPTIONS
+
                         String optionsraw = event.getMessage().getContentRaw().substring(args[0].length());
                         List<String> options = Arrays.asList(optionsraw.trim().split(",", 10));
+
+                        if(options.size() < 2){
+                            event.getChannel().sendMessage("Not enough options were supplied.  Try again.").queue();
+                            return;
+                        }
 
                         StrawPoll strawPoll = new StrawPoll("HIVE BoT Poll",options).setDupCheck(DupCheckType.NORMAL);
                         strawPoll.create();
 
                         event.getChannel().sendMessage("GO CAST YOUR VOTES! " + strawPoll.getPollURL()).queue();
-                        URL=strawPoll.getPollURL();
+                        URL=strawPoll.getPollURL(); // Store poll url into data
 /*
                         new Thread( new Runnable() {
                             public void run()  {
