@@ -36,6 +36,7 @@ public class HiveBot extends ListenerAdapter {
         api.addEventListener(new AdminInfo());
         api.addEventListener(new Role());
         api.addEventListener(new Poll());
+        api.addEventListener(new LinkGrabber());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
