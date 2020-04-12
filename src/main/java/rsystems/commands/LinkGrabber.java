@@ -60,6 +60,8 @@ public class LinkGrabber extends ListenerAdapter {
                         catch (StringIndexOutOfBoundsException e){
                             System.out.println("Could not find author");
                         }
+                    } else {
+                        author = event.getMessage().getAuthor().getName();
                     }
                     try{
                         textChannel.sendMessage(author + link).queue();
