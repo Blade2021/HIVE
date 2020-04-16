@@ -61,7 +61,7 @@ public class Clear extends ListenerAdapter {
                         EmbedBuilder error = new EmbedBuilder();
                         error.setColor(Color.RED);
                         error.setTitle("\uD83D\uDEAB Too many messages selected");
-                        error.setDescription("Between 1-100 messages can be deleted at one time.");
+                        error.setDescription("Between 1-99 messages can be deleted at one time.");
                         event.getChannel().sendMessage(error.build()).queue();
                     } else {
                         // Messages too old
@@ -73,6 +73,7 @@ public class Clear extends ListenerAdapter {
                     }
                 }
                 catch(InsufficientPermissionException e){
+                    event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + " Sorry I cannot do that here.").queue();
                     System.out.println("Clear tried to call without access");
                 }
                 catch(NullPointerException e){

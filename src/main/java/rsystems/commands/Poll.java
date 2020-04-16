@@ -42,11 +42,11 @@ public class Poll extends ListenerAdapter {
                         info.setTitle("HIVE Poll Help");
                         info.setDescription("Poll information");
                         info.setThumbnail(event.getGuild().getIconUrl());
-                        info.addField("Poll x,y,z","Option 1, Option 2, Option 3 (COMMA SEPARATED!)",false);
-                        info.addField("GetURL","Grab the URL of current Poll",false);
-                        info.addField("SetURL (URL)","Set URL of current Poll",false);
-                        info.addField("GetVotes","Display current vote count from poll",false);
-                        info.addField("Pick","Grab the votes and pick the winner",false);
+                        info.addField("`Poll [option 1],[option 2],[option 3]`","Start a strawpoll using HVIE (COMMA SEPARATED!)",false);
+                        info.addField("`Poll GetURL`","Grab the URL of current Poll",false);
+                        info.addField("`Poll SetURL [URL]`","Set URL of current Poll",false);
+                        info.addField("`Poll GetVotes`","Display current vote count from poll",false);
+                        info.addField("`Poll Pick`","Grab the votes and pick the winner",false);
                         info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                         info.setColor(Color.CYAN);
                         event.getChannel().sendTyping().queue();

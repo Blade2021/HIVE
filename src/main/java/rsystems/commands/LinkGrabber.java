@@ -1,5 +1,11 @@
 package rsystems.commands;
 
+/*
+    @author: Blade2021
+    @description: Pull links from designated channel, Sanitize links from extra words/characters.  Then post to target channel
+ */
+
+
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -25,6 +31,7 @@ public class LinkGrabber extends ListenerAdapter {
                     // Initialize link start index
                     String link = "";
                     if(messageraw.contains("http")){
+
                         int linkStart = messageraw.indexOf("http");
                         try{
                             // Space was found after link
@@ -45,6 +52,12 @@ public class LinkGrabber extends ListenerAdapter {
                             link = messageraw.substring(linkStart);
                         }
                     }
+
+                    if(link.length() <= 8){
+                        return;
+                        //Link was not long enough to verify
+                    }
+
                     // Initialize author
                     String author = "";
                     // Does message contain brackets?
@@ -62,12 +75,16 @@ public class LinkGrabber extends ListenerAdapter {
                         }
                     } else {
                         author = event.getMessage().getAuthor().getName();
+                        author = author + " : ";
                     }
                     try{
                         textChannel.sendMessage(author + link).queue();
                     }
                     catch(InsufficientPermissionException e){
                         System.out.println("No permission allowed for that channel");
+                    }
+                    catch(NullPointerException e){
+                        System.out.println("THE CHANNEL DISAPPEARED!");
                     }
                 }
             }

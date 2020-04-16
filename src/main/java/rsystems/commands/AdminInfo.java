@@ -23,12 +23,13 @@ public class AdminInfo extends ListenerAdapter {
                 if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)){
                     EmbedBuilder ainfo = new EmbedBuilder();
                     ainfo.setTitle("HIVE Admin Commands");
-                    ainfo.setDescription("Prefix: " + HiveBot.prefix+ "\nCurrent User Count: " + event.getGuild().getMemberCount());
+                    ainfo.setDescription("BoT Prefix: " + HiveBot.prefix+ "\nCurrent User Count: `" + event.getGuild().getMemberCount() + " Users`");
                     ainfo.setThumbnail(event.getGuild().getIconUrl());
-                    ainfo.addField("Clear [int]","Clears x amount of lines of chat.",false);
-                    ainfo.addField("Status [String]","Sets the status activity of the BOT",false);
-                    ainfo.addField("Shutdown","Shuts down the BOT.  Only use if REQUIRED!",false);
-                    ainfo.addField("Role [String]","Grabs current user count for specified role", false);
+                    ainfo.addField("`Clear [int]`","Clears x amount of lines of chat.",false);
+                    ainfo.addField("`Status [String]`","Sets the status activity of the BOT",false);
+                    ainfo.addField("`Shutdown`","Shuts down the BOT.  Only use if **REQUIRED!**",false);
+                    ainfo.addField("`Role [String]`","Grabs current user count for specified role", false);
+                    ainfo.addField("`Poll [option 1],[option 2],[option 3]`","Create a StrawPoll using HIVE.  Use `Poll help` for poll menu",false);
                     ainfo.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                     ainfo.setColor(Color.RED);
                     event.getChannel().sendMessage(ainfo.build()).queue();
