@@ -12,8 +12,6 @@ import rsystems.commands.*;
 
 import javax.security.auth.login.LoginException;
 
-import static net.dv8tion.jda.api.requests.GatewayIntent.GUILD_MEMBERS;
-
 public class HiveBot extends ListenerAdapter {
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
@@ -38,6 +36,9 @@ public class HiveBot extends ListenerAdapter {
         api.addEventListener(new Poll());
         api.addEventListener(new LinkGrabber());
         api.addEventListener(new TwitchSub());
+        api.addEventListener(new Code());
+        api.addEventListener(new Say());
+        api.addEventListener(new Page());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));

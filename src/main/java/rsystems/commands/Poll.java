@@ -2,7 +2,6 @@ package rsystems.commands;
 
 import com.samuelmaddock.strawpollwrapper.DupCheckType;
 import com.samuelmaddock.strawpollwrapper.StrawPoll;
-import com.sun.org.apache.bcel.internal.generic.SWITCH;
 import kotlin.random.Random;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;

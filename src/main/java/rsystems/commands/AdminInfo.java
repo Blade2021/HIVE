@@ -40,6 +40,25 @@ public class AdminInfo extends ListenerAdapter {
                 System.out.println("Null permission found");
             }
         }
+
+        if(args[0].equalsIgnoreCase((HiveBot.prefix + "stats"))){
+
+            int textChannelAmt = event.getGuild().getTextChannels().size();
+            int voiceChannelAmt = event.getGuild().getVoiceChannels().size();
+            int memberCount = event.getGuild().getMemberCount();
+
+            EmbedBuilder ainfo = new EmbedBuilder();
+            ainfo.setTitle(event.getGuild().getName() + " discord server");
+            ainfo.setDescription("Current User Count: " + memberCount + "\n" +
+                    "Text Channel Count: " + textChannelAmt + "\n" +
+                    "Voice Channel Count: " + voiceChannelAmt);
+            ainfo.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+            ainfo.setColor(Color.RED);
+            event.getChannel().sendMessage(ainfo.build()).queue();
+            ainfo.clear();
+
+        }
+
     }
 
 }
