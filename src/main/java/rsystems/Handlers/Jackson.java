@@ -1,61 +1,74 @@
 package rsystems.Handlers;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException;
-import net.dv8tion.jda.api.entities.User;
 import rsystems.UserModel;
-
+import org.json.simple.*;
+import org.json.simple.parser.*;
 import java.io.*;
-import java.io.File;
-import java.net.URISyntaxException;
-import java.util.List;
 
 public class Jackson {
+    private static FileWriter file;
+    private static JSONParser parser = new JSONParser();
+    private static Object obj;
+    private static JSONObject jsonObj = null;
+    private static final String path = "data.json";
 
-    //private static ObjectMapper objectMapper = new ObjectMapper();
+    public static JSONObject readJFile() {
+        try{
+            obj  = parser.parse(new FileReader(path));
+            jsonObj = (JSONObject) obj;
 
-    /*
-
-    private static ObjectMapper getDefaultObjectMapper(){
-        ObjectMapper defaultObjectMapper = new ObjectMapper();
-
-        return defaultObjectMapper;
-    }
-
-    public static JsonNode parse(String src) throws IOException {
-        return objectMapper.readTree(src);
-    }
-
-    */
-
-    public static void readData() {
-
-        String path = "data.json";
-
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            InputStream inputStream = new FileInputStream(new File(path));
-            TypeReference<List<UserModel>> typeReference = new TypeReference<List<UserModel>>() {};
-            List<UserModel> users = objectMapper.readValue(inputStream,typeReference);
-            for(UserModel x:users){
-                System.out.println(x);
-            }
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
+        } catch(FileNotFoundException e){
+            System.out.println("Could not find JSON File");
+        } catch (ParseException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
 
+        return jsonObj;
     }
 
+    public static String readDataBit(String id){
+        try{
+            obj  = parser.parse(new FileReader(path));
+            jsonObj = (JSONObject) obj;
+
+            return jsonObj.get(id).toString();
+
+        } catch(FileNotFoundException e){
+            System.out.println("Could not find JSON File");
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        } catch (NullPointerException e){
+            return "";
+        }
+
+        return "";
+    }
+
+    public static boolean writeData(String id,String value){
+        try {
+            parser = new JSONParser();
+            obj  = parser.parse(new FileReader(path));
+            jsonObj = (JSONObject) obj;
+
+            jsonObj.put(id,value);
+
+            
+
+            file = new FileWriter(path);
+            file.write(jsonObj.toJSONString());
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                file.flush();
+                file.close();
+                return true;
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return false;
+    }
 }

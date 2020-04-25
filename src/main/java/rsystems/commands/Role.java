@@ -3,10 +3,16 @@ package rsystems.commands;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Role extends ListenerAdapter {
+
+    boolean getMembers = false;
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         //Don't accept messages from BOT Accounts
@@ -24,28 +30,57 @@ public class Role extends ListenerAdapter {
                         event.getMessage().addReaction("\uD83D\uDEAB").queue();
                         event.getChannel().sendMessage(event.getAuthor().getAsMention() + " Not enough arguments supplied").queue();
                     } else {
+                        // Good argument count
                         String roleName = event.getMessage().getContentRaw().substring(args[0].length()+1);
-                        if (event.getGuild().getRoles().toString().toLowerCase().contains(roleName.toLowerCase())) {
-                            for(net.dv8tion.jda.api.entities.Role role:event.getGuild().getRoles()){
-                                if(role.getName().equalsIgnoreCase(roleName)){
-                                    //Role was found
-                                    try {
-                                        int x = 0;
-                                        for (Member m : event.getGuild().getMembersWithRoles(event.getGuild().getRolesByName(roleName, true))) {
-                                            x++;
+                        roleName = roleName.replaceAll(" true","");
+
+                        if((args.length > 2) && (args[2].equalsIgnoreCase("true"))){
+                            getMembers = true;
+                        }
+                        try {
+                            if (event.getGuild().getRoles().toString().toLowerCase().contains(roleName.toLowerCase())) {
+                                for (net.dv8tion.jda.api.entities.Role role : event.getGuild().getRoles()) {
+                                    if (role.getName().equalsIgnoreCase(roleName)) {
+                                        //Role was found
+
+                                        List<String> memberList = new ArrayList();
+
+                                        try {
+                                            int x = 0;
+                                            for (Member m : event.getGuild().getMembersWithRoles(event.getGuild().getRolesByName(roleName, true))) {
+                                                if (getMembers) {
+
+                                                    //Only go up to 200 members
+                                                    if (x < 200) {
+                                                        memberList.add(m.getUser().getAsTag());
+                                                    }
+                                                }
+                                                x++;
+                                            }
+                                            event.getMessage().addReaction("✅").queue();
+                                            event.getChannel().sendMessage("`" + roleName + "` has " + x + " users.").queue();
+
+                                            if (getMembers) {
+                                                event.getAuthor().openPrivateChannel().queue((channel) ->
+                                                {
+                                                    channel.sendMessage(memberList.toString()).queue();
+                                                    memberList.clear();
+                                                });
+                                            }
+                                            return;
+                                        } catch (Exception e) {
+                                            e.printStackTrace();
                                         }
-                                        event.getMessage().addReaction("✅").queue();
-                                        event.getChannel().sendMessage("`" + roleName + "` has " + x + " users.").queue();
-                                        return;
-                                    } catch(Exception e){
-                                        e.printStackTrace();
                                     }
                                 }
+                                event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
+                            } else {
+                                event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
                             }
-                            event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
-                        } else {
-                            event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
+                        } catch (InsufficientPermissionException e){
+                            event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
                         }
+                        //
                     }
                 } else {
                     // User does not have administrator rights
@@ -58,5 +93,6 @@ public class Role extends ListenerAdapter {
                 e.printStackTrace();
             }
         }
+        getMembers = false;
     }
 }

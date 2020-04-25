@@ -10,14 +10,17 @@ public class Shutdown extends ListenerAdapter {
         if(event.getAuthor().isBot()){
             return;
         }
-        if (event.getMessage().getContentRaw().equalsIgnoreCase(HiveBot.prefix + "shutdown")) {
+
+        String message = event.getMessage().getContentRaw();
+
+        if ((message.equalsIgnoreCase(HiveBot.prefix + "shutdown")) || (message.equalsIgnoreCase(HiveBot.prefix + "sd"))) {
             try {
                 if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
                     event.getChannel().sendMessage("Shutting down...").queue();
                     System.out.println("Shut down called by " + event.getMessage().getAuthor().getName());
                     event.getGuild().getJDA().shutdown();
                 } else {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have permission for that").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             } catch (NullPointerException e) {
                 System.out.println("Null permission found");

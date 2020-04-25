@@ -2,6 +2,7 @@ package rsystems.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
@@ -30,6 +31,9 @@ public class Code extends ListenerAdapter {
                 info.clear();
             } catch (NullPointerException e){
                 System.out.println("User left after trigger");
+            }
+            catch (InsufficientPermissionException e){
+                event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
             }
         }
     }

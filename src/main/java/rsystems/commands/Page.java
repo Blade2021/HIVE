@@ -17,24 +17,25 @@ public class Page extends ListenerAdapter{
 
     boolean cooldown = false;
 
-        public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-            //Escape if message came from a bot account
-            if(event.getMessage().getAuthor().isBot()){
-                return;
-            }
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event){
+        //Escape if message came from a bot account
+        if(event.getMessage().getAuthor().isBot()){
+            return;
+        }
 
-            String[] args = event.getMessage().getContentRaw().split("\\s+");
-            if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                if (args[0].equalsIgnoreCase((HiveBot.prefix + "page"))) {
-
+        String[] args = event.getMessage().getContentRaw().split("\\s+");
+        //if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + "page"))) {
+            try {
+                if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
                     int anon = new Random().nextInt(10);
-                    if(anon == 6){
+                    if (anon == 6) {
                         event.getChannel().sendMessage("> " + event.getMessage().getContentDisplay() + "\n" + event.getAuthor().getAsMention() + "umm... no").queue();
                         return;
                     }
 
                     final String POSTS_API_URL = Config.get("notifyLight");
-                    if(!cooldown) {
+                    if (!cooldown) {
                         try {
                             HttpClient client = HttpClient.newHttpClient();
 
@@ -46,18 +47,25 @@ public class Page extends ListenerAdapter{
 
                             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
                             System.out.println(response);
-                            event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + " Sending hook...").queue();
+                            int scode = response.statusCode();
+                            if (scode == 200) {
+                                event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + " Hook sent...").queue();
+                            } else {
+                                event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + " Something went wrong. Code[ " + scode + " ]").queue();
+                            }
 
                             cooldown = true;
 
 
-                            new Thread( new Runnable() {
-                                public void run()  {
-                                    try  { Thread.sleep( 10000 ); }
-                                    catch (InterruptedException ie)  {}
+                            new Thread(new Runnable() {
+                                public void run() {
+                                    try {
+                                        Thread.sleep(10000);
+                                    } catch (InterruptedException ie) {
+                                    }
                                     cooldown = false;
                                 }
-                            } ).start();
+                            }).start();
 
 
                         } catch (IllegalArgumentException e) {
@@ -81,8 +89,15 @@ public class Page extends ListenerAdapter{
 
                         event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index]).queue();
                     }
+                } else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
+                //
+            } catch (NullPointerException e){
+                event.getChannel().sendMessage("Something went wrong...").queue();
             }
         }
+
+    }
 
 }

@@ -1,7 +1,9 @@
 package rsystems.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
@@ -14,7 +16,7 @@ import java.util.Random;
 
 public class Info extends ListenerAdapter {
 
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event){
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) throws PermissionException {
         //Escape if message came from a bot account
         if(event.getMessage().getAuthor().isBot()){
             return;
@@ -22,15 +24,17 @@ public class Info extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
+        //Info command
         if((args[0].equalsIgnoreCase((HiveBot.prefix + "info")) || (args[0].equalsIgnoreCase(((HiveBot.prefix + "help")))) || (args[0].equalsIgnoreCase((HiveBot.prefix + "commands"))))) {
             event.getMessage().addReaction("✅").queue();
             try {
+                //Open a private channel with requester
                 event.getAuthor().openPrivateChannel().queue((channel) ->
                 {
                     EmbedBuilder info = new EmbedBuilder();
                     info.setTitle("HIVE BoT Information");
                     info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**");
-                    info.setThumbnail(event.getGuild().getIconUrl());
+                    info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
                     info.addField("`**Official Commands:**`", "", false);
                     info.addField("`Notify`", "Enable/Disable notification channel for stream events", false);
                     info.addField("`Ping`", "Grab the latest latency between the bot and Discord servers", false);
@@ -48,29 +52,37 @@ public class Info extends ListenerAdapter {
                     channel.close();
                 });
             } catch(UnsupportedOperationException e) {
+                // Couldn't open private channel
                 event.getMessage().removeReaction("✅").queue();
                 event.getMessage().addReaction("🚫").queue();
             }
         }
+
+        //Request features or report bugs
         if((args[0].equalsIgnoreCase(HiveBot.prefix + "request")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "requests")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "bug"))){
             event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVEWasp/issues").queue();
         }
 
+        //Three Laws Safe command
         if((args[0].equalsIgnoreCase((HiveBot.prefix + "botlaws"))) || (args[0].equalsIgnoreCase((HiveBot.prefix + "threelawssafe")))){
-            EmbedBuilder info = new EmbedBuilder();
-            info.setTitle("3 Laws of BoTs");
-            info.setThumbnail("http://marc-jennings.co.uk/wp-content/uploads/2020/04/robot_1f916.png");
-            info.addField("`Law 1`","A BoT will **NOT** trigger another bot",false);
-            info.addField("`Law 2`", "A BoT will **NOT** trigger itself",false);
-            info.addField("`Law 3`", "A BoT will **NOT** kill hoomans",false);
-            info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
-            info.setColor(Color.CYAN);
-            event.getChannel().sendTyping().queue();
-            event.getChannel().sendMessage(info.build()).queue();
-            info.clear();
+            try {
+                EmbedBuilder info = new EmbedBuilder();
+                info.setTitle("3 Laws of BoTs");
+                info.setThumbnail("http://marc-jennings.co.uk/wp-content/uploads/2020/04/robot_1f916.png");
+                info.addField("`Law 1`", "A BoT will **NOT** trigger another bot", false);
+                info.addField("`Law 2`", "A BoT will **NOT** trigger itself", false);
+                info.addField("`Law 3`", "A BoT will **NOT** kill hoomans", false);
+                info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+                info.setColor(Color.CYAN);
+                event.getChannel().sendTyping().queue();
+                event.getChannel().sendMessage(info.build()).queue();
+                info.clear();
+            } catch (PermissionException e){
+                event.getChannel().sendMessage("Missing Permission: " + e.getPermission().getName()).queue();
+            }
         }
 
-        //if(args[0].equalsIgnoreCase(HiveBot.prefix + "execute_order_66")){
+        //Execute order 66 command
         if(event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "execute order 66")){
 
             String[] rand = {" Yes my lord.", " Yes My lord, The troops have been notified.",
@@ -81,35 +93,42 @@ public class Info extends ListenerAdapter {
 
         }
 
+
+        //Rule 34 Command
         if((event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule 34")) || (event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule34"))){
 
+            //Random string selection
             String[] rand = {" You need help.", " nope, im out.",
                     " rUlE tHiRty FouR", " I don't know what to say to you anymore"};
             int index = new Random().nextInt(rand.length);
 
+            //If random triggers sponge response
             if(index == 2) {
 
-                File file = null;
+                File file = null;  //Initalize file as null
                 try {
+                    // Get path of JAR file
                     file = new File(this.getClass().getProtectionDomain().
                             getCodeSource().getLocation().toURI().getPath());
                 } catch (URISyntaxException e) {
                     e.printStackTrace();
                 }
-                String path = file.getParent() + "/images/sponge.png";
+                // Get sponge image path
                 try {
+                    String path = file.getParent() + "/images/sponge.png";
                     File image = new File(path);
-
+                    //Send message WITH image
                     event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index])
                             .addFile(image)
                             .queue();
                 } catch (NullPointerException e) {
-                    System.out.println("Couldn't find file:" + path);
-
+                    //Send regular message without image
+                    System.out.println("Couldn't find file:");
                     event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index])
                             .queue();
                 }
             } else {
+                //Send one of the other responses
                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index]).queue();
             }
 
