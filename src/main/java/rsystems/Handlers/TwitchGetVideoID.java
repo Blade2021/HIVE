@@ -2,20 +2,8 @@ package rsystems.Handlers;
 
 import com.github.twitch4j.TwitchClient;
 import com.github.twitch4j.common.events.channel.ChannelGoLiveEvent;
-import com.github.twitch4j.common.util.TwitchUtils;
-import com.github.twitch4j.helix.TwitchHelix;
 import com.github.twitch4j.helix.domain.StreamMarkersList;
-import com.github.twitch4j.helix.domain.Subscription;
-import com.github.twitch4j.helix.domain.SubscriptionList;
-import org.json.simple.JSONArray;
 import rsystems.Config;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
 
 public class TwitchGetVideoID {
     private static TwitchClient twitchClient = TwitchHandler.getClient();

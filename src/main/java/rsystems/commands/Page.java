@@ -39,9 +39,7 @@ public class Page extends ListenerAdapter{
                         postData = "{\"User\":\"" +  event.getMessage().getContentRaw().substring(args[0].length()+1) + "\"}";
                     }
 
-                    //final String POSTS_API_URL = Config.get("notifyLight");
-
-                    final String POSTS_API_URL = "https://hooks.nabu.casa/gAAAAABepaadY0t7b5fdbKdWP6I-HoQyscseR19qVX_yKYM1MlKOan2nr18iBgfx69oTALgwdWInJvq5kIxHdWr1X6REnx1z_x67VZw1mtMb_ITgmjBY19HDoZ63mhVkHAv5Z1-bVvDH0yv34Ws338Kahv4-CkkdY0XE-bA_mVkjQYdjb4_2rQo=";
+                    final String POSTS_API_URL = Config.get("notifyLight");
                     if (!cooldown) {
                         try {
                             HttpClient client = HttpClient.newHttpClient();
