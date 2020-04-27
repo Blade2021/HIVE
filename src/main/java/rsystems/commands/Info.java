@@ -9,8 +9,6 @@ import rsystems.HiveBot;
 
 import java.awt.*;
 import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.util.Random;
 
@@ -87,9 +85,14 @@ public class Info extends ListenerAdapter {
 
             String[] rand = {" Yes my lord.", " Yes My lord, The troops have been notified.",
                     " Yes my lord, Alright troops, move out!", " Right away my lord"};
-            int index = new Random().nextInt(rand.length);
 
-            event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index]).queue();
+            String[] gifLinks = {"https://tenor.com/view/heading-in-stormtrooper-starwars-gif-4902440","https://tenor.com/view/dancing-darth-vader-storm-troopers-gif-5595478",
+                    "https://tenor.com/view/cooking-storm-trooper-pancakes-star-wars-gif-15568625", "https://tenor.com/view/roast-squad-star-wars-order-gif-10141605","https://tenor.com/view/star-wars-rey-gif-14874010", "https://tenor.com/view/star-wars-pizza-darth-vader-han-solo-gif-4826490"};
+
+            int index = new Random().nextInt(rand.length);
+            int gifIndex = new Random().nextInt(gifLinks.length);
+
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + rand[index] + "\n\n" + gifLinks[gifIndex]).queue();
 
         }
 

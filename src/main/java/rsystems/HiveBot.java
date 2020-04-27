@@ -4,15 +4,15 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
-import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import rsystems.Handlers.TwitchHandler;
 import rsystems.commands.*;
 
 import javax.security.auth.login.LoginException;
 
-public class HiveBot extends ListenerAdapter {
+public class HiveBot {
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
 
@@ -39,9 +39,15 @@ public class HiveBot extends ListenerAdapter {
         api.addEventListener(new Code());
         api.addEventListener(new Say());
         api.addEventListener(new Page());
-
+        api.addEventListener(new Twitch());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
+
+        //TwitchHandler twitchHandler = new TwitchHandler();
+
+
     }
+
+
 }
 

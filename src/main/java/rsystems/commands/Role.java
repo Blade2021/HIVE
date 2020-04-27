@@ -15,7 +15,7 @@ public class Role extends ListenerAdapter {
     boolean getMembers = false;
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        //Don't accept messages from BOT Accounts
+        //Don't accept messages from BOT Accounts [BOT LAW 2]
         if (event.getMessage().getAuthor().isBot()) {
             return;
         }
@@ -37,50 +37,8 @@ public class Role extends ListenerAdapter {
                         if((args.length > 2) && (args[2].equalsIgnoreCase("true"))){
                             getMembers = true;
                         }
-                        try {
-                            if (event.getGuild().getRoles().toString().toLowerCase().contains(roleName.toLowerCase())) {
-                                for (net.dv8tion.jda.api.entities.Role role : event.getGuild().getRoles()) {
-                                    if (role.getName().equalsIgnoreCase(roleName)) {
-                                        //Role was found
 
-                                        List<String> memberList = new ArrayList();
-
-                                        try {
-                                            int x = 0;
-                                            for (Member m : event.getGuild().getMembersWithRoles(event.getGuild().getRolesByName(roleName, true))) {
-                                                if (getMembers) {
-
-                                                    //Only go up to 200 members
-                                                    if (x < 200) {
-                                                        memberList.add(m.getUser().getAsTag());
-                                                    }
-                                                }
-                                                x++;
-                                            }
-                                            event.getMessage().addReaction("✅").queue();
-                                            event.getChannel().sendMessage("`" + roleName + "` has " + x + " users.").queue();
-
-                                            if (getMembers) {
-                                                event.getAuthor().openPrivateChannel().queue((channel) ->
-                                                {
-                                                    channel.sendMessage(memberList.toString()).queue();
-                                                    memberList.clear();
-                                                });
-                                            }
-                                            return;
-                                        } catch (Exception e) {
-                                            e.printStackTrace();
-                                        }
-                                    }
-                                }
-                                event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
-                            } else {
-                                event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
-                            }
-                        } catch (InsufficientPermissionException e){
-                            event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
-                        }
-                        //
+                        getMemberRoles(event,roleName);
                     }
                 } else {
                     // User does not have administrator rights
@@ -88,11 +46,59 @@ public class Role extends ListenerAdapter {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to this command.").queue();
                 }
             } catch (NullPointerException e) {
-                //todo Add better error description
+                event.getChannel().sendMessage("Something went wrong...").queue();
                 System.out.println("Null found on permissions request");
-                e.printStackTrace();
             }
         }
         getMembers = false;
     }
+
+    private void getMemberRoles(GuildMessageReceivedEvent event, String roleName){
+        try {
+            if (event.getGuild().getRoles().toString().toLowerCase().contains(roleName.toLowerCase())) {
+                for (net.dv8tion.jda.api.entities.Role role : event.getGuild().getRoles()) {
+                    if (role.getName().equalsIgnoreCase(roleName)) {
+                        //Role was found
+
+                        List<String> memberList = new ArrayList();
+
+                        try {
+                            int x = 0;
+                            for (Member m : event.getGuild().getMembersWithRoles(event.getGuild().getRolesByName(roleName, true))) {
+                                if (getMembers) {
+
+                                    //Only go up to 200 members
+                                    if (x < 200) {
+                                        memberList.add(m.getUser().getAsTag());
+                                    }
+                                }
+                                x++;
+                            }
+                            event.getMessage().addReaction("✅").queue();
+                            event.getChannel().sendMessage("`" + roleName + "` has " + x + " users.").queue();
+
+                            if (getMembers) {
+                                event.getAuthor().openPrivateChannel().queue((channel) ->
+                                {
+                                    channel.sendMessage(memberList.toString()).queue();
+                                    memberList.clear();
+                                });
+                            }
+                            return;
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
+            } else {
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + "`" + roleName + "` was not found").queue();
+            }
+        } catch (InsufficientPermissionException e){
+            event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
+        }
+    }
+
+
+
 }

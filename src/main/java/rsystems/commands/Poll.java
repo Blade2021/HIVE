@@ -6,6 +6,7 @@ import kotlin.random.Random;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
@@ -27,44 +28,42 @@ public class Poll extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + "Poll")) {
 
-            //String URL = null;
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + "Poll")) {
             try {
                 if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
 
                     // User has administrator rights
                     // GET Help with poll command
-
                     if((args.length < 2) || (args[1].equalsIgnoreCase("help")) || (args[1].equalsIgnoreCase("?"))){
-                        EmbedBuilder info = new EmbedBuilder();
-                        info.setTitle("HIVE Poll Help");
-                        info.setDescription("Poll information");
-                        info.setThumbnail(event.getGuild().getIconUrl());
-                        info.addField("`Poll [option 1],[option 2],[option 3]`","Start a strawpoll using HVIE (COMMA SEPARATED!)",false);
-                        info.addField("`Poll GetURL`","Grab the URL of current Poll",false);
-                        info.addField("`Poll SetURL [URL]`","Set URL of current Poll",false);
-                        info.addField("`Poll GetVotes`","Display current vote count from poll",false);
-                        info.addField("`Poll Pick`","Grab the votes and pick the winner",false);
-                        info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
-                        info.setColor(Color.CYAN);
-                        event.getChannel().sendTyping().queue();
-                        event.getChannel().sendMessage(info.build()).queue();
-                        info.clear();
+                        try {
+                            EmbedBuilder info = new EmbedBuilder();
+                            info.setTitle("HIVE Poll Help");
+                            info.setDescription("Poll information");
+                            info.setThumbnail(event.getGuild().getIconUrl());
+                            info.addField("`Poll [option 1],[option 2],[option 3]`", "Start a strawpoll using HVIE (COMMA SEPARATED!)", false);
+                            info.addField("`Poll GetURL`", "Grab the URL of current Poll", false);
+                            info.addField("`Poll SetURL [URL]`", "Set URL of current Poll", false);
+                            info.addField("`Poll GetVotes`", "Display current vote count from poll", false);
+                            info.addField("`Poll Pick`", "Grab the votes and pick the winner", false);
+                            info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+                            info.setColor(Color.CYAN);
+                            event.getChannel().sendTyping().queue();
+                            event.getChannel().sendMessage(info.build()).queue();
+                            info.clear();
+                        } catch (PermissionException e){
+                            event.getChannel().sendMessage("Missing Permissions: " + e.getPermission().getName()).queue();
+                        }
                         return;
-                    }
-                    /*
-                    if (args.length < 2) {
-                        // Not enough arguments (nothing to check)
-                        event.getMessage().addReaction("\uD83D\uDEAB").queue();
-                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + " Not enough arguments supplied").queue();
-                    }*/ else {
+
+                    } else {
 
                         // User has administrator permissions
 
                         // Set URL for Poll
                         if (args[1].equalsIgnoreCase("seturl")) {
-                            URL=event.getMessage().getContentRaw().substring((args[0].length() + args[1].length())+2);
+                            setURL(event.getMessage().getContentRaw().substring((args[0].length() + args[1].length())+2));
+                            event.getMessage().addReaction("✅").queue();
                             return;
                         }
 
@@ -72,29 +71,10 @@ public class Poll extends ListenerAdapter {
                         if (args[1].equalsIgnoreCase("getvotes")) {
                             //Check if poll is in session
                             if(URL == null){
-                                System.out.println("URL is NULL");
                                 event.getChannel().sendMessage("There is currently no active poll.").queue();
                                 return;
                             } else {
-                                System.out.println("URL is not NULL");
-                                System.out.println(URL);
-                                try {
-                                    StrawPoll getVote = new StrawPoll(URL);
-                                    ListIterator<String> listItr = getVote.getOptions().listIterator();
-                                    int x = 0;
-                                    while (listItr.hasNext()) {
-                                        try {
-                                            //System.out.println(strawPoll.getVotes().toString());
-                                            event.getChannel().sendMessage(getVote.getOptions().get(x) + " | " + getVote.getVotes().get(x).toString()).queue();
-                                            x++;
-                                        } catch (IndexOutOfBoundsException e) {
-                                            break;
-                                        }
-                                    }
-                                }
-                                catch(NullPointerException e){
-                                    e.printStackTrace();
-                                }
+                                event.getChannel().sendMessage(getVotes().build()).queue();
                             }
                             return;
                         }
@@ -109,97 +89,22 @@ public class Poll extends ListenerAdapter {
                             return;
                         }
 
-                        if ((args[1].equalsIgnoreCase("pick")) && (URL != null)) {
+                        if (args[1].equalsIgnoreCase("pick")){
 
-                            StrawPoll winner = new StrawPoll(URL);
-                            try {
-                                ListIterator<String> listItr = winner.getOptions().listIterator();
-                                int x = 0;
-                                int[] voteArray = new int[50];
-
-                                while (listItr.hasNext()) {
-                                    try {
-                                        voteArray[x] = Integer.parseInt(winner.getVotes().get(x).toString());
-                                        x++;
-                                    } catch (IndexOutOfBoundsException e) {
-                                        break;
-                                    }
+                            if (URL != null) {
+                                String message = pickWinner();
+                                if (message != null) {
+                                    event.getChannel().sendMessage(message).queue();
                                 }
 
-                                // Find the max value in the array
-                                int max = 0;
-                                for (int i:voteArray) {
-                                    if((voteArray[i] > max) && (voteArray[i] > 0)){
-                                        max = voteArray[i];
-                                    }
-                                }
-                                // Find out if there are duplicates of the max value
-                                if(max > 0) {
-                                    int dupCheck = 0;
-                                    List<String> suddenOptions = new ArrayList();
-
-                                    for(int f=0;f<voteArray.length;f++){
-                                        if(voteArray[f] == max){
-                                            dupCheck++;
-                                            suddenOptions.add(winner.getOptions().get(f));
-                                        }
-                                    }
-
-                                    System.out.println(dupCheck);
-
-                                    // Single option won as it should!
-                                    if(dupCheck == 1)
-                                    {
-                                        event.getChannel().sendMessage("We have a winner! " + suddenOptions.get(0) + " wins this round!").queue();
-                                    }
-
-                                    // Two way TIE
-                                    if (dupCheck == 2) {
-                                        int rand = Random.Default.nextInt(4);
-                                        String message = "";
-                                        switch(rand){
-                                            case 0:
-                                                message = "OPTIONA AND OPTIONB ARE GOING HEAD TO HEAD!";
-                                                break;
-                                            case 1:
-                                                message = "OPTIONA is taunting OPTIONB for a rematch!";
-                                                break;
-                                            case 2:
-                                                message = "OPTIONA said OPTIONB smells funny.";
-                                                break;
-                                            case 3:
-                                                message = "OPTIONA is getting taunted by OPTIONB";
-                                                break;
-                                            case 4:
-                                                message = "OPTIONA gave OPTIONB a disgust look!";
-                                                break;
-                                        }
-                                        message = message.replaceFirst("OPTIONA",suddenOptions.get(0));
-                                        message = message.replaceFirst("OPTIONB",suddenOptions.get(1));
-
-                                        event.getChannel().sendMessage("Well its a TIE and " + message).queue();
-
-                                    }
-                                    // Greater than or equal to a 3 way tie
-                                    if (dupCheck >= 3){
-
-                                        event.getChannel().sendMessage("WHAT! Nope, i'm out on this one! YOU figure it out!").queue();
-                                    }
-                                } else {
-                                    event.getMessage().addReaction("\uD83E\uDDD0").queue();
-                                    event.getChannel().sendMessage("Uh... well this is awkward, nobody voted! \uD83E\uDD10 ").queue();
-                                }
-
-
-                                //event.getChannel().sendMessage("Winning Option is: " + winningOption + " with " + vote + " votes").queue();
                                 URL = null;
+                                return;
+                            } else {
+                                // POLL URL IS NULL (No active polls)
+                                event.getMessage().addReaction("🚫").queue();
+                                event.getChannel().sendMessage("There are no active polls right now").queue();
                             }
-                            catch(NullPointerException e){
-                                e.printStackTrace();
-                            }
-                            return;
                         }
-
                         // SET NEW POLL OPTIONS
 
                         String optionsraw = event.getMessage().getContentRaw().substring(args[0].length());
@@ -215,39 +120,6 @@ public class Poll extends ListenerAdapter {
 
                         event.getChannel().sendMessage("GO CAST YOUR VOTES! " + strawPoll.getPollURL()).queue();
                         URL=strawPoll.getPollURL(); // Store poll url into data
-/*
-                        new Thread( new Runnable() {
-                            public void run()  {
-                                try  { Thread.sleep( 30000 ); }
-                                catch (InterruptedException ie)  {}
-                                try {
-
-                                    System.out.println(strawPoll.getVotes());
-                                    /*
-                                    //System.out.println(strawPoll.getPollURL());
-                                    ListIterator<String> listItr = strawPoll.getOptions().listIterator();
-                                    int x = 0;
-                                    while(listItr.hasNext()) {
-                                        try {
-                                            //System.out.println(strawPoll.getVotes().toString());
-                                            event.getChannel().sendMessage(strawPoll.getOptions().get(x) + " | " + strawPoll.getVotes().get(x).toString()).queue();
-                                            x++;
-                                        } catch(IndexOutOfBoundsException e){
-                                            break;
-                                        }
-                                    }
-
-
-                                }
-                                catch(NullPointerException e){
-                                    event.getChannel().sendMessage("Something terrible went wrong!").queue();
-                                }
-                                return;
-                            }
-                        } ).start();
-
-
-                     */
 
                     }
                 } else {
@@ -262,4 +134,122 @@ public class Poll extends ListenerAdapter {
         }
 
     }
+
+    private void setURL(String URL){
+        Poll.URL = URL;
+    }
+
+    private EmbedBuilder getVotes(){
+        EmbedBuilder voteEmbed = new EmbedBuilder();
+        voteEmbed.setTitle("Current Poll Votes",URL);
+        try {
+            StrawPoll getVote = new StrawPoll(URL);
+            ListIterator<String> listItr = getVote.getOptions().listIterator();
+            int x = 0;
+            while (listItr.hasNext() && (x<12)) {
+                try {
+                    // Build embed with builder
+                    voteEmbed.addField(getVote.getOptions().get(x),getVote.getVotes().get(x).toString(),false);
+                    x++;
+                } catch (IndexOutOfBoundsException e) {
+                    break;
+                }
+            }
+        }
+        catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        return voteEmbed;
+    }
+
+    private String pickWinner(){
+        StrawPoll winner = new StrawPoll(URL);
+
+        try {
+            //Initiate list of options
+            ListIterator<String> listItr = winner.getOptions().listIterator();
+
+            int x = 0;
+            int[] voteArray = new int[50];
+
+            while (listItr.hasNext()) {
+                try {
+                    voteArray[x] = Integer.parseInt(winner.getVotes().get(x).toString());
+                    x++;
+                } catch (IndexOutOfBoundsException e) {
+                    break;
+                }
+            }
+
+            // Find the max value in the array
+            int max = 0;
+            for (int i:voteArray) {
+                if((voteArray[i] > max) && (voteArray[i] > 0)){
+                    max = voteArray[i];
+                }
+            }
+
+            // Find out if there are duplicates of the max value
+            if(max > 0) {
+                int dupCheck = 0;
+                List<String> suddenOptions = new ArrayList();
+
+                for(int f=0;f<voteArray.length;f++){
+                    if(voteArray[f] == max){
+                        dupCheck++;
+                        suddenOptions.add(winner.getOptions().get(f));
+                    }
+                }
+
+                System.out.println(dupCheck);
+
+                // Single option won as it should!
+                if(dupCheck == 1)
+                {
+                    return("We have a winner! " + suddenOptions.get(0) + " wins this round!");
+                }
+
+                // Two way TIE
+                if (dupCheck == 2) {
+                    int rand = Random.Default.nextInt(4);
+                    String message = "";
+                    switch(rand){
+                        case 0:
+                            message = "OPTIONA AND OPTIONB ARE GOING HEAD TO HEAD!";
+                            break;
+                        case 1:
+                            message = "OPTIONA is taunting OPTIONB for a rematch!";
+                            break;
+                        case 2:
+                            message = "OPTIONA said OPTIONB smells funny.";
+                            break;
+                        case 3:
+                            message = "OPTIONA is getting taunted by OPTIONB";
+                            break;
+                        case 4:
+                            message = "OPTIONA gave OPTIONB a disgust look!";
+                            break;
+                    }
+                    message = message.replaceFirst("OPTIONA",suddenOptions.get(0));
+                    message = message.replaceFirst("OPTIONB",suddenOptions.get(1));
+
+                   return("Well its a TIE and " + message);
+
+                }
+                // Greater than or equal to a 3 way tie
+                if (dupCheck >= 3){
+
+                    return("WHAT! Nope, i'm out on this one! YOU figure it out!");
+                }
+            } else {
+                // Nobody voted
+                return null;
+            }
+        }
+        catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

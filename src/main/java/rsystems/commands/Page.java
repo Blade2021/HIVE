@@ -24,7 +24,6 @@ public class Page extends ListenerAdapter{
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        //if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
         if (args[0].equalsIgnoreCase((HiveBot.prefix + "page"))) {
             try {
                 if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
@@ -34,19 +33,28 @@ public class Page extends ListenerAdapter{
                         return;
                     }
 
-                    final String POSTS_API_URL = Config.get("notifyLight");
+                    String postData = "none";
+
+                    if(args.length > 1){
+                        postData = "{\"User\":\"" +  event.getMessage().getContentRaw().substring(args[0].length()+1) + "\"}";
+                    }
+
+                    //final String POSTS_API_URL = Config.get("notifyLight");
+
+                    final String POSTS_API_URL = "https://hooks.nabu.casa/gAAAAABepaadY0t7b5fdbKdWP6I-HoQyscseR19qVX_yKYM1MlKOan2nr18iBgfx69oTALgwdWInJvq5kIxHdWr1X6REnx1z_x67VZw1mtMb_ITgmjBY19HDoZ63mhVkHAv5Z1-bVvDH0yv34Ws338Kahv4-CkkdY0XE-bA_mVkjQYdjb4_2rQo=";
                     if (!cooldown) {
                         try {
                             HttpClient client = HttpClient.newHttpClient();
 
                             HttpRequest request = HttpRequest.newBuilder()
                                     .uri(URI.create(POSTS_API_URL))
-                                    .header("Content-Type", "text/plain; charset=UTF-8")
-                                    .POST(HttpRequest.BodyPublishers.ofString("trigger"))
+                                    //.header("Content-Type", "text/plain; charset=UTF-8")
+                                    .header("Content-Type","application/json")
+                                    .POST(HttpRequest.BodyPublishers.ofString(postData))
                                     .build();
 
                             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-                            System.out.println(response);
+                            System.out.println(event.getAuthor().getAsTag() + " : " + response);
                             int scode = response.statusCode();
                             if (scode == 200) {
                                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + " Hook sent...").queue();
@@ -85,14 +93,14 @@ public class Page extends ListenerAdapter{
                         String[] rand = {" Listen!  I'm working on it!", " Look! Do you want to be the bot?", " This hook is smoking hot! Lets let it cool down some!",
                                 " There's only so much squirreling I can help to prevent", "Nope.  The doc is off in his own little world here",
                                 " I cannot break the laws of bots"};
-                        int index = new Random().nextInt(rand.length);
-
+                        int index = new Random().nextInt(rand.length);  //Generate a random int for string selection
                         event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index]).queue();
                     }
                 } else {
+                    //User does not have admin rights
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
-                //
+            // An error occured with checking for permission
             } catch (NullPointerException e){
                 event.getChannel().sendMessage("Something went wrong...").queue();
             }

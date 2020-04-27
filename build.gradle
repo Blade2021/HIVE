@@ -17,6 +17,7 @@ repositories {
     google()
 
     maven { url 'https://jitpack.io' }
+    maven { url "https://oss.jfrog.org/artifactory/libs-release"}
 }
 
 dependencies {
@@ -29,6 +30,8 @@ dependencies {
     compile 'com.google.apis:google-api-services-youtube:v3-rev20200320-1.30.9'
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
+    compile group: 'com.github.twitch4j', name: 'twitch4j', version: '1.0.0-alpha.19'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 }
 
 compileJava.options.encoding = 'UTF-8'
