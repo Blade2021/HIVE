@@ -3,6 +3,7 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.json.simple.JSONObject;
 import rsystems.Config;
 import rsystems.HiveBot;
 
@@ -33,22 +34,26 @@ public class Page extends ListenerAdapter{
                         return;
                     }
 
-                    String postData = "none";
-
+                    String data = "";
                     if(args.length > 1){
-                        postData = "{\"User\":\"" +  event.getMessage().getContentRaw().substring(args[0].length()+1) + "\"}";
+                        data = event.getMessage().getContentRaw().substring(args[0].length()+1);
                     }
+
+                    JSONObject json = new JSONObject();
+                    json.put("UserID",event.getAuthor().getId());
+                    json.put("User",event.getAuthor().getName());
+                    json.put("Data",data);
 
                     final String POSTS_API_URL = Config.get("notifyLight");
                     if (!cooldown) {
                         try {
+
                             HttpClient client = HttpClient.newHttpClient();
 
                             HttpRequest request = HttpRequest.newBuilder()
                                     .uri(URI.create(POSTS_API_URL))
-                                    //.header("Content-Type", "text/plain; charset=UTF-8")
-                                    .header("Content-Type","application/json")
-                                    .POST(HttpRequest.BodyPublishers.ofString(postData))
+                                    .header("Content-Type","application/json; charset=UTF-8")
+                                    .POST(HttpRequest.BodyPublishers.ofString(json.toJSONString()))
                                     .build();
 
                             HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());

@@ -14,6 +14,8 @@ import java.util.Random;
 
 public class Info extends ListenerAdapter {
 
+    String version = "0.14";
+
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) throws PermissionException {
         //Escape if message came from a bot account
         if(event.getMessage().getAuthor().isBot()){
@@ -21,6 +23,10 @@ public class Info extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
+
+        if(args[0].equalsIgnoreCase(HiveBot.prefix + "version")){
+            event.getChannel().sendMessage("Current Version: " + version).queue();
+        }
 
         //Info command
         if((args[0].equalsIgnoreCase((HiveBot.prefix + "info")) || (args[0].equalsIgnoreCase(((HiveBot.prefix + "help")))) || (args[0].equalsIgnoreCase((HiveBot.prefix + "commands"))))) {
@@ -30,7 +36,7 @@ public class Info extends ListenerAdapter {
                 event.getAuthor().openPrivateChannel().queue((channel) ->
                 {
                     EmbedBuilder info = new EmbedBuilder();
-                    info.setTitle("HIVE BoT Information");
+                    info.setTitle("HIVE BoT Information V. " + version);
                     info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**");
                     info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
                     info.addField("`**Official Commands:**`", "", false);
@@ -39,6 +45,7 @@ public class Info extends ListenerAdapter {
                     info.addField("`Helpdoc`", "Post a link to the Helpful Documents Page", false);
                     info.addField("`Who`", "Display information about HIVE", false);
                     info.addField("`TwitchSub`", "Awesome Twitch Subscriber information", false);
+                    info.addField("`Code`","Display information about pasting code in Discord",false);
                     info.addField("`**Fun Commands**`", "", false);
                     info.addField("`Execute Order 66`", "Send a message to the troops", false);
                     info.addField("`ThreeLawsSafe`", "You can figure it out ;) ", false);

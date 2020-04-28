@@ -17,12 +17,13 @@ public class Who extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
         if(((args[0].equalsIgnoreCase((HiveBot.prefix + "who")) && args.length < 2) || (args[0].equalsIgnoreCase((HiveBot.prefix + "hive"))))) {
-            event.getMessage().addReaction("\uD83D\uDC4B ").queue();
+            event.getMessage().addReaction("\uD83D\uDC1D ").queue(); // Bee Emoji
+            event.getMessage().addReaction("\uD83D\uDC4B ").queue(); // Waving hand emoji
             try {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am HIVE! A buzzy little bot that is here to help!\nWanna see a list of commands just type: `" + HiveBot.prefix + "help`  \n\nIf you run into any issues please contact my creator: "
-                    + event.getGuild().getMemberById("313832264792539142").getAsMention()).queue();
+                    + event.getGuild().getMemberById("313832264792539142").getAsMention() + "\uD83E\uDDD9\u200D♂️ ").queue();
             } catch(NullPointerException e){
-                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am HIVE! A buzzy little bot that is here to help!\nWanna see a list of commands just type: `" + HiveBot.prefix + "help`  \n\nIf you run into any issues please contact my creator: Blade2021#8727").queue();
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am HIVE! A buzzy little bot that is here to help!\nWanna see a list of commands just type: `" + HiveBot.prefix + "help`  \n\nIf you run into any issues please contact my creator: Blade2021#8727" + "\uD83E\uDDD9\u200D♂️ ").queue();
             }
         } /*else {
             if(args.length >= 2){
