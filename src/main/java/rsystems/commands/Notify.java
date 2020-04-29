@@ -12,7 +12,7 @@ import java.awt.*;
 public class Notify extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        //Don't accept messages from BOT Accounts
+        //Don't accept messages from BOT Accounts [BOT LAW 2]
         if (event.getMessage().getAuthor().isBot()) {
             return;
         }

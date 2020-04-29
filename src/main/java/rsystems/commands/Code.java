@@ -4,7 +4,9 @@ import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.error.YAMLException;
@@ -21,7 +23,7 @@ public class Code extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-
+        // Check if the message contains a command
         if((args[0].equalsIgnoreCase((HiveBot.prefix + "code")))){
             try {
                 try{
@@ -46,7 +48,7 @@ public class Code extends ListenerAdapter {
             }
         }
 
-
+        // Check to see if initial message contains a json code block
         if (event.getMessage().getContentRaw().contains("```json")){
             String message = event.getMessage().getContentRaw();
             try{
@@ -64,10 +66,12 @@ public class Code extends ListenerAdapter {
                 } else {
                     event.getMessage().addReaction("🚫").queue();
                 }
-            } catch (IndexOutOfBoundsException ignored){
+            } catch (IndexOutOfBoundsException | PermissionException ignored){
+                // Ignore any errors
             }
         }
 
+        // Check to see if initial message contains a yaml code block
         if (event.getMessage().getContentRaw().contains("```yaml")){
             String message = event.getMessage().getContentRaw();
 
@@ -76,6 +80,7 @@ public class Code extends ListenerAdapter {
             }catch(InsufficientPermissionException | NullPointerException ignored){
             }
 
+            // Try to locate the start and end of the code block
             try{
                 int startCode = message.indexOf("```yaml");
                 int endCode = message.indexOf("```",startCode+3);
@@ -86,12 +91,98 @@ public class Code extends ListenerAdapter {
                 } else {
                     event.getMessage().addReaction("🚫").queue();
                 }
-            } catch (IndexOutOfBoundsException ignored){
+            } catch (IndexOutOfBoundsException | PermissionException | NullPointerException ignored){
+                // Ignore any errors
             }
         }
     }
 
+    /*
+    This method is called upon a message is updated.  (Edited)  This way we can recheck the message for proper code.
+     */
+    public void onGuildMessageUpdate(GuildMessageUpdateEvent event){
+        if (event.getMessage().getContentRaw().contains("```yaml")){
+            String message = event.getMessage().getContentRaw();
 
+            try{
+                // Add a Bee Emoji to the message to signal we received a code message.
+                event.getMessage().addReaction("\uD83D\uDC1D ").queue();
+            }catch(InsufficientPermissionException | NullPointerException ignored){
+            }
+
+            try{
+                //Find the start and end of the code snippet.
+                int startCode = message.indexOf("```yaml");
+                int endCode = message.indexOf("```",startCode+3); //Add 3 to the start to exclude the first set of ticks.
+
+                String code = message.substring(startCode+7, endCode); // Add 7 to the starter to exclude ```yaml
+                // The validation returned true (Good YAML Code)
+                if(validateYaml(code)){
+                    event.getMessage().addReaction("✅").queue();
+                    try{
+                        //Remove the NG emoji if there was one added.  If not the catch will trigger
+                        event.getMessage().removeReaction("🚫").queue();
+                    } catch(PermissionException | NullPointerException ignored) {
+                    }
+                } else {
+                    // The validation of the code block returned a failure
+                    event.getMessage().addReaction("🚫").queue();
+                    try{
+                        //Remove the OK emoji if there was one added.  If not the catch will trigger
+                        event.getMessage().removeReaction("✅").queue();
+                    } catch (IndexOutOfBoundsException | PermissionException | NullPointerException ignored){
+                        // Ignore any errors
+                    }
+                }
+            } catch (IndexOutOfBoundsException ignored){
+                // Could not locate beginning and end of code block
+            }
+        }
+
+        // Does the message contain a json code block
+        if (event.getMessage().getContentRaw().contains("```json")){
+            String message = event.getMessage().getContentRaw();
+            try{
+                // Add a Bee Emoji to the message to signal we received a code message.
+                event.getMessage().addReaction("\uD83D\uDC1D ").queue();
+            }catch(InsufficientPermissionException | NullPointerException ignored){
+            }
+
+            try{
+                //Find the start and end of the code snippet.
+                int startCode = message.indexOf("```json");
+                int endCode = message.indexOf("```",startCode+3); //Add 3 to the start to exclude the first set of ticks.
+
+                String code = message.substring(startCode+7, endCode); // Add 7 to the starter to exclude ```json
+
+                // The validation of the code block returned OK
+                if(validateJson(code)){
+                    event.getMessage().addReaction("✅").queue();
+                    try{
+                        //Remove the NG emoji if there was one added.  If not the catch will trigger
+                        event.getMessage().removeReaction("🚫").queue();
+                    } catch(PermissionException | NullPointerException ignored) {
+                    }
+
+                } else {
+                    // The validation of the code block returned a failure
+                    event.getMessage().addReaction("🚫").queue();
+                    try{
+                        //Remove the OK emoji if there was one added.  If not the catch will trigger
+                        event.getMessage().removeReaction("✅").queue();
+                    } catch(PermissionException | NullPointerException ignored) {
+                    }
+                }
+            } catch (IndexOutOfBoundsException ignored){
+                // Could not locate beginning and end of code block
+            }
+        }
+
+    }
+
+    /*
+        This method will validate the json code and return true if the code validates, returns false if invalid
+     */
     private boolean validateJson(String code){
         try {
             JsonParser parser = new JsonParser();
@@ -102,15 +193,20 @@ public class Code extends ListenerAdapter {
         return true;
     }
 
+
+    /*
+        This method will validate the yaml code and return true if the code validates, returns false if invalid
+     */
     private boolean validateYaml(String code){
         Yaml yamlValidator = new Yaml();
         try{
             yamlValidator.load(code);
         } catch(YAMLException e){
-            System.out.println(e.getCause());
             return false;
         }
         return true;
     }
+
+
 
 }

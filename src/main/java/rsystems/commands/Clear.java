@@ -32,9 +32,9 @@ public class Clear extends ListenerAdapter {
                     if(args.length < 2){
                         // No Argument Detected, Post Helpful doc
                         EmbedBuilder info = new EmbedBuilder();
-                        info.setColor(Color.CYAN);
+                        info.setColor(Color.YELLOW);
                         info.setTitle("Specify amount to delete");
-                        info.setDescription("Usage: `" + HiveBot.prefix + "clear [#of messages]`");
+                        info.setDescription("Usage: `" + HiveBot.prefix + "clear [# of messages]`");
                         event.getChannel().sendMessage(info.build()).queue();
                         info.clear();
                     } else {

@@ -40,11 +40,17 @@ public class Page extends ListenerAdapter{
                     }
 
                     JSONObject json = new JSONObject();
-                    json.put("UserID",event.getAuthor().getId());
-                    json.put("User",event.getAuthor().getName());
-                    json.put("Data",data);
+                    try {
+                        json.put("UserID", event.getAuthor().getId());
+                        json.put("User", event.getAuthor().getName());
+                        json.put("Data", data);
+                    } catch (NullPointerException e) {
+                        event.getChannel().sendMessage("Something went wrong...").queue();
+                    }
 
+                    // Pull the webhook URL from .env file for security purposes.
                     final String POSTS_API_URL = Config.get("notifyLight");
+
                     if (!cooldown) {
                         try {
 
