@@ -6,10 +6,16 @@ package rsystems.commands;
 */
 
 
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+
+import java.util.Iterator;
+import java.util.List;
+import java.util.ListIterator;
 
 public class LinkGrabber extends ListenerAdapter {
 
@@ -45,6 +51,16 @@ public class LinkGrabber extends ListenerAdapter {
 
 
                 try{
+                    //Get history of the past 20 messages
+                    List<Message> messages = textChannel.getHistory().retrievePast(20).complete();
+
+                    for(Message m:messages){
+                        if(m.getContentRaw().contains(link)){
+                            event.getMessage().addReaction("⚠").queue();
+                            return;
+                        }
+                    }
+                    //If current link was not found in messages
                     textChannel.sendMessage(author + link).queue();
                 }
                 catch(InsufficientPermissionException e){
