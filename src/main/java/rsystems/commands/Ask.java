@@ -11,13 +11,14 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import rsystems.HiveBot;
 
 import java.util.List;
 
-public class LinkGrabber extends ListenerAdapter {
+public class Ask extends ListenerAdapter {
 
     String pullChannel = "469343461150162955";
-    String pushChannel = "698214886622232606";
+    String pushChannel = "707341967268249630";
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
@@ -31,14 +32,14 @@ public class LinkGrabber extends ListenerAdapter {
                     return;  // Exit
                 }
             }
-            if ((event.getMessage().getContentRaw().contains("http://")) || (event.getMessage().getContentRaw().contains("https://")) || (event.getMessage().getContentRaw().contains("www."))) {
+            if ((event.getMessage().getContentRaw().contains(HiveBot.prefix + "ask"))) {
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();
 
                 // Call method to get link
-                String link = getLink(messageraw);
+                String question = getQuestion(messageraw);
 
-                if(link.length() <= 5){
+                if(question.length() <= 5){
                     //Link was not long enough to verify
                     return;
                 }
@@ -52,13 +53,13 @@ public class LinkGrabber extends ListenerAdapter {
                     List<Message> messages = textChannel.getHistory().retrievePast(20).complete();
 
                     for(Message m:messages){
-                        if(m.getContentRaw().contains(link)){
+                        if(m.getContentRaw().contains(question)){
                             event.getMessage().addReaction("⚠").queue();
                             return;
                         }
                     }
                     //If current link was not found in messages
-                    textChannel.sendMessage(author + link).queue();
+                    textChannel.sendMessage(author + question).queue();
                 }
                 catch(InsufficientPermissionException e){
                     System.out.println("Error: Missing permission: " + e.getPermission().getName());
@@ -71,31 +72,16 @@ public class LinkGrabber extends ListenerAdapter {
         }
     }
 
-    private String getLink(String message){
-        String link = "";
-
-        if(message.contains("http")){
-            int linkStart = message.indexOf("http");
-            try{
-                // Space was found after link
-                link = message.substring(linkStart,message.indexOf(" ",linkStart+1));
-            }
-            catch(StringIndexOutOfBoundsException e){
-                // No space was found
-                link = message.substring(linkStart);
-            }
-        } else {
-            int linkStart = message.indexOf("www");
-            try {
-                // Space was found after link
-                link = message.substring(linkStart, message.indexOf(" ", linkStart + 1));
-            }
-            catch(StringIndexOutOfBoundsException e){
-                // No space was found
-                link = message.substring(linkStart);
-            }
+    private String getQuestion(String message){
+        String question = "";
+        try{
+            int questionStart = message.indexOf(HiveBot.prefix + "ask");
+            question = message.substring(questionStart+4);
         }
-        return link;
+        catch(IndexOutOfBoundsException | NullPointerException e){
+            System.out.println("did not find question");
+        }
+        return question;
     }
 
     private String getAuthor(GuildMessageReceivedEvent event, String message){

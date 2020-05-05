@@ -1,6 +1,5 @@
-package rsystems.Handlers;
+package rsystems.handlers;
 
-import rsystems.UserModel;
 import org.json.simple.*;
 import org.json.simple.parser.*;
 import java.io.*;

@@ -170,7 +170,7 @@ public class Poll extends ListenerAdapter {
             ListIterator<String> listItr = winner.getOptions().listIterator();
 
             int x = 0;
-            int[] voteArray = new int[50];
+            int[] voteArray = new int[winner.getOptions().size()];
 
             while (listItr.hasNext()) {
                 try {
@@ -183,34 +183,32 @@ public class Poll extends ListenerAdapter {
 
             // Find the max value in the array
             int max = 0;
-            for (int i:voteArray) {
-                if((voteArray[i] > max) && (voteArray[i] > 0)){
-                    max = voteArray[i];
+            for (int vote:voteArray) {
+                if((vote > max) && (vote > 0)){
+                    max = vote;
                 }
             }
 
             // Find out if there are duplicates of the max value
             if(max > 0) {
-                int dupCheck = 0;
+                int duplicates = 0;
                 List<String> suddenOptions = new ArrayList();
 
-                for(int f=0;f<voteArray.length;f++){
-                    if(voteArray[f] == max){
-                        dupCheck++;
-                        suddenOptions.add(winner.getOptions().get(f));
+                for(int voteIndex=0;voteIndex < voteArray.length; voteIndex++){
+                    if(voteArray[voteIndex] == max){
+                        duplicates++;
+                        suddenOptions.add(winner.getOptions().get(voteIndex));
                     }
                 }
 
-                System.out.println(dupCheck);
-
                 // Single option won as it should!
-                if(dupCheck == 1)
+                if(duplicates == 1)
                 {
                     return("We have a winner! " + suddenOptions.get(0) + " wins this round!");
                 }
 
                 // Two way TIE
-                if (dupCheck == 2) {
+                if (duplicates == 2) {
                     int rand = Random.Default.nextInt(4);
                     String message = "";
                     switch(rand){
@@ -237,7 +235,7 @@ public class Poll extends ListenerAdapter {
 
                 }
                 // Greater than or equal to a 3 way tie
-                if (dupCheck >= 3){
+                if (duplicates >= 3){
 
                     return("WHAT! Nope, i'm out on this one! YOU figure it out!");
                 }
@@ -247,6 +245,9 @@ public class Poll extends ListenerAdapter {
             }
         }
         catch(NullPointerException e){
+            e.printStackTrace();
+        }
+        catch(IndexOutOfBoundsException e){
             e.printStackTrace();
         }
         return null;

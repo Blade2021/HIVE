@@ -27,13 +27,7 @@ public class Page extends ListenerAdapter{
         String[] args = event.getMessage().getContentRaw().split("\\s+");
         if (args[0].equalsIgnoreCase((HiveBot.prefix + "page"))) {
             try {
-                if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                    int anon = new Random().nextInt(10);
-                    if (anon == 6) {
-                        event.getChannel().sendMessage("> " + event.getMessage().getContentDisplay() + "\n" + event.getAuthor().getAsMention() + "umm... no").queue();
-                        return;
-                    }
-
+                if((event.getMember().getRoles().toString().contains("Page")) || (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR))){
                     String data = "";
                     if(args.length > 1){
                         data = event.getMessage().getContentRaw().substring(args[0].length()+1);

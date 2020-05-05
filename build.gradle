@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'rsystems.HiveBot'
 
-version '1.0-SNAPSHOT'
+version '1.1-SNAPSHOT'
 
 sourceCompatibility = 1.8
 targetCompatibility = 11
@@ -30,6 +30,13 @@ dependencies {
     compile 'com.google.api-client:google-api-client:1.30.9'
     compile 'com.google.apis:google-api-services-youtube:v3-rev20200320-1.30.9'
     compile 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    compile 'com.github.philippheuer.credentialmanager:credentialmanager:0.0.5'
+    compile 'com.github.philippheuer.events4j:events4j:0.5.0'
+    implementation group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "2.11.0"
+
+    compileOnly 'org.projectlombok:lombok:1.18.12'
+    annotationProcessor 'org.projectlombok:lombok:1.18.12'
+
     implementation 'com.googlecode.json-simple:json-simple:1.1.1'
     compile group: 'com.github.twitch4j', name: 'twitch4j', version: '1.0.0-alpha.19'
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'

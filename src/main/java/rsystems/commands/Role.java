@@ -77,10 +77,10 @@ public class Role extends ListenerAdapter {
                             event.getMessage().addReaction("✅").queue();
                             event.getChannel().sendMessage("`" + roleName + "` has " + x + " users.").queue();
 
-                            if (getMembers) {
+                            if ((getMembers) && (x>0)) {
                                 event.getAuthor().openPrivateChannel().queue((channel) ->
                                 {
-                                    channel.sendMessage(memberList.toString()).queue();
+                                    channel.sendMessage("`" + roleName + "`: " + memberList.toString()).queue();
                                     memberList.clear();
                                 });
                             }

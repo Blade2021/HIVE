@@ -112,6 +112,10 @@ public class Info extends ListenerAdapter {
                     " rUlE tHiRty FouR", " I don't know what to say to you anymore"};
             int index = new Random().nextInt(rand.length);
 
+            if((args.length >= 2) && (args[2].equalsIgnoreCase("sponge"))){
+                index = 2;
+            }
+
             //If random triggers sponge response
             if(index == 2) {
 

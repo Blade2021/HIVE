@@ -6,7 +6,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
-import rsystems.Handlers.Jackson;
+import rsystems.handlers.Jackson;
 import rsystems.HiveBot;
 
 import java.awt.*;
@@ -24,19 +24,27 @@ public class AdminInfo extends ListenerAdapter {
         if(args[0].equalsIgnoreCase((HiveBot.prefix + "admin"))){
             try{
                 if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)){
-                    EmbedBuilder ainfo = new EmbedBuilder();
-                    ainfo.setTitle("HIVE Admin Commands");
-                    ainfo.setDescription("BoT Prefix: " + HiveBot.prefix+ "\nCurrent User Count: `" + event.getGuild().getMemberCount() + " Users`");
-                    ainfo.setThumbnail(event.getGuild().getIconUrl());
-                    ainfo.addField("`Clear [int]`","Clears x amount of lines of chat.",false);
-                    ainfo.addField("`Status [String]`","Sets the status activity of the BOT",false);
-                    ainfo.addField("`Shutdown`","Shuts down the BOT.  Only use if **REQUIRED!**",false);
-                    ainfo.addField("`Role [String]`","Grabs current user count for specified role", false);
-                    ainfo.addField("`Poll [option 1],[option 2],[option 3]`","Create a StrawPoll using HIVE.  Use `Poll help` for poll menu",false);
-                    ainfo.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
-                    ainfo.setColor(Color.RED);
-                    event.getChannel().sendMessage(ainfo.build()).queue();
-                    ainfo.clear();
+                    event.getAuthor().openPrivateChannel().queue((channel) ->
+                    {
+                        EmbedBuilder ainfo = new EmbedBuilder();
+                        ainfo.setTitle("HIVE Admin Commands");
+                        ainfo.setDescription("BoT Prefix: " + HiveBot.prefix + "\nCurrent User Count: `" + event.getGuild().getMemberCount() + " Users`");
+                        ainfo.setThumbnail(event.getGuild().getIconUrl());
+                        ainfo.addField("`Clear [int]`", "Clears x amount of lines of chat.", false);
+                        ainfo.addField("`Status [String]`", "Sets the status activity of the BOT", false);
+                        ainfo.addField("`Shutdown`", "Shuts down the BOT.  Only use if **REQUIRED!**", false);
+                        ainfo.addField("`Role [String]`", "Grabs current user count for specified role", false);
+                        ainfo.addField("`Poll [option 1],[option 2],[option 3]`", "Create a StrawPoll using HIVE.  Use `Poll help` for poll menu", false);
+                        ainfo.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+                        ainfo.setColor(Color.RED);
+                        channel.sendMessage(ainfo.build()).queue();
+                        ainfo.clear();
+                        channel.close();
+                    });
+                    event.getMessage().addReaction("✅").queue();
+                } else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
+                    event.getMessage().addReaction("🚫").queue();
                 }
             }
             catch(NullPointerException e){
@@ -44,6 +52,9 @@ public class AdminInfo extends ListenerAdapter {
             }
             catch(InsufficientPermissionException e){
                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
+            }
+            catch(UnsupportedOperationException e){
+                System.out.println(event.getAuthor().getName() + " tried to call admin menu but invalid operation found.");
             }
         }
 
