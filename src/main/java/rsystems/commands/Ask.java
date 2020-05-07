@@ -11,14 +11,18 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.json.simple.JSONObject;
 import rsystems.HiveBot;
+import rsystems.handlers.DataFile;
 
 import java.util.List;
 
-public class Ask extends ListenerAdapter {
+import static rsystems.handlers.DataFile.datafileData;
 
-    String pullChannel = "469343461150162955";
-    String pushChannel = "707341967268249630";
+public class Ask extends ListenerAdapter {
+    DataFile dataFile = HiveBot.dataFile;
+    String pullChannel = dataFile.getDatafileData().get("QuestionPullChannel").toString();
+    String pushChannel = dataFile.getDatafileData().get("QuestionPushChannel").toString();
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
@@ -28,7 +32,7 @@ public class Ask extends ListenerAdapter {
 
             if(event.getAuthor().isBot()){
                 // Allow only restream bot to continue
-                if(!event.getMember().getId().equals("491614535812120596")){
+                if(!event.getMember().getId().equals(HiveBot.restreamID)){
                     return;  // Exit
                 }
             }

@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import rsystems.commands.*;
+import rsystems.handlers.DataFile;
 import rsystems.handlers.TwitchHandler;
 
 import javax.security.auth.login.LoginException;
@@ -15,6 +16,8 @@ import javax.security.auth.login.LoginException;
 public class HiveBot {
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
+    public static String restreamID = Config.get("restreamid");
+    public static DataFile dataFile = new DataFile();
 
     public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
@@ -28,6 +31,7 @@ public class HiveBot {
         api.addEventListener(new AssignRole());
         api.addEventListener(new Clear());
         api.addEventListener(new Code());
+        api.addEventListener(new HallMonitor());
         api.addEventListener(new Helpdoc());
         api.addEventListener(new Info());
         api.addEventListener(new LinkGrabber());
@@ -44,6 +48,9 @@ public class HiveBot {
         api.addEventListener(new Who());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
+
+
+        //DataFile data = new DataFile();
 
         /*TwitchHandler twitchHandler = new TwitchHandler();
         twitchHandler.registerFeatures();

@@ -11,13 +11,16 @@ import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import rsystems.HiveBot;
+import rsystems.handlers.DataFile;
 
 import java.util.List;
 
 public class LinkGrabber extends ListenerAdapter {
 
-    String pullChannel = "469343461150162955";
-    String pushChannel = "698214886622232606";
+    DataFile dataFile = HiveBot.dataFile;
+    String pullChannel = dataFile.getDatafileData().get("LinksPullChannel").toString();
+    String pushChannel = dataFile.getDatafileData().get("LinksPushChannel").toString();
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
@@ -27,7 +30,7 @@ public class LinkGrabber extends ListenerAdapter {
 
             if(event.getAuthor().isBot()){
                 // Allow only restream bot to continue
-                if(!event.getMember().getId().equals("491614535812120596")){
+                if(!event.getMember().getId().equals(HiveBot.restreamID)){
                     return;  // Exit
                 }
             }

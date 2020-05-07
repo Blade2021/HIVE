@@ -5,11 +5,14 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.json.simple.JSONObject;
 import rsystems.Config;
+import rsystems.handlers.DataFile;
 import rsystems.handlers.Jackson;
 import rsystems.HiveBot;
 
 import java.awt.*;
+import java.util.Iterator;
 
 public class AdminInfo extends ListenerAdapter {
 
@@ -143,6 +146,25 @@ public class AdminInfo extends ListenerAdapter {
                     }
                 }else{
                     event.getMessage().addReaction("🚫").queue();
+                }
+            }
+        }
+
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + "getData"))) {
+            if ((event.getMember().hasPermission(Permission.ADMINISTRATOR))) {
+                EmbedBuilder ainfo = new EmbedBuilder();
+                ainfo.setTitle("HIVE Data File");
+                try {
+                    DataFile dataFile = HiveBot.dataFile;
+                    JSONObject obj = dataFile.getDatafileData();
+                    obj.keySet().forEach(keyStr ->
+                    {
+                        Object keyValue = obj.get(keyStr);
+                        ainfo.appendDescription(keyStr + ":" + keyValue + "\n");
+                    });
+                    event.getChannel().sendMessage(ainfo.build()).queue();
+                    ainfo.clear();
+                } catch (NullPointerException ignored) {
                 }
             }
         }
