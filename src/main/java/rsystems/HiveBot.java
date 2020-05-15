@@ -7,7 +7,10 @@ import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
+import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rsystems.commands.*;
+import rsystems.events.DocStream;
+import rsystems.events.OnlineStatusListener;
 import rsystems.handlers.DataFile;
 import rsystems.handlers.TwitchHandler;
 
@@ -18,11 +21,14 @@ public class HiveBot {
     public static String helpPrefix = Config.get("helpprefix");
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
+    private static Boolean streamMode = false;
+    public static String docDUID = Config.get("docDUID");
 
     public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_PRESENCES)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
+                .enableCache(CacheFlag.ACTIVITY)
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .build();
 
@@ -46,9 +52,14 @@ public class HiveBot {
         api.addEventListener(new Twitch());
         api.addEventListener(new TwitchSub());
         api.addEventListener(new Who());
+        api.addEventListener(new DocStream());
+        api.addEventListener(new Test());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 
+        if(Config.get("debug").equalsIgnoreCase("true")){
+            api.addEventListener(new OnlineStatusListener());
+        }
 
         //DataFile data = new DataFile();
 
@@ -61,6 +72,12 @@ public class HiveBot {
 
     }
 
+    public static void setStreamMode(Boolean streamMode) {
+        HiveBot.streamMode = streamMode;
+    }
 
+    public static Boolean getStreamMode(){
+        return HiveBot.streamMode;
+    }
 }
 

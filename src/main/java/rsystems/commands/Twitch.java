@@ -1,13 +1,9 @@
 package rsystems.commands;
 
-import com.github.twitch4j.TwitchClient;
-import com.github.twitch4j.helix.domain.StreamMarkersList;
-import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import rsystems.Config;
-import rsystems.Handlers.TwitchGetVideoID;
-import rsystems.Handlers.TwitchHandler;
+import rsystems.adapters.ChannelSendMessage;
 import rsystems.HiveBot;
 
 public class Twitch extends ListenerAdapter {
@@ -19,6 +15,12 @@ public class Twitch extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
+        if(args[0].equalsIgnoreCase(HiveBot.prefix + "tsay")){
+            if(event.getMember().hasPermission(Permission.ADMINISTRATOR)){
+                ChannelSendMessage.sendMessage(args[1]);
+            }
+        }
+        /*
         if(args[0].equalsIgnoreCase(HiveBot.prefix + "marker")) {
             TwitchGetVideoID.getMarkers(args[1]);
 
@@ -40,7 +42,9 @@ public class Twitch extends ListenerAdapter {
             });
 
             event.getChannel().sendMessage(info.build()).queue();
-        }
+        }*/
 
     }
+
+
 }

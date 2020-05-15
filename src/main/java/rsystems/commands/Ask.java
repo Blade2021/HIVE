@@ -6,7 +6,9 @@ package rsystems.commands;
 */
 
 
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -15,6 +17,7 @@ import org.json.simple.JSONObject;
 import rsystems.HiveBot;
 import rsystems.handlers.DataFile;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static rsystems.handlers.DataFile.datafileData;
@@ -111,4 +114,20 @@ public class Ask extends ListenerAdapter {
 
         return author;
     }
+    /*
+    public void cleanUp(Guild guild){
+        ArrayList<Long> markers = new ArrayList<>();
+        List<Message> messages = guild.getTextChannelById("id").getHistory().retrievePast(99).complete();
+        for(Message m:messages){
+            m.getContentRaw().contains("STREAM MARKER");
+            markers.add(m.getIdLong());
+        }
+
+        if(markers.size() >= 3){
+            List<Message> rmMessages = guild.getTextChannelById("id").getHistoryBefore(markers.get(1),99).complete().getRetrievedHistory();
+            guild.getTextChannelById("id").purgeMessages(rmMessages);
+        }
+    }
+
+    */
 }

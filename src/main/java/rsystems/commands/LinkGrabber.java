@@ -18,59 +18,57 @@ import java.util.List;
 
 public class LinkGrabber extends ListenerAdapter {
 
-    DataFile dataFile = HiveBot.dataFile;
-    String pullChannel = dataFile.getDatafileData().get("LinksPullChannel").toString();
-    String pushChannel = dataFile.getDatafileData().get("LinksPushChannel").toString();
+    //DataFile dataFile = HiveBot.dataFile;
+    String pullChannel = HiveBot.dataFile.getDatafileData().get("LinksPullChannel").toString();
+    String pushChannel = HiveBot.dataFile.getDatafileData().get("LinksPushChannel").toString();
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
         TextChannel textChannel = event.getGuild().getTextChannelById(pushChannel);
-
-        if(event.getChannel().getId().equals(pullChannel)){
-
-            if(event.getAuthor().isBot()){
-                // Allow only restream bot to continue
-                if(!event.getMember().getId().equals(HiveBot.restreamID)){
-                    return;  // Exit
-                }
-            }
-            if ((event.getMessage().getContentRaw().contains("http://")) || (event.getMessage().getContentRaw().contains("https://")) || (event.getMessage().getContentRaw().contains("www."))) {
-                // Assign message to local variable
-                String messageraw = event.getMessage().getContentRaw();
-
-                // Call method to get link
-                String link = getLink(messageraw);
-
-                if(link.length() <= 5){
-                    //Link was not long enough to verify
-                    return;
-                }
-
-                // Call method to get author
-                String author = getAuthor(event,messageraw);
-
-
-                try{
-                    //Get history of the past 20 messages
-                    List<Message> messages = textChannel.getHistory().retrievePast(20).complete();
-
-                    for(Message m:messages){
-                        if(m.getContentRaw().contains(link)){
-                            event.getMessage().addReaction("⚠").queue();
-                            return;
-                        }
+        if(event.getChannel().getId().equals(pullChannel)) {
+            if (HiveBot.getStreamMode()) {
+                if (event.getAuthor().isBot()) {
+                    // Allow only restream bot to continue
+                    if (!event.getMember().getId().equals(HiveBot.restreamID)) {
+                        return;  // Exit
                     }
-                    //If current link was not found in messages
-                    textChannel.sendMessage(author + link).queue();
                 }
-                catch(InsufficientPermissionException e){
-                    System.out.println("Error: Missing permission: " + e.getPermission().getName());
-                }
-                catch(NullPointerException e){
-                    System.out.println("THE CHANNEL DISAPPEARED!");
-                }
-            }
+                if ((event.getMessage().getContentRaw().contains("http://")) || (event.getMessage().getContentRaw().contains("https://")) || (event.getMessage().getContentRaw().contains("www."))) {
+                    // Assign message to local variable
+                    String messageraw = event.getMessage().getContentRaw();
 
+                    // Call method to get link
+                    String link = getLink(messageraw);
+
+                    if (link.length() <= 5) {
+                        //Link was not long enough to verify
+                        return;
+                    }
+
+                    // Call method to get author
+                    String author = getAuthor(event, messageraw);
+
+
+                    try {
+                        //Get history of the past 20 messages
+                        List<Message> messages = textChannel.getHistory().retrievePast(20).complete();
+
+                        for (Message m : messages) {
+                            if (m.getContentRaw().contains(link)) {
+                                event.getMessage().addReaction("⚠").queue();
+                                return;
+                            }
+                        }
+                        //If current link was not found in messages
+                        textChannel.sendMessage(author + link).queue();
+                    } catch (InsufficientPermissionException e) {
+                        System.out.println("Error: Missing permission: " + e.getPermission().getName());
+                    } catch (NullPointerException e) {
+                        System.out.println("THE CHANNEL DISAPPEARED!");
+                    }
+                }
+
+            }
         }
     }
 

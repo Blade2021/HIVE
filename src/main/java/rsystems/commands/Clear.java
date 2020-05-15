@@ -63,7 +63,7 @@ public class Clear extends ListenerAdapter {
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setColor(Color.ORANGE);
-                info.setTitle("Successfully deleted " + msgcount + " messages.");
+                info.setTitle("Successfully deleted " + (messages.size()-1) + " messages.");
                 info.setFooter("Command called by: " + event.getMessage().getAuthor().getName(), event.getAuthor().getAvatarUrl());
                 event.getChannel().sendMessage(info.build()).queue();
                 info.clear();
