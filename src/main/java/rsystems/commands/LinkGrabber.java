@@ -12,24 +12,23 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
-import rsystems.handlers.DataFile;
 
 import java.util.List;
 
 public class LinkGrabber extends ListenerAdapter {
 
-    //DataFile dataFile = HiveBot.dataFile;
-    String pullChannel = HiveBot.dataFile.getDatafileData().get("LinksPullChannel").toString();
-    String pushChannel = HiveBot.dataFile.getDatafileData().get("LinksPushChannel").toString();
+    String pullChannel = HiveBot.dataFile.getData("LinksPullChannel").toString();
+    String pushChannel = HiveBot.dataFile.getData("LinksPushChannel").toString();
+    String restreamID = HiveBot.dataFile.getData("RestreamID").toString();
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
-        TextChannel textChannel = event.getGuild().getTextChannelById(pushChannel);
+        TextChannel linkChannel = event.getGuild().getTextChannelById(pushChannel);
         if(event.getChannel().getId().equals(pullChannel)) {
             if (HiveBot.getStreamMode()) {
                 if (event.getAuthor().isBot()) {
                     // Allow only restream bot to continue
-                    if (!event.getMember().getId().equals(HiveBot.restreamID)) {
+                    if (!event.getMember().getId().equals(restreamID)) {
                         return;  // Exit
                     }
                 }
@@ -51,7 +50,7 @@ public class LinkGrabber extends ListenerAdapter {
 
                     try {
                         //Get history of the past 20 messages
-                        List<Message> messages = textChannel.getHistory().retrievePast(20).complete();
+                        List<Message> messages = linkChannel.getHistory().retrievePast(20).complete();
 
                         for (Message m : messages) {
                             if (m.getContentRaw().contains(link)) {
@@ -60,7 +59,9 @@ public class LinkGrabber extends ListenerAdapter {
                             }
                         }
                         //If current link was not found in messages
-                        textChannel.sendMessage(author + link).queue();
+                        System.out.println("Sending link to channel: " + link);
+                        linkChannel.sendMessage(author + link).queue();
+                        event.getMessage().addReaction("\uD83D\uDCE8").queue();
                     } catch (InsufficientPermissionException e) {
                         System.out.println("Error: Missing permission: " + e.getPermission().getName());
                     } catch (NullPointerException e) {
@@ -68,6 +69,9 @@ public class LinkGrabber extends ListenerAdapter {
                     }
                 }
 
+            } else {
+                event.getMessage().addReaction("\uD83D\uDEE1").queue();
+                System.out.println("Found link but stream mode is false");
             }
         }
     }

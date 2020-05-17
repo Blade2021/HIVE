@@ -14,7 +14,7 @@ import java.util.Random;
 
 public class Info extends ListenerAdapter {
 
-    String version = "0.15.3";
+    String version = "0.15.5";
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) throws PermissionException {
         //Escape if message came from a bot account

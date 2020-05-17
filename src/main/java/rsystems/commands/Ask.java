@@ -12,13 +12,13 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
-import rsystems.handlers.DataFile;
 
 import java.util.List;
 
 public class Ask extends ListenerAdapter {
     String pullChannel = HiveBot.dataFile.getDatafileData().get("QuestionPullChannel").toString();
     String pushChannel = HiveBot.dataFile.getDatafileData().get("QuestionPushChannel").toString();
+    String restreamID = HiveBot.dataFile.getData("RestreamID").toString();
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
@@ -28,7 +28,7 @@ public class Ask extends ListenerAdapter {
 
             if(event.getAuthor().isBot()){
                 // Allow only restream bot to continue
-                if(!event.getMember().getId().equals(HiveBot.restreamID)){
+                if(!event.getMember().getId().equals(restreamID)){
                     return;  // Exit
                 }
             }
@@ -58,8 +58,9 @@ public class Ask extends ListenerAdapter {
                             return;
                         }
                     }
-                    //If current link was not found in messages
+                    //If current question was not found in messages
                     textChannel.sendMessage(author + question).queue();
+                    event.getMessage().addReaction("\uD83D\uDCE8").queue();
                 }
                 catch(InsufficientPermissionException e){
                     System.out.println("Error: Missing permission: " + e.getPermission().getName());

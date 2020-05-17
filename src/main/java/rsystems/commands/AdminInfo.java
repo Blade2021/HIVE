@@ -9,14 +9,10 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.JSONObject;
 import rsystems.Config;
 import rsystems.handlers.DataFile;
-import rsystems.handlers.Jackson;
 import rsystems.HiveBot;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-
 import static rsystems.events.DocStream.sendMarkers;
 
 public class AdminInfo extends ListenerAdapter {
@@ -89,69 +85,6 @@ public class AdminInfo extends ListenerAdapter {
                 System.out.println("Could not find permissions");
             } catch(InsufficientPermissionException e){
                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
-            }
-        }
-
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "reload"))) {
-            try {
-                if((event.getMember().hasPermission(Permission.ADMINISTRATOR))) {
-                    Config.reload();
-                    event.getMessage().addReaction("✅").queue();
-                } else {
-                    event.getChannel().sendMessage("You do not have access to that command").queue();
-                }
-            } catch(NullPointerException e){
-                System.out.println("Could not find permissions");
-            }
-        }
-
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "load"))) {
-            try {
-                if ((event.getMember().hasPermission(Permission.ADMINISTRATOR))) {
-                    event.getChannel().sendMessage("```json\n" + Jackson.readJFile().toString() + "```").queue();
-                } else {
-                    event.getMessage().addReaction("🚫").queue();
-                }
-            }catch(NullPointerException e){
-                e.printStackTrace();
-            };
-        }
-
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "jread"))) {
-            if (args.length < 2) {
-                return;
-            } else {
-                try {
-                    if ((event.getMember().hasPermission(Permission.ADMINISTRATOR))) {
-                        String output = Jackson.readDataBit(args[1]);
-                        if (!output.isBlank()) {
-                            event.getChannel().sendMessage("```json\n" + Jackson.readDataBit(args[1]) + "```").queue();
-                        }
-                    } else {
-                        event.getMessage().addReaction("🚫").queue();
-                    }
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "jset"))) {
-            if (args.length < 2) {
-                return;
-            } else {
-                if ((event.getMember().hasPermission(Permission.ADMINISTRATOR))) {
-                    try {
-                        if(Jackson.writeData(args[1], event.getMessage().getContentRaw().substring(args[0].length() + args[1].length() + 2))){
-                            event.getMessage().addReaction("✅").queue();
-                        }else{
-                            event.getMessage().addReaction("🚫").queue();
-                        }
-                    } catch (NullPointerException e) {
-                        e.printStackTrace();
-                    }
-                }else{
-                    event.getMessage().addReaction("🚫").queue();
-                }
             }
         }
 
@@ -261,16 +194,45 @@ public class AdminInfo extends ListenerAdapter {
 
         if (args[0].equalsIgnoreCase((HiveBot.prefix + "Welcome"))) {
             try {
-                Object object = HiveBot.dataFile.getData("WelcomeMessage");
-                JSONObject jsonObject = (JSONObject) object;
+                if(event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                    Object object = HiveBot.dataFile.getData("WelcomeMessage");
+                    JSONObject jsonObject = (JSONObject) object;
 
-                String welcomeMessage = (String) jsonObject.get(event.getGuild().getId());
-                welcomeMessage = welcomeMessage.replace("{user}", event.getMember().getEffectiveName());
-                event.getChannel().sendMessage(welcomeMessage).queue();
-                event.getMessage().addReaction("✅").queue();
+                    String welcomeMessage = (String) jsonObject.get(event.getGuild().getId());
+                    welcomeMessage = welcomeMessage.replace("{user}", event.getMember().getEffectiveName());
+                    event.getChannel().sendMessage(welcomeMessage).queue();
+                    event.getMessage().addReaction("✅").queue();
+                }
             }catch(NullPointerException e){
                 System.out.println("Could not find object");
             }
         }
+
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + "getStreamMode"))) {
+            try {
+                if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                    event.getChannel().sendMessage("Stream Mode: " + HiveBot.getStreamMode()).queue();
+                }
+            }catch(PermissionException e){
+            }
+        }
+
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + "setStreamMode"))) {
+            try {
+                if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                    if(args[1].equalsIgnoreCase("true")){
+                        HiveBot.setStreamMode(true);
+                    } else {
+                        HiveBot.setStreamMode(false);
+                    }
+                    event.getMessage().addReaction("✅ ").queue();
+                }
+            }catch(PermissionException e){
+            }catch(IndexOutOfBoundsException e){
+                event.getChannel().sendMessage("Missing parameter").queue();
+                System.out.println("Missing parameter");
+            }
+        }
+
     }
 }
