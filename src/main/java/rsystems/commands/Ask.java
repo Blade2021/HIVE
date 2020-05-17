@@ -6,26 +6,19 @@ package rsystems.commands;
 */
 
 
-import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.json.simple.JSONObject;
 import rsystems.HiveBot;
 import rsystems.handlers.DataFile;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static rsystems.handlers.DataFile.datafileData;
-
 public class Ask extends ListenerAdapter {
-    DataFile dataFile = HiveBot.dataFile;
-    String pullChannel = dataFile.getDatafileData().get("QuestionPullChannel").toString();
-    String pushChannel = dataFile.getDatafileData().get("QuestionPushChannel").toString();
+    String pullChannel = HiveBot.dataFile.getDatafileData().get("QuestionPullChannel").toString();
+    String pushChannel = HiveBot.dataFile.getDatafileData().get("QuestionPushChannel").toString();
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 

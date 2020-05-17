@@ -18,7 +18,8 @@ public class Shutdown extends ListenerAdapter {
                 if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
                     event.getChannel().sendMessage("Shutting down...").queue();
                     System.out.println("Shut down called by " + event.getMessage().getAuthor().getName());
-                    event.getGuild().getJDA().shutdown();
+                    event.getJDA().shutdown();
+                    //event.getJDA().shutdownNow();
                 } else {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }

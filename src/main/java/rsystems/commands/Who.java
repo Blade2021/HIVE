@@ -35,8 +35,8 @@ public class Who extends ListenerAdapter {
 
         if((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + "who"))){
             try{
-                event.getMessage().delete().queue();
                 if(RoleCheck.getRank(event,Long.toString(event.getMember().getUser().getIdLong())) >= 1){
+                    event.getMessage().delete().queue();
                     List<Member> mentions = event.getMessage().getMentionedMembers();
                     EmbedBuilder info = new EmbedBuilder();
                     for(Member m: mentions){
@@ -54,6 +54,8 @@ public class Who extends ListenerAdapter {
                         event.getChannel().sendMessage(info.build()).queue();
                         info.clear();
                     }
+                } else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             }
             catch(NullPointerException ignored){

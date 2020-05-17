@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rsystems.commands.*;
 import rsystems.events.DocStream;
 import rsystems.events.OnlineStatusListener;
+import rsystems.events.WelcomeWagon;
 import rsystems.handlers.DataFile;
 import rsystems.handlers.TwitchHandler;
 
@@ -53,7 +54,8 @@ public class HiveBot {
         api.addEventListener(new TwitchSub());
         api.addEventListener(new Who());
         api.addEventListener(new DocStream());
-        api.addEventListener(new Test());
+        api.addEventListener(new Analyze());
+        api.addEventListener(new WelcomeWagon());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 

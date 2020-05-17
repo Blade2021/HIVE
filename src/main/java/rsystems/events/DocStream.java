@@ -40,7 +40,7 @@ public class DocStream extends ListenerAdapter {
         }
     }
 
-    private void sendMarkers(Guild guild){
+    public static void sendMarkers(Guild guild){
         ArrayList<String> markerChannels = new ArrayList<String>();
         markerChannels = HiveBot.dataFile.getArrayList("markerChannels");
         Date date = new Date();
