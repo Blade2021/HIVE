@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
+import rsystems.adapters.RoleCheck;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,11 +22,11 @@ public class Role extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + "Role")) {
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(8).getCommand())) {
             try {
-                if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(8).getRank()){
                     // User has administrator rights
-                    if (args.length < 2) {
+                    if (args.length < HiveBot.commands.get(8).getMinimumArgCount()) {
                         // Not enough arguments (nothing to check)
                         event.getMessage().addReaction("\uD83D\uDEAB").queue();
                         event.getChannel().sendMessage(event.getAuthor().getAsMention() + " Not enough arguments supplied").queue();
@@ -34,7 +35,7 @@ public class Role extends ListenerAdapter {
                         String roleName = event.getMessage().getContentRaw().substring(args[0].length()+1);
                         roleName = roleName.replaceAll(" true","");
 
-                        if((args.length > 2) && (args[2].equalsIgnoreCase("true"))){
+                        if((args.length > 2) && (args[2].equalsIgnoreCase("true")) && (RoleCheck.getRank(event,event.getMember().getId()) >= 3)){
                             getMembers = true;
                         }
 

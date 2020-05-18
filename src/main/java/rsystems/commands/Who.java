@@ -22,7 +22,7 @@ public class Who extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(((args[0].equalsIgnoreCase((HiveBot.prefix + "who")) && args.length < 2) || (args[0].equalsIgnoreCase((HiveBot.prefix + "hive"))))) {
+        if(((args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(3).getCommand())) && args.length < 2) || (args[0].equalsIgnoreCase((HiveBot.prefix + "hive"))))) {
             event.getMessage().addReaction("\uD83D\uDC1D ").queue(); // Bee Emoji
             event.getMessage().addReaction("\uD83D\uDC4B ").queue(); // Waving hand emoji
             try {
@@ -33,7 +33,7 @@ public class Who extends ListenerAdapter {
             }
         }
 
-        if((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + "who"))){
+        if((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(22).getCommand()))){
             try{
                 if(RoleCheck.getRank(event,Long.toString(event.getMember().getUser().getIdLong())) >= 1){
                     event.getMessage().delete().queue();

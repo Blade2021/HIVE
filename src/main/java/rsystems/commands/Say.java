@@ -4,7 +4,10 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
+import rsystems.adapters.RoleCheck;
 
+import java.io.File;
+import java.net.URISyntaxException;
 import java.util.Random;
 
 public class Say extends ListenerAdapter{
@@ -16,34 +19,28 @@ public class Say extends ListenerAdapter{
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "say"))) {
-            if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                try {
-                    String message = event.getMessage().getContentDisplay().substring(args[0].length()+1);
-                    event.getMessage().delete().queue();
-                    event.getChannel().sendMessage(message).queue();
-                }
-                catch (IllegalArgumentException e) {
-                    System.out.println("Something went wrong");
-                }
-                catch (InsufficientPermissionException e) {
-                    event.getChannel().sendMessage("I am lacking permissions to perform this action").queue();
-                }
-                catch(IndexOutOfBoundsException e){
-                    event.getChannel().sendMessage("Nice try " + event.getAuthor().getAsMention() + "! I see what you did there!").queue();
-                }
-            }
-        }
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(28).getCommand())) {
+            if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(28).getRank()) {
 
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "sponge"))) {
-            if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
-                char[] messageCharArray = event.getMessage().getContentDisplay().substring(args[0].length()+1).toCharArray();
+
+                File file = null;  //Initalize file as null
+                try {
+                    // Get path of JAR file
+                    file = new File(this.getClass().getProtectionDomain().
+                            getCodeSource().getLocation().toURI().getPath());
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
+                }
+
+
+                char[] messageCharArray = event.getMessage().getContentDisplay().substring(args[0].length() + 1).toCharArray();
+                event.getMessage().delete().queue();
+
                 Random rd = new Random();
-                Integer randInt;
-                for(int index = 0; index < messageCharArray.length; index++)
-                {
+                int randInt;
+                for (int index = 0; index < messageCharArray.length; index++) {
                     randInt = rd.nextInt(20);
-                    if(Character.isAlphabetic(messageCharArray[index])){
+                    if (Character.isAlphabetic(messageCharArray[index])) {
                         if (randInt > 10) {
                             messageCharArray[index] = Character.toUpperCase(messageCharArray[index]);
                         } else {
@@ -52,8 +49,22 @@ public class Say extends ListenerAdapter{
                     }
                 }
                 String newMessage = new String(messageCharArray);
-                event.getChannel().sendMessage(newMessage).queue();
 
+
+                // Get sponge image path
+                try {
+                    String path = file.getParent() + "/images/sponge.png";
+                    File image = new File(path);
+                    //Send message WITH image
+                    event.getChannel().sendMessage(newMessage)
+                            .addFile(image)
+                            .queue();
+                } catch (NullPointerException e) {
+                    //Send regular message without image
+                    System.out.println("Couldn't find file:");
+                    event.getChannel().sendMessage(newMessage)
+                            .queue();
+                }
             }
         }
     }

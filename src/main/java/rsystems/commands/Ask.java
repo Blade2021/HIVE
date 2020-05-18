@@ -32,7 +32,7 @@ public class Ask extends ListenerAdapter {
                     return;  // Exit
                 }
             }
-            if ((event.getMessage().getContentRaw().contains(HiveBot.prefix + "ask"))) {
+            if ((event.getMessage().getContentRaw().contains(HiveBot.prefix + HiveBot.commands.get(12).getCommand()))) {
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();
 

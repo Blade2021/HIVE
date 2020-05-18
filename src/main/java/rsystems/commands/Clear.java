@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
+import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
 import java.util.List;
@@ -24,9 +25,9 @@ public class Clear extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "clear"))){
+        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(7).getCommand()))){
             try{
-                if(event.getMember().hasPermission(Permission.ADMINISTRATOR)){
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(7).getRank()){
                     // USER DOES HAVE ADMIN RIGHTS
 
                     if(args.length < 2){

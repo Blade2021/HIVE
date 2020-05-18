@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import java.util.List;
 
 public class RoleCheck {
-
     public static int getRank(GenericGuildMessageEvent event, String id){
         try {
             List<Role> memberRoles = event.getGuild().getMemberById(id).getRoles();

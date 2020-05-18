@@ -24,7 +24,7 @@ public class Code extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
         // Check if the message contains a command
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + "code")))){
+        if((args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(5).getCommand())))){
             try {
                 try{
                     event.getMessage().delete().reason("Bot command called").queue();

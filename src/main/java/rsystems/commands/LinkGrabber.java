@@ -25,14 +25,15 @@ public class LinkGrabber extends ListenerAdapter {
 
         TextChannel linkChannel = event.getGuild().getTextChannelById(pushChannel);
         if(event.getChannel().getId().equals(pullChannel)) {
-            if (HiveBot.getStreamMode()) {
-                if (event.getAuthor().isBot()) {
-                    // Allow only restream bot to continue
-                    if (!event.getMember().getId().equals(restreamID)) {
-                        return;  // Exit
-                    }
+
+            if (event.getAuthor().isBot()) {
+                // Allow only restream bot to continue
+                if (!event.getMember().getId().equals(restreamID)) {
+                    return;  // Exit
                 }
-                if ((event.getMessage().getContentRaw().contains("http://")) || (event.getMessage().getContentRaw().contains("https://")) || (event.getMessage().getContentRaw().contains("www."))) {
+            }
+            if ((event.getMessage().getContentRaw().contains("http://")) || (event.getMessage().getContentRaw().contains("https://")) || (event.getMessage().getContentRaw().contains("www."))) {
+                if (HiveBot.getStreamMode()) {
                     // Assign message to local variable
                     String messageraw = event.getMessage().getContentRaw();
 
@@ -67,11 +68,10 @@ public class LinkGrabber extends ListenerAdapter {
                     } catch (NullPointerException e) {
                         System.out.println("THE CHANNEL DISAPPEARED!");
                     }
+                } else {
+                    event.getMessage().addReaction("\uD83D\uDEE1").queue();
+                    System.out.println("Found link but stream mode is false");
                 }
-
-            } else {
-                event.getMessage().addReaction("\uD83D\uDEE1").queue();
-                System.out.println("Found link but stream mode is false");
             }
         }
     }

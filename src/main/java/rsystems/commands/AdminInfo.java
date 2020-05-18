@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.JSONObject;
 import rsystems.Config;
+import rsystems.adapters.Command;
+import rsystems.adapters.RoleCheck;
 import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
 
@@ -25,24 +27,69 @@ public class AdminInfo extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "admin"))){
+        // Admin Menu command
+        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(13).getCommand()))){
             try{
-                if(event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)){
+                int rank = RoleCheck.getRank(event,event.getMember().getId());
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(13).getRank()){
                     event.getAuthor().openPrivateChannel().queue((channel) ->
                     {
-                        EmbedBuilder ainfo = new EmbedBuilder();
-                        ainfo.setTitle("HIVE Admin Commands");
-                        ainfo.setDescription("BoT Prefix: " + HiveBot.prefix + "\nCurrent User Count: `" + event.getGuild().getMemberCount() + " Users`");
-                        ainfo.setThumbnail(event.getGuild().getIconUrl());
-                        ainfo.addField("`Clear [int]`", "Clears x amount of lines of chat.", false);
-                        ainfo.addField("`Status [String]`", "Sets the status activity of the BOT", false);
-                        ainfo.addField("`Shutdown`", "Shuts down the BOT.  Only use if **REQUIRED!**", false);
-                        ainfo.addField("`Role [String]`", "Grabs current user count for specified role", false);
-                        ainfo.addField("`Poll [option 1],[option 2],[option 3]`", "Create a StrawPoll using HIVE.  Use `Poll help` for poll menu", false);
-                        ainfo.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
-                        ainfo.setColor(Color.RED);
-                        channel.sendMessage(ainfo.build()).queue();
-                        ainfo.clear();
+                        EmbedBuilder info = new EmbedBuilder();
+                        info.setTitle("HIVE Admin Commands");
+                        info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n" + event.getGuild().getName() + "Current User Count: `" + event.getGuild().getMemberCount() + " Users`");
+                        info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
+
+                        //Initialize categories for each type
+                        ArrayList<String> utilityCommands = new ArrayList<>();
+                        ArrayList<String> botCommands = new ArrayList<>();
+                        ArrayList<String> userCommands = new ArrayList<>();
+
+                        //Assign the commands to categories
+                        for(Command c:HiveBot.commands){
+                            if((rank >= c.getRank()) && (c.getRank() > 0)){
+                                try {
+                                    //info.addField("`" + c.getCommand() + "`", c.getDescription(), false);
+                                    if (c.getCommandType().equalsIgnoreCase("utility-admin")) {
+                                        //info.addField("",c.getCommand(),true);
+                                        utilityCommands.add(c.getCommand());
+                                    }
+                                    if (c.getCommandType().equalsIgnoreCase("botControl")) {
+                                        //info.addField("",c.getCommand(),true);
+                                        botCommands.add(c.getCommand());
+                                    }
+                                    if (c.getCommandType().equalsIgnoreCase("user-control")) {
+                                        //info.addField("",c.getCommand(),true);
+                                        userCommands.add(c.getCommand());
+                                    }
+                                } catch (NullPointerException e){
+                                    System.out.println("Found null for command" + c.getCommand());
+                                }
+                            }
+                        }
+
+                        StringBuilder utilityString = new StringBuilder();
+                        for(String s:utilityCommands){
+                            utilityString.append(s).append("\n");
+                        }
+
+                        StringBuilder botString = new StringBuilder();
+                        for(String s:botCommands){
+                            botString.append(s).append("\n");
+                        }
+
+                        StringBuilder userString = new StringBuilder();
+                        for(String s:userCommands){
+                            userString.append(s).append("\n");
+                        }
+
+                        info.addField("Utility", utilityString.toString(),true);
+                        info.addField("Bot Control",botString.toString(),true);
+                        info.addField("User Control",userString.toString(),true);
+
+                        info.setFooter("Please use these commands responsibly", event.getMember().getUser().getAvatarUrl());
+                        info.setColor(Color.RED);
+                        channel.sendMessage(info.build()).queue();
+                        info.clear();
                         channel.close();
                     });
                     event.getMessage().addReaction("✅").queue();
@@ -62,9 +109,12 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + "stats"))) {
+
+
+        // Stats Command
+        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(20).getCommand()))) {
             try {
-                if((event.getMember().hasPermission(Permission.MANAGE_CHANNEL))) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(20).getRank()){
                     int textChannelAmt = event.getGuild().getTextChannels().size();
                     int voiceChannelAmt = event.getGuild().getVoiceChannels().size();
                     int memberCount = event.getGuild().getMemberCount();
@@ -88,8 +138,9 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "getData"))) {
-            if ((event.getMember().hasPermission(Permission.ADMINISTRATOR))) {
+        // Get Data
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(21).getCommand()))) {
+            if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(21).getRank()){
                 EmbedBuilder ainfo = new EmbedBuilder();
                 ainfo.setTitle("HIVE Data File");
                 try {
@@ -118,6 +169,8 @@ public class AdminInfo extends ListenerAdapter {
                     ainfo.clear();
                 } catch (NullPointerException ignored) {
                 }
+            }else {
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
             }
         }
 
@@ -182,19 +235,23 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "sendMarkers"))) {
+        // Send Markers
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(24).getCommand()))) {
             try {
-                if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(24).getRank()){
                     sendMarkers(event.getGuild());
                     event.getMessage().addReaction("✅").queue();
+                }else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             }catch(PermissionException e){
             }
         }
 
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "Welcome"))) {
+        //Trigger welcome message
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(29).getCommand()))) {
             try {
-                if(event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(29).getRank()){
                     Object object = HiveBot.dataFile.getData("WelcomeMessage");
                     JSONObject jsonObject = (JSONObject) object;
 
@@ -202,30 +259,38 @@ public class AdminInfo extends ListenerAdapter {
                     welcomeMessage = welcomeMessage.replace("{user}", event.getMember().getEffectiveName());
                     event.getChannel().sendMessage(welcomeMessage).queue();
                     event.getMessage().addReaction("✅").queue();
+                }else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             }catch(NullPointerException e){
                 System.out.println("Could not find object");
             }
         }
 
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "getStreamMode"))) {
+        //Get Stream Mode
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(25).getCommand()))) {
             try {
-                if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(25).getRank()){
                     event.getChannel().sendMessage("Stream Mode: " + HiveBot.getStreamMode()).queue();
+                }else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             }catch(PermissionException e){
             }
         }
 
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "setStreamMode"))) {
+        //Set Stream Mode
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(26).getCommand()))) {
             try {
-                if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(26).getRank()){
                     if(args[1].equalsIgnoreCase("true")){
                         HiveBot.setStreamMode(true);
                     } else {
                         HiveBot.setStreamMode(false);
                     }
                     event.getMessage().addReaction("✅ ").queue();
+                }else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             }catch(PermissionException e){
             }catch(IndexOutOfBoundsException e){

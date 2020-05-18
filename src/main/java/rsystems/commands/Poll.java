@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
+import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
 import java.lang.reflect.Array;
@@ -29,9 +30,9 @@ public class Poll extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + "Poll")) {
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(10).getCommand())) {
             try {
-                if (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR)) {
+                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(10).getRank()){
 
                     // User has administrator rights
                     // GET Help with poll command
@@ -123,9 +124,7 @@ public class Poll extends ListenerAdapter {
 
                     }
                 } else {
-                    // User does not have administrator rights
-                    event.getMessage().addReaction("\uD83D\uDEAB").queue();
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to this command.").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();

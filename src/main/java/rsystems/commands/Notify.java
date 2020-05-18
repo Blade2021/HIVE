@@ -20,7 +20,7 @@ public class Notify extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
 
-        if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + "notify")) || ((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + "notify")) && (args[1].equalsIgnoreCase("??"))))) {
+        if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + HiveBot.commands.get(1).getCommand())) || ((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(1).getCommand())) && (args[1].equalsIgnoreCase("??"))))) {
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setColor(Color.CYAN);
@@ -34,7 +34,7 @@ public class Notify extends ListenerAdapter {
             return;
         }
 
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + "notify") || (args[0].equalsIgnoreCase("-notify")))){
+        if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(1).getCommand()) || (args[0].equalsIgnoreCase("-" + HiveBot.commands.get(1).getCommand())))){
             try {
                 if(!(event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) && !(event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES))){
                     event.getChannel().sendMessage("Missing permissions | Error 3X95Z").queue();

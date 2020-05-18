@@ -6,15 +6,17 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
+import rsystems.adapters.Command;
 
 import java.awt.*;
 import java.io.File;
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Random;
 
 public class Info extends ListenerAdapter {
-
-    String version = "0.15.5";
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) throws PermissionException {
         //Escape if message came from a bot account
@@ -24,33 +26,71 @@ public class Info extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + "version")){
-            event.getChannel().sendMessage("Current Version: " + version).queue();
+        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(15).getCommand())){
+            event.getChannel().sendMessage("Current Version: " + HiveBot.version).queue();
+            //System.out.println(HiveBot.commands.get(2).getCommand());
         }
 
         //Info command
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + "info")) || (args[0].equalsIgnoreCase(((HiveBot.prefix + "help")))) || (args[0].equalsIgnoreCase((HiveBot.prefix + "commands"))))) {
+        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(2).getCommand())){
+
             event.getMessage().addReaction("✅").queue();
             try {
                 //Open a private channel with requester
                 event.getAuthor().openPrivateChannel().queue((channel) ->
                 {
                     EmbedBuilder info = new EmbedBuilder();
-                    info.setTitle("HIVE BoT Information V. " + version);
-                    info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**");
+                    info.setTitle("HIVE BoT Information V. " + HiveBot.version);
+                    info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**\nNeed help with a command?  Just type " + HiveBot.prefix + "help [command]\n" + HiveBot.prefix + "help Who");
                     info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
-                    info.addField("`**Official Commands:**`", "", false);
-                    info.addField("`Notify`", "Enable/Disable notification channel for stream events", false);
-                    info.addField("`Ping`", "Grab the latest latency between the bot and Discord servers", false);
-                    info.addField("`Helpdoc`", "Post a link to the Helpful Documents Page", false);
-                    info.addField("`Who`", "Display information about HIVE", false);
-                    info.addField("`TwitchSub`", "Awesome Twitch Subscriber information", false);
-                    info.addField("`Code`","Display information about pasting code in Discord",false);
-                    info.addField("`**Fun Commands**`", "", false);
-                    info.addField("`Execute Order 66`", "Send a message to the troops", false);
-                    info.addField("`ThreeLawsSafe`", "You can figure it out ;) ", false);
-                    info.addField("`Rule 34`", "Uh... Same as above....", false);
-                    info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+
+                    //Initialize categories for each type
+                    ArrayList<String> utilityCommands = new ArrayList<>();
+                    ArrayList<String> infoCommands = new ArrayList<>();
+                    ArrayList<String> funCommands = new ArrayList<>();
+
+                    //Assign the commands to categories
+                    for(Command c:HiveBot.commands){
+                        if(c.getRank() <= 0) {
+                            try {
+                                //info.addField("`" + c.getCommand() + "`", c.getDescription(), false);
+                                if (c.getCommandType().equalsIgnoreCase("utility")) {
+                                    //info.addField("",c.getCommand(),true);
+                                    utilityCommands.add(c.getCommand());
+                                }
+                                if (c.getCommandType().equalsIgnoreCase("information")) {
+                                    //info.addField("",c.getCommand(),true);
+                                    infoCommands.add(c.getCommand());
+                                }
+                                if (c.getCommandType().equalsIgnoreCase("fun")) {
+                                    //info.addField("",c.getCommand(),true);
+                                    funCommands.add(c.getCommand());
+                                }
+                            }catch(NullPointerException e){
+                                System.out.println("Found null for command: " + c.getCommand());
+                            }
+                        }
+                    }
+
+                    StringBuilder utilityString = new StringBuilder();
+                    for(String s:utilityCommands){
+                        utilityString.append(s).append("\n");
+                    }
+
+                    StringBuilder infoString = new StringBuilder();
+                    for(String s:infoCommands){
+                        infoString.append(s).append("\n");
+                    }
+
+                    StringBuilder funString = new StringBuilder();
+                    for(String s:funCommands){
+                        funString.append(s).append("\n");
+                    }
+
+                    info.addField("Utility", utilityString.toString(),true);
+                    info.addField("Information",infoString.toString(),true);
+                    info.addField("Fun",funString.toString(),true);
+
                     info.setColor(Color.CYAN);
                     channel.sendMessage(info.build()).queue();
                     info.clear();
@@ -63,13 +103,23 @@ public class Info extends ListenerAdapter {
             }
         }
 
+        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(30).getCommand())) {
+            RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+            long uptime = runtimeMXBean.getUptime();
+            long uptimeinSeconds = uptime / 1000;
+            long uptimeHours = uptimeinSeconds / (60 * 60);
+            long uptimeMinutes = (uptimeinSeconds / 60) - (uptimeHours * 60);
+            long uptimeSeconds = uptimeinSeconds % 60;
+            event.getChannel().sendMessageFormat("Uptime: %s hours, %s minutes, %s seconds",uptimeHours,uptimeMinutes,uptimeSeconds).queue();
+        }
+
         //Request features or report bugs
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + "request")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "requests")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "bug"))){
+        if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(18).getCommand())) || (args[0].equalsIgnoreCase(HiveBot.prefix + "requests")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "bug"))){
             event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVEWasp/issues").queue();
         }
 
         //Three Laws Safe command
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + "botlaws"))) || (args[0].equalsIgnoreCase((HiveBot.prefix + "threelawssafe")))){
+        if((args[0].equalsIgnoreCase((HiveBot.prefix + "botlaws"))) || (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(14).getCommand())))){
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setTitle("3 Laws of BoTs");
@@ -88,7 +138,7 @@ public class Info extends ListenerAdapter {
         }
 
         //Execute order 66 command
-        if(event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "execute order 66")){
+        if(event.getMessage().getContentRaw().startsWith(HiveBot.prefix + HiveBot.commands.get(16).getCommand())){
 
             String[] rand = {" Yes my lord.", " Yes My lord, The troops have been notified.",
                     " Yes my lord, Alright troops, move out!", " Right away my lord"};
@@ -105,14 +155,14 @@ public class Info extends ListenerAdapter {
 
 
         //Rule 34 Command
-        if((event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule 34")) || (event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule34"))){
+        if((event.getMessage().getContentRaw().startsWith(HiveBot.prefix + HiveBot.commands.get(17).getCommand())) || (event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule34"))){
 
             //Random string selection
             String[] rand = {" You need help.", " nope, im out.",
                     " rUlE tHiRty FouR", " I don't know what to say to you anymore"};
             int index = new Random().nextInt(rand.length);
 
-            if((args.length >= 2) && (args[2].equalsIgnoreCase("sponge"))){
+            if((args.length >= 2) && (args[1].equalsIgnoreCase("sponge"))){
                 index = 2;
             }
 

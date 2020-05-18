@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.JSONObject;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.adapters.RoleCheck;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,9 +26,9 @@ public class Page extends ListenerAdapter{
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "page"))) {
+        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(6).getCommand()))) {
             try {
-                if((event.getMember().getRoles().toString().contains("Page")) || (event.getMessage().getMember().hasPermission(Permission.ADMINISTRATOR))){
+                if((event.getMember().getRoles().toString().contains("Page")) || (RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(6).getRank())) {
                     String data = "";
                     if(args.length > 1){
                         data = event.getMessage().getContentRaw().substring(args[0].length()+1);
@@ -100,7 +101,6 @@ public class Page extends ListenerAdapter{
                         event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index]).queue();
                     }
                 } else {
-                    //User does not have admin rights
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             // An error occured with checking for permission

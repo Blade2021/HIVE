@@ -25,7 +25,7 @@ public class AssignRole extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
         // Helpful notes or not enough arguments
-        if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + "assign")) || ((args.length < 2) && (args[0].equalsIgnoreCase(HiveBot.prefix + "assign"))))) {
+        if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + HiveBot.commands.get(9).getCommand())) || ((args.length < 2) && (args[0].equalsIgnoreCase(HiveBot.prefix + "assign"))))) {
             try {
                 // Get user authorization level
                 if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
@@ -38,7 +38,7 @@ public class AssignRole extends ListenerAdapter {
                     event.getChannel().sendMessage(info.build()).queue();
                     info.clear();
                 } else {
-                    event.getChannel().sendMessage("You do not have access to that command.").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             } catch (InsufficientPermissionException e) {
                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();

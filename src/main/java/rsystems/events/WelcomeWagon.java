@@ -15,7 +15,12 @@ public class WelcomeWagon extends ListenerAdapter {
                 JSONObject jsonObject = (JSONObject) object;
                 String welcomeMessage = (String) jsonObject.get(event.getGuild().getId());
                 welcomeMessage = welcomeMessage.replace("{user}", event.getMember().getEffectiveName());
-                event.getUser().openPrivateChannel().complete().sendMessage(welcomeMessage).queue();
+
+                String finalWelcomeMessage = welcomeMessage;
+                event.getUser().openPrivateChannel().queue((channel) -> {
+                    channel.sendMessage(finalWelcomeMessage).queue();
+                    channel.close();
+                        });
             } catch (NullPointerException e) {
                 System.out.println("Could not find message for " + event.getGuild().getName());
             }
