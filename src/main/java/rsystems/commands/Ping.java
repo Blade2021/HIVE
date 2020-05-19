@@ -13,7 +13,7 @@ public class Ping extends ListenerAdapter{
 
             String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-            if(args[0].equalsIgnoreCase((HiveBot.prefix + "ping"))){
+            if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(4).getCommand()))){
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + " Pong " + event.getGuild().getJDA().getGatewayPing() + " ms").queue();
             }
         }
