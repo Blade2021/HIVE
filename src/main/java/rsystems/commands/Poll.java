@@ -18,6 +18,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Poll extends ListenerAdapter {
 
     static String URL = null;
@@ -33,6 +35,7 @@ public class Poll extends ListenerAdapter {
         if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(10).getCommand())) {
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(10).getRank()){
+                    LOGGER.info(HiveBot.commands.get(10).getCommand() + " called by " + event.getAuthor().getAsTag());
 
                     // User has administrator rights
                     // GET Help with poll command

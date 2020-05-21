@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.adapters.RoleCheck;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Shutdown extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -18,6 +20,7 @@ public class Shutdown extends ListenerAdapter {
         if((message.equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(0).getCommand()))){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(0).getRank()){
+                    LOGGER.severe(HiveBot.commands.get(0).getCommand() + " called by " + event.getAuthor().getAsTag());
                     event.getChannel().sendMessage("Shutting down...").queue();
                     System.out.println("Shut down called by " + event.getMessage().getAuthor().getName());
                     event.getJDA().shutdown();

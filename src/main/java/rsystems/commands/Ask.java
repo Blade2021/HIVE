@@ -15,6 +15,8 @@ import rsystems.HiveBot;
 
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Ask extends ListenerAdapter {
     String pullChannel = HiveBot.dataFile.getDatafileData().get("QuestionPullChannel").toString();
     String pushChannel = HiveBot.dataFile.getDatafileData().get("QuestionPushChannel").toString();
@@ -32,7 +34,9 @@ public class Ask extends ListenerAdapter {
                     return;  // Exit
                 }
             }
+            // Ask Command
             if ((event.getMessage().getContentRaw().contains(HiveBot.prefix + HiveBot.commands.get(12).getCommand()))) {
+                LOGGER.info(HiveBot.commands.get(12).getCommand() + " called by " + event.getAuthor().getAsTag());
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();
 

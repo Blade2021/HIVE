@@ -2,6 +2,7 @@ package rsystems.events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
@@ -9,8 +10,10 @@ import java.awt.*;
 import java.lang.management.ManagementFactory;
 import java.lang.management.RuntimeMXBean;
 
+import static rsystems.HiveBot.LOGGER;
 
-public class HIVE extends ListenerAdapter {
+
+public class Mentionable extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         if(event.getAuthor().isBot()){
@@ -19,7 +22,7 @@ public class HIVE extends ListenerAdapter {
 
 
         if(event.getMessage().getContentDisplay().equals("@HIVE")){
-
+            LOGGER.info("HIVE Mentionable | Called by " + event.getAuthor().getAsTag());
             event.getMessage().getMentionedMembers().forEach(member -> {
                 if (member.getId().equals("650410966130884629")) {
                     event.getMessage().addReaction("\uD83D\uDC1D ").queue(); // Bee Emoji
@@ -46,7 +49,7 @@ public class HIVE extends ListenerAdapter {
                         info.setColor(Color.ORANGE);
                         event.getChannel().sendMessage(info.build()).queue();
                         info.clear();
-                    } catch(NullPointerException e){
+                    } catch(PermissionException e){
                         event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am HIVE! A buzzy little bot that is here to help!\nWanna see a list of commands just type: `" + HiveBot.prefix + "help`  \n\nIf you run into any issues please contact my creator: Blade2021#8727" + "\uD83E\uDDD9\u200D♂️ ").queue();
                     }
                 }});

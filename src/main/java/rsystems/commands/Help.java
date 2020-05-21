@@ -13,6 +13,8 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Help extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -22,8 +24,10 @@ public class Help extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        // Helpful notes or not enough arguments
+
+        // Help Command
         if ((args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(23).getCommand())))) {
+            LOGGER.info(HiveBot.commands.get(23).getCommand() + " called by " + event.getAuthor().getAsTag());
             if (args.length >= 2) {
                 Boolean send = false;
                 EmbedBuilder help = new EmbedBuilder();
@@ -75,6 +79,7 @@ public class Help extends ListenerAdapter {
 
         //Commands command
         if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(27).getCommand()))){
+            LOGGER.info(HiveBot.commands.get(27).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
 
                 ArrayList<String> commands = new ArrayList<>();

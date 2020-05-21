@@ -1,0 +1,33 @@
+{
+  "reference": {
+    "installation": "Please try to include details in your submissions for approval.",
+    "links": ["https://github.com/Blade2021/HIVE-RefData","https://hivedev.roots.systems"],
+    "description": "Wanna help develop a database of helpful information for beginners starting out in the home automation field?  Help us grow the HIVE Reference Database by submitting commits/PRs to the link included.",
+    "category": ["utilities"]
+  },
+  "tasmota": {
+    "installation": "To learn more about flashing tasmota onto your supported device, check out this article: https://tasmota.github.io/docs/Getting-Started/",
+    "links": ["https://tasmota.github.io/docs/","https://tasmota.github.io/docs/Getting-Started/"],
+    "description": "Tasmota is a type of firmware that can be flashed onto several types of devices for better functionallty and control verus the included firmware on a device.  Tasmota is 100% free and open source making it a great product for the home automation community",
+    "category": ["switching-applications"]
+  },
+  "nodered": {
+    "installation": "To learn how to install node-red check out this link: https://nodered.org/docs/getting-started/local",
+    "links": ["https://bit.ly/2XkGZMi","https://nodered.org/docs/getting-started/local","http://www.steves-internet-guide.com/node-red-overview/","http://www.steves-internet-guide.com/node-red-message-object/"],
+    "description": "Node-Red is a fantastic flow based visual tool for creating and linking automations and devices.  Node-Red works very well with Home-Assistant to provide a nice easy infrastructure for your wildest dreams.",
+    "category": ["infrastructure","super awesome gadget of the future!"]
+  },
+  "refTest": {
+    "installation": "How does one install it?  A how to, a link to a article.",
+    "links": ["https://google.com"],
+    "description": "A simple description of what 'IT' is",
+    "category": ["switching-applications"]
+  },
+  "ESP8266": {
+    "alias":["ESP-8266","ESP8285","AI-Thinker","ESP-01","NodeMCU","Wemos","Wemos D1 Mini","Huzzah","ESP8266 Thing"],
+    "installation": [""],
+    "links": ["https://www.espressif.com/en/products/socs/esp8266/overview","https://en.wikipedia.org/wiki/ESP8266"],
+    "description": "The ESP8266 is a microcontroller with built-in 2.4GHz Wifi (802.11b/g/n) made by a company called Espressif.  It comes in several flavors, each one with its own part number, but most people refer them collectively as 'ESP8266'.\n\nIt was originally designed and released as a wifi bridge to be used in conjunction with other microcontrollers and was initially released with only 8 pins exposed on a module known as an ESP-01.  It is super cheap, and when everyone realized that it was much more capable than being just a wifi bridge, people started using it in projects and products.  Espressif heard about what was being done with their chips and started releasing different modules with all of the pins exposed.\n\nThere aren't very many pins, though, and some of them are a bit... quirky to use.  But, because they're cheap, many smart home gadget companies started using them as the main chip in their products.  (Sonoff, Shelly, and Tuya being three you'll see thrown around in here.)",
+    "category": ["microcontroller"]
+  }
+}

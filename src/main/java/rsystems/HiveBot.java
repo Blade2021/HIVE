@@ -5,33 +5,45 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.requests.RestAction;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rsystems.adapters.Command;
+import rsystems.adapters.MessageCheck;
+import rsystems.adapters.Reference;
 import rsystems.commands.*;
 import rsystems.events.DocStream;
-import rsystems.events.HIVE;
+import rsystems.events.Mentionable;
 import rsystems.events.WelcomeWagon;
-import rsystems.handlers.CommandData;
-import rsystems.handlers.DataFile;
+import rsystems.handlers.*;
 
 import javax.security.auth.login.LoginException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.logging.Logger;
 
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.16.2";
+    public static String version = "0.16.6";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
     public static String docDUID = Config.get("docDUID");
 
-    public static ArrayList<Command> commands = new ArrayList<Command>();
-    //public static AdminCommand shutdown = new AdminCommand("shutdown","shutdown","Shuts down the bot",2, 0);
 
-    public static void main(String[] args) throws LoginException {
+    public static ArrayList<Command> commands = new ArrayList<Command>();
+    public static ArrayList<Reference> references = new ArrayList<Reference>();
+
+    public static MessageCheck messageCheck = new MessageCheck();
+
+
+    public static ReferenceLoader referenceLoader = new ReferenceLoader();
+
+    public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    public static void main(String[] args) throws LoginException, IOException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_PRESENCES)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -45,15 +57,16 @@ public class HiveBot{
         api.addEventListener(new Clear());
         api.addEventListener(new Code());
         api.addEventListener(new HallMonitor());
-        api.addEventListener(new HIVE());
+        api.addEventListener(new Mentionable());
         api.addEventListener(new Info());
         api.addEventListener(new LinkGrabber());
         api.addEventListener(new Notify());
         api.addEventListener(new Page());
         api.addEventListener(new Ping());
         api.addEventListener(new Poll());
+        api.addEventListener(new ReferenceTrigger());
         api.addEventListener(new Role());
-        api.addEventListener(new Say());
+        //api.addEventListener(new Say());
         api.addEventListener(new Shutdown());
         api.addEventListener(new Status());
         api.addEventListener(new Twitch());
@@ -66,6 +79,16 @@ public class HiveBot{
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 
+        for(Command c:commands){
+            System.out.println(c.getCommand());
+        }
+
+        try{
+            MyLogger.setup();
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+
         //AdminCommand shutdown = new AdminCommand("shutdown","shutdown","Shuts down the bot",2, 0);
 
         /*TwitchHandler twitchHandler = new TwitchHandler();
@@ -73,6 +96,7 @@ public class HiveBot{
         twitchHandler.start();
 
          */
+
 
         commands.add(new Command("Shutdown","Shutdown HIVE","shutdown",0, 3));  //0
         commands.add(new Command("Notify","Add/Remove notify role for notifications","notify",0,0));  //1
@@ -105,7 +129,13 @@ public class HiveBot{
         commands.add(new Command("Sponge","Turn a string into a spongy text","sponge [text]",1,1)); // 28
         commands.add(new Command("Welcome","Trigger the welcome message","welcome",0,3)); // 29
         commands.add(new Command("Uptime","See how long HIVE has been running","uptime",0,0)); // 30
+        commands.add(new Command("updateReference","See how long HIVE has been running","uptime",0,0)); // 31
+        commands.add(new Command("reloadAll","Reload data","reloadall",0,4)); // 32
+        commands.add(new Command("appendData")); // 33
+        commands.add(new Command("writeData")); // 34
+        commands.add(new Command("removeData")); // 35
         CommandData commandData = new CommandData();
+
 
     }
 
@@ -115,6 +145,12 @@ public class HiveBot{
 
     public static Boolean getStreamMode(){
         return HiveBot.streamMode;
+    }
+
+    public static void reloadAll(){
+        HiveBot.dataFile.loadDataFile();
+        HiveBot.messageCheck.reloadData();
+        HiveBot.referenceLoader.updateData();
     }
 }
 

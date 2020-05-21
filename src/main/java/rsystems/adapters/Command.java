@@ -8,6 +8,11 @@ public class Command {
     protected int rank;
     protected String commandType;
 
+
+    public Command(String command){
+        this.command = command;
+    }
+
     public Command(String command, String description, String syntax, int minimumArgCount, int rank) {
         this.command = command;
         this.description = description;

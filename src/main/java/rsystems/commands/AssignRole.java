@@ -12,6 +12,8 @@ import rsystems.adapters.RoleCheck;
 import java.awt.*;
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class AssignRole extends ListenerAdapter {
 
     // Initialize our AssignableRoles Object
@@ -29,6 +31,7 @@ public class AssignRole extends ListenerAdapter {
             try {
                 // Get user authorization level
                 if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
+                    LOGGER.info(HiveBot.commands.get(9).getCommand() + " called by " + event.getAuthor().getAsTag());
                     EmbedBuilder info = new EmbedBuilder();
                     info.setColor(Color.CYAN);
                     info.setTitle(HiveBot.prefix + "assign / " + HiveBot.prefix+ "resign" );
@@ -52,6 +55,7 @@ public class AssignRole extends ListenerAdapter {
             try {
                 // Get user authorization level
                 if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
+
                     // Initialize a boolean for return level
                     Boolean roleFound = false;
                     for (String role : aroles.getRoles()) {
