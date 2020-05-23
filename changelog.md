@@ -1,7 +1,7 @@
 # Change Log
 
 ### 0.16.8
-- Added HoneyStatus ("Collecting honey from (USER)")
+- Added HoneyStatus ("Collecting pollen from (USER)")
 
 ### 0.16.7
 - Added logging to Welcome message for debugging and analytics.
