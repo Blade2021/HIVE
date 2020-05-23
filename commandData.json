@@ -250,5 +250,19 @@
     "description": "Remove a value from a key or the entire key from the datafile.",
     "minArgCount": 1,
     "commandType": "utility-admin"
+  },
+  "changelog": {
+    "rank": 0,
+    "syntax": "changelog",
+    "description": "Post a link to the HIVE github page to view the changelog file.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "reflist": {
+    "rank": 4,
+    "syntax": "reflist",
+    "description": "Get a list of all references.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
   }
 }

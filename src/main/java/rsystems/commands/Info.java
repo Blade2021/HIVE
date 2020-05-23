@@ -133,7 +133,30 @@ public class Info extends ListenerAdapter {
         //Request features or report bugs
         if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(18).getCommand())) || (args[0].equalsIgnoreCase(HiveBot.prefix + "requests")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "bug"))){
             LOGGER.info(HiveBot.commands.get(18).getCommand() + " called by " + event.getAuthor().getAsTag());
-            event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVEWasp/issues").queue();
+            event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVE/issues").queue();
+        }
+
+        //Request features or report bugs
+        if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(36).getCommand()))){
+            LOGGER.info(HiveBot.commands.get(36).getCommand() + " called by " + event.getAuthor().getAsTag());
+            try{
+                event.getMessage().delete();
+            } catch (PermissionException e){
+                LOGGER.warning("Unable to delete trigger msg from " + event.getChannel().getName());
+            }
+
+            try {
+                EmbedBuilder info = new EmbedBuilder();
+                info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
+                info.setTitle("HIVE ChangeLog");
+                info.setDescription("HIVE's changeLog can be found on the main github page: https://github.com/Blade2021/HIVE");
+                info.setFooter("Called by: " + event.getAuthor().getAsTag(),event.getMember().getUser().getAvatarUrl());
+                event.getChannel().sendMessage(info.build()).queue();
+                info.clear();
+            } catch (PermissionException e){
+                LOGGER.warning("Unable to send embed msg to: " + event.getChannel().getName());
+                event.getChannel().sendMessage("HIVE's changeLog can be found on the main github page: https://github.com/Blade2021/HIVE").queue();
+            }
         }
 
         //Three Laws Safe command

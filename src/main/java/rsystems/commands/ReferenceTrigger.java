@@ -1,11 +1,13 @@
 package rsystems.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.adapters.Reference;
 import rsystems.adapters.RoleCheck;
 
+import java.awt.*;
 import java.util.ArrayList;
 
 import static rsystems.HiveBot.LOGGER;
@@ -89,6 +91,7 @@ public class ReferenceTrigger extends ListenerAdapter{
                             }
 
                             info.setTitle(r.getRefCode());
+                            info.setColor(Color.CYAN);
                             info.setDescription(r.getDescription());
                             info.addField("Links", links.toString(), false);
                             info.addField("Installation", r.getInstallString(), false);
@@ -113,9 +116,71 @@ public class ReferenceTrigger extends ListenerAdapter{
                 }
             }
 
+            if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(37).getCommand())){
+                // Check user access
+                if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(37).getRank()) {
+                    LOGGER.info(HiveBot.commands.get(37).getCommand() + " called by " + event.getAuthor().getAsTag());
 
+                    //Initalize stringbuilder objects to hold the list items
+                    StringBuilder output1 = new StringBuilder();
+                    StringBuilder output2 = new StringBuilder();
+                    StringBuilder output3 = new StringBuilder();
+
+                    //Track index to add to each list evenly
+                    int index = 0;
+
+                    //Iterate through each Reference and grab the main ref code
+                    for(Reference r:HiveBot.references){
+                        switch (index){
+                            case 0:
+                                output1.append(r.getRefCode()).append("\n");
+                                break;
+                            case 1:
+                                output2.append(r.getRefCode()).append("\n");
+                                break;
+                            case 2:
+                                output3.append(r.getRefCode()).append("\n");
+                                break;
+                        }
+                        index++;
+                        if(index > 2){
+                            index = 0;
+                        }
+                    }
+
+                    try {
+                        EmbedBuilder info = new EmbedBuilder();
+                        info.setTitle("HIVE Reference List");
+                        info.setDescription("https://github.com/Blade2021/HIVE-RefData");
+                        info.setColor(Color.CYAN);
+                        info.addField("", output1.toString(), true);
+                        info.addField("", output2.toString(), true);
+                        info.addField("", output3.toString(), true);
+                        info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+                        event.getChannel().sendMessage(info.build()).queue();
+                        info.clear();
+                    } catch (PermissionException e){
+                        event.getChannel().sendMessage("Missing permission exception: " + e.getPermission()).queue();
+                    }
+                }else {
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
+                }
+            }
         }
 
+        private ArrayList<String> categories(ArrayList<Reference> refList){
+            ArrayList<String> cats = new ArrayList<>();
 
+            for(Reference r:refList){
+                ArrayList<String> tempCat = new ArrayList<>();
+                tempCat.addAll(r.getCategory());
+                for(String s:tempCat){
+                    if(!(cats.contains(s))){
+                        cats.add(s);
+                    }
+                }
+            }
+            return cats;
+        }
 
 }
