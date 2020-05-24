@@ -9,3 +9,9 @@ Enjoy!
 # HIVE Data Reference Library
 We are developing a data library of references and information for HIVE.  Wanna help contribute?  
 Head over to https://github.com/Blade2021/HIVE-RefData for futher instructions.
+
+# HIVE Features
+- Hall Monitor 
+  - Watches for vulgar language
+- Code Validation (JSON & YAML)
+  - When code is posted, HIVE will validate it and send feedback to discord.
