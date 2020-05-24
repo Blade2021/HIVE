@@ -1,5 +1,9 @@
 # Change Log
 
+### 0.17.0
+- Added command alias framework
+  - Modified command check method
+
 ### 0.16.8
 - Added HoneyStatus ("Collecting pollen from (USER)")
 
