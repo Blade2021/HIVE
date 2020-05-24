@@ -11,6 +11,8 @@ import rsystems.adapters.RoleCheck;
 import java.util.ArrayList;
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Role extends ListenerAdapter {
 
     boolean getMembers = false;
@@ -22,9 +24,11 @@ public class Role extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(8).getCommand())) {
+
+        if(HiveBot.commands.get(8).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(8).getRank()){
+                    LOGGER.info(HiveBot.commands.get(8).getCommand() + " called by " + event.getAuthor().getAsTag());
                     // User has administrator rights
                     if (args.length < HiveBot.commands.get(8).getMinimumArgCount()) {
                         // Not enough arguments (nothing to check)

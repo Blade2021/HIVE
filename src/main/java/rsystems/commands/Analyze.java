@@ -23,6 +23,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Analyze extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -33,17 +35,13 @@ public class Analyze extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(11).getCommand())) {
+        //Analyzer command
+        if(HiveBot.commands.get(11).checkCommand(event.getMessage().getContentRaw())){
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(11).getRank()){
-                System.out.println("ANALYZER CALLED BY " + event.getAuthor().getName());
+                LOGGER.warning(HiveBot.commands.get(11).getCommand() + " called by " + event.getAuthor().getAsTag());
                 EmbedBuilder output = new EmbedBuilder();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-YYYY");
                 LocalDate currentDate = LocalDate.now();
-
-
-
-
-
 
                 output.setTitle("Channel Analyzer");
 

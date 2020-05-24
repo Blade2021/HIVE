@@ -15,6 +15,8 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.Random;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Page extends ListenerAdapter{
 
     boolean cooldown = false;
@@ -26,7 +28,9 @@ public class Page extends ListenerAdapter{
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(6).getCommand()))) {
+
+        if(HiveBot.commands.get(6).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(6).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 if((event.getMember().getRoles().toString().contains("Page")) || (RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(6).getRank())) {
                     String data = "";

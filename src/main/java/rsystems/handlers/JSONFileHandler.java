@@ -5,7 +5,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import rsystems.HiveBot;
-import rsystems.adapters.Command;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -13,60 +12,33 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class CommandData {
-    public static JSONObject fileData;
+import static rsystems.HiveBot.LOGGER;
 
-    public CommandData() {
+public class JSONFileHandler {
+
+    public static JSONObject fileData;
+    private String path = "";
+
+    public JSONFileHandler(String path){
+        this.path = path;
         loadDataFile();
     }
 
     public void loadDataFile() {
         JSONParser parser = new JSONParser();
         Object obj;
-        String path = "commandData.json";
 
         try{
             obj  = parser.parse(new FileReader(path));
             fileData = (JSONObject) obj;
-
-            fileData.keySet().forEach(keyStr ->
-            {
-                Object keyValue = fileData.get(keyStr);
-                JSONObject jsonObject = (JSONObject) keyValue;
-
-                for(Command c: HiveBot.commands){
-                    if(c.getCommand().equalsIgnoreCase(keyStr.toString())){
-
-                        int rank = Integer.parseInt(jsonObject.get("rank").toString());
-                        c.setRank(rank);
-
-                        String description = (String) jsonObject.get("description");
-                        c.setDescription(description);
-
-                        String syntax = jsonObject.get("syntax").toString();
-                        c.setSyntax(syntax);
-
-                        ArrayList<String> aliases = new ArrayList<>();
-
-                        try{
-                            c.setAlias(getArrayList(jsonObject,"alias"));
-                        } catch(NullPointerException e){
-                        }
-
-                        try {
-                            String commandType = jsonObject.get("commandType").toString();
-                            c.setCommandType(commandType);
-                        } catch (NullPointerException e){}
-                    }
-                }
-            });
-
         } catch(FileNotFoundException e){
             System.out.println("Could not find JSON File");
+            LOGGER.severe("Could not load JSON file: " + path);
         } catch (ParseException | IOException e) {
             e.printStackTrace();
         }
 
+        //System.out.println(fileData);
     }
 
     public JSONObject getDatafileData(){
@@ -99,17 +71,6 @@ public class CommandData {
             System.out.println("Found null when assigning roles to list");
         }
         return null;
-    }
-
-    private ArrayList<String> getArrayList(JSONObject parsedValue,String key){
-        //Get links from datafile
-        JSONArray jsonArray = (JSONArray) parsedValue.get(key);
-        ArrayList<String> arrayList = new ArrayList<>();
-
-        for(Object linkObject:jsonArray){
-            arrayList.add(linkObject.toString());
-        }
-        return arrayList;
     }
 
     public boolean writeData(String key,String value){

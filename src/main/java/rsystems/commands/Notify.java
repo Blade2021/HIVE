@@ -9,6 +9,8 @@ import rsystems.HiveBot;
 
 import java.awt.*;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Notify extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -21,6 +23,7 @@ public class Notify extends ListenerAdapter {
 
 
         if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + HiveBot.commands.get(1).getCommand())) || ((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(1).getCommand())) && (args[1].equalsIgnoreCase("??"))))) {
+            LOGGER.info(HiveBot.commands.get(1).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setColor(Color.CYAN);
@@ -34,7 +37,9 @@ public class Notify extends ListenerAdapter {
             return;
         }
 
+
         if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(1).getCommand()) || (args[0].equalsIgnoreCase("-" + HiveBot.commands.get(1).getCommand())))){
+            LOGGER.info(HiveBot.commands.get(1).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 if(!(event.getGuild().getSelfMember().hasPermission(Permission.ADMINISTRATOR)) && !(event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES))){
                     event.getChannel().sendMessage("Missing permissions | Error 3X95Z").queue();

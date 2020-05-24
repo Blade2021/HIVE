@@ -14,6 +14,8 @@ import rsystems.HiveBot;
 
 import java.awt.*;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Code extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -23,8 +25,11 @@ public class Code extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
+
+
         // Check if the message contains a command
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(5).getCommand())))){
+        if(HiveBot.commands.get(5).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(5).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 try{
                     event.getMessage().delete().reason("Bot command called").queue();

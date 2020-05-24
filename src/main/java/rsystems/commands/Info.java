@@ -3,6 +3,8 @@ package rsystems.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ContextException;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
@@ -16,6 +18,8 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Random;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Info extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) throws PermissionException {
@@ -26,15 +30,16 @@ public class Info extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(15).getCommand())){
+        //Version command
+        if(HiveBot.commands.get(15).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(15).getCommand() + " called by " + event.getAuthor().getAsTag());
             event.getChannel().sendMessage("Current Version: " + HiveBot.version).queue();
-            //System.out.println(HiveBot.commands.get(2).getCommand());
         }
 
         //Info command
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(2).getCommand())){
+        if(HiveBot.commands.get(2).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(2).getCommand() + " called by " + event.getAuthor().getAsTag());
 
-            event.getMessage().addReaction("✅").queue();
             try {
                 //Open a private channel with requester
                 event.getAuthor().openPrivateChannel().queue((channel) ->
@@ -92,18 +97,31 @@ public class Info extends ListenerAdapter {
                     info.addField("Fun",funString.toString(),true);
 
                     info.setColor(Color.CYAN);
-                    channel.sendMessage(info.build()).queue();
+                    channel.sendMessage(info.build()).queue(
+                            success -> {
+                                event.getMessage().addReaction("✅").queue();
+                            },
+                            failure -> {
+                                event.getMessage().addReaction("⚠").queue();
+                                LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + event.getAuthor().getAsTag());
+                                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                            });
                     info.clear();
                     channel.close();
                 });
             } catch(UnsupportedOperationException e) {
                 // Couldn't open private channel
-                event.getMessage().removeReaction("✅").queue();
                 event.getMessage().addReaction("🚫").queue();
+            } catch(ErrorResponseException e){
+                LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed.  Called by " + event.getAuthor().getAsTag());
+                event.getMessage().addReaction("⚠").queue();
+                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am unable to DM you due to privacy settings. Please update and try again.").queue();
             }
         }
 
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(30).getCommand())) {
+        //Uptime command
+        if(HiveBot.commands.get(30).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(30).getCommand() + " called by " + event.getAuthor().getAsTag());
             RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
             long uptime = runtimeMXBean.getUptime();
             long uptimeinSeconds = uptime / 1000;
@@ -114,12 +132,37 @@ public class Info extends ListenerAdapter {
         }
 
         //Request features or report bugs
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(18).getCommand())) || (args[0].equalsIgnoreCase(HiveBot.prefix + "requests")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "bug"))){
-            event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVEWasp/issues").queue();
+        if(HiveBot.commands.get(18).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(18).getCommand() + " called by " + event.getAuthor().getAsTag());
+            event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVE/issues").queue();
+        }
+
+        //Change Log Command
+        if(HiveBot.commands.get(36).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(36).getCommand() + " called by " + event.getAuthor().getAsTag());
+            try{
+                event.getMessage().delete();
+            } catch (PermissionException e){
+                LOGGER.warning("Unable to delete trigger msg from " + event.getChannel().getName());
+            }
+
+            try {
+                EmbedBuilder info = new EmbedBuilder();
+                info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
+                info.setTitle("HIVE ChangeLog");
+                info.setDescription("HIVE's changeLog can be found on the main github page: https://github.com/Blade2021/HIVE");
+                info.setFooter("Called by: " + event.getAuthor().getAsTag(),event.getMember().getUser().getAvatarUrl());
+                event.getChannel().sendMessage(info.build()).queue();
+                info.clear();
+            } catch (PermissionException e){
+                LOGGER.warning("Unable to send embed msg to: " + event.getChannel().getName());
+                event.getChannel().sendMessage("HIVE's changeLog can be found on the main github page: https://github.com/Blade2021/HIVE").queue();
+            }
         }
 
         //Three Laws Safe command
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + "botlaws"))) || (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(14).getCommand())))){
+        if(HiveBot.commands.get(14).checkCommand(event.getMessage().getContentRaw())){
+            LOGGER.info(HiveBot.commands.get(14).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setTitle("3 Laws of BoTs");
@@ -138,7 +181,8 @@ public class Info extends ListenerAdapter {
         }
 
         //Execute order 66 command
-        if(event.getMessage().getContentRaw().startsWith(HiveBot.prefix + HiveBot.commands.get(16).getCommand())){
+        if(HiveBot.commands.get(16).checkCommand(event.getMessage().getContentRaw(),true)){
+            LOGGER.info(HiveBot.commands.get(16).getCommand() + " called by " + event.getAuthor().getAsTag());
 
             String[] rand = {" Yes my lord.", " Yes My lord, The troops have been notified.",
                     " Yes my lord, Alright troops, move out!", " Right away my lord"};
@@ -155,8 +199,8 @@ public class Info extends ListenerAdapter {
 
 
         //Rule 34 Command
-        if((event.getMessage().getContentRaw().startsWith(HiveBot.prefix + HiveBot.commands.get(17).getCommand())) || (event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule34"))){
-
+        if(HiveBot.commands.get(17).checkCommand(event.getMessage().getContentRaw(),true)){
+            LOGGER.info(HiveBot.commands.get(17).getCommand() + " called by " + event.getAuthor().getAsTag());
             //Random string selection
             String[] rand = {" You need help.", " nope, im out.",
                     " rUlE tHiRty FouR", " I don't know what to say to you anymore"};
@@ -185,7 +229,7 @@ public class Info extends ListenerAdapter {
                     event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index])
                             .addFile(image)
                             .queue();
-                } catch (NullPointerException e) {
+                } catch (NullPointerException | IllegalArgumentException e) {
                     //Send regular message without image
                     System.out.println("Couldn't find file:");
                     event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index])

@@ -14,6 +14,8 @@ import rsystems.adapters.RoleCheck;
 import java.awt.*;
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Clear extends ListenerAdapter {
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -25,11 +27,9 @@ public class Clear extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(7).getCommand()))){
+        if(HiveBot.commands.get(7).checkCommand(event.getMessage().getContentRaw())){
             try{
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(7).getRank()){
-                    // USER DOES HAVE ADMIN RIGHTS
-
                     if(args.length < 2){
                         // No Argument Detected, Post Helpful doc
                         EmbedBuilder info = new EmbedBuilder();
@@ -41,6 +41,7 @@ public class Clear extends ListenerAdapter {
                     } else {
                         // Argument was found, Execute method for clear command
                         int msgcount = Integer.parseInt(args[1]);
+                        LOGGER.warning(HiveBot.commands.get(7).getCommand() + "[" + args[1] + "]" + " called by " + event.getAuthor().getAsTag());
                         clearMessage(event, msgcount);
                     }
                 } else {

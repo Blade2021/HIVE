@@ -10,6 +10,8 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.util.Random;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class Say extends ListenerAdapter{
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -19,8 +21,11 @@ public class Say extends ListenerAdapter{
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
+        //Sponge command
+        /*
         if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(28).getCommand())) {
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(28).getRank()) {
+                LOGGER.info(HiveBot.commands.get(28).getCommand() + " called by " + event.getAuthor().getAsTag());
 
 
                 File file = null;  //Initalize file as null
@@ -66,7 +71,7 @@ public class Say extends ListenerAdapter{
                             .queue();
                 }
             }
-        }
+        }*/
     }
 
 }

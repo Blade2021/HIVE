@@ -14,6 +14,8 @@ import rsystems.handlers.DataFile;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class HallMonitor extends ListenerAdapter {
     private DataFile dataFile = HiveBot.dataFile;
     private Integer filterLevel = Integer.valueOf(dataFile.getDatafileData().get("FilterLevel").toString());
@@ -27,7 +29,7 @@ public class HallMonitor extends ListenerAdapter {
             return;
         }
 
-        if(languageCheck(event.getMessage())){
+        if(languageCheck(event.getMessage().getContentRaw())){
             if(filterLevel > 1) {
                 try {
                     event.getMessage().delete().queue();
@@ -43,7 +45,7 @@ public class HallMonitor extends ListenerAdapter {
     }
 
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event){
-        if(languageCheck(event.getMessage())){
+        if(languageCheck(event.getMessage().getContentRaw())){
             if(filterLevel > 1){
                 try{
                     event.getMessage().delete().queue();
@@ -64,8 +66,8 @@ public class HallMonitor extends ListenerAdapter {
         }
     }
 
-    private boolean languageCheck(Message message){
-        String lowerCase_message = message.getContentRaw().toLowerCase();
+    public boolean languageCheck(String message){
+        String lowerCase_message = message.toLowerCase();
         ArrayList<String> badWords = dataFile.getArrayList("BadWords");
         for(String test:badWords){
             if(lowerCase_message.contains(test.toLowerCase())){
@@ -85,6 +87,8 @@ public class HallMonitor extends ListenerAdapter {
     }
 
     private void logInstance(Guild guild, Member member, Message message){
+        LOGGER.warning(member.getUser().getAsTag() + " flagged for using vulgar language.  MessageID:" + message.getId());
+
         try {
             TextChannel logChannel = guild.getTextChannelById(this.logChannel);
             logChannel.sendMessage("This message has been flagged for vulgar language.\n" + message.getJumpUrl()).queue();

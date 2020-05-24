@@ -12,6 +12,8 @@ import rsystems.adapters.RoleCheck;
 import java.awt.*;
 import java.util.List;
 
+import static rsystems.HiveBot.LOGGER;
+
 public class AssignRole extends ListenerAdapter {
 
     // Initialize our AssignableRoles Object
@@ -24,11 +26,14 @@ public class AssignRole extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
+
+
         // Helpful notes or not enough arguments
-        if ((args[0].equalsIgnoreCase((HiveBot.helpPrefix + HiveBot.commands.get(9).getCommand())) || ((args.length < 2) && (args[0].equalsIgnoreCase(HiveBot.prefix + "assign"))))) {
+        if((args.length < 2) && (HiveBot.commands.get(9).checkCommand(event.getMessage().getContentRaw()))){
             try {
                 // Get user authorization level
                 if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
+                    LOGGER.info(HiveBot.commands.get(9).getCommand() + " called by " + event.getAuthor().getAsTag());
                     EmbedBuilder info = new EmbedBuilder();
                     info.setColor(Color.CYAN);
                     info.setTitle(HiveBot.prefix + "assign / " + HiveBot.prefix+ "resign" );
@@ -48,10 +53,11 @@ public class AssignRole extends ListenerAdapter {
         }
 
         // Assign ROLE command
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + "assign")) && (args.length > 2)){
+        if((HiveBot.commands.get(9).checkCommand(event.getMessage().getContentRaw())) && (args.length > 2)){
             try {
                 // Get user authorization level
-                if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
+                if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(9).getRank()) {
+                    LOGGER.severe(HiveBot.commands.get(9).getCommand() + " called by " + event.getAuthor().getAsTag());
                     // Initialize a boolean for return level
                     Boolean roleFound = false;
                     for (String role : aroles.getRoles()) {
@@ -90,54 +96,58 @@ public class AssignRole extends ListenerAdapter {
         }
 
         // Resign command
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + "resign")) && (args.length > 2)){
-            try {
-                // Get user authorization level
-                if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
-                    // Initalize a boolean for return level
-                    Boolean roleFound = false;
-                    for (String role : aroles.getRoles()) {
-                        // Search the assignableRoles array for role that was sent
-                        if (role.equalsIgnoreCase(args[1])) {
-                            // Role was found in array, now get a list of Mentioned members for assignment
-                            List<Member> mentions = event.getMessage().getMentionedMembers();
-                            for (Member m : mentions) {
-                                try {
-                                    // Remove role from member
-                                    event.getGuild().modifyMemberRoles(m, null, event.getGuild().getRolesByName(role, false)).queue();
-                                    roleFound = true;
-                                } catch(NullPointerException e){
-                                    // Member was not found
-                                    roleFound = false;
+        if((HiveBot.commands.get(38).checkCommand(event.getMessage().getContentRaw())) && (args.length > 2)) {
+                try {
+                    // Get user authorization level
+                    if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(38).getRank()) {
+                        LOGGER.severe(HiveBot.commands.get(38).getCommand() + " called by " + event.getAuthor().getAsTag());
+
+                        // Initalize a boolean for return level
+                        Boolean roleFound = false;
+                        for (String role : aroles.getRoles()) {
+                            // Search the assignableRoles array for role that was sent
+                            if (role.equalsIgnoreCase(args[1])) {
+                                // Role was found in array, now get a list of Mentioned members for assignment
+                                List<Member> mentions = event.getMessage().getMentionedMembers();
+                                for (Member m : mentions) {
+                                    try {
+                                        // Remove role from member
+                                        event.getGuild().modifyMemberRoles(m, null, event.getGuild().getRolesByName(role, false)).queue();
+                                        roleFound = true;
+                                    } catch (NullPointerException e) {
+                                        // Member was not found
+                                        roleFound = false;
+                                    }
                                 }
                             }
                         }
-                    }
-                    // Attach an emoji for verification
-                    if(roleFound){
-                        event.getMessage().addReaction("✅").queue();
+                        // Attach an emoji for verification
+                        if (roleFound) {
+                            event.getMessage().addReaction("✅").queue();
+                        } else {
+                            event.getMessage().addReaction("⚠").queue();
+                        }
                     } else {
-                        event.getMessage().addReaction("⚠").queue();
+                        event.getMessage().addReaction("🚫").queue();
+                        event.getChannel().sendMessage("You do not have access to that command").queue();
                     }
-                } else {
-                    event.getMessage().addReaction("🚫").queue();
-                    event.getChannel().sendMessage("You do not have access to that command").queue();
-                }
-            } catch(NullPointerException e) {
+                } catch (NullPointerException e) {
 
-            } catch(InsufficientPermissionException e){
-                event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
-            }
+                } catch (InsufficientPermissionException e) {
+                    event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
+                }
         }
 
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + "getARoles"))){
-            if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
+        //getAssignableRoles Command
+        if(HiveBot.commands.get(39).checkCommand(event.getMessage().getContentRaw())) {
+            if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(39).getRank()) {
                 event.getChannel().sendMessage(aroles.getRoles().toString()).queue();
             } else {
                 event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that commmand").queue();
             }
         }
 
+        //todo: Add reload a roles to commands
         if((args[0].equalsIgnoreCase(HiveBot.prefix + "reloadaroles"))){
             if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 3) {
                 try{
