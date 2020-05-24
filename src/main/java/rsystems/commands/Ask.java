@@ -34,8 +34,9 @@ public class Ask extends ListenerAdapter {
                     return;  // Exit
                 }
             }
+
             // Ask Command
-            if ((event.getMessage().getContentRaw().contains(HiveBot.prefix + HiveBot.commands.get(12).getCommand()))) {
+            if(HiveBot.commands.get(12).checkCommand(event.getMessage().getContentRaw())){
                 LOGGER.info(HiveBot.commands.get(12).getCommand() + " called by " + event.getAuthor().getAsTag());
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();

@@ -27,7 +27,7 @@ public class Clear extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(7).getCommand()))){
+        if(HiveBot.commands.get(7).checkCommand(event.getMessage().getContentRaw())){
             try{
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(7).getRank()){
                     if(args.length < 2){

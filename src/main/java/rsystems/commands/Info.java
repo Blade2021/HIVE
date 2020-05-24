@@ -30,14 +30,14 @@ public class Info extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(15).getCommand())){
+        //Version command
+        if(HiveBot.commands.get(15).checkCommand(event.getMessage().getContentRaw())){
             LOGGER.info(HiveBot.commands.get(15).getCommand() + " called by " + event.getAuthor().getAsTag());
             event.getChannel().sendMessage("Current Version: " + HiveBot.version).queue();
-            //System.out.println(HiveBot.commands.get(2).getCommand());
         }
 
         //Info command
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(2).getCommand())){
+        if(HiveBot.commands.get(2).checkCommand(event.getMessage().getContentRaw())){
             LOGGER.info(HiveBot.commands.get(2).getCommand() + " called by " + event.getAuthor().getAsTag());
 
             try {
@@ -119,7 +119,8 @@ public class Info extends ListenerAdapter {
             }
         }
 
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(30).getCommand())) {
+        //Uptime command
+        if(HiveBot.commands.get(30).checkCommand(event.getMessage().getContentRaw())){
             LOGGER.info(HiveBot.commands.get(30).getCommand() + " called by " + event.getAuthor().getAsTag());
             RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
             long uptime = runtimeMXBean.getUptime();
@@ -131,13 +132,13 @@ public class Info extends ListenerAdapter {
         }
 
         //Request features or report bugs
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(18).getCommand())) || (args[0].equalsIgnoreCase(HiveBot.prefix + "requests")) || (args[0].equalsIgnoreCase(HiveBot.prefix + "bug"))){
+        if(HiveBot.commands.get(18).checkCommand(event.getMessage().getContentRaw())){
             LOGGER.info(HiveBot.commands.get(18).getCommand() + " called by " + event.getAuthor().getAsTag());
             event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVE/issues").queue();
         }
 
-        //Request features or report bugs
-        if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(36).getCommand()))){
+        //Change Log Command
+        if(HiveBot.commands.get(36).checkCommand(event.getMessage().getContentRaw())){
             LOGGER.info(HiveBot.commands.get(36).getCommand() + " called by " + event.getAuthor().getAsTag());
             try{
                 event.getMessage().delete();
@@ -160,7 +161,7 @@ public class Info extends ListenerAdapter {
         }
 
         //Three Laws Safe command
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + "botlaws"))) || (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(14).getCommand())))){
+        if(HiveBot.commands.get(14).checkCommand(event.getMessage().getContentRaw())){
             LOGGER.info(HiveBot.commands.get(14).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 EmbedBuilder info = new EmbedBuilder();
@@ -180,7 +181,7 @@ public class Info extends ListenerAdapter {
         }
 
         //Execute order 66 command
-        if(event.getMessage().getContentRaw().startsWith(HiveBot.prefix + HiveBot.commands.get(16).getCommand())){
+        if(HiveBot.commands.get(16).checkCommand(event.getMessage().getContentRaw(),true)){
             LOGGER.info(HiveBot.commands.get(16).getCommand() + " called by " + event.getAuthor().getAsTag());
 
             String[] rand = {" Yes my lord.", " Yes My lord, The troops have been notified.",
@@ -198,7 +199,7 @@ public class Info extends ListenerAdapter {
 
 
         //Rule 34 Command
-        if((event.getMessage().getContentRaw().startsWith(HiveBot.prefix + HiveBot.commands.get(17).getCommand())) || (event.getMessage().getContentRaw().startsWith(HiveBot.prefix + "rule34"))){
+        if(HiveBot.commands.get(17).checkCommand(event.getMessage().getContentRaw(),true)){
             LOGGER.info(HiveBot.commands.get(17).getCommand() + " called by " + event.getAuthor().getAsTag());
             //Random string selection
             String[] rand = {" You need help.", " nope, im out.",
@@ -228,7 +229,7 @@ public class Info extends ListenerAdapter {
                     event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index])
                             .addFile(image)
                             .queue();
-                } catch (NullPointerException e) {
+                } catch (NullPointerException | IllegalArgumentException e) {
                     //Send regular message without image
                     System.out.println("Couldn't find file:");
                     event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + rand[index])

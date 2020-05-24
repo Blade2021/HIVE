@@ -1,6 +1,7 @@
 {
   "shutdown": {
     "rank": 3,
+    "alias": ["sd"],
     "syntax": "shutdown",
     "description": "Shutdown HIVE\nOnly do this if **REQUIRED**",
     "minArgCount": 0,
@@ -8,6 +9,7 @@
   },
   "notify": {
     "rank": 0,
+    "alias": [],
     "syntax": "notify",
     "description": "This command is used to add/remove the notify role from yourself.  The notify role is used to give you a notifications channel for streaming events instead of spamming everyone.",
     "minArgCount": 0,
@@ -15,6 +17,7 @@
   },
   "info": {
     "rank": 0,
+    "alias": [],
     "syntax": "info",
     "description": "Get helpful information about HIVE",
     "minArgCount": 0,
@@ -22,6 +25,7 @@
   },
   "who": {
     "rank": 0,
+    "alias": ["hive"],
     "syntax": "who",
     "description": "Display information about HIVE",
     "minArgCount": 0,
@@ -29,6 +33,7 @@
   },
   "ping": {
     "rank": 0,
+    "alias": [],
     "syntax": "ping",
     "description": "Display the latency for HIVE",
     "minArgCount": 0,
@@ -36,6 +41,7 @@
   },
   "code": {
     "rank": 0,
+    "alias": [],
     "syntax": "code",
     "description": "Formatting code is very important on discord.  Type this command to see how to format code properly.",
     "minArgCount": 0,
@@ -43,6 +49,7 @@
   },
   "page": {
     "rank": 2,
+    "alias": [],
     "syntax": "page",
     "description": "Send a page request to the doc to get his attention.",
     "minArgCount": 0,
@@ -50,6 +57,7 @@
   },
   "clear": {
     "rank": 3,
+    "alias": [],
     "syntax": "clear [int]",
     "description": "Clears x amount of messages from a channel.  This cannot be undone.",
     "minArgCount": 1,
@@ -57,6 +65,7 @@
   },
   "role": {
     "rank": 3,
+    "alias": [],
     "syntax": "role [role]",
     "description": "Grabs the current user count for a role.",
     "minArgCount": 1,
@@ -64,13 +73,23 @@
   },
   "assign": {
     "rank": 2,
+    "alias": [],
     "syntax": "assign [role] @user",
     "description": "Assign an \"assignable role\" to a user",
     "minArgCount": 2,
     "commandType": "user-control"
   },
+  "resign": {
+    "rank": 2,
+    "alias": [],
+    "syntax": "resign [role] @user",
+    "description": "Remove an \"assignable role\" to a user",
+    "minArgCount": 2,
+    "commandType": "user-control"
+  },
   "poll": {
     "rank": 1,
+    "alias": [],
     "syntax": "poll [option1],[option2],[option3]",
     "description": "Start a strawpoll with HIVE",
     "minArgCount": 2,
@@ -78,6 +97,7 @@
   },
   "analyze": {
     "rank": 3,
+    "alias": [],
     "syntax": "analyze",
     "description": "Analyze the guild channels for the date of last message.  This is used to make judgements on channel cleanup.",
     "minArgCount": 0,
@@ -85,6 +105,7 @@
   },
   "ask": {
     "rank": 0,
+    "alias": [],
     "syntax": "ask [Question]",
     "description": "Used to send a question to a special channel for the doc/staff to answer.  Please remember not to send your question more then once.",
     "minArgCount": 1,
@@ -92,6 +113,7 @@
   },
   "admin": {
     "rank": 1,
+    "alias": [],
     "syntax": "admin",
     "description": "Get a list of available admin commands sent to you via DM.",
     "minArgCount": 0,
@@ -99,6 +121,7 @@
   },
   "Threelawssafe": {
     "rank": 0,
+    "alias": ["botlaws"],
     "syntax": "threelawssafe",
     "description": "Information about the bot LaWs",
     "minArgCount": 0,
@@ -106,6 +129,7 @@
   },
   "Version": {
     "rank": 0,
+    "alias": [],
     "syntax": "version",
     "description": "Get HIVE's current version",
     "minArgCount": 0,
@@ -113,6 +137,7 @@
   },
   "Execute order 66": {
     "rank": 0,
+    "alias": ["execute"],
     "syntax": "execute order 66",
     "description": "Show the true power of the dark side.",
     "minArgCount": 0,
@@ -120,6 +145,7 @@
   },
   "Rule34": {
     "rank": 0,
+    "alias": ["rule 34"],
     "syntax": "rule34",
     "description": "If you have to ask what it is, you're not ready.",
     "minArgCount": 0,
@@ -127,6 +153,7 @@
   },
   "Request": {
     "rank": 0,
+    "alias": ["bug","bugs","requests"],
     "syntax": "request",
     "description": "Found a bug or wanna submit a feature request?  Use this command to get the github page for HIVE",
     "minArgCount": 0,
@@ -134,6 +161,7 @@
   },
   "Twitchsub": {
     "rank": 0,
+    "alias": [],
     "syntax": "twitchsub",
     "description": "Get information about connecting your Twitch to your discord to receive awesome perks when subscribing.",
     "minArgCount": 0,
@@ -141,6 +169,7 @@
   },
   "Stats": {
     "rank": 1,
+    "alias": [],
     "syntax": "stats",
     "description": "Get the discord server stats like current channel count and other useful stats.",
     "minArgCount": 0,
@@ -148,6 +177,7 @@
   },
   "Getdata": {
     "rank": 3,
+    "alias": [],
     "syntax": "getdata | getdata [key]",
     "description": "Get data from the data file.",
     "minArgCount": 0,
@@ -155,6 +185,7 @@
   },
   "Who": {
     "rank": 1,
+    "alias": [],
     "syntax": "who",
     "description": "Get details about a user.  This will output the user's roles, join date, and UserID",
     "minArgCount": 1,
@@ -162,6 +193,7 @@
   },
   "Help": {
     "rank": 0,
+    "alias": [],
     "syntax": "help [command]",
     "description": "Gets command description and syntax for a command.",
     "minArgCount": 0,
@@ -169,6 +201,7 @@
   },
   "SendMarkers": {
     "rank": 2,
+    "alias": ["mark"],
     "syntax": "sendmarkers",
     "description": "Manually trigger HIVE to send channel markers for a streaming event",
     "minArgCount": 0,
@@ -176,6 +209,7 @@
   },
   "getStreamMode": {
     "rank": 1,
+    "alias": ["getstmode"],
     "syntax": "getstreammode",
     "description": "Gets the current Stream Mode for passing questions and links",
     "minArgCount": 0,
@@ -183,6 +217,7 @@
   },
   "setStreamMode": {
     "rank": 2,
+    "alias": ["setstmode"],
     "syntax": "setstreammode",
     "description": "Sets the current Stream Mode for passing questions and links",
     "minArgCount": 1,
@@ -190,6 +225,7 @@
   },
   "commands": {
     "rank": 0,
+    "alias": [],
     "syntax": "commmands",
     "description": "Get a list of all available commands posted to the channel",
     "minArgCount": 0,
@@ -197,6 +233,7 @@
   },
   "sponge": {
     "rank": 1,
+    "alias": [],
     "syntax": "sponge [text]",
     "description": "Turn a string into a spongy text",
     "minArgCount": 1,
@@ -204,6 +241,7 @@
   },
   "welcome": {
     "rank": 1,
+    "alias": [],
     "syntax": "welcome",
     "description": "Trigger the welcome message to be displayed.  The welcome message is the message sent to new users when joining the discord server.",
     "minArgCount": 0,
@@ -211,6 +249,7 @@
   },
   "uptime": {
     "rank": 0,
+    "alias": ["ut"],
     "syntax": "uptime",
     "description": "See how long HIVE has been running",
     "minArgCount": 0,
@@ -218,6 +257,7 @@
   },
   "updateReference": {
     "rank": 1,
+    "alias": ["updateRef"],
     "syntax": "updateReference",
     "description": "Update the references from the reference datafile.",
     "minArgCount": 0,
@@ -225,44 +265,58 @@
   },
   "reloadAll": {
     "rank": 4,
+    "alias": [],
     "syntax": "reloadAll",
     "description": "Update all memory for HIVE",
     "minArgCount": 0,
-    "commandType": "utility-admin"
+    "commandType": "botControl"
   },
   "appendData": {
     "rank": 4,
+    "alias": ["addData"],
     "syntax": "appendData [Key] [Value]",
     "description": "Add to existing data stored in datafile for key.",
     "minArgCount": 2,
-    "commandType": "utility-admin"
+    "commandType": "botControl"
   },
   "writeData": {
     "rank": 4,
+    "alias": [],
     "syntax": "writeData [Key] [Value]",
     "description": "Overwrite existing data stored in datafile for key.",
     "minArgCount": 2,
-    "commandType": "utility-admin"
+    "commandType": "botControl"
   },
   "removeData": {
     "rank": 4,
+    "alias": [],
     "syntax": "removeData [Key] | removeData [Key] [Value]",
     "description": "Remove a value from a key or the entire key from the datafile.",
     "minArgCount": 1,
-    "commandType": "utility-admin"
+    "commandType": "botControl"
   },
-  "changelog": {
+  "Changelog": {
     "rank": 0,
+    "alias": ["cl"],
     "syntax": "changelog",
     "description": "Post a link to the HIVE github page to view the changelog file.",
     "minArgCount": 0,
     "commandType": "information"
   },
-  "reflist": {
-    "rank": 4,
-    "syntax": "reflist",
+  "ReferenceList": {
+    "rank": 0,
+    "alias": ["refList"],
+    "syntax": "ReferenceList",
     "description": "Get a list of all references.",
     "minArgCount": 0,
-    "commandType": "utility-admin"
+    "commandType": "information"
+  },
+  "getAssignableRoles": {
+    "rank": 2,
+    "alias": ["getaroles"],
+    "syntax": "getAssignableRoles",
+    "description": "Get a list of all roles that are assignable using the assign command.",
+    "minArgCount": 0,
+    "commandType": "user-control"
   }
 }

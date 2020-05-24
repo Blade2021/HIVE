@@ -8,10 +8,7 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
-import rsystems.adapters.Command;
-import rsystems.adapters.MessageCheck;
-import rsystems.adapters.Reference;
-import rsystems.adapters.AutoStatus;
+import rsystems.adapters.*;
 import rsystems.commands.*;
 import rsystems.events.DocStream;
 import rsystems.events.Mentionable;
@@ -27,21 +24,25 @@ import java.util.logging.Logger;
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.16.7";
+    public static String version = "0.17.0";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
     public static String docDUID = Config.get("docDUID");
 
 
+    // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
+    //Reference array
     public static ArrayList<Reference> references = new ArrayList<Reference>();
-
+    // Message Check Class
     public static MessageCheck messageCheck = new MessageCheck();
-
-
+    // Load Reference data
     public static ReferenceLoader referenceLoader = new ReferenceLoader();
 
+    public static HallMonitor hallMonitor = new HallMonitor();
+
+    //Initiate Logger
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public static void main(String[] args) throws LoginException, IOException {
@@ -57,7 +58,7 @@ public class HiveBot{
         api.addEventListener(new AssignRole());
         api.addEventListener(new Clear());
         api.addEventListener(new Code());
-        api.addEventListener(new HallMonitor());
+        api.addEventListener(hallMonitor);
         api.addEventListener(new Mentionable());
         api.addEventListener(new Info());
         api.addEventListener(new LinkGrabber());
@@ -98,57 +99,71 @@ public class HiveBot{
 
          */
 
-
-        commands.add(new Command("Shutdown","Shutdown HIVE","shutdown",0, 3));  //0
-        commands.add(new Command("Notify","Add/Remove notify role for notifications","notify",0,0));  //1
-        commands.add(new Command("Info","Get helpful information about HIVE","info",0,0)); // 2
-        commands.add(new Command("Who","Display information about HIVE or a user","who",0,0)); // 3
-        commands.add(new Command("Ping","Display the latency for HIVE","ping",0,0)); // 4
-        commands.add(new Command("Code","Information regarding formatting code on discord","code",0,0)); // 5
-        commands.add(new Command("Page","Page the doc to get his attention","page",0,2)); // 6
-        commands.add(new Command("Clear","Clear messages from a channel","clear [int]",1,3)); // 7
-        commands.add(new Command("Role","Grabs the current user count for a role","role [role]",1,3)); // 8
-        commands.add(new Command("Assign","Assign a low class role to a user","assign [role] @user",2,2)); // 9
-        commands.add(new Command("Poll","Start a strawpoll with HIVE","poll [option1],[option2],[option3]",2,2)); // 10
-        commands.add(new Command("Analyze","Analyze the guild channels for the date of last message","analyze",0,3)); // 11
-        commands.add(new Command("Ask","Used to send a question to a special channel for the doc/staff to answer","ask [question]",1,0)); // 12
-        commands.add(new Command("Admin","Get admin command menu","admin",0,1)); // 13
-        commands.add(new Command("Threelawssafe","Information about the bot LaWs","threelawssafe",0,0)); // 14
-        commands.add(new Command("Version","Get HIVE's current version","version",0,0)); // 15
-        commands.add(new Command("Execute order 66","Fun command for star wars","execute order 66",0,0)); // 16
-        commands.add(new Command("Rule34","Fun command about Rule 34","rule 34",0,0)); // 17
-        commands.add(new Command("Request","Display GitHub information about HIVE","request",0,0)); // 18
-        commands.add(new Command("Twitchsub","Get information about Twitch Subscriber","twitchsub",0,0)); // 19
-        commands.add(new Command("Stats","Get discord server stats","stats",0,1)); // 20
-        commands.add(new Command("Getdata","Get data from the data file","getdata | getdata [key]",0,3)); // 21
-        commands.add(new Command("Who","Get details about a user","who @user",1,1)); // 22
-        commands.add(new Command("Help","Gets command description and syntax","help [commmand]",0,0)); // 23
-        commands.add(new Command("SendMarkers","Manually trigger HIVE to send channel markers for a streaming event","sendmarkers",0,2)); //24
-        commands.add(new Command("GetStreamMode","Gets the current Stream Mode for passing questions and links","getstreammode",0,2)); // 25
-        commands.add(new Command("SetStreamMode","Sets the current Stream Mode for passing questions and links","setstreammode",0,2)); // 26
-        commands.add(new Command("Commands","Get a list of all available commands posted to the channel","commands",0,0)); // 27
-        commands.add(new Command("Sponge","Turn a string into a spongy text","sponge [text]",1,1)); // 28
-        commands.add(new Command("Welcome","Trigger the welcome message","welcome",0,3)); // 29
-        commands.add(new Command("Uptime","See how long HIVE has been running","uptime",0,0)); // 30
-        commands.add(new Command("updateReference","See how long HIVE has been running","uptime",0,0)); // 31
-        commands.add(new Command("reloadAll","Reload data","reloadall",0,4)); // 32
+        //Create commands
+        commands.add(new Command("Shutdown"));  //0
+        commands.add(new Command("Notify"));  //1
+        commands.add(new Command("Info")); // 2
+        commands.add(new Command("Who")); // 3
+        commands.add(new Command("Ping")); // 4
+        commands.add(new Command("Code")); // 5
+        commands.add(new Command("Page")); // 6
+        commands.add(new Command("Clear")); // 7
+        commands.add(new Command("Role")); // 8
+        commands.add(new Command("Assign")); // 9
+        commands.add(new Command("Poll")); // 10
+        commands.add(new Command("Analyze")); // 11
+        commands.add(new Command("Ask")); // 12
+        commands.add(new Command("Admin")); // 13
+        commands.add(new Command("Threelawssafe")); // 14
+        commands.add(new Command("Version")); // 15
+        commands.add(new Command("Execute order 66")); // 16
+        commands.add(new Command("Rule34")); // 17
+        commands.add(new Command("Request")); // 18
+        commands.add(new Command("Twitchsub")); // 19
+        commands.add(new Command("Stats")); // 20
+        commands.add(new Command("Getdata")); // 21
+        commands.add(new Command("Who")); // 22
+        commands.add(new Command("Help")); // 23
+        commands.add(new Command("SendMarkers")); //24
+        commands.add(new Command("GetStreamMode")); // 25
+        commands.add(new Command("SetStreamMode")); // 26
+        commands.add(new Command("Commands")); // 27
+        commands.add(new Command("Sponge")); // 28
+        commands.add(new Command("Welcome")); // 29
+        commands.add(new Command("Uptime")); // 30
+        commands.add(new Command("updateReference")); // 31
+        commands.add(new Command("reloadAll")); // 32
         commands.add(new Command("appendData")); // 33
         commands.add(new Command("writeData")); // 34
         commands.add(new Command("removeData")); // 35
-        commands.add(new Command("changelog")); // 36
-        commands.add(new Command("refList")); // 37
+        commands.add(new Command("Changelog")); // 36
+        commands.add(new Command("ReferenceList")); // 37
+        commands.add(new Command("Resign")); //38
+        commands.add(new Command("getAssignableRoles")); //39
+
         CommandData commandData = new CommandData();
 
-        //Load Tasks
-        AutoStatus task1 = new AutoStatus(api,"Current Version: " + HiveBot.version);
-        AutoStatus task2 = new AutoStatus(api,Config.get("activity"));
+        try {
+            // Wait for discord jda to completely load
+            api.awaitReady();
+
+            //Load Tasks
+            AutoStatus task1 = new AutoStatus(api,"Current Version: " + HiveBot.version);
+            AutoStatus task2 = new AutoStatus(api,Config.get("activity"));
+            UptimeStatus task3 = new UptimeStatus(api);
+            HoneyStatus task4 = new HoneyStatus(api,api.getGuildById("469330414121517056"));
 
 
-        // Schedule Tasks
-        Timer timer = new Timer();
-        timer.schedule(task1, 30000, 60000);
-        timer.schedule(task2,60000,60000);
+            // Schedule Tasks
+            Timer timer = new Timer();
+            timer.schedule(task1, 30000, 120000); // Current version
+            timer.schedule(task2,60000,120000); // Default status
+            timer.schedule(task3,90000,120000); // Uptime
+            timer.schedule(task4,120000,120000); // Honey
 
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void setStreamMode(Boolean streamMode) {
@@ -163,6 +178,8 @@ public class HiveBot{
         HiveBot.dataFile.loadDataFile();
         HiveBot.messageCheck.reloadData();
         HiveBot.referenceLoader.updateData();
+
+        CommandData commandData = new CommandData();
     }
 }
 

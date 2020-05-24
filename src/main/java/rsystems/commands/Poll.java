@@ -32,7 +32,7 @@ public class Poll extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(10).getCommand())) {
+        if(HiveBot.commands.get(10).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(10).getRank()){
                     LOGGER.info(HiveBot.commands.get(10).getCommand() + " called by " + event.getAuthor().getAsTag());

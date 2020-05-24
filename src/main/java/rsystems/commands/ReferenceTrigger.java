@@ -116,7 +116,8 @@ public class ReferenceTrigger extends ListenerAdapter{
                 }
             }
 
-            if(args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(37).getCommand())){
+            //ReferenceList command
+            if(HiveBot.commands.get(37).checkCommand(event.getMessage().getContentRaw())){
                 // Check user access
                 if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(37).getRank()) {
                     LOGGER.info(HiveBot.commands.get(37).getCommand() + " called by " + event.getAuthor().getAsTag());

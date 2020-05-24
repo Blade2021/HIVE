@@ -29,7 +29,7 @@ public class HallMonitor extends ListenerAdapter {
             return;
         }
 
-        if(languageCheck(event.getMessage())){
+        if(languageCheck(event.getMessage().getContentRaw())){
             if(filterLevel > 1) {
                 try {
                     event.getMessage().delete().queue();
@@ -45,7 +45,7 @@ public class HallMonitor extends ListenerAdapter {
     }
 
     public void onGuildMessageUpdate(GuildMessageUpdateEvent event){
-        if(languageCheck(event.getMessage())){
+        if(languageCheck(event.getMessage().getContentRaw())){
             if(filterLevel > 1){
                 try{
                     event.getMessage().delete().queue();
@@ -66,8 +66,8 @@ public class HallMonitor extends ListenerAdapter {
         }
     }
 
-    private boolean languageCheck(Message message){
-        String lowerCase_message = message.getContentRaw().toLowerCase();
+    public boolean languageCheck(String message){
+        String lowerCase_message = message.toLowerCase();
         ArrayList<String> badWords = dataFile.getArrayList("BadWords");
         for(String test:badWords){
             if(lowerCase_message.contains(test.toLowerCase())){

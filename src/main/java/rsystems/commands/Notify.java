@@ -37,6 +37,7 @@ public class Notify extends ListenerAdapter {
             return;
         }
 
+
         if((args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(1).getCommand()) || (args[0].equalsIgnoreCase("-" + HiveBot.commands.get(1).getCommand())))){
             LOGGER.info(HiveBot.commands.get(1).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {

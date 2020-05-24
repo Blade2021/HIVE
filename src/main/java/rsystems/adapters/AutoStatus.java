@@ -10,10 +10,6 @@ public class AutoStatus extends TimerTask {
     private JDA jda;
     private String activityString = Config.get("activity");
 
-    public AutoStatus(JDA jda){
-        this.jda = jda;
-    }
-
     public AutoStatus(JDA jda, String activityString){
         this.jda = jda;
         this.activityString = activityString;
@@ -21,7 +17,6 @@ public class AutoStatus extends TimerTask {
 
     @Override
     public void run() {
-        System.out.println("Changing status to: " + activityString);
         jda.getPresence().setActivity(Activity.playing(activityString));
     }
 }

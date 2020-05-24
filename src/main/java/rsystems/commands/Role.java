@@ -24,7 +24,8 @@ public class Role extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(8).getCommand())) {
+
+        if(HiveBot.commands.get(8).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(8).getRank()){
                     LOGGER.info(HiveBot.commands.get(8).getCommand() + " called by " + event.getAuthor().getAsTag());

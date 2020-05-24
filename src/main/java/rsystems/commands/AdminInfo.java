@@ -40,7 +40,7 @@ public class AdminInfo extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
         // Admin Menu command
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(13).getCommand()))){
+        if(HiveBot.commands.get(13).checkCommand(event.getMessage().getContentRaw())){
             try{
                 int rank = RoleCheck.getRank(event,event.getMember().getId());
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(13).getRank()){
@@ -132,7 +132,7 @@ public class AdminInfo extends ListenerAdapter {
 
 
         // Stats Command
-        if(args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(20).getCommand()))) {
+        if(HiveBot.commands.get(20).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(20).getRank()){
                     LOGGER.info(HiveBot.commands.get(20).getCommand() + " called by " + event.getAuthor().getAsTag());
@@ -160,7 +160,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         // Get Data
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(21).getCommand()))) {
+        if(HiveBot.commands.get(21).checkCommand(event.getMessage().getContentRaw())){
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(21).getRank()){
                 LOGGER.info(HiveBot.commands.get(21).getCommand() + " called by " + event.getAuthor().getAsTag());
                 EmbedBuilder ainfo = new EmbedBuilder();
@@ -197,7 +197,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Append Data command
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(33).getCommand()))) {
+        if(HiveBot.commands.get(33).checkCommand(event.getMessage().getContentRaw())){
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(33).getRank()){
                 LOGGER.info(HiveBot.commands.get(33).getCommand() + " called by " + event.getAuthor().getAsTag());
                 try {
@@ -222,7 +222,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Write Data Command
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(34).getCommand()))) {
+        if(HiveBot.commands.get(34).checkCommand(event.getMessage().getContentRaw())){
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(34).getRank()){
                 LOGGER.info(HiveBot.commands.get(34).getCommand() + " called by " + event.getAuthor().getAsTag());
                 try {
@@ -234,6 +234,7 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
+        //todo:Check on usage of this command
         if (args[0].equalsIgnoreCase((HiveBot.prefix + "reloadData"))) {
             if(event.getAuthor().getId().equals(Config.get("OWNER_ID"))){
                 try {
@@ -246,7 +247,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Remove Data command
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(35).getCommand()))) {
+        if(HiveBot.commands.get(35).checkCommand(event.getMessage().getContentRaw())){
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(35).getRank()){
                 LOGGER.info(HiveBot.commands.get(35).getCommand() + " called by " + event.getAuthor().getAsTag());
                 try {
@@ -264,7 +265,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         // Send Markers
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(24).getCommand()))) {
+        if(HiveBot.commands.get(24).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(24).getRank()){
                     LOGGER.info(HiveBot.commands.get(24).getCommand() + " called by " + event.getAuthor().getAsTag());
@@ -278,7 +279,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Trigger welcome message
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(29).getCommand()))) {
+        if(HiveBot.commands.get(29).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(29).getRank()){
                     LOGGER.info(HiveBot.commands.get(29).getCommand() + " called by " + event.getAuthor().getAsTag());
@@ -298,7 +299,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Get Stream Mode
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(25).getCommand()))) {
+        if(HiveBot.commands.get(25).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(25).getRank()){
                     LOGGER.info(HiveBot.commands.get(25).getCommand() + " called by " + event.getAuthor().getAsTag());
@@ -311,7 +312,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Set Stream Mode
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(26).getCommand()))) {
+        if(HiveBot.commands.get(26).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(26).getRank()){
                     LOGGER.info(HiveBot.commands.get(26).getCommand() + " called by " + event.getAuthor().getAsTag());
@@ -337,14 +338,8 @@ public class AdminInfo extends ListenerAdapter {
             LOGGER.info("Test called by " + event.getAuthor().getAsTag());
             try {
                 if(event.getAuthor().getId().equals(Config.get("OWNER_ID"))){
-                    for(Reference r:HiveBot.references){
-                        try {
-                            if (r.getAlias().size() > 0) {
-                                event.getChannel().sendMessage(r.getRefCode() + "|" + r.getAlias()).queue();
-                            }
-                        } catch(NullPointerException e){
-                            event.getChannel().sendMessage("No aliases for " + r.getRefCode()).queue();
-                        }
+                    if(event.getMember().getOnlineStatus().toString().equalsIgnoreCase("ONLINE")){
+                        System.out.println(true);
                     }
                 }else {
                     event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
@@ -357,7 +352,7 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         // Reload All command
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(32).getCommand()))) {
+        if(HiveBot.commands.get(32).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(32).getRank()) {
                     LOGGER.severe(HiveBot.commands.get(32).getCommand() + " called by " + event.getAuthor().getAsTag());

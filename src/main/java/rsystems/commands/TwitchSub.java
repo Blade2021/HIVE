@@ -18,7 +18,7 @@ public class TwitchSub extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if((args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(19).getCommand())))) {
+        if(HiveBot.commands.get(19).checkCommand(event.getMessage().getContentRaw())){
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setTitle("Twitch Subscriber Information");

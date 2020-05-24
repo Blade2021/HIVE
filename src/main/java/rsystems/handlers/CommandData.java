@@ -45,6 +45,14 @@ public class CommandData {
 
                         String syntax = jsonObject.get("syntax").toString();
                         c.setSyntax(syntax);
+
+                        ArrayList<String> aliases = new ArrayList<>();
+
+                        try{
+                            c.setAlias(getArrayList(jsonObject,"alias"));
+                        } catch(NullPointerException e){
+                        }
+
                         try {
                             String commandType = jsonObject.get("commandType").toString();
                             c.setCommandType(commandType);
@@ -91,6 +99,17 @@ public class CommandData {
             System.out.println("Found null when assigning roles to list");
         }
         return null;
+    }
+
+    private ArrayList<String> getArrayList(JSONObject parsedValue,String key){
+        //Get links from datafile
+        JSONArray jsonArray = (JSONArray) parsedValue.get(key);
+        ArrayList<String> arrayList = new ArrayList<>();
+
+        for(Object linkObject:jsonArray){
+            arrayList.add(linkObject.toString());
+        }
+        return arrayList;
     }
 
     public boolean writeData(String key,String value){

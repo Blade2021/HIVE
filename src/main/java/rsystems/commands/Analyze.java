@@ -36,7 +36,7 @@ public class Analyze extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
         //Analyzer command
-        if (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(11).getCommand())) {
+        if(HiveBot.commands.get(11).checkCommand(event.getMessage().getContentRaw())){
             if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(11).getRank()){
                 LOGGER.warning(HiveBot.commands.get(11).getCommand() + " called by " + event.getAuthor().getAsTag());
                 EmbedBuilder output = new EmbedBuilder();

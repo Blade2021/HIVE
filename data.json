@@ -15,12 +15,13 @@
     "nigger",
     "asshole",
     "bitch",
-    "bastard"
+    "bastard",
+    "douche"
   ],
   "QuestionPullChannel": 469343461150162955,
   "RestreamID": "491614535812120596",
   "WelcomeMessage": {
-    "469330414121517056": "**Welcome {user} to the Doctor Zzz's Discord server!**\n\nWe have many channels here with many talented volunteers to help spread the wealth of knowledge for home automation and other topics.  Please do read over the rules and introduce yourself in the #general channel.  If you have a question for a specific topic try looking around for a designated channel or ask the staff for help.  DrZzz's also does streams very regularly so be sure to watch out for the next stream.\n\n`Common BoT Commands:`\n`!stream` - Find out when the next stream is set to broadcast\n`~notify` - Add\/Remove yourself from the notifications channel for streaming notifications (We try not to spam you)\n`~ask` - During a live stream you can use this command followed by a question to have your question posted to a private channel to get answered by the doc or staff.  (This command is only available during a livestream)\n`~help` - A list of common commands provided by HIVE"
+    "469330414121517056": "**Welcome {user} to the Doctor Zzz's Discord server!**\n\nWe have many channels here with many talented volunteers to help spread the wealth of knowledge for home automation and other topics.  Please do read over the rules and introduce yourself in the #general channel.  If you have a question for a specific topic try looking around for a designated channel or ask the staff for help.  DrZzz's also does streams very regularly so be sure to watch out for the next stream.\n\n`Common BoT Commands:`\n`!stream` - Find out when the next stream is set to broadcast\n`~notify` - Add\/Remove yourself from the notifications channel for streaming notifications (We try not to spam you)\n`~ask` - During a live stream you can use this command followed by a question to have your question posted to a private channel to get answered by the doc or staff.  (This command is only available during a livestream)\n`~info` - A list of common commands provided by HIVE\n`~reflist` - Get a list of our reference library"
   },
   "QuestionPushChannel": 707341967268249630,
   "LinksPullChannel": "469343461150162955",

@@ -27,7 +27,7 @@ public class Who extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
-        if(((args[0].equalsIgnoreCase((HiveBot.prefix + HiveBot.commands.get(3).getCommand())) && args.length < 2) || (args[0].equalsIgnoreCase((HiveBot.prefix + "hive"))))) {
+        if((HiveBot.commands.get(3).checkCommand(event.getMessage().getContentRaw())) && (args.length < 2)){
             LOGGER.info(HiveBot.commands.get(3).getCommand() + " called by " + event.getAuthor().getAsTag());
             event.getMessage().addReaction("\uD83D\uDC1D ").queue(); // Bee Emoji
             event.getMessage().addReaction("\uD83D\uDC4B ").queue(); // Waving hand emoji
@@ -59,7 +59,7 @@ public class Who extends ListenerAdapter {
 
         }
 
-        if((args.length > 1) && (args[0].equalsIgnoreCase(HiveBot.prefix + HiveBot.commands.get(22).getCommand()))){
+        if((args.length > 1) && (HiveBot.commands.get(22).checkCommand(event.getMessage().getContentRaw()))){
             LOGGER.info(HiveBot.commands.get(22).getCommand() + " called by " + event.getAuthor().getAsTag());
             try{
                 if(RoleCheck.getRank(event,Long.toString(event.getMember().getUser().getIdLong())) >= 1){
