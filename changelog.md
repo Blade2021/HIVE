@@ -1,5 +1,9 @@
 # Change Log
 
+### 0.17.1
+- Added Janitor class
+  - Removes !stream triggers and messages after a set delay
+
 ### 0.17.0
 - Added command alias framework
   - Modified command check method
