@@ -15,13 +15,21 @@
     "nigger",
     "asshole",
     "bitch",
-    "bastard",
-    "douche"
+    "bastard"
   ],
   "QuestionPullChannel": 469343461150162955,
   "RestreamID": "491614535812120596",
+  "WelcomeChannel": {
+    "469330414121517056": "469332579221504000",
+    "386701951662030858": "650463410345082882"
+  },
   "WelcomeMessage": {
-    "469330414121517056": "**Welcome {user} to the Doctor Zzz's Discord server!**\n\nWe have many channels here with many talented volunteers to help spread the wealth of knowledge for home automation and other topics.  Please do read over the rules and introduce yourself in the #general channel.  If you have a question for a specific topic try looking around for a designated channel or ask the staff for help.  DrZzz's also does streams very regularly so be sure to watch out for the next stream.\n\n`Common BoT Commands:`\n`!stream` - Find out when the next stream is set to broadcast\n`~notify` - Add\/Remove yourself from the notifications channel for streaming notifications (We try not to spam you)\n`~ask` - During a live stream you can use this command followed by a question to have your question posted to a private channel to get answered by the doc or staff.  (This command is only available during a livestream)\n`~info` - A list of common commands provided by HIVE\n`~reflist` - Get a list of our reference library"
+    "469330414121517056": "**Welcome {user} to the Doctor Zzz's Discord server!**\n\nWe have many channels here with many talented volunteers to help spread the wealth of knowledge for home automation and other topics.  Please do read over the rules and introduce yourself in the #general channel.  If you have a question for a specific topic try looking around for a designated channel or ask the staff for help.  DrZzz's also does streams very regularly so be sure to watch out for the next stream.\n\n`Common BoT Commands:`\n`!stream` - Find out when the next stream is set to broadcast\n`~notify` - Add\/Remove yourself from the notifications channel for streaming notifications (We try not to spam you)\n`~ask` - During a live stream you can use this command followed by a question to have your question posted to a private channel to get answered by the doc or staff.  (This command is only available during a livestream)\n`~info` - A list of common commands provided by HIVE\n`~help` - Get help with a command\n`~reflist` - Get a list of our reference library",
+    "386701951662030858": "**Welcome {user} to the SteelVein Discord server!**"
+  },
+  "alternativeWelcomeMessage": {
+    "469330414121517056": "**Welcome {user} to the Doctor Zzz's Discord server!**\n\nWe attempted to send you a welcome message through direct message but were unable too.  Please be sure to review the rules of this server.  If you need any help or want to see when the next live stream is, check out the commands below.\n\n`Common BoT Commands`\n`!stream` - See when the next live stream is set to broadcast\n`~info` - Learn more about common commands from HIVE",
+    "386701951662030858": "**Welcome {user} to the SteelVein Discord server!**\n\nWe attempted to send you a welcome message through direct message but were unable too.  Please review the rules of this server and introduce yourself in the #general channel.  If you need any help check out the commands below.\n\n`Common BoT Commands`\n`~info` - Learn more about common commands from HIVE"
   },
   "QuestionPushChannel": 707341967268249630,
   "LinksPullChannel": "469343461150162955",

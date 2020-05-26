@@ -33,7 +33,7 @@ public class MyLogger {
         logger.addHandler(handler);
 
         logger.setLevel(Level.INFO);
-        fileTxt = new FileHandler("back.log", true);
+        fileTxt = new FileHandler("logfile.log", true);
 
 
         // create a TXT formatter

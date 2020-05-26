@@ -1,9 +1,6 @@
 package rsystems.commands;
 
-import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -12,6 +9,10 @@ import rsystems.HiveBot;
 import rsystems.handlers.DataFile;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
 import static rsystems.HiveBot.LOGGER;
@@ -21,14 +22,19 @@ public class HallMonitor extends ListenerAdapter {
     private Integer filterLevel = Integer.valueOf(dataFile.getDatafileData().get("FilterLevel").toString());
     private String logChannel = dataFile.getDatafileData().get("LogChannelID").toString();
     String removedMessage = " Your message was removed due to inappropriate content [Vulgar Language].  Please refrain from using vulgar language here.  This action has been logged.";
-    String badMessage = " Your message has been flagged due to inappropriate content [Vulgar Language].  Please edit or delete your message immediately.  This action has been logged.";
+    String badMessage = " Your message has been flagged due to inappropriate content [Vulgar Language].  Please edit or delete your message immediately or risk the message being deleted.  This action has been logged.";
+
+    //Initialize a HashMap for storing futures
+    private Map<String,Future<?>> futures = new HashMap<>();
+
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-        //Ignore all bots EXCEPT Restream
+        //Ignore all bots
         if(event.getAuthor().isBot()){
             return;
         }
 
+        //Does message contain vulgar language?
         if(languageCheck(event.getMessage().getContentRaw())){
             if(filterLevel > 1) {
                 try {
@@ -39,6 +45,7 @@ public class HallMonitor extends ListenerAdapter {
                 }
             } else {
                 sendNotice(event);
+                futures.put(event.getMessageId(),event.getMessage().delete().submitAfter(30,TimeUnit.SECONDS));
             }
             logInstance(event.getGuild(),event.getMember(),event.getMessage());
         }
@@ -55,13 +62,38 @@ public class HallMonitor extends ListenerAdapter {
                 }
             } else {
                 sendNotice(event);
+                Boolean futureFound = false;
+                for(Map.Entry<String,Future<?>> entry:futures.entrySet()){
+                    String key = entry.getKey();
+                    if(key.equalsIgnoreCase(event.getMessageId())){
+                        entry.getValue().cancel(true);
+                        futureFound = true;
+                    }
+                }
+                if(!futureFound){
+                    futures.put(event.getMessageId(),event.getMessage().delete().submitAfter(30,TimeUnit.SECONDS));
+                    try {
+                        event.getMessage().addReaction("⁉").queue();
+                    }catch(NullPointerException e){
+
+                    }
+                }
             }
             if(filterLevel >= 2) {
                 logInstance(event.getGuild(), event.getMember(), event.getMessage());
             }
         } else {
             try{
+                for(Map.Entry<String,Future<?>> entry:futures.entrySet()){
+                    String key = entry.getKey();
+                    if(key.equalsIgnoreCase(event.getMessageId())){
+                        entry.getValue().cancel(true);
+                        System.out.println("Removing future for message" + key);
+                        futures.remove(entry.getKey());
+                    }
+                }
                 event.getMessage().removeReaction("⚠").queue();
+                event.getMessage().removeReaction("⁉").queue();
             } catch(NullPointerException ignored){}
         }
     }

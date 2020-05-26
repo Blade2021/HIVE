@@ -49,6 +49,7 @@ public class CommandData {
                         ArrayList<String> aliases = new ArrayList<>();
 
                         try{
+                            c.clearAlias();
                             c.setAlias(getArrayList(jsonObject,"alias"));
                         } catch(NullPointerException e){
                         }

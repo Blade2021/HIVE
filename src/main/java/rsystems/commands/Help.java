@@ -3,6 +3,7 @@ package rsystems.commands;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.exceptions.ErrorResponseException;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -69,34 +70,78 @@ public class Help extends ListenerAdapter {
                 }
                 help.clear();
             } else {
-                event.getMessage().addReaction("✅").queue();
                 try {
                     //Open a private channel with requester
                     event.getAuthor().openPrivateChannel().queue((channel) ->
                     {
                         EmbedBuilder info = new EmbedBuilder();
-                        info.setTitle("HIVE BoT Commands");
-                        info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**");
+                        info.setTitle("HIVE BoT Information V. " + HiveBot.version);
+                        info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**\nNeed help with a command?  Just type " + HiveBot.prefix + "help [command]\n" + HiveBot.prefix + "help Who");
                         info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
 
+                        //Initialize categories for each type
+                        ArrayList<String> utilityCommands = new ArrayList<>();
+                        ArrayList<String> infoCommands = new ArrayList<>();
+                        ArrayList<String> funCommands = new ArrayList<>();
+
+                        //Assign the commands to categories
                         for(Command c:HiveBot.commands){
                             if(c.getRank() <= 0) {
                                 try {
-                                    info.addField("`" + c.getCommand() + "`", c.getDescription(), false);
-                                } catch(IllegalArgumentException e){
-                                    System.out.println("Error on command: " + c.getCommand());
+                                    if (c.getCommandType().equalsIgnoreCase("utility")) {
+                                        utilityCommands.add(c.getCommand());
+                                    }
+                                    if (c.getCommandType().equalsIgnoreCase("information")) {
+                                        infoCommands.add(c.getCommand());
+                                    }
+                                    if (c.getCommandType().equalsIgnoreCase("fun")) {
+                                        funCommands.add(c.getCommand());
+                                    }
+                                }catch(NullPointerException e){
+                                    System.out.println("Found null for command: " + c.getCommand());
                                 }
                             }
                         }
+
+                        StringBuilder utilityString = new StringBuilder();
+                        for(String s:utilityCommands){
+                            utilityString.append(s).append("\n");
+                        }
+
+                        StringBuilder infoString = new StringBuilder();
+                        for(String s:infoCommands){
+                            infoString.append(s).append("\n");
+                        }
+
+                        StringBuilder funString = new StringBuilder();
+                        for(String s:funCommands){
+                            funString.append(s).append("\n");
+                        }
+
+                        info.addField("Utility", utilityString.toString(),true);
+                        info.addField("Information",infoString.toString(),true);
+                        info.addField("Fun",funString.toString(),true);
+
                         info.setColor(Color.CYAN);
-                        channel.sendMessage(info.build()).queue();
+                        channel.sendMessage(info.build()).queue(
+                                success -> {
+                                    event.getMessage().addReaction("✅").queue();
+                                },
+                                failure -> {
+                                    event.getMessage().addReaction("⚠").queue();
+                                    LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + event.getAuthor().getAsTag());
+                                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                                });
                         info.clear();
                         channel.close();
                     });
                 } catch(UnsupportedOperationException e) {
                     // Couldn't open private channel
-                    event.getMessage().removeReaction("✅").queue();
                     event.getMessage().addReaction("🚫").queue();
+                } catch(ErrorResponseException e){
+                    LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed.  Called by " + event.getAuthor().getAsTag());
+                    event.getMessage().addReaction("⚠").queue();
+                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I am unable to DM you due to privacy settings. Please update and try again.").queue();
                 }
             }
         }
@@ -106,7 +151,7 @@ public class Help extends ListenerAdapter {
             LOGGER.info(HiveBot.commands.get(27).getCommand() + " called by " + event.getAuthor().getAsTag());
             try {
                 try {
-                    event.getMessage().delete();
+                    //event.getMessage().delete().reason("Deleting trigger").queue();
                 }catch(PermissionException e){
                     LOGGER.severe("Failed to delete trigger message in channel: " + event.getChannel().getName());
                 }
