@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.17.0";
+    public static String version = "0.17.1";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
@@ -78,6 +78,7 @@ public class HiveBot{
         api.addEventListener(new Analyze());
         api.addEventListener(new WelcomeWagon());
         api.addEventListener(new Help());
+        api.addEventListener(new Janitor());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 

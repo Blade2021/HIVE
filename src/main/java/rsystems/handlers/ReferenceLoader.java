@@ -22,7 +22,7 @@ public class ReferenceLoader {
             Reference tempRef = new Reference(
                     keyStr.toString(),
                     parsedValue.get("installation").toString(),
-                    parsedValue.get("description").toString()
+                    parsedValue.get("description").toString().replace("{prefix}",HiveBot.prefix)
             );
 
             try{
@@ -44,8 +44,9 @@ public class ReferenceLoader {
         referenceCommands = referenceFile.getDatafileData();
         referenceData = (JSONObject) referenceCommands;
 
-
+        // Clear all references from array to recreate them below.
         HiveBot.references.clear();
+
         referenceData.keySet().forEach(keyStr -> {
             //Form the object into a JSONObject for processing
             Object keyValue = referenceData.get(keyStr);
@@ -55,7 +56,7 @@ public class ReferenceLoader {
                 Reference tempRef = new Reference(
                         keyStr.toString(),
                         parsedValue.get("installation").toString(),
-                        parsedValue.get("description").toString()
+                        parsedValue.get("description").toString().replace("{prefix}",HiveBot.prefix)
                 );
 
                 tempRef.setLinks(getArrayList(parsedValue,"links"));

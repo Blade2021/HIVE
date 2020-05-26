@@ -78,6 +78,10 @@ public class Command {
         this.alias.addAll(alias);
     }
 
+    public void clearAlias(){
+        this.alias.clear();
+    }
+
     public boolean checkCommand(String message){
         String[] args = message.split("\\s+");
         if(args[0].equalsIgnoreCase(HiveBot.prefix + this.command)){

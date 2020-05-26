@@ -3,6 +3,10 @@
 ### 0.17.1
 - Added Janitor class
   - Removes !stream triggers and messages after a set delay
+- Fixed a recursion bug on command loader
+- Added alternative method for welcoming new users (Users with direct messages turned off)
+- Automatic delete vulgar messages after 30 seconds if not resolved.
+
 
 ### 0.17.0
 - Added command alias framework
