@@ -138,7 +138,7 @@ public class ReferenceTrigger extends ListenerAdapter {
             for (String s : refCheck) {
                 if ((args[0].equalsIgnoreCase(HiveBot.prefix + s))) {
                     // A reference was found
-                    LOGGER.info("REF:" + r.getRefCode() + " called by " + message.getAuthor().getAsTag());
+                    LOGGER.info("REF " + s + " : " + r.getRefCode() + " called by " + message.getAuthor().getAsTag());
 
                     if (args.length >= 2) {
                         if (args[1].equalsIgnoreCase("install")) {
