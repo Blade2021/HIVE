@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.17.2";
+    public static String version = "0.17.3";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;

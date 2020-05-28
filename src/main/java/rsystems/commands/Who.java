@@ -67,15 +67,30 @@ public class Who extends ListenerAdapter {
                     List<Member> mentions = event.getMessage().getMentionedMembers();
                     EmbedBuilder info = new EmbedBuilder();
                     for(Member m: mentions){
-                        info.setTitle("Who command");
-                        info.setDescription("User: " + m.getAsMention());
-                        ArrayList<String> userroles = new ArrayList<>();
-                        for(Role r:m.getRoles()){
-                            userroles.add(r.getName());
+                        info.setTitle("User Information");
+                        info.addField("User: ",m.getAsMention(),true);
+                        String nickname = "Not set";
+                        try{
+                            if(!m.getNickname().isEmpty()) {
+                                nickname = m.getNickname();
+                            }
+                        } catch(NullPointerException e){
                         }
-                        info.addField("Roles",userroles.toString(),false);
-                        info.addField("UserID",m.getId(),false);
-                        info.addField("Join Date",m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),false);
+                        info.addField("Nickname",nickname,true);
+                        info.addField("UserID",m.getId(),true);
+                        info.addField("Joined",m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
+                        info.addField("Created",m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
+                        info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
+
+                        //ArrayList<String> userroles = new ArrayList<>();
+                        StringBuilder roleString = new StringBuilder();
+                        for(Role r:m.getRoles()){
+                            //userroles.add(r.getName());
+                            roleString.append(r.getName()).append(", ");
+                        }
+                        //info.addField("Roles",userroles.toString(),false);
+                        info.addField("Roles",roleString.toString(),true);
+
                         info.setColor(Color.CYAN);
                         info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                         event.getChannel().sendMessage(info.build()).queue();

@@ -3,7 +3,6 @@ package rsystems.commands;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import rsystems.adapters.ChannelSendMessage;
 import rsystems.HiveBot;
 
 public class Twitch extends ListenerAdapter {
@@ -17,7 +16,7 @@ public class Twitch extends ListenerAdapter {
 
         if(args[0].equalsIgnoreCase(HiveBot.prefix + "tsay")){
             if(event.getMember().hasPermission(Permission.ADMINISTRATOR)){
-                ChannelSendMessage.sendMessage(args[1]);
+                //ChannelSendMessage.sendMessage(args[1]);
             }
         }
         /*
