@@ -26,17 +26,6 @@ public class Status extends ListenerAdapter {
                     return;
                 }
 
-                /*
-                Activity oldActivity = event.getJDA().getPresence().getActivity();
-                new Thread( new Runnable() {
-                    public void run()  {
-                        try  { Thread.sleep( 10000 ); }
-                        catch (InterruptedException ie)  {}
-                        event.getJDA().getPresence().setActivity(oldActivity);
-                    }
-                } ).start();
-                */
-
                 if (args.length >= 2) {
 
                     String statusMessage = event.getMessage().getContentRaw().substring(args[0].length() + 1);
