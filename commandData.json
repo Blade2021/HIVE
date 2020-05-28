@@ -318,5 +318,13 @@
     "description": "Get a list of all roles that are assignable using the assign command.",
     "minArgCount": 0,
     "commandType": "user-control"
+  },
+  "localPoll": {
+    "rank": 2,
+    "alias": [],
+    "syntax": "localPoll",
+    "description": "Start a poll that will not be sent to strawpoll.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
   }
 }

@@ -21,7 +21,7 @@ public class UptimeStatus extends TimerTask {
         long uptimeHours = uptimeinSeconds / (60 * 60);
         long uptimeMinutes = (uptimeinSeconds / 60) - (uptimeHours * 60);
         long uptimeSeconds = uptimeinSeconds % 60;
-        jda.getPresence().setActivity(Activity.playing("Uptime| "+uptimeHours + " Hours "+uptimeMinutes + " Min"));
+        jda.getPresence().setActivity(Activity.playing("Uptime| "+uptimeHours + " hrs "+uptimeMinutes + " mins"));
 
     }
 }

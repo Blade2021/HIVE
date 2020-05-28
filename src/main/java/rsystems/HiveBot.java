@@ -24,7 +24,7 @@ import java.util.logging.Logger;
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.17.1";
+    public static String version = "0.17.2";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
@@ -69,6 +69,7 @@ public class HiveBot{
         api.addEventListener(new ReferenceTrigger());
         api.addEventListener(new Role());
         //api.addEventListener(new Say());
+        api.addEventListener(new LocalPoll());
         api.addEventListener(new Shutdown());
         api.addEventListener(new Status());
         api.addEventListener(new Twitch());
@@ -141,6 +142,7 @@ public class HiveBot{
         commands.add(new Command("ReferenceList")); // 37
         commands.add(new Command("Resign")); //38
         commands.add(new Command("getAssignableRoles")); //39
+        commands.add(new Command("localPoll")); //40
 
         CommandData commandData = new CommandData();
 
