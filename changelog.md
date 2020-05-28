@@ -1,5 +1,10 @@
 # Change Log
 
+### 0.17.2
+- Changed info and reference triggers to allow to be called in private messages.
+- Local Polls
+- Found and fixed bug on Hall Monitor Class
+
 ### 0.17.1
 - Added Janitor class
   - Removes !stream triggers and messages after a set delay

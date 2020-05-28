@@ -8,10 +8,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.handlers.DataFile;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
@@ -84,16 +81,32 @@ public class HallMonitor extends ListenerAdapter {
             }
         } else {
             try{
+                String messageid = "";
+
+                // Cancel the future
                 for(Map.Entry<String,Future<?>> entry:futures.entrySet()){
                     String key = entry.getKey();
                     if(key.equalsIgnoreCase(event.getMessageId())){
                         entry.getValue().cancel(true);
-                        System.out.println("Removing future for message" + key);
-                        futures.remove(entry.getKey());
+                        System.out.println("Removing future for message: " + entry.getKey());
+                        messageid = entry.getKey();
                     }
                 }
+
+
+                //Remove the entry from the HashMap
+                Iterator it = futures.entrySet().iterator();
+                while(it.hasNext()){
+                    Map.Entry pair = (Map.Entry)it.next();
+                    if(pair.getKey().toString().equalsIgnoreCase(messageid)){
+                        it.remove();
+                    }
+                }
+
                 event.getMessage().removeReaction("⚠").queue();
                 event.getMessage().removeReaction("⁉").queue();
+
+                System.out.println(futures.size());
             } catch(NullPointerException ignored){}
         }
     }
