@@ -1,4 +1,7 @@
 # Change Log
+### 0.17.3
+- Changed referenceTriggers to send direct message unless -show used
+- Updated who command with more information
 
 ### 0.17.2
 - Changed info and reference triggers to allow to be called in private messages.

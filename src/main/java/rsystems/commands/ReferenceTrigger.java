@@ -2,6 +2,7 @@ package rsystems.commands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -12,6 +13,7 @@ import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 import static rsystems.HiveBot.LOGGER;
 
@@ -118,6 +120,7 @@ public class ReferenceTrigger extends ListenerAdapter {
 
     private void referenceCommand(Message message) {
 
+        boolean show = false;
         String[] args = message.getContentRaw().split("\\s+");
 
         //Parse through all references
@@ -140,70 +143,146 @@ public class ReferenceTrigger extends ListenerAdapter {
                     // A reference was found
                     LOGGER.info("REF " + s + " : " + r.getRefCode() + " called by " + message.getAuthor().getAsTag());
 
-                    if (args.length >= 2) {
-                        if (args[1].equalsIgnoreCase("install")) {
-                            message.getChannel().sendMessage(r.getInstallString()).queue();
-                        }
-                        if (args[1].equalsIgnoreCase("links")) {
-                            StringBuilder output = new StringBuilder();
-                            r.getLinks().forEach(link -> {
-                                if (!(link.isEmpty())) {
-                                    output.append("<").append(link).append(">").append("\n");
-                                }
-                            });
-                            if (output.length() >= 1) {
-                                message.getChannel().sendMessage(output).queue();
+                    for (String checkForShow : args) {
+                        if (checkForShow.equalsIgnoreCase("-show")) {
+                            if (RoleCheck.getRank(message.getGuild(), message.getAuthor().getId()) >= 1) {
+                                show = true;
                             }
                         }
+                    }
 
-                        if (args[1].equalsIgnoreCase("alias")) {
-                            StringBuilder output = new StringBuilder();
-                            try {
-                                if (r.getAlias().size() > 0) {
-                                    output.append(r.getRefCode()).append(",");
-                                    r.getAlias().forEach(alias -> {
-                                        output.append(alias).append(",");
-                                    });
-
-                                    message.getChannel().sendMessage(output).queue();
-
-                                }
-                            } catch (NullPointerException e) {
-                            }
-                        }
-
-                    } else {
-                        EmbedBuilder info = new EmbedBuilder();
-
-                        StringBuilder links = new StringBuilder();
+                    if ((args.length >= 2) && (args[1].equalsIgnoreCase("install"))) {
+                        sendReference(message,r.getInstallString(),show);
+                        return;
+                    }
+                    if ((args.length >= 2) && (args[1].equalsIgnoreCase("links"))) {
+                        StringBuilder output = new StringBuilder();
                         r.getLinks().forEach(link -> {
                             if (!(link.isEmpty())) {
-                                links.append("<").append(link).append(">").append("\n");
+                                output.append("<").append(link).append(">").append("\n");
                             }
                         });
+                        if (output.length() >= 1) {
 
-                        StringBuilder cats = new StringBuilder();
-                        if (r.getCategory().size() > 1) {
-                            r.getCategory().forEach(cat -> {
-                                if (!(cat.isEmpty())) {
-                                    cats.append(cat).append(", ");
-                                }
-                            });
-                        } else {
-                            cats.append(r.getCategory().get(0));
+                            sendReference(message,output.toString(),show);
+                            return;
                         }
-
-                        info.setTitle(r.getRefCode());
-                        info.setColor(Color.CYAN);
-                        info.setDescription(r.getDescription());
-                        info.addField("Links", links.toString(), false);
-                        info.addField("Installation", r.getInstallString(), false);
-                        info.addField("Category", cats.toString(), false);
-
-                        message.getChannel().sendMessage(info.build()).queue();
-                        info.clear();
                     }
+
+                    if ((args.length >= 2) && (args[1].equalsIgnoreCase("alias"))) {
+                        StringBuilder output = new StringBuilder();
+                        try {
+                            if (r.getAlias().size() > 0) {
+                                output.append(r.getRefCode()).append(",");
+                                r.getAlias().forEach(alias -> {
+                                    output.append(alias).append(",");
+                                });
+
+                                sendReference(message,output.toString(),show);
+                                return;
+                            } else {
+                                sendReference(message,"There are no aliases assigned to: " + r.getRefCode(),show);
+                                return;
+                            }
+                        } catch (NullPointerException e) {
+                        }
+                    }
+
+                    EmbedBuilder info = new EmbedBuilder();
+
+                    StringBuilder links = new StringBuilder();
+                    r.getLinks().forEach(link -> {
+                        if (!(link.isEmpty())) {
+                            links.append("<").append(link).append(">").append("\n");
+                        }
+                    });
+
+                    StringBuilder cats = new StringBuilder();
+                    if (r.getCategory().size() > 1) {
+                        r.getCategory().forEach(cat -> {
+                            if (!(cat.isEmpty())) {
+                                cats.append(cat).append(", ");
+                            }
+                        });
+                    } else {
+                        cats.append(r.getCategory().get(0));
+                    }
+
+                    info.setTitle(r.getRefCode());
+                    info.setColor(Color.CYAN);
+                    info.setDescription(r.getDescription());
+                    info.addField("Links", links.toString(), false);
+                    info.addField("Installation", r.getInstallString(), false);
+                    info.addField("Category", cats.toString(), false);
+
+                    if(!info.isEmpty()) {
+                        //!IMPORTANT - Send the MessageEmbed and not the EmbedBuilder
+                        sendReference(message, info.build(), show);
+                    }
+                    info.clear();
                 }
+            }
+        }
+    }
+
+    private void sendReference(Message message, MessageEmbed embedMessage, boolean show){
+        if (show) {
+            try {
+                message.getChannel().sendMessage(embedMessage).queue();
+            } catch (PermissionException e) {
+                message.getChannel().sendMessage("Missing Permissions: " + e.getPermission()).queue();
+            } catch (IllegalStateException e){
+                System.out.println("Empty embed detected");
+            }
+        } else {
+            try {
+                message.getAuthor().openPrivateChannel().queue((channel) ->
+                {
+                    channel.sendMessage(embedMessage).queue(
+                            success -> {
+                                message.addReaction("✅").queue();
+                            },
+                            failure -> {
+                                message.addReaction("⚠").queue();
+                                //LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
+                                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                            });
+
+                });
+            } catch (NullPointerException e) {
+            }catch (IllegalStateException e){
+                System.out.println("Empty embed detected");
+            }
+        }
+    }
+
+    private void sendReference(Message message,String embedMessage, boolean show){
+        if (show) {
+            try {
+                message.getChannel().sendMessage(embedMessage).queue();
+            } catch (PermissionException e) {
+                message.getChannel().sendMessage("Missing Permissions: " + e.getPermission()).queue();
+            }catch (IllegalStateException e){
+                System.out.println("Empty embed detected");
+            }
+        } else {
+            try {
+                message.getAuthor().openPrivateChannel().queue((channel) ->
+                {
+                    channel.sendMessage(embedMessage).queue(
+                            success -> {
+                                message.addReaction("✅").queue();
+                            },
+                            failure -> {
+                                message.addReaction("⚠").queue();
+                                //LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
+                                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                            });
+
+                });
+            } catch (NullPointerException e) {
+            }catch (IllegalStateException e){
+                System.out.println("Empty embed detected");
             }
         }
     }

@@ -1,6 +1,7 @@
 package rsystems.adapters;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import rsystems.Config;
@@ -28,6 +29,28 @@ public class RoleCheck {
             }
         } catch(NullPointerException e){
             event.getChannel().sendMessage("Could not get roles of user").queue();
+        }
+        return 0;
+    }
+
+    public static int getRank(Guild guild, String id){
+        try {
+            List<Role> memberRoles = guild.getMemberById(id).getRoles();
+
+            if (id.equalsIgnoreCase(Config.get("OWNER_ID"))){
+                return 4;
+            }
+
+            if (guild.getMemberById(id).hasPermission(Permission.ADMINISTRATOR)) {
+                return 3;
+            }
+            if (memberRoles.toString().contains("Yeoman")) {
+                return 2;
+            }
+            if (memberRoles.toString().contains("Bannerman")) {
+                return 1;
+            }
+        } catch(NullPointerException e){
         }
         return 0;
     }
