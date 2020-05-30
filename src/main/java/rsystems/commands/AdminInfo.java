@@ -13,6 +13,7 @@ import rsystems.adapters.Reference;
 import rsystems.adapters.RoleCheck;
 import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
+import rsystems.handlers.SQLHandler;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -178,7 +179,12 @@ public class AdminInfo extends ListenerAdapter {
                             if(keyStr.toString().equalsIgnoreCase("BadWords")){
                                 return;
                             }
+
                             if(keyStr.toString().equalsIgnoreCase("WelcomeMessage")){
+                                return;
+                            }
+
+                            if(keyStr.toString().equalsIgnoreCase("alternativeWelcomeMessage")){
                                 return;
                             }
 
@@ -338,11 +344,10 @@ public class AdminInfo extends ListenerAdapter {
             LOGGER.info("Test called by " + event.getAuthor().getAsTag());
             try {
                 if(event.getAuthor().getId().equals(Config.get("OWNER_ID"))){
-                    if(event.getMember().getOnlineStatus().toString().equalsIgnoreCase("ONLINE")){
-                        System.out.println(true);
-                    }
-                }else {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
+                    AutoRemove autoRemove = new AutoRemove();
+                    event.getMessage().getMentionedUsers().forEach(user -> {
+                        autoRemove.removeUser(user.getId());
+                    });
                 }
             }catch(PermissionException e){
             }catch(IndexOutOfBoundsException e){

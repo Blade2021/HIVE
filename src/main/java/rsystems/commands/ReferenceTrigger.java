@@ -175,7 +175,7 @@ public class ReferenceTrigger extends ListenerAdapter {
                             if (r.getAlias().size() > 0) {
                                 output.append(r.getRefCode()).append(",");
                                 r.getAlias().forEach(alias -> {
-                                    output.append(alias).append(",");
+                                    output.append(alias).append(", ");
                                 });
 
                                 sendReference(message,output.toString(),show);

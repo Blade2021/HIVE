@@ -326,5 +326,37 @@
     "description": "Start a poll that will not be sent to strawpoll.",
     "minArgCount": 0,
     "commandType": "utility-admin"
+  },
+  "checkDB": {
+    "rank": 1,
+    "alias": [],
+    "syntax": "checkDB",
+    "description": "Check the database to see if your entered into it or not.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "getDBUsers": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "getDBUsers",
+    "description": "Get a list of all users in the DB.",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "setDBUsername": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "setDBUsername",
+    "description": "Set the name of a user in the DB.",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "removeDBUser": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "removeDBUser",
+    "description": "Remove a user from the DB.",
+    "minArgCount": 0,
+    "commandType": "user-control"
   }
 }
