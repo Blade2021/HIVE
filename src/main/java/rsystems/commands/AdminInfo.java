@@ -5,21 +5,22 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.apache.commons.lang.ObjectUtils;
 import org.json.simple.JSONObject;
 import rsystems.Config;
+import rsystems.adapters.AutoRemove;
 import rsystems.adapters.Command;
-import rsystems.adapters.Reference;
 import rsystems.adapters.RoleCheck;
 import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
 import rsystems.handlers.SQLHandler;
 
 import java.awt.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
-import static rsystems.HiveBot.LOGGER;
 import static rsystems.events.DocStream.sendMarkers;
 
 public class AdminInfo extends ListenerAdapter {
@@ -326,10 +327,15 @@ public class AdminInfo extends ListenerAdapter {
         if(HiveBot.commands.get(47).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(47))){
+                    /*
                     AutoRemove autoRemove = new AutoRemove();
                     event.getMessage().getMentionedUsers().forEach(user -> {
                         autoRemove.removeUser(user.getId());
                     });
+                     */
+                    SQLHandler sqlHandler = new SQLHandler();
+                    sqlHandler.setDate(args[1],args[2]);
+
                 }
             }catch(PermissionException e){
             }catch(IndexOutOfBoundsException e){

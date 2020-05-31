@@ -27,7 +27,7 @@ public class OnlineStatusListener extends ListenerAdapter {
                 String lastSeen = HiveBot.sqlHandler.getDate(event.getMember().getId());
 
                 //Initiate the formatter for formatting the date into a set format
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-YYYY");
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
                 //Get the current date
                 LocalDate currentDate = LocalDate.now();
                 //Format the current date into a set format

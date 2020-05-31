@@ -174,6 +174,8 @@ public class HiveBot{
             UptimeStatus task3 = new UptimeStatus(api);
             HoneyStatus task4 = new HoneyStatus(api,api.getGuildById("469330414121517056"));
 
+            AutoRemove autoRemoveTask = new AutoRemove();
+
 
             // Schedule Tasks
             Timer timer = new Timer();
@@ -181,6 +183,10 @@ public class HiveBot{
             timer.schedule(task2,60000,120000); // Default status
             timer.schedule(task3,90000,120000); // Uptime
             timer.schedule(task4,120000,120000); // Honey
+
+            Timer serverTaskTimer = new Timer();
+            //Schedule AutoRemove task to run every 6 hours
+            serverTaskTimer.schedule(autoRemoveTask,30000,21600000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

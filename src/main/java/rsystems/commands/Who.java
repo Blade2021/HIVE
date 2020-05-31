@@ -81,15 +81,6 @@ public class Who extends ListenerAdapter {
                         info.addField("Created",m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
                         info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
 
-                        //ArrayList<String> userroles = new ArrayList<>();
-                        StringBuilder roleString = new StringBuilder();
-                        for(Role r:m.getRoles()){
-                            //userroles.add(r.getName());
-                            roleString.append(r.getName()).append(", ");
-                        }
-                        //info.addField("Roles",userroles.toString(),false);
-                        info.addField("Roles",roleString.toString(),true);
-
                         info.setColor(Color.CYAN);
                         info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                         event.getChannel().sendMessage(info.build()).queue();
