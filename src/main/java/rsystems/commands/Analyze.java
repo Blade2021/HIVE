@@ -37,8 +37,9 @@ public class Analyze extends ListenerAdapter {
 
         //Analyzer command
         if(HiveBot.commands.get(11).checkCommand(event.getMessage().getContentRaw())){
-            if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(11).getRank()){
-                LOGGER.warning(HiveBot.commands.get(11).getCommand() + " called by " + event.getAuthor().getAsTag());
+            //Check rank of user for authorization
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(11))){
+
                 EmbedBuilder output = new EmbedBuilder();
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-YYYY");
                 LocalDate currentDate = LocalDate.now();
@@ -84,8 +85,6 @@ public class Analyze extends ListenerAdapter {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-            }else {
-                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
             }
         }
     }

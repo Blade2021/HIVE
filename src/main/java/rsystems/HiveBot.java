@@ -51,7 +51,7 @@ public class HiveBot{
     //Initiate Logger
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public static void main(String[] args) throws LoginException, IOException {
+    public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_PRESENCES)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -151,10 +151,14 @@ public class HiveBot{
         commands.add(new Command("Resign")); //38
         commands.add(new Command("getAssignableRoles")); //39
         commands.add(new Command("localPoll")); //40
-        commands.add(new Command("checkdb")); // 41
+        commands.add(new Command("CheckDB")); // 41
         commands.add(new Command("getDBUsers")); // 42
         commands.add(new Command("setDBUsername")); // 43
-        commands.add(new Command("removeDBUser")); // 43
+        commands.add(new Command("removeDBUser")); // 44
+        commands.add(new Command("getDBdate")); // 45
+        commands.add(new Command("getDBData")); // 46
+        commands.add(new Command("Test")); // 47
+
 
         CommandData commandData = new CommandData();
 

@@ -327,7 +327,7 @@
     "minArgCount": 0,
     "commandType": "utility-admin"
   },
-  "checkDB": {
+  "CheckDB": {
     "rank": 1,
     "alias": [],
     "syntax": "checkDB",
@@ -358,5 +358,29 @@
     "description": "Remove a user from the DB.",
     "minArgCount": 0,
     "commandType": "user-control"
+  },
+  "getDBdate": {
+    "rank": 3,
+    "alias": [],
+    "syntax": "getDBdate id",
+    "description": "Get the last seen date of the user specified.",
+    "minArgCount": 1,
+    "commandType": "user-control"
+  },
+  "getDBData": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "getDBData",
+    "description": "Get all data from dB",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "Test": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "bot-control"
   }
 }

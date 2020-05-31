@@ -16,9 +16,13 @@ public class AutoRemove {
 
         Guild guild = HiveBot.docGuild;
 
-        // If user has honorary role, ignore
-        if (guild.getMemberById(id).getRoles().contains(guild.getRoleById("716171458623307796"))) {
-            return;
+        try {
+            // If user has honorary role, ignore
+            if (guild.getMemberById(id).getRoles().contains(guild.getRoleById("716171458623307796"))) {
+                return;
+            }
+        } catch(NullPointerException e){
+            LOGGER.severe("Could not find honorary guild role");
         }
 
         ArrayList<Role> rolesToRemove = new ArrayList<>();

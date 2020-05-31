@@ -60,9 +60,8 @@ public class Who extends ListenerAdapter {
         }
 
         if((args.length > 1) && (HiveBot.commands.get(22).checkCommand(event.getMessage().getContentRaw()))){
-            LOGGER.info(HiveBot.commands.get(22).getCommand() + " called by " + event.getAuthor().getAsTag());
             try{
-                if(RoleCheck.getRank(event,Long.toString(event.getMember().getUser().getIdLong())) >= 1){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(22))){
                     event.getMessage().delete().queue();
                     List<Member> mentions = event.getMessage().getMentionedMembers();
                     EmbedBuilder info = new EmbedBuilder();

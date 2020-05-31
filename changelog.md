@@ -6,6 +6,7 @@
 - Added class for SQLite DB Handling
   - Added method to add privileged users to db automatically.
 - Added AutoRemove class to remove privileged roles from user for setting inactive status.
+- Centralized command logging and rank check
 
 ### 0.17.2
 - Changed info and reference triggers to allow to be called in private messages.

@@ -34,8 +34,7 @@ public class Poll extends ListenerAdapter {
 
         if(HiveBot.commands.get(10).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(10).getRank()){
-                    LOGGER.info(HiveBot.commands.get(10).getCommand() + " called by " + event.getAuthor().getAsTag());
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(10))){
 
                     // User has administrator rights
                     // GET Help with poll command
@@ -126,8 +125,6 @@ public class Poll extends ListenerAdapter {
                         URL=strawPoll.getPollURL(); // Store poll url into data
 
                     }
-                } else {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             } catch (NullPointerException e) {
                 e.printStackTrace();

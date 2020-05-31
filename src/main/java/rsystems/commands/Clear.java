@@ -29,7 +29,7 @@ public class Clear extends ListenerAdapter {
 
         if(HiveBot.commands.get(7).checkCommand(event.getMessage().getContentRaw())){
             try{
-                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(7).getRank()){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(7))){
                     if(args.length < 2){
                         // No Argument Detected, Post Helpful doc
                         EmbedBuilder info = new EmbedBuilder();
@@ -44,9 +44,6 @@ public class Clear extends ListenerAdapter {
                         LOGGER.warning(HiveBot.commands.get(7).getCommand() + "[" + args[1] + "]" + " called by " + event.getAuthor().getAsTag());
                         clearMessage(event, msgcount);
                     }
-                } else {
-                    // USER DOES NOT HAVE ADMIN RIGHTS
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             } catch (PermissionException e){
                 // Most likely missing embed permissions

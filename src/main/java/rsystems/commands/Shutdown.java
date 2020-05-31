@@ -25,8 +25,7 @@ public class Shutdown extends ListenerAdapter {
 
         if(HiveBot.commands.get(0).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(0).getRank()){
-                    LOGGER.severe(HiveBot.commands.get(0).getCommand() + " called by " + event.getAuthor().getAsTag());
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(0))){
                     event.getChannel().sendMessage("Shutting down...").queue();
                     System.out.println("Shut down called by " + event.getMessage().getAuthor().getName());
                     event.getJDA().shutdown();

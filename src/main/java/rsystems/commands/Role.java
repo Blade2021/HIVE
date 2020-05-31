@@ -27,8 +27,7 @@ public class Role extends ListenerAdapter {
 
         if(HiveBot.commands.get(8).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if(RoleCheck.getRank(event,event.getMember().getId()) >= HiveBot.commands.get(8).getRank()){
-                    LOGGER.info(HiveBot.commands.get(8).getCommand() + " called by " + event.getAuthor().getAsTag());
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(8))){
                     // User has administrator rights
                     if (args.length < HiveBot.commands.get(8).getMinimumArgCount()) {
                         // Not enough arguments (nothing to check)
@@ -45,10 +44,6 @@ public class Role extends ListenerAdapter {
 
                         getMemberRoles(event,roleName);
                     }
-                } else {
-                    // User does not have administrator rights
-                    event.getMessage().addReaction("\uD83D\uDEAB").queue();
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to this command.").queue();
                 }
             } catch (NullPointerException e) {
                 event.getChannel().sendMessage("Something went wrong...").queue();

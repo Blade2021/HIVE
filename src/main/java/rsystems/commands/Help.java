@@ -55,6 +55,8 @@ public class Help extends ListenerAdapter {
                         }
                         commandFound = true;
                     } else if ((c.getCommand().equalsIgnoreCase(args[1])) && (RoleCheck.getRank(event, event.getMember().getId()) < c.getRank())) {
+                        LOGGER.warning(event.getMember().getUser().getAsTag() + " tried to call a help command without access.  Command: " + c.getCommand());
+                        event.getMessage().addReaction("🚫").queue();
                         event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                         return;
                     }
