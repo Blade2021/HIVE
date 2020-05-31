@@ -32,8 +32,7 @@ public class AssignRole extends ListenerAdapter {
         if((args.length < 2) && (HiveBot.commands.get(9).checkCommand(event.getMessage().getContentRaw()))){
             try {
                 // Get user authorization level
-                if (RoleCheck.getRank(event, Long.toString(event.getMember().getUser().getIdLong())) >= 2) {
-                    LOGGER.info(HiveBot.commands.get(9).getCommand() + " called by " + event.getAuthor().getAsTag());
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(9))){
                     EmbedBuilder info = new EmbedBuilder();
                     info.setColor(Color.CYAN);
                     info.setTitle(HiveBot.prefix + "assign / " + HiveBot.prefix+ "resign" );
@@ -42,8 +41,6 @@ public class AssignRole extends ListenerAdapter {
                     info.addField("`Resign`",HiveBot.prefix + "resign RoleName " + event.getAuthor().getAsMention(),false);
                     event.getChannel().sendMessage(info.build()).queue();
                     info.clear();
-                } else {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
                 }
             } catch (InsufficientPermissionException e) {
                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
@@ -56,8 +53,7 @@ public class AssignRole extends ListenerAdapter {
         if((HiveBot.commands.get(9).checkCommand(event.getMessage().getContentRaw())) && (args.length > 2)){
             try {
                 // Get user authorization level
-                if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(9).getRank()) {
-                    LOGGER.severe(HiveBot.commands.get(9).getCommand() + " called by " + event.getAuthor().getAsTag());
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(9))){
                     // Initialize a boolean for return level
                     Boolean roleFound = false;
                     for (String role : aroles.getRoles()) {
@@ -83,9 +79,6 @@ public class AssignRole extends ListenerAdapter {
                     } else {
                         event.getMessage().addReaction("⚠").queue();
                     }
-                } else {
-                    event.getMessage().addReaction("🚫").queue();
-                    event.getChannel().sendMessage("You do not have access to that command").queue();
                 }
             } catch(NullPointerException e) {
 
@@ -99,8 +92,7 @@ public class AssignRole extends ListenerAdapter {
         if((HiveBot.commands.get(38).checkCommand(event.getMessage().getContentRaw())) && (args.length > 2)) {
                 try {
                     // Get user authorization level
-                    if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(38).getRank()) {
-                        LOGGER.severe(HiveBot.commands.get(38).getCommand() + " called by " + event.getAuthor().getAsTag());
+                    if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(38))){
 
                         // Initalize a boolean for return level
                         Boolean roleFound = false;
@@ -127,9 +119,6 @@ public class AssignRole extends ListenerAdapter {
                         } else {
                             event.getMessage().addReaction("⚠").queue();
                         }
-                    } else {
-                        event.getMessage().addReaction("🚫").queue();
-                        event.getChannel().sendMessage("You do not have access to that command").queue();
                     }
                 } catch (NullPointerException e) {
 
@@ -140,10 +129,8 @@ public class AssignRole extends ListenerAdapter {
 
         //getAssignableRoles Command
         if(HiveBot.commands.get(39).checkCommand(event.getMessage().getContentRaw())) {
-            if (RoleCheck.getRank(event, event.getMember().getId()) >= HiveBot.commands.get(39).getRank()) {
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(39))){
                 event.getChannel().sendMessage(aroles.getRoles().toString()).queue();
-            } else {
-                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that commmand").queue();
             }
         }
 

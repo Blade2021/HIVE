@@ -168,6 +168,10 @@ public class Info extends ListenerAdapter {
             }
 
         }
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + "overload")) {
+            event.getChannel().sendMessage("\"I suspect more that there's an infinite number of things devs can do, and finite time\" - Tinkerer").queue();
+        }
+
     }
 
     public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) throws PermissionException {

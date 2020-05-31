@@ -60,9 +60,8 @@ public class Who extends ListenerAdapter {
         }
 
         if((args.length > 1) && (HiveBot.commands.get(22).checkCommand(event.getMessage().getContentRaw()))){
-            LOGGER.info(HiveBot.commands.get(22).getCommand() + " called by " + event.getAuthor().getAsTag());
             try{
-                if(RoleCheck.getRank(event,Long.toString(event.getMember().getUser().getIdLong())) >= 1){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(22))){
                     event.getMessage().delete().queue();
                     List<Member> mentions = event.getMessage().getMentionedMembers();
                     EmbedBuilder info = new EmbedBuilder();
@@ -81,15 +80,6 @@ public class Who extends ListenerAdapter {
                         info.addField("Joined",m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
                         info.addField("Created",m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
                         info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
-
-                        //ArrayList<String> userroles = new ArrayList<>();
-                        StringBuilder roleString = new StringBuilder();
-                        for(Role r:m.getRoles()){
-                            //userroles.add(r.getName());
-                            roleString.append(r.getName()).append(", ");
-                        }
-                        //info.addField("Roles",userroles.toString(),false);
-                        info.addField("Roles",roleString.toString(),true);
 
                         info.setColor(Color.CYAN);
                         info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());

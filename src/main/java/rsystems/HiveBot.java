@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -12,6 +13,7 @@ import rsystems.adapters.*;
 import rsystems.commands.*;
 import rsystems.events.DocStream;
 import rsystems.events.Mentionable;
+import rsystems.events.OnlineStatusListener;
 import rsystems.events.WelcomeWagon;
 import rsystems.handlers.*;
 
@@ -30,6 +32,8 @@ public class HiveBot{
     private static Boolean streamMode = false;
     public static String docDUID = Config.get("docDUID");
 
+    public static Guild docGuild = null;
+
 
     // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
@@ -42,10 +46,12 @@ public class HiveBot{
 
     public static HallMonitor hallMonitor = new HallMonitor();
 
+    public static SQLHandler sqlHandler = new SQLHandler();
+
     //Initiate Logger
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public static void main(String[] args) throws LoginException, IOException {
+    public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_PRESENCES)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -58,6 +64,7 @@ public class HiveBot{
         api.addEventListener(new AssignRole());
         api.addEventListener(new Clear());
         api.addEventListener(new Code());
+        api.addEventListener(new DatabaseCommands());
         api.addEventListener(hallMonitor);
         api.addEventListener(new Mentionable());
         api.addEventListener(new Info());
@@ -68,7 +75,7 @@ public class HiveBot{
         api.addEventListener(new Poll());
         api.addEventListener(new ReferenceTrigger());
         api.addEventListener(new Role());
-        //api.addEventListener(new Say());
+        api.addEventListener(new Say());
         api.addEventListener(new LocalPoll());
         api.addEventListener(new Shutdown());
         api.addEventListener(new Status());
@@ -80,6 +87,7 @@ public class HiveBot{
         api.addEventListener(new WelcomeWagon());
         api.addEventListener(new Help());
         api.addEventListener(new Janitor());
+        api.addEventListener(new OnlineStatusListener());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 
@@ -143,6 +151,14 @@ public class HiveBot{
         commands.add(new Command("Resign")); //38
         commands.add(new Command("getAssignableRoles")); //39
         commands.add(new Command("localPoll")); //40
+        commands.add(new Command("CheckDB")); // 41
+        commands.add(new Command("getDBUsers")); // 42
+        commands.add(new Command("setDBUsername")); // 43
+        commands.add(new Command("removeDBUser")); // 44
+        commands.add(new Command("getDBdate")); // 45
+        commands.add(new Command("getDBData")); // 46
+        commands.add(new Command("Test")); // 47
+
 
         CommandData commandData = new CommandData();
 
@@ -150,11 +166,15 @@ public class HiveBot{
             // Wait for discord jda to completely load
             api.awaitReady();
 
+            docGuild = api.getGuildById("469330414121517056");
+
             //Load Tasks
             AutoStatus task1 = new AutoStatus(api,"Current Version: " + HiveBot.version);
             AutoStatus task2 = new AutoStatus(api,Config.get("activity"));
             UptimeStatus task3 = new UptimeStatus(api);
             HoneyStatus task4 = new HoneyStatus(api,api.getGuildById("469330414121517056"));
+
+            AutoRemove autoRemoveTask = new AutoRemove();
 
 
             // Schedule Tasks
@@ -163,6 +183,10 @@ public class HiveBot{
             timer.schedule(task2,60000,120000); // Default status
             timer.schedule(task3,90000,120000); // Uptime
             timer.schedule(task4,120000,120000); // Honey
+
+            Timer serverTaskTimer = new Timer();
+            //Schedule AutoRemove task to run every 6 hours
+            serverTaskTimer.schedule(autoRemoveTask,30000,21600000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
