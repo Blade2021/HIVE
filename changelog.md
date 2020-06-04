@@ -1,5 +1,10 @@
 # Change Log
 
+### 0.17.4
+- Introduced karma system
+  - Karma system was developed so members could give or take from other members to help show appreciation.
+
+
 ### 0.17.3
 - Changed referenceTriggers to send direct message unless -show used
 - Updated who command with more information

@@ -268,7 +268,8 @@
     "links": [
       "https://sonoff.tech/",
       "https://tinyurl.com/drzzs-sonoffbasic",
-      "https://tinyurl.com/drzzs-sonoffmini"
+      "https://tinyurl.com/drzzs-sonoffmini",
+      "https://tasmota.github.io/docs/devices/Sonoff-Basic/"
     ],
     "description": "Sonoff is a brand of smarthome products created by Itead.  They make a wide range of inexpensive smarthome gadgets, many are based upon the venerable ESP8266 microcontroller.\n\nSome of the most popular Sonoff producs are the Sonoff Basic and the Sonoff Mini, but they make a number of smaartplugs, wall switches, and in-wall controllable outlets.\n\nThe stock firmware uses an app called eWeLink, which integrates with Home Assistant.  If one does not wish to use the stock firmware, most of their products can be flashed with Tasmota, ESPHome, or other custom firmware.\n\n**CAUTION*\nMost Sonoff devices are used in conjunction with Mains voltages and can be very hazardous if mishandled. ",
     "category": [

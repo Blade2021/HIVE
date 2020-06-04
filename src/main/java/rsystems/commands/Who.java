@@ -79,6 +79,7 @@ public class Who extends ListenerAdapter {
                         info.addField("UserID",m.getId(),true);
                         info.addField("Joined",m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
                         info.addField("Created",m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
+                        info.addField("Karma:",String.valueOf(HiveBot.karmaSQLHandler.getKarma(m.getId())),true);
                         info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
 
                         info.setColor(Color.CYAN);

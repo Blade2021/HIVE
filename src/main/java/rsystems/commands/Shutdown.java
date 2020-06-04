@@ -6,6 +6,8 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.adapters.RoleCheck;
 
+import java.sql.SQLException;
+
 import static rsystems.HiveBot.LOGGER;
 
 public class Shutdown extends ListenerAdapter {
@@ -27,6 +29,11 @@ public class Shutdown extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(0))){
                     event.getChannel().sendMessage("Shutting down...").queue();
+                    try{
+                        HiveBot.sqlHandler.closeConnection();
+                    } catch(NullPointerException e){
+                        System.out.println("Could not find connection to DB");
+                    }
                     System.out.println("Shut down called by " + event.getMessage().getAuthor().getName());
                     event.getJDA().shutdown();
                 } else {

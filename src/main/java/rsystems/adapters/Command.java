@@ -82,14 +82,29 @@ public class Command {
         this.alias.clear();
     }
 
-    public boolean checkCommand(String message){
+    public boolean checkCommand(String message) {
         String[] args = message.split("\\s+");
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + this.command)){
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + this.command)) {
             return true;
         } else {
             final Boolean[] returnValue = {false};
             this.alias.forEach(alias -> {
-                if(args[0].equalsIgnoreCase(HiveBot.prefix + alias)){
+                if (args[0].equalsIgnoreCase(HiveBot.prefix + alias)) {
+                    returnValue[0] = true;
+                }
+            });
+            return returnValue[0];
+        }
+    }
+
+    public boolean checkCommand(String message, String prefix) {
+        String[] args = message.split("\\s+");
+        if (args[0].equalsIgnoreCase(prefix + this.command)) {
+            return true;
+        } else {
+            final Boolean[] returnValue = {false};
+            this.alias.forEach(alias -> {
+                if (args[0].equalsIgnoreCase(prefix + alias)) {
                     returnValue[0] = true;
                 }
             });

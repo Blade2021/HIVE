@@ -16,6 +16,7 @@ import rsystems.handlers.SQLHandler;
 
 import java.awt.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
@@ -63,6 +64,7 @@ public class AdminInfo extends ListenerAdapter {
                         ArrayList<String> utilityCommands = new ArrayList<>();
                         ArrayList<String> botCommands = new ArrayList<>();
                         ArrayList<String> userCommands = new ArrayList<>();
+                        ArrayList<String> karmaCommands = new ArrayList<>();
 
                         //Assign the commands to categories
                         for(Command c:HiveBot.commands){
@@ -80,6 +82,10 @@ public class AdminInfo extends ListenerAdapter {
                                     if (c.getCommandType().equalsIgnoreCase("user-control")) {
                                         //info.addField("",c.getCommand(),true);
                                         userCommands.add(c.getCommand());
+                                    }
+                                    if (c.getCommandType().equalsIgnoreCase("karma-admin")) {
+                                        //info.addField("",c.getCommand(),true);
+                                        karmaCommands.add(c.getCommand());
                                     }
                                 } catch (NullPointerException e){
                                     System.out.println("Found null for command" + c.getCommand());
@@ -102,9 +108,15 @@ public class AdminInfo extends ListenerAdapter {
                             userString.append(s).append("\n");
                         }
 
+                        StringBuilder karmaString = new StringBuilder();
+                        for(String s:karmaCommands){
+                            karmaString.append(s).append("\n");
+                        }
+
                         info.addField("Utility", utilityString.toString(),true);
                         info.addField("Bot Control",botString.toString(),true);
                         info.addField("User Control",userString.toString(),true);
+                        info.addField("Karma Admin",karmaString.toString(),true);
 
                         info.setFooter("Please use these commands responsibly", event.getMember().getUser().getAvatarUrl());
                         info.setColor(Color.RED);
@@ -327,15 +339,7 @@ public class AdminInfo extends ListenerAdapter {
         if(HiveBot.commands.get(47).checkCommand(event.getMessage().getContentRaw())){
             try {
                 if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(47))){
-                    /*
-                    AutoRemove autoRemove = new AutoRemove();
-                    event.getMessage().getMentionedUsers().forEach(user -> {
-                        autoRemove.removeUser(user.getId());
-                    });
-                     */
-                    SQLHandler sqlHandler = new SQLHandler();
-                    sqlHandler.setDate(args[1],args[2]);
-
+                    HiveBot.karmaSQLHandler.setDate("KARMA",args[1],args[2]);
                 }
             }catch(PermissionException e){
             }catch(IndexOutOfBoundsException e){

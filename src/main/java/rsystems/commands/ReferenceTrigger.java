@@ -104,7 +104,10 @@ public class ReferenceTrigger extends ListenerAdapter {
         try {
             EmbedBuilder info = new EmbedBuilder();
             info.setTitle("HIVE Reference List");
-            info.setDescription("https://github.com/Blade2021/HIVE-RefData");
+            info.setDescription("https://github.com/Blade2021/HIVE-RefData\n\nHow do I use these?\n" +
+                    "Just type ~ then the reference you'd like to grab. \n" +
+                    "HIVE will send you a DM (Direct Message) with the information. \n" +
+                    "Example: ~mqtt");
             info.setColor(Color.CYAN);
             info.addField("", output1.toString(), true);
             info.addField("", output2.toString(), true);

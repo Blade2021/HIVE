@@ -200,6 +200,7 @@ public class Info extends ListenerAdapter {
                 ArrayList<String> utilityCommands = new ArrayList<>();
                 ArrayList<String> infoCommands = new ArrayList<>();
                 ArrayList<String> funCommands = new ArrayList<>();
+                ArrayList<String> karmaCommands = new ArrayList<>();
 
                 //Assign the commands to categories
                 for (Command c : HiveBot.commands) {
@@ -213,6 +214,9 @@ public class Info extends ListenerAdapter {
                             }
                             if (c.getCommandType().equalsIgnoreCase("fun")) {
                                 funCommands.add(c.getCommand());
+                            }
+                            if (c.getCommandType().equalsIgnoreCase("karma")) {
+                                karmaCommands.add(c.getCommand());
                             }
                         } catch (NullPointerException e) {
                             System.out.println("Found null for command: " + c.getCommand());
@@ -235,9 +239,15 @@ public class Info extends ListenerAdapter {
                     funString.append(s).append("\n");
                 }
 
+                StringBuilder karmaString = new StringBuilder();
+                for (String s : karmaCommands) {
+                    karmaString.append(s).append("\n");
+                }
+
                 info.addField("Utility", utilityString.toString(), true);
                 info.addField("Information", infoString.toString(), true);
                 info.addField("Fun", funString.toString(), true);
+                info.addField("Karma",karmaString.toString(),true);
 
                 info.setColor(Color.CYAN);
                 channel.sendMessage(info.build()).queue(

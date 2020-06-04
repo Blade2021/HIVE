@@ -359,10 +359,10 @@
     "minArgCount": 0,
     "commandType": "user-control"
   },
-  "getDBdate": {
+  "getLSDate": {
     "rank": 3,
     "alias": [],
-    "syntax": "getDBdate id",
+    "syntax": "getLSDate id",
     "description": "Get the last seen date of the user specified.",
     "minArgCount": 1,
     "commandType": "user-control"
@@ -382,5 +382,133 @@
     "description": "If you have to ask, you shouldn't use it.",
     "minArgCount": 0,
     "commandType": "bot-control"
+  },
+  "addKarma": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getKarma": {
+    "rank": 0,
+    "alias": [],
+    "syntax": "Test",
+    "description": "Check to see your Karma score.  Your karma is influenced by other users.  Try helping others to receive points from them.",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "setPoints": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "setKarma": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getPoints": {
+    "rank": 0,
+    "alias": [],
+    "syntax": "getPoints",
+    "description": "Check to see how many points you have to send karma to other users.",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "++": {
+    "rank": 0,
+    "alias": [],
+    "syntax": "++ @User",
+    "description": "Using this command, ++ @user or the Karma Positive reactions, you can use your points to influence another users karma.\n\nPlease use this RESPONSIBLY!",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "getUserKarma": {
+    "rank": 1,
+    "alias": ["getKarma"],
+    "syntax": "Test",
+    "description": "Get the current karma status of another user.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getUserPoints": {
+    "rank": 1,
+    "alias": ["getPoints"],
+    "syntax": "Test",
+    "description": "See how many points another user has.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getDBSize": {
+    "rank": 3,
+    "alias": [],
+    "syntax": "getDBSize",
+    "description": "Get the current KARMA table size.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "--": {
+    "rank": 0,
+    "alias": [],
+    "syntax": "-- @User",
+    "description": "Using this command, -- @user or the Karma Negative reactions, you can use your points to influence another users karma.\n\nPlease use this RESPONSIBLY!",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "masterOverride": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "masterOverride",
+    "description": "Master Override the database",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "pollOnlineUsers": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "pollOnlineUsers",
+    "description": "Grab all online users",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "deleteUser": {
+    "rank": 4,
+    "alias": [],
+    "syntax": "deleteUser",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getTop5": {
+    "rank": 1,
+    "alias": [],
+    "syntax": "getTop5",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "karma": {
+    "rank": 0,
+    "alias": [],
+    "syntax": "karma",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "getDate": {
+    "rank": 1,
+    "alias": [],
+    "syntax": "getDate | getDate @USER",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
   }
 }

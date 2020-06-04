@@ -11,10 +11,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rsystems.adapters.*;
 import rsystems.commands.*;
-import rsystems.events.DocStream;
-import rsystems.events.Mentionable;
-import rsystems.events.OnlineStatusListener;
-import rsystems.events.WelcomeWagon;
+import rsystems.events.*;
 import rsystems.handlers.*;
 
 import javax.security.auth.login.LoginException;
@@ -26,7 +23,9 @@ import java.util.logging.Logger;
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.17.3";
+    public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
+    public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
+    public static String version = "0.17.4";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
@@ -43,10 +42,12 @@ public class HiveBot{
     public static MessageCheck messageCheck = new MessageCheck();
     // Load Reference data
     public static ReferenceLoader referenceLoader = new ReferenceLoader();
-
+    // Hall Monitor Object
     public static HallMonitor hallMonitor = new HallMonitor();
-
-    public static SQLHandler sqlHandler = new SQLHandler();
+    //SQL Interface
+    public static SQLHandler sqlHandler = new SQLHandler(Config.get("DATABASE_URL"));
+    //Karma SQL Interface
+    public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("DATABASE_URL"));
 
     //Initiate Logger
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -88,6 +89,8 @@ public class HiveBot{
         api.addEventListener(new Help());
         api.addEventListener(new Janitor());
         api.addEventListener(new OnlineStatusListener());
+        api.addEventListener(new KarmaInterface());
+        api.addEventListener(new ReactionListener());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 
@@ -155,11 +158,25 @@ public class HiveBot{
         commands.add(new Command("getDBUsers")); // 42
         commands.add(new Command("setDBUsername")); // 43
         commands.add(new Command("removeDBUser")); // 44
-        commands.add(new Command("getDBdate")); // 45
+        commands.add(new Command("getLSDate")); // 45
         commands.add(new Command("getDBData")); // 46
         commands.add(new Command("Test")); // 47
-
-
+        commands.add(new Command("addKarma")); // 48
+        commands.add(new Command("getKarma")); // 49
+        commands.add(new Command("setPoints")); // 50
+        commands.add(new Command("getPoints")); // 51
+        commands.add(new Command("setKarma")); // 52
+        commands.add(new Command("++")); // 53
+        commands.add(new Command("getUserKarma")); // 54
+        commands.add(new Command("getUserPoints")); // 55
+        commands.add(new Command("getDBSize")); // 56
+        commands.add(new Command("--")); // 57
+        commands.add(new Command("masterOverride")); // 58
+        commands.add(new Command("pollOnlineUsers")); // 59
+        commands.add(new Command("deleteUser")); // 60
+        commands.add(new Command("getTop5")); //61
+        commands.add(new Command("karma")); //62
+        commands.add(new Command("getDate")); //63
         CommandData commandData = new CommandData();
 
         try {
@@ -175,6 +192,7 @@ public class HiveBot{
             HoneyStatus task4 = new HoneyStatus(api,api.getGuildById("469330414121517056"));
 
             AutoRemove autoRemoveTask = new AutoRemove();
+            AddKarmaPoints addKarmaPoints = new AddKarmaPoints(docGuild);
 
 
             // Schedule Tasks
@@ -187,6 +205,8 @@ public class HiveBot{
             Timer serverTaskTimer = new Timer();
             //Schedule AutoRemove task to run every 6 hours
             serverTaskTimer.schedule(autoRemoveTask,30000,21600000);
+            serverTaskTimer.schedule(addKarmaPoints,600000,21600000);
+
 
         } catch (InterruptedException e) {
             e.printStackTrace();
