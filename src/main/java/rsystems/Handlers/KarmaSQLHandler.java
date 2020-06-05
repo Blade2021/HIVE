@@ -1,14 +1,11 @@
 package rsystems.handlers;
 
-import rsystems.HiveBot;
+import rsystems.adapters.KarmaUserInfo;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.TreeMap;
+import java.util.Optional;
 
 public class KarmaSQLHandler extends SQLHandler {
 
@@ -100,10 +97,10 @@ public class KarmaSQLHandler extends SQLHandler {
             if (availableKarma >= 1) {
 
                 if (direction) {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1 WHERE ID = " + sender);
+                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender);
                     st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver);
                 } else {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1 WHERE ID = " + sender);
+                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender);
                     st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver);
                 }
                 return true;
@@ -215,7 +212,7 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
-    public Map<String, Integer> getTopFive(){
+    public Map<String, Integer> getTopTen(){
         Map<String, Integer> topRank = new LinkedHashMap<>();
         try {
             if ((connection == null) || (connection.isClosed())) {
@@ -223,7 +220,7 @@ public class KarmaSQLHandler extends SQLHandler {
             }
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NAME, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC LIMIT 5");
+            ResultSet rs = st.executeQuery("SELECT NAME, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC LIMIT 10");
             while(rs.next()){
                 topRank.put(rs.getString("NAME"),rs.getInt("USER_KARMA"));
             }
@@ -233,5 +230,33 @@ public class KarmaSQLHandler extends SQLHandler {
         }
 
         return topRank;
+    }
+
+    public KarmaUserInfo userInfo(String id){
+        KarmaUserInfo userInfoObject = new KarmaUserInfo();
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ID, NAME, USER_KARMA, AV_POINTS, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + id);
+            while(rs.next()){
+                userInfoObject.setId(rs.getLong("ID"));
+                userInfoObject.setName(rs.getString("NAME"));
+                userInfoObject.setKarma(rs.getInt("USER_KARMA"));
+                userInfoObject.setAvailable_points(rs.getInt("AV_POINTS"));
+                userInfoObject.setKsent_pos(rs.getInt("KSEND_POS"));
+                userInfoObject.setKsent_neg(rs.getInt("KSEND_NEG"));
+
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        if(userInfoObject.getId() > 0) {
+            return userInfoObject;
+        }
+        return null;
     }
 }

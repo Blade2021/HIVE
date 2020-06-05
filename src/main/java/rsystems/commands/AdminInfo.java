@@ -7,18 +7,12 @@ import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.JSONObject;
 import rsystems.Config;
-import rsystems.adapters.AutoRemove;
 import rsystems.adapters.Command;
 import rsystems.adapters.RoleCheck;
 import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
-import rsystems.handlers.SQLHandler;
 
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -338,9 +332,13 @@ public class AdminInfo extends ListenerAdapter {
         //Test command
         if(HiveBot.commands.get(47).checkCommand(event.getMessage().getContentRaw())){
             try {
+                /*
                 if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(47))){
                     HiveBot.karmaSQLHandler.setDate("KARMA",args[1],args[2]);
                 }
+                */
+
+                HiveBot.karmaLogger.info("debug");
             }catch(PermissionException e){
             }catch(IndexOutOfBoundsException e){
                 event.getChannel().sendMessage("Missing parameter").queue();

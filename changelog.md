@@ -3,6 +3,8 @@
 ### 0.17.4
 - Introduced karma system
   - Karma system was developed so members could give or take from other members to help show appreciation.
+  - Admin karma commands added
+- Fixed bug with who command
 
 
 ### 0.17.3

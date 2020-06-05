@@ -35,9 +35,9 @@ public class OnlineStatusListener extends ListenerAdapter {
             //Insert new user if not found in DB
             if (lastSeenKarma.isEmpty()) {
                 if (karmaSQLHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
-                    LOGGER.severe("Failed to add " + event.getUser().getAsTag() + " to honeyCombDB");
+                    karmaLogger.severe("Failed to add " + event.getUser().getAsTag() + " to honeyCombDB");
                 } else {
-                    LOGGER.info("Added " + event.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
+                    karmaLogger.info("Added " + event.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
                     karmaSQLHandler.overrideKarmaPoints(event.getMember().getId(), 5);
                 }
             } else {

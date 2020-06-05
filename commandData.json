@@ -183,10 +183,10 @@
     "minArgCount": 0,
     "commandType": "botControl"
   },
-  "Who": {
+  "AdminWho": {
     "rank": 1,
-    "alias": [],
-    "syntax": "who",
+    "alias": ["who"],
+    "syntax": "who | who @USER | who id",
     "description": "Get details about a user.  This will output the user's roles, join date, and UserID",
     "minArgCount": 1,
     "commandType": "user-control"
@@ -487,10 +487,10 @@
     "minArgCount": 0,
     "commandType": "karma-admin"
   },
-  "getTop5": {
-    "rank": 1,
-    "alias": [],
-    "syntax": "getTop5",
+  "getTopTen": {
+    "rank": 0,
+    "alias": ["getTop10"],
+    "syntax": "getTopTen",
     "description": "",
     "minArgCount": 0,
     "commandType": "karma"
@@ -507,6 +507,14 @@
     "rank": 1,
     "alias": [],
     "syntax": "getDate | getDate @USER",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "getKUserInfo": {
+    "rank": 3,
+    "alias": [],
+    "syntax": "getKUserInfo",
     "description": "",
     "minArgCount": 0,
     "commandType": "karma"

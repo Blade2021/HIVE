@@ -49,8 +49,10 @@ public class HiveBot{
     //Karma SQL Interface
     public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("DATABASE_URL"));
 
-    //Initiate Logger
+    //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    public final static Logger karmaLogger = Logger.getLogger("karmaLogger");
 
     public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
@@ -100,6 +102,7 @@ public class HiveBot{
 
         try{
             MyLogger.setup();
+            MyLogger.setup("karmaLogger");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -135,7 +138,7 @@ public class HiveBot{
         commands.add(new Command("Twitchsub")); // 19
         commands.add(new Command("Stats")); // 20
         commands.add(new Command("Getdata")); // 21
-        commands.add(new Command("Who")); // 22
+        commands.add(new Command("AdminWho")); // 22
         commands.add(new Command("Help")); // 23
         commands.add(new Command("SendMarkers")); //24
         commands.add(new Command("GetStreamMode")); // 25
@@ -174,9 +177,10 @@ public class HiveBot{
         commands.add(new Command("masterOverride")); // 58
         commands.add(new Command("pollOnlineUsers")); // 59
         commands.add(new Command("deleteUser")); // 60
-        commands.add(new Command("getTop5")); //61
+        commands.add(new Command("getTopTen")); //61
         commands.add(new Command("karma")); //62
         commands.add(new Command("getDate")); //63
+        commands.add(new Command("getKUserInfo")); //64
         CommandData commandData = new CommandData();
 
         try {

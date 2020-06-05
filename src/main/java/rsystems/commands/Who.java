@@ -59,36 +59,60 @@ public class Who extends ListenerAdapter {
 
         }
 
+        //Admin Who command
         if((args.length > 1) && (HiveBot.commands.get(22).checkCommand(event.getMessage().getContentRaw()))){
             try{
                 if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(22))){
-                    event.getMessage().delete().queue();
-                    List<Member> mentions = event.getMessage().getMentionedMembers();
-                    EmbedBuilder info = new EmbedBuilder();
-                    for(Member m: mentions){
-                        info.setTitle("User Information");
-                        info.addField("User: ",m.getAsMention(),true);
-                        String nickname = "Not set";
-                        try{
-                            if(!m.getNickname().isEmpty()) {
-                                nickname = m.getNickname();
-                            }
-                        } catch(NullPointerException e){
-                        }
-                        info.addField("Nickname",nickname,true);
-                        info.addField("UserID",m.getId(),true);
-                        info.addField("Joined",m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
-                        info.addField("Created",m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
-                        info.addField("Karma:",String.valueOf(HiveBot.karmaSQLHandler.getKarma(m.getId())),true);
-                        info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
-
-                        info.setColor(Color.CYAN);
-                        info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
-                        event.getChannel().sendMessage(info.build()).queue();
-                        info.clear();
+                    try {
+                        event.getMessage().delete().queue();
+                    } catch(PermissionException e){
+                        // No delete permissions
                     }
-                } else {
-                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " You do not have access to that command").queue();
+                    if(event.getMessage().getMentionedMembers().size() > 0) {
+                        List<Member> mentions = event.getMessage().getMentionedMembers();
+                        EmbedBuilder info = new EmbedBuilder();
+                        for (Member m : mentions) {
+                            info.setTitle("User Information");
+                            info.addField("User: ", m.getAsMention(), true);
+                            String nickname = "Not set";
+                            try {
+                                if (!m.getNickname().isEmpty()) {
+                                    nickname = m.getNickname();
+                                }
+                            } catch (NullPointerException e) {
+                            }
+                            info.addField("Nickname", nickname, true);
+                            info.addField("UserID", m.getId(), true);
+                            info.addField("Joined", m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
+                            info.addField("Created", m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
+                            info.addField("Karma:", String.valueOf(HiveBot.karmaSQLHandler.getKarma(m.getId())), true);
+                            info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
+
+                            info.setColor(Color.CYAN);
+                            info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
+                            event.getChannel().sendMessage(info.build()).queue();
+                            info.clear();
+                        }
+                    } else {
+                        try{
+                            for(Member m:event.getGuild().getMembers()){
+                                if(m.getId().equalsIgnoreCase(args[1])){
+                                    EmbedBuilder info = new EmbedBuilder();
+                                    info.setTitle("User Information");
+                                    info.addField("User: ", m.getUser().getAsTag(), true);
+                                    info.addField("Name:", m.getEffectiveName(), true);
+                                    info.addField("UserID", m.getId(), true);
+                                    info.addField("Joined", m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
+                                    info.addField("Created", m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
+                                    info.addField("Karma:", String.valueOf(HiveBot.karmaSQLHandler.getKarma(m.getId())), true);
+                                    info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
+
+                                    event.getChannel().sendMessage(info.build()).queue();
+                                    info.clear();
+                                }
+                            }
+                        } catch (NullPointerException e){}
+                    }
                 }
             }
             catch(NullPointerException ignored){

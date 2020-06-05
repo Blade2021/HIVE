@@ -26,35 +26,34 @@ public class AddKarmaPoints extends TimerTask {
 
         for(Member member:guild.getMembers()){
 
-            if(member.getUser().isBot()){
-                return;
-            }
+            if(!member.getUser().isBot()) {
 
-            if(member.getOnlineStatus().equals(OnlineStatus.ONLINE)){
+                if (member.getOnlineStatus().equals(OnlineStatus.ONLINE)) {
 
-                //Initiate the formatter for formatting the date into a set format
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-                //Get the current date
-                LocalDate currentDate = LocalDate.now();
-                //Format the current date into a set format
-                String formattedCurrentDate = formatter.format(currentDate);
+                    //Initiate the formatter for formatting the date into a set format
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+                    //Get the current date
+                    LocalDate currentDate = LocalDate.now();
+                    //Format the current date into a set format
+                    String formattedCurrentDate = formatter.format(currentDate);
 
-                //Get the last date of karma increment
-                String lastSeenKarma = karmaSQLHandler.getDate(member.getId());
+                    //Get the last date of karma increment
+                    String lastSeenKarma = karmaSQLHandler.getDate(member.getId());
 
-                //Insert new user if not found in DB
-                if (lastSeenKarma.isEmpty()) {
-                    if (karmaSQLHandler.insertUser(member.getId(), member.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
-                        LOGGER.severe("Failed to add " + member.getUser().getAsTag() + " to honeyCombDB");
+                    //Insert new user if not found in DB
+                    if (lastSeenKarma.isEmpty()) {
+                        if (karmaSQLHandler.insertUser(member.getId(), member.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
+                            LOGGER.severe("Failed to add " + member.getUser().getAsTag() + " to honeyCombDB");
+                        } else {
+                            LOGGER.info("Added " + member.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
+                            karmaSQLHandler.overrideKarmaPoints(member.getId(), 5);
+                        }
                     } else {
-                        LOGGER.info("Added " + member.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
-                        karmaSQLHandler.overrideKarmaPoints(member.getId(), 5);
-                    }
-                } else {
-                    long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
-                    if (daysPassed >= 1) {
-                        karmaSQLHandler.addKarmaPoints(member.getId(),formattedCurrentDate);
-                        System.out.println("Adding point to user: " + member.getUser().getAsTag());
+                        long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
+                        if (daysPassed >= 1) {
+                            karmaSQLHandler.addKarmaPoints(member.getId(), formattedCurrentDate);
+                            System.out.println("Adding point to user: " + member.getUser().getAsTag());
+                        }
                     }
                 }
             }
