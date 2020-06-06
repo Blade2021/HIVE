@@ -97,99 +97,51 @@ public class KarmaInterface extends ListenerAdapter {
 
         //sendPositiveKarma
         if (args[0].equalsIgnoreCase(HiveBot.karmaPrefixPositive)) {
-            try {
-                if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(53))) {
-                    if(event.getMessage().getMentionedMembers().size() > 0) {
-                        event.getMessage().getMentionedMembers().forEach(member -> {
-                            try {
-                                // User is trying to give them self karma
-                                if (member.getId().equalsIgnoreCase(event.getMember().getId())) {
-                                    event.getMessage().addReaction("\uD83E\uDD54").queue();
-                                    event.getChannel().sendMessage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif \n\n" + event.getAuthor().getAsMention() + " You can't give karma to yourself!").queue(success -> {
-                                        success.delete().queueAfter(30, TimeUnit.SECONDS);
-                                    });
-                                    HiveBot.karmaLogger.warning(event.getMember().getUser().getAsTag() + " attempted to send karma to them self");
-                                    return;
 
-                                    // User is trying to give a bot karma
-                                } else if (member.getUser().isBot()) {
-                                    event.getMessage().addReaction("\uD83E\uDD54").queue();
-                                    event.getChannel().sendMessage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif \n\n" + event.getAuthor().getAsMention() + " You can't give karma to BoTs!").queue(success -> {
-                                        success.delete().queueAfter(30, TimeUnit.SECONDS);
-                                    });
-                                    HiveBot.karmaLogger.warning(event.getMember().getUser().getAsTag() + " attempted to send karma to a BOT");
-                                    return;
-                                } else {
-                                    if (HiveBot.karmaSQLHandler.updateKarma(event.getMember().getId(), member.getId(), true)) {
-                                        event.getMessage().addReaction("\uD83D\uDCE8").queue();
-                                        HiveBot.karmaLogger.info("Sending positive karma from: " + event.getMember().getId() + " to: " + member.getId());
-                                    } else {
-                                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + " sorry, looks like you don't have any points").queue();
-                                    }
-                                }
-
-                            } catch (NullPointerException e) {
-                                System.out.println("Found null");
-                            }
-                        });
-                    } else {
-                        try{
-                            if (HiveBot.karmaSQLHandler.updateKarma(event.getMember().getId(), args[1], true)) {
-                                event.getMessage().addReaction("\uD83D\uDCE8").queue();
-                                HiveBot.karmaLogger.info("Sending positive karma from: " + event.getMember().getId() + " to: " + args[1]);
-                            } else {
-                                event.getChannel().sendMessage(event.getAuthor().getAsMention() + " sorry, looks like you don't have any points").queue();
-                            }
-                        } catch (NullPointerException e){
-                            System.out.println("Found null when trying to send karma");
+            if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(53))) {
+                if (event.getMessage().getMentionedMembers().size() > 0) {
+                    event.getMessage().getMentionedMembers().forEach(member -> {
+                        try {
+                            runUpdateKarma(event.getMessage(), event.getMember(), member, true);
+                        } catch (NullPointerException e) {
+                            System.out.println("Found null when sending positive karma");
                         }
+                    });
+                } else {
+                    try {
+                        runUpdateKarma(event.getMessage(), event.getMember(), args[1], event.getGuild(), true);
+                    } catch (NullPointerException e) {
+                        System.out.println("Found null when trying to send karma");
+                    } catch (IndexOutOfBoundsException e) {
+                        event.getChannel().sendMessage("You didn't provide enough arguments").queue();
                     }
                 }
-            } catch (NullPointerException e) {
-                System.out.println("Found null");
             }
+
         }
 
         //sendNegativeKarma
         if (args[0].equalsIgnoreCase(HiveBot.karmaPrefixNegative)) {
-            try {
-                if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(57))) {
 
+            if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(57))) {
+                if (event.getMessage().getMentionedMembers().size() > 0) {
                     event.getMessage().getMentionedMembers().forEach(member -> {
                         try {
-                            // User is trying to give them self karma
-                            if (member.getId().equalsIgnoreCase(event.getMember().getId())) {
-                                event.getMessage().addReaction("\uD83E\uDD54").queue();
-                                event.getChannel().sendMessage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif \n\n" + event.getAuthor().getAsMention() + " You can't take karma from yourself!").queue(success -> {
-                                    success.delete().queueAfter(30, TimeUnit.SECONDS);
-                                });
-                                HiveBot.karmaLogger.warning(event.getMember().getUser().getAsTag() + " attempted to send karma to them self");
-                                return;
-                            // User is trying to give to a bot
-                            } else if (member.getUser().isBot()) {
-                                event.getMessage().addReaction("\uD83E\uDD54").queue();
-                                event.getChannel().sendMessage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif \n\n" + event.getAuthor().getAsMention() + " You can't take karma from BoTs!").queue(success -> {
-                                    success.delete().queueAfter(30, TimeUnit.SECONDS);
-                                });
-                                HiveBot.karmaLogger.warning(event.getMember().getUser().getAsTag() + " attempted to send karma to a BOT");
-                                return;
-                            } else {
-                            // Legit request
-                                if (HiveBot.karmaSQLHandler.updateKarma(event.getMember().getId(), member.getId(), false)) {
-                                    event.getMessage().addReaction("\uD83D\uDCE8").queue();
-                                    HiveBot.karmaLogger.info("Sending negative karma from: " + event.getMember().getId() + " to: " + member.getId());
-                                } else {
-                                    event.getChannel().sendMessage(event.getAuthor().getAsMention() + " sorry, looks like you don't have any points").queue();
-                                }
-                            }
+                            runUpdateKarma(event.getMessage(), event.getMember(), member, false);
                         } catch (NullPointerException e) {
-                            System.out.println("Found null");
+                            System.out.println("Found null when sending negative karma");
                         }
                     });
 
+                } else {
+                    try {
+                        runUpdateKarma(event.getMessage(), event.getMember(), args[1], event.getGuild(), false);
+                    } catch (NullPointerException e) {
+                        System.out.println("Found null when trying to send karma");
+                    } catch (IndexOutOfBoundsException e) {
+                        event.getChannel().sendMessage("You didn't provide enough arguments").queue();
+                    }
                 }
-            } catch (NullPointerException e) {
-                System.out.println("Found null");
             }
         }
 
@@ -369,10 +321,10 @@ public class KarmaInterface extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(64))) {
 
-                    if(event.getMessage().getMentionedMembers().size() > 0){
-                        getKarmaInfo(event.getGuild(), event.getMessage(),true,event.getMessage().getMentionedMembers().get(0).getUser().getId());
+                    if (event.getMessage().getMentionedMembers().size() > 0) {
+                        getKarmaInfo(event.getGuild(), event.getMessage(), true, event.getMessage().getMentionedMembers().get(0).getUser().getId());
                     } else {
-                        getKarmaInfo(event.getGuild(), event.getMessage(), true,args[1]);
+                        getKarmaInfo(event.getGuild(), event.getMessage(), true, args[1]);
                     }
                 }
             } catch (NullPointerException e) {
@@ -382,32 +334,32 @@ public class KarmaInterface extends ListenerAdapter {
 
 
         //Master Override
-        if(HiveBot.commands.get(58).checkCommand(event.getMessage().getContentRaw())){
+        if (HiveBot.commands.get(58).checkCommand(event.getMessage().getContentRaw())) {
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(58))){
-                    if(args[1].equalsIgnoreCase("points")) {
+                if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(58))) {
+                    if (args[1].equalsIgnoreCase("points")) {
                         if (HiveBot.karmaSQLHandler.masterOverridePoints(args[2])) {
                             event.getMessage().addReaction("\uD83D\uDCE8").queue();
                         }
                     }
 
-                    if(args[1].equalsIgnoreCase("karma")) {
+                    if (args[1].equalsIgnoreCase("karma")) {
                         if (HiveBot.karmaSQLHandler.masterOverrideKarma(args[2])) {
                             event.getMessage().addReaction("\uD83D\uDCE8").queue();
                         }
                     }
                 }
-            }catch(PermissionException e){
-            }catch(IndexOutOfBoundsException e){
+            } catch (PermissionException e) {
+            } catch (IndexOutOfBoundsException e) {
                 event.getChannel().sendMessage("Missing parameter").queue();
                 System.out.println("Missing parameter");
             }
         }
 
         // Query DB Size
-        if(HiveBot.commands.get(56).checkCommand(event.getMessage().getContentRaw())){
+        if (HiveBot.commands.get(56).checkCommand(event.getMessage().getContentRaw())) {
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(56))){
+                if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(56))) {
                     event.getChannel().sendMessage("Size: " + HiveBot.karmaSQLHandler.getDBSize() + " users").queue();
                 }
             } catch (NullPointerException e) {
@@ -455,18 +407,18 @@ public class KarmaInterface extends ListenerAdapter {
         }));
     }
 
-    private void getKarmaInfo(Guild guild, Message message, boolean source, String id){
+    private void getKarmaInfo(Guild guild, Message message, boolean source, String id) {
         KarmaUserInfo karmaUserInfo;
 
         karmaUserInfo = HiveBot.karmaSQLHandler.userInfo(id);
 
         EmbedBuilder userInfo = new EmbedBuilder();
-        userInfo.addField("Name: ",karmaUserInfo.getName(),true);
-        userInfo.addField("UID: ", karmaUserInfo.getId().toString(),true);
-        userInfo.addField("Karma: ", String.valueOf(karmaUserInfo.getKarma()),true);
-        userInfo.addField("Available Points: ", String.valueOf(karmaUserInfo.getAvailable_points()),true);
-        userInfo.addField("Positive Karma Sent: ", String.valueOf(karmaUserInfo.getKsent_pos()),true);
-        userInfo.addField("Negative Karma Sent: ", String.valueOf(karmaUserInfo.getKsent_neg()),true);
+        userInfo.addField("Name: ", karmaUserInfo.getName(), true);
+        userInfo.addField("UID: ", karmaUserInfo.getId().toString(), true);
+        userInfo.addField("Karma: ", String.valueOf(karmaUserInfo.getKarma()), true);
+        userInfo.addField("Available Points: ", String.valueOf(karmaUserInfo.getAvailable_points()), true);
+        userInfo.addField("Positive Karma Sent: ", String.valueOf(karmaUserInfo.getKsent_pos()), true);
+        userInfo.addField("Negative Karma Sent: ", String.valueOf(karmaUserInfo.getKsent_neg()), true);
         userInfo.setColor(Color.ORANGE);
         userInfo.setThumbnail(guild.getMemberById(id).getUser().getEffectiveAvatarUrl());
 
@@ -489,6 +441,117 @@ public class KarmaInterface extends ListenerAdapter {
         }));
 
         userInfo.clear();
+    }
+
+    // Run karma update using mentions
+    private void runUpdateKarma(Message message, Member sender, Member receiver, boolean direction) {
+        try {
+            // User is trying to give them self karma
+            if (sender.getId().equalsIgnoreCase(receiver.getId())) {
+                message.addReaction("\uD83E\uDD54").queue();
+                EmbedBuilder badMessage = new EmbedBuilder();
+                badMessage.setDescription(message.getAuthor().getAsMention() + " You can't give karma to yourself!");
+                badMessage.setImage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif");
+                message.getChannel().sendMessage(badMessage.build()).queue(success -> {
+                    success.delete().queueAfter(30, TimeUnit.SECONDS);
+                });
+                HiveBot.karmaLogger.warning(message.getMember().getUser().getAsTag() + " attempted to send karma to them self");
+                return;
+            }
+
+            // User is trying to give a BOT Karma
+            if (receiver.getUser().isBot()) {
+                message.addReaction("\uD83E\uDD54").queue();
+                EmbedBuilder badMessage = new EmbedBuilder();
+                badMessage.setDescription(message.getAuthor().getAsMention() + " You can't give karma to BoTs!");
+                badMessage.setImage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif");
+                message.getChannel().sendMessage(badMessage.build()).queue(success -> {
+                    success.delete().queueAfter(30, TimeUnit.SECONDS);
+                });
+                HiveBot.karmaLogger.warning(message.getMember().getUser().getAsTag() + " attempted to send karma to a BOT");
+                return;
+            }
+
+            // Try to execute request
+            int result = HiveBot.karmaSQLHandler.updateKarma(sender.getId(), receiver.getId(), direction);
+
+            // Check result of query
+            if (result == 4) {
+                // Karma sent successfully
+                message.addReaction("\uD83D\uDCE8").queue();
+                if (direction) {
+                    HiveBot.karmaLogger.info("Sending positive karma from: " + sender.getId() + " to: " + receiver.getId());
+                } else {
+                    HiveBot.karmaLogger.info("Sending negative karma from: " + sender.getId() + " to: " + receiver.getId());
+                }
+            } else if (result == 1) {
+                // Could not find user in DB
+                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " Sorry, I could not find that member in the karma DB").queue();
+            } else if (result == 2) {
+                // Sender did not have enough points
+                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " sorry, looks like you don't have any points").queue();
+            } else {
+                // SQL Error
+                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " Unknown error encountered.  Try again later").queue();
+            }
+        } catch (NullPointerException e) {
+        }
+    }
+
+    //Run karma update using ID
+    private void runUpdateKarma(Message message, Member sender, String receiver, Guild guild, boolean direction) {
+        try {
+            // User is trying to give them self karma
+            if (sender.getId().equalsIgnoreCase(receiver)) {
+                message.addReaction("\uD83E\uDD54").queue();
+                EmbedBuilder badMessage = new EmbedBuilder();
+                badMessage.setDescription(message.getAuthor().getAsMention() + " You can't give karma to yourself!");
+                badMessage.setImage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif");
+                message.getChannel().sendMessage(badMessage.build()).queue(success -> {
+                    success.delete().queueAfter(30, TimeUnit.SECONDS);
+                });
+                HiveBot.karmaLogger.warning(message.getMember().getUser().getAsTag() + " attempted to send karma to them self");
+                return;
+            }
+
+            // User is trying to give a BOT Karma
+            if (guild.getMemberById(receiver).getUser().isBot()) {
+                message.addReaction("\uD83E\uDD54").queue();
+                EmbedBuilder badMessage = new EmbedBuilder();
+                badMessage.setDescription(message.getAuthor().getAsMention() + " You can't give karma to BoTs!");
+                badMessage.setImage("https://cdn.discordapp.com/attachments/602040131079372825/717792573174841434/image0.gif");
+                message.getChannel().sendMessage(badMessage.build()).queue(success -> {
+                    success.delete().queueAfter(30, TimeUnit.SECONDS);
+                });
+                HiveBot.karmaLogger.warning(message.getMember().getUser().getAsTag() + " attempted to send karma to a BOT");
+                return;
+            }
+
+            // Try to execute request
+            int result = HiveBot.karmaSQLHandler.updateKarma(sender.getId(), receiver, direction);
+
+            // Check result of query
+            if (result == 4) {
+                // Karma sent successfully
+                message.addReaction("\uD83D\uDCE8").queue();
+                if (direction) {
+                    HiveBot.karmaLogger.info("Sending positive karma from: " + sender.getId() + " to: " + receiver);
+                } else {
+                    HiveBot.karmaLogger.info("Sending negative karma from: " + sender.getId() + " to: " + receiver);
+                }
+            } else if (result == 1) {
+                // Could not find user in DB
+                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " Sorry, I could not find that member in the karma DB").queue();
+            } else if (result == 2) {
+                // Sender did not have enough points
+                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " sorry, looks like you don't have any points").queue();
+            } else {
+                // SQL Error
+                message.getChannel().sendMessage(message.getAuthor().getAsMention() + " Unknown error encountered.  Try again later").queue();
+                System.out.println("Error encountered");
+            }
+        } catch (NullPointerException e) {
+        }
     }
 
 }

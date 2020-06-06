@@ -337,6 +337,7 @@ public class AdminInfo extends ListenerAdapter {
                     HiveBot.karmaSQLHandler.setDate("KARMA",args[1],args[2]);
                 }
                 */
+                event.getChannel().sendMessage("Rank: " + HiveBot.commands.get(47).getRank()).queue();
 
                 HiveBot.karmaLogger.info("debug");
             }catch(PermissionException e){

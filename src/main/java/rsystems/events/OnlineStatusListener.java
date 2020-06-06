@@ -43,8 +43,8 @@ public class OnlineStatusListener extends ListenerAdapter {
             } else {
                 long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
                 if (daysPassed >= 1) {
-                    karmaSQLHandler.addKarmaPoints(event.getMember().getId(),formattedCurrentDate);
-                } else if (event.getMember().getId().equalsIgnoreCase("313832264792539142")){
+                    karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate);
+                } else if (event.getMember().getId().equalsIgnoreCase("313832264792539142")) {
                     System.out.println("Days Passed: " + daysPassed);
                 }
             }
@@ -52,31 +52,38 @@ public class OnlineStatusListener extends ListenerAdapter {
 
             //Auto Remove Functions:
 
-            //Check to see if user is privileged
-            if (RoleCheck.getRank(event.getGuild(), event.getMember().getId()) >= 1) {
+            try {
+                // Only check for users on Doc's guild
+                if (event.getGuild().getId().equalsIgnoreCase(docGuild.getId())) {
 
-                //Query the DB here
-                String lastSeen = sqlHandler.getDate(event.getMember().getId());
+                    //Check to see if user is privileged
+                    if (RoleCheck.getRank(event.getGuild(), event.getMember().getId()) >= 1) {
 
-                //User doesn't exist in DB
-                if (lastSeen.isEmpty()) {
-                    if (sqlHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate)) {
-                        LOGGER.severe("Failed to add " + event.getUser().getAsTag() + " to honeyCombDB");
-                    } else {
-                        LOGGER.info("Added " + event.getUser().getAsTag() + " to honeyCombDB");
-                    }
-                } else {
-                    //Member already exists in DB
+                        //Query the DB here
+                        String lastSeen = sqlHandler.getDate(event.getMember().getId());
 
-                    //Last seen date does not equal current
-                    if (!formattedCurrentDate.equals(lastSeen)) {
+                        //User doesn't exist in DB
+                        if (lastSeen.isEmpty()) {
+                            if (sqlHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate)) {
+                                LOGGER.severe("Failed to add " + event.getUser().getAsTag() + " to honeyCombDB");
+                            } else {
+                                LOGGER.info("Added " + event.getUser().getAsTag() + " to honeyCombDB");
+                            }
+                        } else {
+                            //Member already exists in DB
 
-                        //Set date to current
-                        sqlHandler.setDate("LastSeenTable",event.getMember().getId(), formattedCurrentDate);
+                            //Last seen date does not equal current
+                            if (!formattedCurrentDate.equals(lastSeen)) {
+
+                                //Set date to current
+                                sqlHandler.setDate("LastSeenTable", event.getMember().getId(), formattedCurrentDate);
+                            }
+                        }
                     }
                 }
-            }
+            } catch (NullPointerException e){
 
+            }
         }
     }
 }

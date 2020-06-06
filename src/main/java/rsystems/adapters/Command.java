@@ -9,7 +9,7 @@ public class Command {
     protected String description;
     protected String syntax;
     protected int minimumArgCount;
-    protected int rank;
+    protected int rank = 4;
     protected String commandType;
     protected ArrayList<String> alias = new ArrayList<>();
 
