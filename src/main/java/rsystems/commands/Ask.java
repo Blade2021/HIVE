@@ -6,13 +6,16 @@ package rsystems.commands;
 */
 
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageHistory;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
+import java.awt.*;
 import java.util.List;
 
 import static rsystems.HiveBot.LOGGER;
@@ -21,6 +24,8 @@ public class Ask extends ListenerAdapter {
     String pullChannel = HiveBot.dataFile.getDatafileData().get("QuestionPullChannel").toString();
     String pushChannel = HiveBot.dataFile.getDatafileData().get("QuestionPushChannel").toString();
     String restreamID = HiveBot.dataFile.getData("RestreamID").toString();
+
+    private static int lastColor = 0;
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
@@ -36,7 +41,7 @@ public class Ask extends ListenerAdapter {
             }
 
             // Ask Command
-            if(HiveBot.commands.get(12).checkCommand(event.getMessage().getContentRaw())){
+            if(event.getMessage().getContentRaw().toLowerCase().contains(HiveBot.prefix+HiveBot.commands.get(12).getCommand().toLowerCase())){
                 LOGGER.info(HiveBot.commands.get(12).getCommand() + " called by " + event.getAuthor().getAsTag());
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();
@@ -46,6 +51,7 @@ public class Ask extends ListenerAdapter {
 
                 if(question.length() <= 5){
                     //Link was not long enough to verify
+                    System.out.println("Question was to short");
                     return;
                 }
 
@@ -55,7 +61,8 @@ public class Ask extends ListenerAdapter {
 
                 try{
                     //Get history of the past 20 messages
-                    List<Message> messages = textChannel.getHistory().retrievePast(20).complete();
+                    MessageHistory history = event.getChannel().getHistoryBefore(event.getMessageId(),100).limit(100).complete();
+                    List<Message> messages = history.getRetrievedHistory();
 
                     for(Message m:messages){
                         if(m.getContentRaw().contains(question)){
@@ -64,7 +71,45 @@ public class Ask extends ListenerAdapter {
                         }
                     }
                     //If current question was not found in messages
-                    textChannel.sendMessage(author + question).queue();
+                    EmbedBuilder questionBuilder = new EmbedBuilder();
+                    questionBuilder.setTitle("Requester: " + author);
+                    questionBuilder.addField("**Question**",question,false);
+
+                    switch(lastColor){
+                        case 0:
+                            questionBuilder.setColor(Color.ORANGE);
+                            break;
+                        case 1:
+                            questionBuilder.setColor(Color.CYAN);
+                            break;
+                        case 2:
+                            questionBuilder.setColor(Color.GRAY);
+                            break;
+                        case 3:
+                            questionBuilder.setColor(Color.GREEN);
+                            break;
+                        case 4:
+                            questionBuilder.setColor(Color.PINK);
+                            break;
+                        case 5:
+                            questionBuilder.setColor(Color.RED);
+                            break;
+                        case 6:
+                            questionBuilder.setColor(Color.BLUE);
+                            break;
+                        case 7:
+                            questionBuilder.setColor(Color.magenta);
+                            break;
+                    }
+
+                    if(lastColor >= 7){
+                        lastColor = 0;
+                    } else {
+                        lastColor++;
+                    }
+
+                    textChannel.sendMessage(questionBuilder.build()).queue();
+                    questionBuilder.clear();
                     event.getMessage().addReaction("\uD83D\uDCE8").queue();
                 }
                 catch(InsufficientPermissionException e){
@@ -101,14 +146,14 @@ public class Ask extends ListenerAdapter {
                 int closeBracketLocation = message.indexOf("]");
                 // Grab author, and strip youtube and twitch from author
                 author = message.substring(openBracketLocation+1,closeBracketLocation).replaceFirst("YouTube:","").replaceFirst("Twitch:","");
-                author = author + " : ";
+                //author = author + " : ";
             }
             catch (StringIndexOutOfBoundsException e){
                 System.out.println("Could not find author");
             }
         } else {
             author = event.getMessage().getAuthor().getName();
-            author = author + " : ";
+            //author = author + " : ";
         }
 
         return author;

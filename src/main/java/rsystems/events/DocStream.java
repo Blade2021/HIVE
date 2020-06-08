@@ -41,7 +41,7 @@ public class DocStream extends ListenerAdapter {
     }
 
     public static void sendMarkers(Guild guild){
-        ArrayList<String> markerChannels = new ArrayList<String>();
+        ArrayList<String> markerChannels = new ArrayList<>();
         markerChannels = HiveBot.dataFile.getArrayList("markerChannels");
         Date date = new Date();
         SimpleDateFormat ft = new SimpleDateFormat("MM.dd.yyyy 'at' hh:mm:ss a zzz");
@@ -49,7 +49,7 @@ public class DocStream extends ListenerAdapter {
         for(String s:markerChannels){
             try{
                 TextChannel textChannel = guild.getTextChannelById(s);
-                textChannel.sendMessage("`STREAM MARKER`\n" + ft.format(date)).queue();
+                textChannel.sendMessage("☕ `STREAM MARKER` \n" + ft.format(date)).queue();
             } catch(NullPointerException e){
                 System.out.println("Could not find channel");
             }

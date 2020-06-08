@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 
 public class HiveBot{
     public static String prefix = Config.get("prefix");
+    public static String altPrefix = Config.get("altprefix");
     public static String helpPrefix = Config.get("helpprefix");
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
@@ -36,8 +37,10 @@ public class HiveBot{
 
     // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
+    //Extended Reference array
+    public static ArrayList<ExtendedReference> extendedReferences = new ArrayList<>();
     //Reference array
-    public static ArrayList<Reference> references = new ArrayList<Reference>();
+    public static ArrayList<Reference> references = new ArrayList<>();
     // Message Check Class
     public static MessageCheck messageCheck = new MessageCheck();
     // Load Reference data

@@ -3,54 +3,35 @@ package rsystems.adapters;
 import java.util.ArrayList;
 
 public class Reference {
-    private String refCode;
-    private String installString;
-    private String description;
-    private ArrayList<String> category;
-    private ArrayList<String> links;
-    private ArrayList<String> alias;
+    protected String referenceCommand;
+    protected String description;
+    protected ArrayList<String> aliases;
+    protected ArrayList<String> category;
 
-
-    public Reference(String refCode) {
-        this.refCode = refCode;
-    }
-
-    public Reference(String refCode, String installString) {
-        this.refCode = refCode;
-        this.installString = installString;
-    }
-
-    public Reference(String refCode, String installString, String description) {
-        this.refCode = refCode;
-        this.installString = installString;
+    public Reference(String referenceCommand, String description) {
+        this.referenceCommand = referenceCommand;
         this.description = description;
     }
 
-    public Reference(String refCode, String installString, String description, ArrayList<String>  category) {
-        this.refCode = refCode;
-        this.installString = installString;
+    public Reference(String referenceCommand, String description, ArrayList<String> aliases) {
+        this.referenceCommand = referenceCommand;
         this.description = description;
+        this.aliases = aliases;
+    }
+
+    public Reference(String referenceCommand, String description, ArrayList<String> aliases, ArrayList<String> category) {
+        this.referenceCommand = referenceCommand;
+        this.description = description;
+        this.aliases = aliases;
         this.category = category;
     }
 
-    public Reference(String refCode, String installString, String description, ArrayList<String>  category, ArrayList<String> links) {
-        this.refCode = refCode;
-        this.installString = installString;
-        this.description = description;
-        this.category = category;
-        this.links = links;
+    public String getReferenceCommand() {
+        return referenceCommand;
     }
 
-    public String getRefCode() {
-        return refCode;
-    }
-
-    public String getInstallString() {
-        return installString;
-    }
-
-    public void setInstallString(String installString) {
-        this.installString = installString;
+    public void setReferenceCommand(String referenceCommand) {
+        this.referenceCommand = referenceCommand;
     }
 
     public String getDescription() {
@@ -59,6 +40,18 @@ public class Reference {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public ArrayList<String> getAliases() {
+        return aliases;
+    }
+
+    public void setAliases(ArrayList<String> aliases) {
+        this.aliases = aliases;
+    }
+
+    public void addAlias(String alias){
+        this.aliases.add(alias);
     }
 
     public ArrayList<String> getCategory() {
@@ -71,29 +64,5 @@ public class Reference {
 
     public void addCategory(String category){
         this.category.add(category);
-    }
-
-    public ArrayList<String> getLinks() {
-        return links;
-    }
-
-    public void setLinks(ArrayList<String> links) {
-        this.links = links;
-    }
-
-    public void addLinks(String link){
-        this.links.add(link);
-    }
-
-    public ArrayList<String> getAlias() {
-        return alias;
-    }
-
-    public void setAlias(ArrayList<String> alias) {
-        this.alias = alias;
-    }
-
-    public void addAlias(String alias){
-        this.alias.add(alias);
     }
 }

@@ -2,9 +2,16 @@
 
 ### 0.17.4
 - Introduced karma system
-  - Karma system was developed so members could give or take from other members to help show appreciation.
+  - Karma system developed so members could give or take from other members to help show appreciation.
   - Admin karma commands added
-- Fixed bug with who command
+- Fixed a bug with who command
+- Fixed a bug with Ask command
+- Changed output of ask command to embedded message vs regular message.
+- Changed reference trigger to include all aliases WITH output
+- Fixed a bug with references
+- Renamed References to now Extended References
+- Added new References class to help support simple commands/output
+  - Added references.json file to support new commands
 
 
 ### 0.17.3

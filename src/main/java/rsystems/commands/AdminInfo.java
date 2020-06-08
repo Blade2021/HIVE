@@ -1,5 +1,6 @@
 package rsystems.commands;
 
+import com.sun.tools.javac.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
@@ -13,6 +14,9 @@ import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
 
 import java.awt.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.Logger;
 
@@ -332,14 +336,11 @@ public class AdminInfo extends ListenerAdapter {
         //Test command
         if(HiveBot.commands.get(47).checkCommand(event.getMessage().getContentRaw())){
             try {
-                /*
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(47))){
-                    HiveBot.karmaSQLHandler.setDate("KARMA",args[1],args[2]);
-                }
-                */
-                event.getChannel().sendMessage("Rank: " + HiveBot.commands.get(47).getRank()).queue();
+                EmbedBuilder info = new EmbedBuilder();
+                info.setDescription("[GitHub](http://github.com)");
 
-                HiveBot.karmaLogger.info("debug");
+                event.getChannel().sendMessage(info.build()).queue();
+                info.clear();
             }catch(PermissionException e){
             }catch(IndexOutOfBoundsException e){
                 event.getChannel().sendMessage("Missing parameter").queue();
@@ -358,5 +359,14 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
+    }
+    private File getJarFile() throws FileNotFoundException {
+        String path = Main.class.getResource(Main.class.getSimpleName() + ".class").getFile();
+        if(path.startsWith("/")) {
+            throw new FileNotFoundException("This is not a jar file: \n" + path);
+        }
+        path = ClassLoader.getSystemClassLoader().getResource(path).getFile();
+
+        return new File(path.substring(0, path.lastIndexOf('!')));
     }
 }

@@ -61,22 +61,24 @@ public class Info extends ListenerAdapter {
         //Request features or report bugs
         if (HiveBot.commands.get(18).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(18).getCommand() + " called by " + event.getAuthor().getAsTag());
-            event.getChannel().sendMessage("Request new features and notify of a bug on GitHub: https://github.com/Blade2021/HIVE/issues").queue();
+            event.getChannel().sendMessage("\uD83D\uDCA1 Wanna request a new feature, or found a bug, Submit an issue on GitHub: https://github.com/Blade2021/HIVE/issues").queue();
         }
 
         //Change Log Command
         if (HiveBot.commands.get(36).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(36).getCommand() + " called by " + event.getAuthor().getAsTag());
+            /*
             try {
-                event.getMessage().delete();
+                event.getMessage().delete().queue();
             } catch (PermissionException e) {
                 LOGGER.warning("Unable to delete trigger msg from " + event.getChannel().getName());
             }
+            */
 
             try {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
-                info.setTitle("HIVE ChangeLog");
+                info.setTitle("\uD83D\uDEE0 HIVE ChangeLog \uD83D\uDEE0 ");
                 info.setDescription("HIVE's changeLog can be found on the main github page: https://github.com/Blade2021/HIVE");
                 info.setFooter("Called by: " + event.getAuthor().getAsTag(), event.getMember().getUser().getAvatarUrl());
                 event.getChannel().sendMessage(info.build()).queue();
@@ -193,7 +195,7 @@ public class Info extends ListenerAdapter {
             {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setTitle("HIVE BoT Information V. " + HiveBot.version);
-                info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**\nNeed help with a command?  Just type " + HiveBot.prefix + "help [command]\n" + HiveBot.prefix + "help Who");
+                info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n**All commands ignore case for your convenience.**\nNeed help with a command?  Just type " + HiveBot.prefix + "help [command]\n" + HiveBot.prefix + "help Who\n\n[Command Wiki](https://github.com/Blade2021/HIVE/wiki/Commands-and-Abilities)");
                 info.setThumbnail(message.getJDA().getSelfUser().getAvatarUrl());
 
                 //Initialize categories for each type
@@ -241,13 +243,13 @@ public class Info extends ListenerAdapter {
 
                 StringBuilder karmaString = new StringBuilder();
                 for (String s : karmaCommands) {
-                    karmaString.append(s).append("\n");
+                    karmaString.append("").append(s).append("\n");
                 }
 
-                info.addField("Utility", utilityString.toString(), true);
-                info.addField("Information", infoString.toString(), true);
-                info.addField("Fun", funString.toString(), true);
-                info.addField("Karma",karmaString.toString(),true);
+                info.addField("Information", "```fix\n" + infoString.toString() + "\n```", true);
+                info.addField("Utility", "```fix\n" + utilityString.toString() + "\n```", true);
+                info.addField("Fun", "```fix\n" + funString.toString() + "\n```", true);
+                info.addField("Karma","```fix\n" + karmaString.toString() + "\n```",true);
 
                 info.setColor(Color.CYAN);
                 channel.sendMessage(info.build()).queue(
