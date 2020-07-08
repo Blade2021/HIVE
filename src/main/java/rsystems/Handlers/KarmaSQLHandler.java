@@ -3,9 +3,7 @@ package rsystems.handlers;
 import rsystems.adapters.KarmaUserInfo;
 
 import java.sql.*;
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 public class KarmaSQLHandler extends SQLHandler {
 
@@ -41,11 +39,30 @@ public class KarmaSQLHandler extends SQLHandler {
         return date;
     }
 
-    public void addKarmaPoints(String id, String date) {
+    public void addKarmaPoints(String id, String date, boolean staff) {
         try {
             Statement st = connection.createStatement();
 
-            st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS + 1 WHERE ID = " + id);
+            /*
+            ADD POINT TO USER FOR BEING ONLINE IF THEY AREN'T MAXED OUT
+             */
+
+            int availablePoints = 0;
+            ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + id);
+            // ID was found, get available points
+            while(rs.next()){
+                availablePoints = rs.getInt("AV_POINTS");
+            }
+
+            if(availablePoints < 10) {
+                if(staff){
+                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = 5 WHERE ID = " + id);
+                } else {
+                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS + 1 WHERE ID = " + id);
+                }
+            }
+
+            // SET DATE TO FINISH QUERY
             st.executeUpdate("UPDATE KARMA SET DATE = \"" + date + "\" WHERE ID = " + id);
 
         } catch (SQLException throwables) {
@@ -78,6 +95,30 @@ public class KarmaSQLHandler extends SQLHandler {
         return value;
     }
 
+    public String getUserTag(String id) {
+
+        String tag = null;
+
+        try {
+
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT NAME FROM KARMA WHERE ID = " + id);
+            while (rs.next()) {
+                tag = rs.getString("NAME");
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+
+        return tag;
+    }
+
     public int updateKarma(String sender, String receiver, Boolean direction) {
         //direction (True = Positive karma | False = Negative karma)
 
@@ -104,6 +145,7 @@ public class KarmaSQLHandler extends SQLHandler {
                 if (direction) {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender);
                     st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver);
+                    st.executeUpdate("INSERT INTO karmaTracker (ID) VALUES (" + receiver + ")");
 
                 } else {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender);
@@ -116,8 +158,9 @@ public class KarmaSQLHandler extends SQLHandler {
                 return 2;
             }
         } catch (SQLException throwables) {
-            System.out.println("Error:");
-            System.out.println(throwables.getMessage());
+            //System.out.println("Error:");
+            //System.out.println(throwables.getMessage());
+            throwables.getCause();
         } catch (NullPointerException e) {
             System.out.println("Could not find user");
         }
@@ -138,6 +181,28 @@ public class KarmaSQLHandler extends SQLHandler {
             System.out.println(throwables.getMessage());
         }
         return false;
+    }
+
+    public int checkKarmaRanking(String id){
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+
+            int indexesFound = 0;
+            ResultSet rs = st.executeQuery("SELECT COUNT(ID) FROM karmaTracker WHERE (ID = " + id + " AND DATE > (SELECT DATETIME('now', '-7 day')))");
+            while(rs.next()){
+                indexesFound = rs.getInt(1);
+            }
+
+            return indexesFound;
+
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return 0;
     }
 
     public boolean masterOverrideKarma(String value) {
@@ -270,5 +335,129 @@ public class KarmaSQLHandler extends SQLHandler {
             return userInfoObject;
         }
         return null;
+    }
+
+    public int getInt(String column,String id) {
+
+        int value = 0;
+
+        try {
+
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT " + column + " FROM KARMA WHERE ID = " + id);
+            while (rs.next()) {
+                value = rs.getInt(column);
+            }
+
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+
+        return value;
+    }
+
+    public boolean setInt(String id, String column,int value) {
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+            st.executeUpdate("UPDATE KARMA SET " + column + " = " + value + " WHERE ID = " + id);
+            return true;
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return false;
+    }
+
+    public boolean setType(String id,int type) {
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+
+            int currentType = 0;
+            ResultSet rs = st.executeQuery("SELECT KTYPE FROM KARMA WHERE ID = " + id);
+            while(rs.next()){
+                currentType = rs.getInt("KTYPE");
+            }
+
+            if(currentType < 4) {
+                st.executeUpdate("UPDATE KARMA SET KTYPE = " + type + " WHERE ID = " + id);
+                return true;
+            } else {
+                return false;
+            }
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return false;
+    }
+
+    public void clearTracking(){
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+            st.executeUpdate("DELETE FROM karmaTracker WHERE DATE < (SELECT DATETIME('now', '-7 day'))");
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+    }
+
+    public ArrayList<String> getActive() {
+        ArrayList<String> members = new ArrayList<>();
+
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ID FROM KARMA WHERE KTYPE >= 1");
+            while (rs.next()) {
+                members.add(String.valueOf(rs.getLong("ID")));
+            }
+
+        }catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+
+        return members;
+    }
+
+    public Map<String,Integer> getActiveUsers(){
+        Map<String, Integer> activeUsers = new HashMap<>();
+
+        try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT DISTINCT ID FROM karmaTracker WHERE (DATE > (SELECT DATETIME('now', '-7 day')))");
+            while (rs.next()) {
+                Statement nestedSt = connection.createStatement();
+                ResultSet nestedRs = nestedSt.executeQuery("SELECT ID, COUNT(ID) FROM karmaTracker WHERE (ID = " + rs.getLong("ID") + " AND DATE > (SELECT DATETIME('now', '-7 day')))");
+                while(nestedRs.next()){
+                    activeUsers.put(String.valueOf(rs.getLong("ID")),nestedRs.getInt(2));
+                }
+            }
+
+        }catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+
+        return activeUsers;
     }
 }

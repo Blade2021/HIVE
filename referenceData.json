@@ -100,9 +100,27 @@
       "docs github"
     ],
     "minRank": 0,
-    "description": "You can find the docs public github here: [Link](https://gist.github.com/Snipercaine)",
+    "description": "You can find the docs public github here: [Link](https://github.com/Snipercaine)",
     "category": [
       "user-base"
+    ]
+  },
+  "points": {
+    "alias": [
+    ],
+    "minRank": 0,
+    "description": "Points are used to give karma to other users.  Use ~getpoints to see how many points you have. [More information](https://github.com/Blade2021/HIVE/wiki/Karma)",
+    "category": [
+      "user-base"
+    ]
+  },
+  "suggestHelp": {
+    "alias": [
+    ],
+    "minRank": 0,
+    "description": "Wanna submit a suggestion?  Use ~suggest followed by your suggestion.  This will send your suggestion to our staff to review before being posted as a poll for the community to vote.",
+    "category": [
+      "information"
     ]
   }
 

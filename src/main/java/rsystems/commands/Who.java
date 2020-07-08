@@ -74,18 +74,13 @@ public class Who extends ListenerAdapter {
                         for (Member m : mentions) {
                             info.setTitle("User Information");
                             info.addField("User: ", m.getAsMention(), true);
-                            String nickname = "Not set";
-                            try {
-                                if (!m.getNickname().isEmpty()) {
-                                    nickname = m.getNickname();
-                                }
-                            } catch (NullPointerException e) {
-                            }
-                            info.addField("Nickname", nickname, true);
+                            info.setColor(Color.CYAN);
+                            info.addField("Tag", m.getUser().getAsTag(), true);
                             info.addField("UserID", m.getId(), true);
                             info.addField("Joined", m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
                             info.addField("Created", m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
                             info.addField("Karma:", String.valueOf(HiveBot.karmaSQLHandler.getKarma(m.getId())), true);
+                            info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                             info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
 
                             info.setColor(Color.CYAN);
@@ -99,12 +94,14 @@ public class Who extends ListenerAdapter {
                                 if(m.getId().equalsIgnoreCase(args[1])){
                                     EmbedBuilder info = new EmbedBuilder();
                                     info.setTitle("User Information");
-                                    info.addField("User: ", m.getUser().getAsTag(), true);
-                                    info.addField("Name:", m.getEffectiveName(), true);
+                                    info.setColor(Color.CYAN);
+                                    info.addField("User:", m.getEffectiveName(), true);
+                                    info.addField("Tag: ", m.getUser().getAsTag(), true);
                                     info.addField("UserID", m.getId(), true);
                                     info.addField("Joined", m.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
                                     info.addField("Created", m.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE), true);
                                     info.addField("Karma:", String.valueOf(HiveBot.karmaSQLHandler.getKarma(m.getId())), true);
+                                    info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                                     info.setThumbnail(m.getUser().getEffectiveAvatarUrl());
 
                                     event.getChannel().sendMessage(info.build()).queue();

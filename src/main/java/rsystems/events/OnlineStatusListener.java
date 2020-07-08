@@ -20,7 +20,10 @@ public class OnlineStatusListener extends ListenerAdapter {
         }
 
         if (event.getNewOnlineStatus().equals(OnlineStatus.ONLINE)) {
-            //Karma system
+
+            /*
+            KARMA SYSTEM
+             */
 
             //Initiate the formatter for formatting the date into a set format
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -43,14 +46,20 @@ public class OnlineStatusListener extends ListenerAdapter {
             } else {
                 long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
                 if (daysPassed >= 1) {
-                    karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate);
+                    if(RoleCheck.getRank(event.getGuild(),event.getMember().getId()) >= 1){
+                        karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate,true);
+                    } else {
+                        karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
+                    }
                 } else if (event.getMember().getId().equalsIgnoreCase("313832264792539142")) {
                     System.out.println("Days Passed: " + daysPassed);
                 }
             }
 
 
-            //Auto Remove Functions:
+            /*
+            STAFF AUTO REMOVE FUNCTIONS
+             */
 
             try {
                 // Only check for users on Doc's guild

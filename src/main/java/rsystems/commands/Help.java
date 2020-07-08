@@ -40,6 +40,7 @@ public class Help extends ListenerAdapter {
 
                 for (Command c : HiveBot.commands) {
                     if((c.helpCheck(args[1])) && (RoleCheck.getRank(event, event.getMember().getId()) >= c.getRank())){
+                        help.setColor(Color.YELLOW);
                         help.appendDescription(c.getDescription());
                         help.addField("`" + c.getCommand() + "`", "Syntax: " + c.getSyntax(), false);
                         try {

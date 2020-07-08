@@ -1,5 +1,6 @@
 {
   "shutdown": {
+    "id": 0,
     "rank": 3,
     "alias": ["sd"],
     "syntax": "shutdown",
@@ -8,6 +9,7 @@
     "commandType": "botControl"
   },
   "notify": {
+    "id": 1,
     "rank": 0,
     "alias": [],
     "syntax": "notify",
@@ -16,6 +18,7 @@
     "commandType": "utility"
   },
   "info": {
+    "id": 2,
     "rank": 0,
     "alias": [],
     "syntax": "info",
@@ -24,6 +27,7 @@
     "commandType": "information"
   },
   "who": {
+    "id": 3,
     "rank": 0,
     "alias": ["hive"],
     "syntax": "who",
@@ -32,6 +36,7 @@
     "commandType": "utility"
   },
   "ping": {
+    "id": 4,
     "rank": 0,
     "alias": [],
     "syntax": "ping",
@@ -40,6 +45,7 @@
     "commandType": "utility"
   },
   "code": {
+    "id": 5,
     "rank": 0,
     "alias": [],
     "syntax": "code",
@@ -48,6 +54,7 @@
     "commandType": "information"
   },
   "page": {
+    "id": 6,
     "rank": 2,
     "alias": [],
     "syntax": "page",
@@ -56,6 +63,7 @@
     "commandType": "utility-admin"
   },
   "clear": {
+    "id": 7,
     "rank": 3,
     "alias": [],
     "syntax": "clear [int]",
@@ -64,6 +72,7 @@
     "commandType": "server-control"
   },
   "role": {
+    "id": 8,
     "rank": 3,
     "alias": [],
     "syntax": "role [role]",
@@ -72,6 +81,7 @@
     "commandType": "utility-admin"
   },
   "assign": {
+    "id": 9,
     "rank": 2,
     "alias": [],
     "syntax": "assign [role] @user",
@@ -80,6 +90,7 @@
     "commandType": "user-control"
   },
   "resign": {
+    "id": 10,
     "rank": 2,
     "alias": [],
     "syntax": "resign [role] @user",
@@ -88,6 +99,7 @@
     "commandType": "user-control"
   },
   "poll": {
+    "id": 11,
     "rank": 1,
     "alias": [],
     "syntax": "poll [option1],[option2],[option3]",
@@ -96,6 +108,7 @@
     "commandType": "utility-admin"
   },
   "analyze": {
+    "id": 12,
     "rank": 3,
     "alias": [],
     "syntax": "analyze",
@@ -104,6 +117,7 @@
     "commandType": "utility-admin"
   },
   "ask": {
+    "id": 13,
     "rank": 0,
     "alias": [],
     "syntax": "ask [Question]",
@@ -112,6 +126,7 @@
     "commandType": "utility"
   },
   "admin": {
+    "id": 14,
     "rank": 1,
     "alias": [],
     "syntax": "admin",
@@ -120,6 +135,7 @@
     "commandType": "utility-admin"
   },
   "Threelawssafe": {
+    "id": 15,
     "rank": 0,
     "alias": ["botlaws"],
     "syntax": "threelawssafe",
@@ -128,6 +144,7 @@
     "commandType": "fun"
   },
   "Version": {
+    "id": 16,
     "rank": 0,
     "alias": [],
     "syntax": "version",
@@ -136,6 +153,7 @@
     "commandType": "information"
   },
   "Execute order 66": {
+    "id": 17,
     "rank": 0,
     "alias": ["execute"],
     "syntax": "execute order 66",
@@ -144,6 +162,7 @@
     "commandType": "fun"
   },
   "Rule34": {
+    "id": 18,
     "rank": 0,
     "alias": ["rule 34"],
     "syntax": "rule34",
@@ -152,6 +171,7 @@
     "commandType": "fun"
   },
   "Request": {
+    "id": 19,
     "rank": 0,
     "alias": ["bug","bugs","requests"],
     "syntax": "request",
@@ -160,6 +180,7 @@
     "commandType": "information"
   },
   "Twitchsub": {
+    "id": 20,
     "rank": 0,
     "alias": [],
     "syntax": "twitchsub",
@@ -168,6 +189,7 @@
     "commandType": "information"
   },
   "Stats": {
+    "id": 21,
     "rank": 1,
     "alias": [],
     "syntax": "stats",
@@ -176,6 +198,7 @@
     "commandType": "utility-admin"
   },
   "Getdata": {
+    "id": 22,
     "rank": 3,
     "alias": [],
     "syntax": "getdata | getdata [key]",
@@ -183,8 +206,9 @@
     "minArgCount": 0,
     "commandType": "botControl"
   },
-  "AdminWho": {
-    "rank": 1,
+  "WhoIs": {
+    "id": 23,
+    "rank": 0,
     "alias": ["who"],
     "syntax": "who | who @USER | who id",
     "description": "Get details about a user.  This will output the user's roles, join date, and UserID",
@@ -192,6 +216,7 @@
     "commandType": "user-control"
   },
   "Help": {
+    "id": 24,
     "rank": 0,
     "alias": [],
     "syntax": "help [command]",
@@ -200,6 +225,7 @@
     "commandType": "information"
   },
   "SendMarkers": {
+    "id": 25,
     "rank": 2,
     "alias": ["mark"],
     "syntax": "sendmarkers",
@@ -208,6 +234,7 @@
     "commandType": "utility-admin"
   },
   "getStreamMode": {
+    "id": 26,
     "rank": 1,
     "alias": ["getstmode"],
     "syntax": "getstreammode",
@@ -216,6 +243,7 @@
     "commandType": "botControl"
   },
   "setStreamMode": {
+    "id": 27,
     "rank": 2,
     "alias": ["setstmode"],
     "syntax": "setstreammode [boolean]",
@@ -224,6 +252,7 @@
     "commandType": "botControl"
   },
   "commands": {
+    "id": 28,
     "rank": 0,
     "alias": [],
     "syntax": "commmands",
@@ -232,6 +261,7 @@
     "commandType": "information"
   },
   "sponge": {
+    "id": 29,
     "rank": 1,
     "alias": [],
     "syntax": "sponge [text]",
@@ -240,6 +270,7 @@
     "commandType": "botControl"
   },
   "welcome": {
+    "id": 30,
     "rank": 1,
     "alias": [],
     "syntax": "welcome",
@@ -248,6 +279,7 @@
     "commandType": "utility-admin"
   },
   "uptime": {
+    "id": 31,
     "rank": 0,
     "alias": ["ut"],
     "syntax": "uptime",
@@ -256,6 +288,7 @@
     "commandType": "information"
   },
   "updateReference": {
+    "id": 32,
     "rank": 1,
     "alias": ["updateRef"],
     "syntax": "updateReference",
@@ -264,6 +297,7 @@
     "commandType": "utility-admin"
   },
   "reloadAll": {
+    "id": 33,
     "rank": 4,
     "alias": [],
     "syntax": "reloadAll",
@@ -272,6 +306,7 @@
     "commandType": "botControl"
   },
   "appendData": {
+    "id": 34,
     "rank": 4,
     "alias": ["addData"],
     "syntax": "appendData [Key] [Value]",
@@ -280,6 +315,7 @@
     "commandType": "botControl"
   },
   "writeData": {
+    "id": 35,
     "rank": 4,
     "alias": [],
     "syntax": "writeData [Key] [Value]",
@@ -288,6 +324,7 @@
     "commandType": "botControl"
   },
   "removeData": {
+    "id": 36,
     "rank": 4,
     "alias": [],
     "syntax": "removeData [Key] | removeData [Key] [Value]",
@@ -296,6 +333,7 @@
     "commandType": "botControl"
   },
   "Changelog": {
+    "id": 37,
     "rank": 0,
     "alias": ["cl"],
     "syntax": "changelog",
@@ -304,6 +342,7 @@
     "commandType": "information"
   },
   "ReferenceList": {
+    "id": 38,
     "rank": 0,
     "alias": ["refList"],
     "syntax": "ReferenceList",
@@ -312,6 +351,7 @@
     "commandType": "information"
   },
   "getAssignableRoles": {
+    "id": 39,
     "rank": 2,
     "alias": ["getaroles"],
     "syntax": "getAssignableRoles",
@@ -320,6 +360,7 @@
     "commandType": "user-control"
   },
   "localPoll": {
+    "id": 40,
     "rank": 2,
     "alias": [],
     "syntax": "localPoll",
@@ -328,6 +369,7 @@
     "commandType": "utility-admin"
   },
   "CheckDB": {
+    "id": 41,
     "rank": 1,
     "alias": [],
     "syntax": "checkDB",
@@ -336,6 +378,7 @@
     "commandType": "utility-admin"
   },
   "getDBUsers": {
+    "id": 42,
     "rank": 4,
     "alias": [],
     "syntax": "getDBUsers",
@@ -344,6 +387,7 @@
     "commandType": "user-control"
   },
   "setDBUsername": {
+    "id": 43,
     "rank": 4,
     "alias": [],
     "syntax": "setDBUsername",
@@ -352,6 +396,7 @@
     "commandType": "user-control"
   },
   "removeDBUser": {
+    "id": 44,
     "rank": 4,
     "alias": [],
     "syntax": "removeDBUser",
@@ -360,6 +405,7 @@
     "commandType": "user-control"
   },
   "getLSDate": {
+    "id": 45,
     "rank": 3,
     "alias": [],
     "syntax": "getLSDate id",
@@ -368,6 +414,7 @@
     "commandType": "user-control"
   },
   "getDBData": {
+    "id": 46,
     "rank": 4,
     "alias": [],
     "syntax": "getDBData",
@@ -376,7 +423,8 @@
     "commandType": "user-control"
   },
   "Test": {
-    "rank": 4,
+    "id": 47,
+    "rank": 3,
     "alias": [],
     "syntax": "Test",
     "description": "If you have to ask, you shouldn't use it.",
@@ -384,6 +432,7 @@
     "commandType": "bot-control"
   },
   "addKarma": {
+    "id": 48,
     "rank": 4,
     "alias": [],
     "syntax": "Test",
@@ -392,6 +441,7 @@
     "commandType": "karma-admin"
   },
   "getKarma": {
+    "id": 49,
     "rank": 0,
     "alias": [],
     "syntax": "Test",
@@ -400,6 +450,7 @@
     "commandType": "karma"
   },
   "setPoints": {
+    "id": 50,
     "rank": 4,
     "alias": [],
     "syntax": "Test",
@@ -408,6 +459,7 @@
     "commandType": "karma-admin"
   },
   "setKarma": {
+    "id": 51,
     "rank": 4,
     "alias": [],
     "syntax": "Test",
@@ -416,6 +468,7 @@
     "commandType": "karma-admin"
   },
   "getPoints": {
+    "id": 52,
     "rank": 0,
     "alias": [],
     "syntax": "getPoints",
@@ -424,6 +477,7 @@
     "commandType": "karma"
   },
   "++": {
+    "id": 53,
     "rank": 0,
     "alias": [],
     "syntax": "++ @User",
@@ -432,6 +486,7 @@
     "commandType": "karma"
   },
   "getUserKarma": {
+    "id": 54,
     "rank": 1,
     "alias": ["getKarma"],
     "syntax": "Test",
@@ -440,6 +495,7 @@
     "commandType": "karma-admin"
   },
   "getUserPoints": {
+    "id": 55,
     "rank": 1,
     "alias": ["getPoints"],
     "syntax": "Test",
@@ -448,6 +504,7 @@
     "commandType": "karma-admin"
   },
   "getDBSize": {
+    "id": 56,
     "rank": 3,
     "alias": [],
     "syntax": "getDBSize",
@@ -456,6 +513,7 @@
     "commandType": "karma-admin"
   },
   "--": {
+    "id": 57,
     "rank": 0,
     "alias": [],
     "syntax": "-- @User",
@@ -464,6 +522,7 @@
     "commandType": "karma"
   },
   "masterOverride": {
+    "id": 58,
     "rank": 4,
     "alias": [],
     "syntax": "masterOverride",
@@ -472,6 +531,7 @@
     "commandType": "karma-admin"
   },
   "pollOnlineUsers": {
+    "id": 59,
     "rank": 4,
     "alias": [],
     "syntax": "pollOnlineUsers",
@@ -480,6 +540,7 @@
     "commandType": "karma-admin"
   },
   "deleteUser": {
+    "id": 60,
     "rank": 4,
     "alias": [],
     "syntax": "deleteUser",
@@ -488,6 +549,7 @@
     "commandType": "karma-admin"
   },
   "getTopTen": {
+    "id": 61,
     "rank": 0,
     "alias": ["getTop10"],
     "syntax": "getTopTen",
@@ -496,6 +558,7 @@
     "commandType": "karma"
   },
   "karma": {
+    "id": 62,
     "rank": 0,
     "alias": [],
     "syntax": "karma",
@@ -504,6 +567,7 @@
     "commandType": "karma"
   },
   "getDate": {
+    "id": 63,
     "rank": 1,
     "alias": [],
     "syntax": "getDate | getDate @USER",
@@ -512,11 +576,138 @@
     "commandType": "karma"
   },
   "getKUserInfo": {
+    "id": 64,
     "rank": 3,
     "alias": [],
     "syntax": "getKUserInfo",
     "description": "",
     "minArgCount": 0,
     "commandType": "karma"
+  },
+  "cleanse": {
+    "id": 65,
+    "rank": 4,
+    "alias": [],
+    "syntax": "cleanse",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "nick": {
+    "id": 66,
+    "rank": 0,
+    "alias": [],
+    "syntax": "nick [desired nickname]",
+    "description": "Set your nickname on the server.  (No emojis or vulgar language allowed)",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "optout": {
+    "id": 67,
+    "rank": 0,
+    "alias": [],
+    "syntax": "optout | optout [true/false]",
+    "description": "Opt IN/OUT of including your karma rank emoji on your nickname in the server.",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "updateKarmaUsers": {
+    "id": 68,
+    "rank": 4,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "getActiveKarmaUsers": {
+    "id": 69,
+    "rank": 4,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "karmaShort": {
+    "id": 70,
+    "rank": 0,
+    "alias": ["ks"],
+    "syntax": "",
+    "description": "Get a short summary of how to use karma",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggest": {
+    "id": 71,
+    "rank": 0,
+    "alias": ["suggestion"],
+    "syntax": "suggest [Suggestion]",
+    "description": "Submit a suggestion.  This can be related to discord, HIVE, or anything stream related\n\n",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionAccept": {
+    "id": 72,
+    "rank": 1,
+    "alias": ["suggestAccept"],
+    "syntax": "suggestionAccept [Suggestion ID]",
+    "description": "Approve a suggestion request",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionReject": {
+    "id": 73,
+    "rank": 1,
+    "alias": ["suggestionReject"],
+    "syntax": "suggestionReject [Suggestion ID]",
+    "description": "Reject a suggestion request",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionStatus": {
+    "id": 74,
+    "rank": 4,
+    "alias": [""],
+    "syntax": "",
+    "description": "Get a short summary of how to use karma",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionApprove": {
+    "id": 75,
+    "rank": 3,
+    "alias": [""],
+    "syntax": "",
+    "description": "Approve a suggestion",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionDeny": {
+    "id": 76,
+    "rank": 3,
+    "alias": [""],
+    "syntax": "",
+    "description": "Deny a suggestion",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionOverrideMessage": {
+    "id": 77,
+    "rank": 4,
+    "alias": [""],
+    "syntax": "",
+    "description": "Get a short summary of how to use karma",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionsList": {
+    "id": 78,
+    "rank": 1,
+    "alias": ["suggestionList"],
+    "syntax": "",
+    "description": "Get a list of all OPEN suggestions",
+    "minArgCount": 0,
+    "commandType": "utility"
   }
 }

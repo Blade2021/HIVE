@@ -4,6 +4,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.channel.text.GenericTextChannelEvent;
+import net.dv8tion.jda.api.events.message.GenericMessageEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -19,8 +22,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static rsystems.HiveBot.LOGGER;
-import static rsystems.HiveBot.karmaSQLHandler;
+import static rsystems.HiveBot.*;
 
 public class KarmaInterface extends ListenerAdapter {
 
@@ -31,6 +33,7 @@ public class KarmaInterface extends ListenerAdapter {
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
+        /*
         //Karma Help command
         if (HiveBot.commands.get(62).checkCommand(event.getMessage().getContentRaw())) {
 
@@ -43,6 +46,26 @@ public class KarmaInterface extends ListenerAdapter {
                     } else {
                         karmaExplanation(event.getMessage(), false);
                     }
+                }
+            } catch (NullPointerException e) {
+                System.out.println("Found null");
+            }
+        }
+        */
+
+
+        //Karma Help command short
+        if (HiveBot.commands.get(70).checkCommand(event.getMessage().getContentRaw())) {
+
+            try {
+                if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(70))) {
+
+                    try{
+                        event.getMessage().delete().queue();
+                    } catch (NullPointerException | PermissionException e){};
+
+
+                    karmaExplanationShort(event.getMessage(),true);
                 }
             } catch (NullPointerException e) {
                 System.out.println("Found null");
@@ -96,13 +119,14 @@ public class KarmaInterface extends ListenerAdapter {
         }
 
         //sendPositiveKarma
-        if (args[0].equalsIgnoreCase(HiveBot.karmaPrefixPositive)) {
+        //if (args[0].equalsIgnoreCase(HiveBot.karmaPrefixPositive)) {
+        if(HiveBot.commands.get(53).checkCommand(event.getMessage().getContentRaw(), "")){
 
             if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(53))) {
                 if (event.getMessage().getMentionedMembers().size() > 0) {
                     event.getMessage().getMentionedMembers().forEach(member -> {
                         try {
-                            runUpdateKarma(event.getMessage(), event.getMember(), member, true);
+                            runUpdateKarma(event.getGuild(), event.getMessage(), event.getMember(), member, true);
                         } catch (NullPointerException e) {
                             System.out.println("Found null when sending positive karma");
                         }
@@ -127,7 +151,7 @@ public class KarmaInterface extends ListenerAdapter {
                 if (event.getMessage().getMentionedMembers().size() > 0) {
                     event.getMessage().getMentionedMembers().forEach(member -> {
                         try {
-                            runUpdateKarma(event.getMessage(), event.getMember(), member, false);
+                            runUpdateKarma(event.getGuild(), event.getMessage(), event.getMember(), member, false);
                         } catch (NullPointerException e) {
                             System.out.println("Found null when sending negative karma");
                         }
@@ -368,15 +392,21 @@ public class KarmaInterface extends ListenerAdapter {
 
     }
 
-    public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) throws PermissionException {
+    public void onMessageReceived(MessageReceivedEvent event) throws PermissionException {
         //Escape if message came from a bot account
         if (event.getMessage().getAuthor().isBot()) {
             return;
         }
 
+        //Get karma
         if (HiveBot.commands.get(62).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(62).getCommand() + " called by " + event.getAuthor().getAsTag());
             karmaExplanation(event.getMessage(), false);
+        }
+
+        if (HiveBot.commands.get(69).checkCommand(event.getMessage().getContentRaw())) {
+            LOGGER.info(HiveBot.commands.get(69).getCommand() + " called by " + event.getAuthor().getAsTag());
+            getKarmaActiveUsers(event);
         }
 
     }
@@ -391,6 +421,34 @@ public class KarmaInterface extends ListenerAdapter {
         // Send to guild channel or not
         if (source) {
             message.getChannel().sendMessage(finalKarmaExplanation).queue();
+            return;
+        }
+
+        message.getAuthor().openPrivateChannel().queue((channel -> {
+            channel.sendMessage(finalKarmaExplanation).queue(
+                    success -> {
+                        message.addReaction("✅").queue();
+                    },
+                    failure -> {
+                        message.addReaction("⚠").queue();
+                        LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
+                        message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                    });
+        }));
+    }
+
+    private void karmaExplanationShort(Message message, boolean source) {
+        String karmaExplanation = (String) HiveBot.dataFile.getData("KarmaExplanationShort");
+        karmaExplanation = karmaExplanation.replace("{kPosIcon}", "<:KU:717177145717424180>");
+        karmaExplanation = karmaExplanation.replace("{kNegIcon}", "<:KD:717177177849724948> ");
+
+        String finalKarmaExplanation = karmaExplanation;
+
+        // Send to guild channel or not
+        if (source) {
+            message.getChannel().sendMessage(finalKarmaExplanation).queue(success -> {
+                success.delete().queueAfter(60,TimeUnit.SECONDS);
+            });
             return;
         }
 
@@ -444,7 +502,7 @@ public class KarmaInterface extends ListenerAdapter {
     }
 
     // Run karma update using mentions
-    private void runUpdateKarma(Message message, Member sender, Member receiver, boolean direction) {
+    private void runUpdateKarma(Guild guild, Message message, Member sender, Member receiver, boolean direction) {
         try {
             // User is trying to give them self karma
             if (sender.getId().equalsIgnoreCase(receiver.getId())) {
@@ -481,6 +539,7 @@ public class KarmaInterface extends ListenerAdapter {
                 message.addReaction("\uD83D\uDCE8").queue();
                 if (direction) {
                     HiveBot.karmaLogger.info("Sending positive karma from: " + sender.getId() + " to: " + receiver.getId());
+                    nickname.parseRank(guild,receiver);
                 } else {
                     HiveBot.karmaLogger.info("Sending negative karma from: " + sender.getId() + " to: " + receiver.getId());
                 }
@@ -536,6 +595,7 @@ public class KarmaInterface extends ListenerAdapter {
                 message.addReaction("\uD83D\uDCE8").queue();
                 if (direction) {
                     HiveBot.karmaLogger.info("Sending positive karma from: " + sender.getId() + " to: " + receiver);
+                    nickname.parseRank(guild,receiver);
                 } else {
                     HiveBot.karmaLogger.info("Sending negative karma from: " + sender.getId() + " to: " + receiver);
                 }
@@ -550,9 +610,38 @@ public class KarmaInterface extends ListenerAdapter {
                 message.getChannel().sendMessage(message.getAuthor().getAsMention() + " Unknown error encountered.  Try again later").queue();
                 System.out.println("Error encountered");
             }
+            //System.out.println(result);
         } catch (NullPointerException e) {
         }
     }
 
+    private void getKarmaActiveUsers(MessageReceivedEvent event){
+        StringBuilder userList = new StringBuilder();
+        StringBuilder indexList = new StringBuilder();
+        StringBuilder nameList = new StringBuilder();
+
+
+
+        EmbedBuilder messageOut = new EmbedBuilder();
+
+        for(Map.Entry<String, Integer> entry: karmaSQLHandler.getActiveUsers().entrySet()){
+
+            //messageOut.addField(entry.getKey(),"Name:" + karmaSQLHandler.getUserTag(entry.getKey()) + "\n" + "Karma Recv. " + entry.getValue(),false);
+
+            userList.append(entry.getKey()).append("\n");
+            nameList.append(karmaSQLHandler.getUserTag(entry.getKey())).append("\n");
+            indexList.append(entry.getValue()).append("\n");
+
+
+        }
+
+        //EmbedBuilder messageOut = new EmbedBuilder();
+        messageOut.addField("ID",userList.toString(),true);
+        messageOut.addField("NAME",nameList.toString(),true);
+        messageOut.addField("# of karma recieved",indexList.toString(),true);
+
+        event.getChannel().sendMessage(messageOut.build()).queue();
+        messageOut.clear();
+    }
 
 }

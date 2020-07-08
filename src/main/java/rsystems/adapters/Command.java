@@ -108,6 +108,19 @@ public class Command {
                     returnValue[0] = true;
                 }
             });
+            //return returnValue[0];
+        }
+
+        String formattedMessage = message.toLowerCase();
+        if(formattedMessage.startsWith(prefix + this.command.toLowerCase())){
+            return true;
+        } else {
+            final Boolean[] returnValue = {false};
+            this.alias.forEach(alias -> {
+                if(formattedMessage.startsWith(prefix + alias.toLowerCase())){
+                    returnValue[0] = true;
+                }
+            });
             return returnValue[0];
         }
     }

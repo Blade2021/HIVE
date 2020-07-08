@@ -1,5 +1,8 @@
 # Change Log
 
+### 0.17.5
+- Added nickname command for setting your nickname on a server.
+
 ### 0.17.4
 - Introduced karma system
   - Karma system developed so members could give or take from other members to help show appreciation.

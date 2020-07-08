@@ -26,13 +26,15 @@ public class HiveBot{
     public static String helpPrefix = Config.get("helpprefix");
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
-    public static String version = "0.17.4";
+    public static String version = "0.17.6";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
     public static String docDUID = Config.get("docDUID");
+    public static String botSpamChannel = Config.get("botSpamChannelID");
 
     public static Guild docGuild = null;
+    public static Guild steelVein = null;
 
 
     // Commands array
@@ -45,12 +47,24 @@ public class HiveBot{
     public static MessageCheck messageCheck = new MessageCheck();
     // Load Reference data
     public static ReferenceLoader referenceLoader = new ReferenceLoader();
+    //SQL Handler
+    public static SQLHandler sqlHandler = new SQLHandler(Config.get("DATABASE_URL"));
+    //Karma SQL Handler
+    public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("DATABASE_URL"));
+    //Suggestion SQL Handler
+    public static SuggestionHandler suggestionHandler = new SuggestionHandler(
+            Config.get("DATABASE_URL"),
+            HiveBot.dataFile.getData("SuggestionsRequestsChannel").toString(),
+            HiveBot.dataFile.getData("SuggestionsReviewChannel").toString(),
+            HiveBot.dataFile.getData("SuggestionsPostChannel").toString()
+    );
+
+    //Static handlers
     // Hall Monitor Object
     public static HallMonitor hallMonitor = new HallMonitor();
-    //SQL Interface
-    public static SQLHandler sqlHandler = new SQLHandler(Config.get("DATABASE_URL"));
-    //Karma SQL Interface
-    public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("DATABASE_URL"));
+    // Nickname handler
+    public static Nickname nickname = new Nickname();
+
 
     //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -96,6 +110,9 @@ public class HiveBot{
         api.addEventListener(new OnlineStatusListener());
         api.addEventListener(new KarmaInterface());
         api.addEventListener(new ReactionListener());
+        api.addEventListener(new GratitudeListener());
+        api.addEventListener(new SuggestionInterface());
+        api.addEventListener(nickname);
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 
@@ -141,7 +158,7 @@ public class HiveBot{
         commands.add(new Command("Twitchsub")); // 19
         commands.add(new Command("Stats")); // 20
         commands.add(new Command("Getdata")); // 21
-        commands.add(new Command("AdminWho")); // 22
+        commands.add(new Command("WhoIs")); // 22
         commands.add(new Command("Help")); // 23
         commands.add(new Command("SendMarkers")); //24
         commands.add(new Command("GetStreamMode")); // 25
@@ -184,6 +201,20 @@ public class HiveBot{
         commands.add(new Command("karma")); //62
         commands.add(new Command("getDate")); //63
         commands.add(new Command("getKUserInfo")); //64
+        commands.add(new Command("cleanse")); //65
+        commands.add(new Command("nick")); //66
+        commands.add(new Command("optout")); //67
+        commands.add(new Command("updateKarmaUsers")); //68
+        commands.add(new Command("getActiveKarmaUsers")); //69
+        commands.add(new Command("karmaShort")); //70
+        commands.add(new Command("suggest")); //71
+        commands.add(new Command("suggestionAccept")); //72
+        commands.add(new Command("suggestionReject")); //73
+        commands.add(new Command("suggestionStatus")); //74
+        commands.add(new Command("suggestionApprove")); //75
+        commands.add(new Command("suggestionDeny")); //76
+        commands.add(new Command("suggestionOverrideMessage")); //77
+        commands.add(new Command("suggestionsList")); //78
         CommandData commandData = new CommandData();
 
         try {
@@ -191,6 +222,7 @@ public class HiveBot{
             api.awaitReady();
 
             docGuild = api.getGuildById("469330414121517056");
+            steelVein = api.getGuildById("386701951662030858");
 
             //Load Tasks
             AutoStatus task1 = new AutoStatus(api,"Current Version: " + HiveBot.version);

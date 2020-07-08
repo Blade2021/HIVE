@@ -23,7 +23,7 @@ public class ReferenceTrigger extends ListenerAdapter {
 
         //Look for reference triggers
         if(!checkExtendedReferences(event.getMessage())) {
-            checkReferences(event.getMessage());
+            checkReferences(event.getMessage(),true);
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
@@ -49,7 +49,7 @@ public class ReferenceTrigger extends ListenerAdapter {
     public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
         //Check for references
         if(!checkExtendedReferences(event.getMessage())) {
-            checkReferences(event.getMessage());
+            checkReferences(event.getMessage(),false);
         }
 
         //ReferenceList command
@@ -261,8 +261,12 @@ public class ReferenceTrigger extends ListenerAdapter {
                     info.addField("Aliases", aliasList.toString(),false);
 
                     if(!info.isEmpty()) {
-                        //!IMPORTANT - Send the MessageEmbed and not the EmbedBuilder
-                        sendReference(message, info.build(), show);
+                        try {
+                            //!IMPORTANT - Send the MessageEmbed and not the EmbedBuilder
+                            sendReference(message, info.build(), show);
+                        } catch (IllegalArgumentException e){
+                            System.out.println("Error with Embed: " + r.getReferenceCommand());
+                        }
                     }
                     info.clear();
                     return true;
@@ -272,7 +276,7 @@ public class ReferenceTrigger extends ListenerAdapter {
         return false;
     }
 
-    private boolean checkReferences(Message message) {
+    private boolean checkReferences(Message message, boolean delete) {
         String[] args = message.getContentRaw().split("\\s+");
 
         //Parse through all extended references
@@ -293,12 +297,13 @@ public class ReferenceTrigger extends ListenerAdapter {
             for (String s : refCheck) {
                 if((message.getContentRaw().toLowerCase().startsWith(HiveBot.prefix + s.toLowerCase())) || (message.getContentRaw().toLowerCase().startsWith(HiveBot.altPrefix + s.toLowerCase()))){
                 //if ((args[0].equalsIgnoreCase(HiveBot.prefix + s)) || (args[0].equalsIgnoreCase(HiveBot.altPrefix + s))) {
-                    try{
-                        message.delete().queue();
-                    } catch (PermissionException e){
-
+                    if(delete) {
+                        try {
+                            message.delete().queue();
+                        } catch (PermissionException | IllegalStateException e) {
+                            System.out.println("Failed to delete trigger");
+                        }
                     }
-
 
                     // A reference was found
                     LOGGER.info("REF " + s + " : " + r.getReferenceCommand() + " called by " + message.getAuthor().getAsTag());
@@ -379,6 +384,8 @@ public class ReferenceTrigger extends ListenerAdapter {
                 message.getChannel().sendMessage("Missing Permissions: " + e.getPermission()).queue();
             }catch (IllegalStateException e){
                 System.out.println("Empty embed detected");
+            } catch (IllegalArgumentException e){
+                System.out.println("Error with embed");
             }
         } else {
             try {
@@ -398,6 +405,8 @@ public class ReferenceTrigger extends ListenerAdapter {
             } catch (NullPointerException e) {
             }catch (IllegalStateException e){
                 System.out.println("Empty embed detected");
+            } catch (IllegalArgumentException e){
+                System.out.println("Error with embed");
             }
         }
     }

@@ -51,7 +51,11 @@ public class AddKarmaPoints extends TimerTask {
                     } else {
                         long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
                         if (daysPassed >= 1) {
-                            karmaSQLHandler.addKarmaPoints(member.getId(), formattedCurrentDate);
+                            if(RoleCheck.getRank(docGuild,member.getId()) >= 1){
+                                karmaSQLHandler.addKarmaPoints(member.getId(), formattedCurrentDate,true);
+                            } else {
+                                karmaSQLHandler.addKarmaPoints(member.getId(), formattedCurrentDate, false);
+                            }
                             System.out.println("Adding point to user: " + member.getUser().getAsTag());
                         }
                     }
