@@ -668,7 +668,7 @@
   "suggestionStatus": {
     "id": 74,
     "rank": 4,
-    "alias": [""],
+    "alias": [],
     "syntax": "",
     "description": "Get a short summary of how to use karma",
     "minArgCount": 0,
@@ -677,7 +677,7 @@
   "suggestionApprove": {
     "id": 75,
     "rank": 3,
-    "alias": [""],
+    "alias": [],
     "syntax": "",
     "description": "Approve a suggestion",
     "minArgCount": 0,
@@ -686,7 +686,7 @@
   "suggestionDeny": {
     "id": 76,
     "rank": 3,
-    "alias": [""],
+    "alias": [],
     "syntax": "",
     "description": "Deny a suggestion",
     "minArgCount": 0,
@@ -695,7 +695,7 @@
   "suggestionOverrideMessage": {
     "id": 77,
     "rank": 4,
-    "alias": [""],
+    "alias": [],
     "syntax": "",
     "description": "Get a short summary of how to use karma",
     "minArgCount": 0,
@@ -709,5 +709,23 @@
     "description": "Get a list of all OPEN suggestions",
     "minArgCount": 0,
     "commandType": "utility"
+  },
+  "mute": {
+    "id": 79,
+    "rank": 1,
+    "alias": [],
+    "syntax": "mute [Minutes] @Users",
+    "description": "Mute a user for x amount of minutes",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "muteChannel": {
+    "id": 80,
+    "rank": 3,
+    "alias": [],
+    "syntax": "muteChannel [Minutes] #Channel",
+    "description": "Mute a channel for x amount of minutes",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
   }
 }

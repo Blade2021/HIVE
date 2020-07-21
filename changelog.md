@@ -1,5 +1,12 @@
 # Change Log
 
+### 0.17.7
+- Mute User(s) methods
+- Mute Channel(s) methods
+
+### 0.17.6
+- Suggestion Handler
+
 ### 0.17.5
 - Added nickname command for setting your nickname on a server.
 

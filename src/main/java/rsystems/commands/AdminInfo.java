@@ -2,6 +2,10 @@ package rsystems.commands;
 
 import com.sun.tools.javac.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.IPermissionHolder;
+import net.dv8tion.jda.api.entities.PermissionOverride;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
@@ -18,6 +22,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import static rsystems.HiveBot.*;
@@ -337,7 +343,45 @@ public class AdminInfo extends ListenerAdapter {
         //Test command
         if(commands.get(47).checkCommand(event.getMessage().getContentRaw())){
             if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(47))) {
-                System.out.println(suggestionHandler.checkSuggestionPool(args[1]));
+                try {
+                    int timeout = 0;
+                    try {
+                        // Parse argument 1 into an integer
+                        timeout = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException e){
+                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + " INVALID SYNTAX.").queue();
+                        event.getMessage().addReaction("\uD83E\uDD54").queue();
+                    }
+                    //Initialize the string builder for errors to be put into
+                    StringBuilder errors = new StringBuilder();
+
+                    // Get a list of all Text Channels that were mentioned for processing
+                    List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
+                    for (TextChannel channel : mentionedChannels) {
+                        try {
+                            //Notify the channel
+                            channel.sendMessage("This channel is being put on cooldown.  See you in " + timeout + " minutes").queue();
+
+                            //Attach the deny override
+                            int finalTimeout = timeout;
+                            channel.putPermissionOverride(event.getGuild().getPublicRole()).setDeny(Permission.MESSAGE_WRITE).queue(success -> {
+                                //Clear the deny override after the given amount of time from argument 1
+                                channel.putPermissionOverride(event.getGuild().getPublicRole()).clear(Permission.MESSAGE_WRITE).queueAfter(finalTimeout, TimeUnit.MINUTES);
+                            });
+                        } catch (InsufficientPermissionException e){
+                            // Create a message to notify that the BOT does not have permission to set an override
+                            errors.append("❗").append("Missing permission[" + e.getPermission() + "] for channel: " + channel.getName()).append("\n");
+                        }
+                    }
+
+                    // Were there errors found, If so send a message
+                    if(!errors.toString().isBlank()){
+                        event.getChannel().sendMessage(errors.toString()).queue();
+                    }
+
+                }catch(NullPointerException e){
+                    System.out.println("Found null looking for channel");
+                }
             }
         }
 

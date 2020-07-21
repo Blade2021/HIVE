@@ -54,6 +54,15 @@ public class SuggestionInterface extends ListenerAdapter {
                 if (suggestionHandler.getFieldInt(suggestionID, "status") == 0) {
                     suggestionHandler.postSuggestion(suggestionID,event.getGuild());
                     removeApprovalRequest(event.getChannel(), suggestionHandler.getFieldString(suggestionID,"pollMessageID"));
+
+                    String userid = suggestionHandler.getFieldString(suggestionID, "requesterID");
+                    try {
+                        event.getGuild().getMemberById(userid).getUser().openPrivateChannel().queue(success -> {
+                            success.sendMessage("Your suggestion has been reviewed and approved for voting (ID: " + suggestionID + " )").queue();
+                        });
+                    } catch(NullPointerException e){
+                        System.out.println("Could not find user: " + userid);
+                    }
                 } else {
                     event.getChannel().sendMessage("That suggestion has already been processed").queue();
                 }
@@ -147,7 +156,9 @@ public class SuggestionInterface extends ListenerAdapter {
                     suggestionHandler.handleSuggestion(suggestionID,event.getGuild(),true,event.getMessage().getContentRaw().substring((args[0].length() + args[1].length() + 2)));
                 } else {
                     suggestionHandler.handleSuggestion(suggestionID, event.getGuild(), true, "Accepted");
+
                 }
+                event.getMessage().addReaction("✅").queue();
             }
         }
 
@@ -162,6 +173,7 @@ public class SuggestionInterface extends ListenerAdapter {
                 } else {
                     suggestionHandler.handleSuggestion(suggestionID, event.getGuild(), false, "Denied");
                 }
+                event.getMessage().addReaction("✅").queue();
             }
         }
 
@@ -205,6 +217,7 @@ public class SuggestionInterface extends ListenerAdapter {
                             //Replace current embed with temporary one
                             message.editMessage(tempEmbed.build()).override(true).queue();
                             tempEmbed.clear();
+                            event.getMessage().addReaction("✅").queue();
 
                         } catch (NullPointerException e) {
                             System.out.println("Could not find message");
