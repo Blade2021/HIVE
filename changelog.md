@@ -1,5 +1,9 @@
 # Change Log
 
+### 0.17.8
+ - Added automatic parsing of code in messages.
+ - Added automatic forwarding of big code blocks to hastebin with automatic feedback.
+
 ### 0.17.3
 - Changed referenceTriggers to send direct message unless -show used
 - Updated who command with more information
