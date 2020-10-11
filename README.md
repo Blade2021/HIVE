@@ -11,6 +11,10 @@ HIVE is a discord bot that is programmed in JAVA.  While it is still very early 
 
 Enjoy!
 
+# Public moderation BoT
+If you like some of the moderation options of HIVE, check out my other repo with a BoT that is inviteable to any server!  
+https://github.com/Blade2021/Sherlock
+
 # HIVE Data Reference Library
 We are developing a data library of references and information for HIVE.  Wanna help contribute?  
 Head over to https://github.com/Blade2021/HIVE-RefData for futher instructions.
