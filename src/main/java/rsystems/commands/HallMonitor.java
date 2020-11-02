@@ -1,5 +1,6 @@
 package rsystems.commands;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageUpdateEvent;
@@ -23,7 +24,6 @@ public class HallMonitor extends ListenerAdapter {
 
     //Initialize a HashMap for storing futures
     private Map<String,Future<?>> futures = new HashMap<>();
-
 
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
         //Ignore all bots
@@ -136,7 +136,13 @@ public class HallMonitor extends ListenerAdapter {
 
         try {
             TextChannel logChannel = guild.getTextChannelById(this.logChannel);
-            logChannel.sendMessage("This message has been flagged for vulgar language.\n" + message.getJumpUrl()).queue();
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Language Filter Infraction");
+            builder.setDescription("Vulgar language was found on this message: [Message Link](" + message.getJumpUrl() + ")");
+            builder.addField("Member:",message.getAuthor().getAsTag(),true);
+            logChannel.sendMessage(
+                    builder.build()
+            ).queue();
         } catch(NullPointerException | InsufficientPermissionException e){
             System.out.println("Error when logging IAC event");
         }

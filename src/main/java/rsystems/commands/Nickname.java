@@ -43,8 +43,16 @@ public class Nickname extends ListenerAdapter {
                         return;
                     }
 
-                    if (handleNickname(event.getGuild(), event.getMember().getId(), event.getMessage().getContentRaw().substring(args[0].length() + 1))) {
-                        event.getMessage().addReaction("✅").queue();
+                    //Reset their nickname
+                    if ((args.length > 1) && ((args[1].equalsIgnoreCase("-clear")) || (args[1].equalsIgnoreCase("-reset")))) {
+                        if (handleNickname(event.getGuild(), event.getMember().getId(),"")) {
+                            event.getMessage().addReaction("✅").queue();
+                        }
+                    } else {
+
+                        if (handleNickname(event.getGuild(), event.getMember().getId(), event.getMessage().getContentRaw().substring(args[0].length() + 1))) {
+                            event.getMessage().addReaction("✅").queue();
+                        }
                     }
 
                 }
@@ -65,51 +73,51 @@ public class Nickname extends ListenerAdapter {
                 boolean writeStatus = false;
 
                 //Does the message contain an argument?
-                if(args.length < 2){
+                if (args.length < 2) {
                     // The message does not contain an argument (Trigger a flip of current value)
 
                     // If current OPTOUT status is set to true (1)
-                    if(HiveBot.karmaSQLHandler.getInt("OPTOUT",event.getMember().getId()) >= 1){
+                    if (HiveBot.karmaSQLHandler.getInt("OPTOUT", event.getMember().getId()) >= 1) {
                         //Attempt to set the OPTOUT value to false (0)
-                        if(HiveBot.karmaSQLHandler.setInt(event.getMember().getId(),"OPTOUT",0)){
+                        if (HiveBot.karmaSQLHandler.setInt(event.getMember().getId(), "OPTOUT", 0)) {
                             //Send a message back to the channel confirming, good write to DB
                             event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I have removed the OPTOUT status from you").queue();
                             //Trigger the parse rank function to get current rank and add icon to nickname
-                            parseRank(event.getGuild(),event.getMember());
+                            parseRank(event.getGuild(), event.getMember());
                             //Set the write status variable to trigger a complete finish of method
                             writeStatus = true;
                         }
-                    // If current OPTOUT status is set to false (0)
+                        // If current OPTOUT status is set to false (0)
                     } else {
                         //Attempt to set the OPTOUT value to true (1)
-                        if(HiveBot.karmaSQLHandler.setInt(event.getMember().getId(),"OPTOUT",1)){
+                        if (HiveBot.karmaSQLHandler.setInt(event.getMember().getId(), "OPTOUT", 1)) {
                             //Send a message back to the channel confirming, good write to DB
                             event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I have added the OPTOUT status to you").queue();
                             //Trigger the cleanseNickname method to remove the emoji from the user's nickname
-                            cleanseNickname(event.getGuild(),event.getMember());
+                            cleanseNickname(event.getGuild(), event.getMember());
                             //Set the write status variable to trigger a complete finish of method
                             writeStatus = true;
                         }
                     }
-                // User included an argument in call
+                    // User included an argument in call
                 } else {
                     // Does argument equal true
-                    if(args[1].equalsIgnoreCase("true")){
+                    if (args[1].equalsIgnoreCase("true")) {
                         //Attempt to set the OPTOUT value to true (1)
-                        if(HiveBot.karmaSQLHandler.setInt(event.getMember().getId(),"OPTOUT",1)){
+                        if (HiveBot.karmaSQLHandler.setInt(event.getMember().getId(), "OPTOUT", 1)) {
                             //Send a message back to the channel confirming, good write to DB
                             event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I have added the OPTOUT status to you").queue();
                             //Trigger the cleanseNickname method to remove the emoji from the user's nickname
-                            cleanseNickname(event.getGuild(),event.getMember());
+                            cleanseNickname(event.getGuild(), event.getMember());
                             //Set the write status variable to trigger a complete finish of method
                             writeStatus = true;
                         }
                     } else {
                         //Attempt to set the OPTOUT value to false (0)
-                        if(HiveBot.karmaSQLHandler.setInt(event.getMember().getId(),"OPTOUT",0)){
+                        if (HiveBot.karmaSQLHandler.setInt(event.getMember().getId(), "OPTOUT", 0)) {
                             //Send a message back to the channel confirming, good write to DB
                             event.getChannel().sendMessage(event.getAuthor().getAsMention() + " I have removed the OPTOUT status from you").queue();
-                            parseRank(event.getGuild(),event.getMember());
+                            parseRank(event.getGuild(), event.getMember());
                             //Set the write status variable to trigger a complete finish of method
                             writeStatus = true;
                         }
@@ -117,7 +125,7 @@ public class Nickname extends ListenerAdapter {
                 }
 
                 //Did method complete all functions?
-                if(writeStatus){
+                if (writeStatus) {
                     event.getMessage().addReaction("✅").queue();
                 }
 
@@ -127,7 +135,7 @@ public class Nickname extends ListenerAdapter {
         }
 
         if (HiveBot.commands.get(68).checkCommand(event.getMessage().getContentRaw())) {
-            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(68))) {
+            if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(68))) {
                 checkActive(event.getGuild());
             }
         }
@@ -143,7 +151,7 @@ public class Nickname extends ListenerAdapter {
         int rank = HiveBot.karmaSQLHandler.checkKarmaRanking(id); // Get count of karma received
         int suffixRank = 0;
         if (rank > 5) {
-            if(HiveBot.karmaSQLHandler.setType(id, 4)) {
+            if (HiveBot.karmaSQLHandler.setType(id, 4)) {
                 suffixRank = 4;
             } else {
                 System.out.println("NICKNAME ESCAPED. User already has type 4");
@@ -177,11 +185,13 @@ public class Nickname extends ListenerAdapter {
 
         if (rank > 5) {
             System.out.println("Setting type to 4");
-            if(HiveBot.karmaSQLHandler.setType(member.getId(), 4)) {
+            if (HiveBot.karmaSQLHandler.setType(member.getId(), 4)) {
                 suffixRank = 4;
-                try{
-                    guild.getTextChannelById(botSpamChannel).sendMessage(member.getAsMention() + " Congrats, you have been set as an active contributor!").queue();
-                } catch(NullPointerException e){}
+                try {
+                    //todo BUG FIX
+                    //guild.getTextChannelById(botSpamChannel).sendMessage(member.getAsMention() + " Congrats, you have been set as an active contributor!").queue();
+                } catch (NullPointerException e) {
+                }
             } else {
                 System.out.println("NICKNAME ESCAPED. User already has type 4");
                 return;
@@ -305,13 +315,13 @@ public class Nickname extends ListenerAdapter {
         return true;
     }
 
-    private void cleanseNickname(Guild guild, Member member){
+    private void cleanseNickname(Guild guild, Member member) {
         String currentNickname = member.getEffectiveName();
         String nicknameWithoutEmoji = EmojiParser.removeAllEmojis(currentNickname);
 
         try {
             guild.modifyNickname(member, nicknameWithoutEmoji).queue();
-        }catch(HierarchyException e){
+        } catch (HierarchyException e) {
             System.out.println("Can't set nickname for user: " + member.getId());
         }
     }

@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 import com.sun.tools.javac.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -16,6 +16,7 @@ import rsystems.adapters.Command;
 import rsystems.adapters.RoleCheck;
 import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
+import rsystems.handlers.GuildLoader;
 
 import java.awt.*;
 import java.io.File;
@@ -252,7 +253,6 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
-        //todo:Check on usage of this command
         if (args[0].equalsIgnoreCase((prefix + "reloadData"))) {
             if(event.getAuthor().getId().equals(Config.get("OWNER_ID"))){
                 try {
@@ -343,7 +343,15 @@ public class AdminInfo extends ListenerAdapter {
         //Test command
         if(commands.get(47).checkCommand(event.getMessage().getContentRaw())){
             if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(47))) {
-                try {
+
+
+                event.getChannel().sendMessage(
+                        GuildLoader.guilds.get(
+                                event.getGuild().getId())
+                                .getAssignableRoles().toString()
+                ).queue();
+                //event.getChannel().sendMessage(GuildLoader.guilds.get(event.getGuild().getId()).getBotNick()).queue();
+                /*try {
                     int timeout = 0;
                     try {
                         // Parse argument 1 into an integer
@@ -381,7 +389,7 @@ public class AdminInfo extends ListenerAdapter {
 
                 }catch(NullPointerException e){
                     System.out.println("Found null looking for channel");
-                }
+                }*/
             }
         }
 

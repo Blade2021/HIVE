@@ -1,10 +1,9 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 import com.samuelmaddock.strawpollwrapper.DupCheckType;
 import com.samuelmaddock.strawpollwrapper.StrawPoll;
 import kotlin.random.Random;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -12,13 +11,10 @@ import rsystems.HiveBot;
 import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ListIterator;
-
-import static rsystems.HiveBot.LOGGER;
 
 public class Poll extends ListenerAdapter {
 

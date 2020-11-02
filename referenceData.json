@@ -7,6 +7,9 @@
     "description": "If you're having problems with your updates to your configuration, check the troubleshooting steps in <https://home-assistant.io/docs/configuration/troubleshooting/>",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      "troubleshooting","trouble","configuration"
     ]
   },
   "group": {
@@ -17,6 +20,9 @@
     "description": "Groups allow the user to combine multiple entities into one, and create views in the default dashboard. See <https://home-assistant.io/components/group/> for information.",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      "group"
     ]
   },
   "splitConfig": {
@@ -27,6 +33,9 @@
     "description": "Split Configuration: <https://home-assistant.io/docs/configuration/splitting_configuration/>",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      "config","split"
     ]
   },
   "checkconfig": {
@@ -36,6 +45,9 @@
     "description": "http://quadflightdiy.com/wp-content/uploads/2017/07/Home-Assistant-1.png",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      "config","check"
     ]
   },
   "config": {
@@ -45,6 +57,9 @@
     "description": "Enable the \"Configuration\" section of the UI by adding `config:` to your configuration.yaml file, docs: <https://home-assistant.io/components/config/>",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "input_number": {
@@ -55,6 +70,9 @@
     "description": "The `input_number` component allows the user to define values that can be controlled via the frontend and can be used within conditions of automation. The frontend can display a slider, or a numeric input box. Changes to the slider or numeric input box generate state events. These state events can be utilized as `automation` triggers as well.\n```yaml\n# Example configuration.yaml entry\ninput_number:\n  slider1:\n    name: Slider\n    initial: 30\n    min: -20\n    max: 35\n    step: 1\n  box1:\n    name: Numeric Input Box\n    initial: 30\n    min: -20\n    max: 35\n    step: 1\n    mode: box\n```\nMore information: <https://home-assistant.io/components/input_number/>",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      "input number","input"
     ]
   },
   "getting_started": {
@@ -65,6 +83,9 @@
     "description": "When you're getting started, take the time to read [HA Docs Link](https://home-assistant.io/docs/) and have a look at the supported components [Supported Components](https://home-assistant.io/components/). You can find some worked examples at [HA Cookbook](https://home-assistant.io/cookbook/).",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "secrets": {
@@ -74,6 +95,9 @@
     "description": "Rather than putting sensitive information (passwords, locations, etc) into your configuration, you can store them in secrets to make sharing easier. See <https://home-assistant.io/docs/configuration/secrets/> for more.",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "backup": {
@@ -83,6 +107,9 @@
     "description": "Be sure to regularly, automatically, back up your Home Assistant install. There are various critical files and configuration options (like the Z-Wave network key), plus all your time. Hass.io has snapshots, and for unix type installs see <https://blog.ceard.tech/2017/10/backing-up-home-assistant.html>.  Oh, and most important of all **test your ability to restore regularly**.",
     "category": [
       "home-assistant"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "wiki": {
@@ -92,6 +119,9 @@
     "description": "You can find command info and other general information about HIVE on the wiki: [More information](https://github.com/Blade2021/HIVE/wiki)",
     "category": [
       "information"
+    ],
+    "keywords": [
+      "HIVE"
     ]
   },
   "DrZzzGithub": {
@@ -103,6 +133,9 @@
     "description": "You can find the docs public github here: [Link](https://github.com/Snipercaine)",
     "category": [
       "user-base"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "points": {
@@ -112,6 +145,9 @@
     "description": "Points are used to give karma to other users.  Use ~getpoints to see how many points you have. [More information](https://github.com/Blade2021/HIVE/wiki/Karma)",
     "category": [
       "user-base"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "suggestHelp": {
@@ -121,6 +157,46 @@
     "description": "Wanna submit a suggestion?  Use ~suggest followed by your suggestion.  This will send your suggestion to our staff to review before being posted as a poll for the community to vote.",
     "category": [
       "information"
+    ],
+    "keywords": [
+      ""
+    ]
+  },
+  "codeshare": {
+    "alias": [
+    ],
+    "minRank": 0,
+    "description": "Need to work with someone on writing code?  Try using https://codeshare.io",
+    "category": [
+      "information"
+    ],
+    "keywords": [
+      "code","code share"
+    ]
+  },
+  "input_boolean": {
+    "alias": [
+      "boolean"
+    ],
+    "minRank": 0,
+    "description": "Input booleans allow an entity to be created to save a toggleable state.  You can find more about them here: [More information](https://www.home-assistant.io/integrations/input_boolean/)",
+    "category": [
+      "information"
+    ],
+    "keywords": [
+      ""
+    ]
+  },
+  "faq": {
+    "alias": [
+    ],
+    "minRank": 0,
+    "description": "You can find rules, common bot commands, and answers to frequently asked questions in the #faq-and-rules channel.",
+    "category": [
+      "information"
+    ],
+    "keywords": [
+      ""
     ]
   }
 }

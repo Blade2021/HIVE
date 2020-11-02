@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;

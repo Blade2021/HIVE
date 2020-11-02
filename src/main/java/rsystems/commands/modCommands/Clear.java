@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 
 import net.dv8tion.jda.api.EmbedBuilder;

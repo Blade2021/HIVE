@@ -8,6 +8,9 @@
     "description": "Wanna help develop a database of helpful information for beginners starting out in the home automation field?  Help us grow the HIVE Reference Database by submitting commits/PRs to the link included.",
     "category": [
       "utilities"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "tasmota": {
@@ -25,6 +28,9 @@
     "description": "Tasmota is a firmware that can be flashed onto ESP8266-based products created by Theo Arends.  It was originally used for Sonoff boards, but quickly snowballed to include all ESP8266 chips.  You can use it to control just about everything that you want (plugs, switches, dimmers, bulbs, et cetera).\n\nThe reason you'd load this firmware onto your devices is to keep your smart item traffic local to your premise, and not sending it to the cloud servers.  (So that when the internet goes out, the smartness of your things doesn't also).\n\nTasmota is 100% free and open source making it a great product for the home automation community.\n\nThe community submits configuration templates for devices to a site maintained by a user named Blakadder, so most things are pretty easy to configure.  If you run across a new product without a template, you will need to work out where things like LEDs, relays, and the like are by adjusting template settings manually -- but once you've got it, you can submit it to the repository!.\n\nBlakadder's team also maintains a 'naughty list' of devices that are not compatible.",
     "category": [
       "switching-applications"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "nodered": {
@@ -38,6 +44,9 @@
     "description": "Node-Red is a fantastic flow based visual tool for creating and linking automations and devices.  Node-Red works very well with Home-Assistant to provide a nice easy infrastructure for your wildest dreams.",
     "category": [
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "refTest": {
@@ -49,6 +58,9 @@
     "description": "A simple description of what 'IT' is\n\nTesting the {prefix} function",
     "category": [
       "switching-applications"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "ESP8266": {
@@ -73,6 +85,9 @@
     "description": "The ESP8266 is a microcontroller with built-in 2.4GHz Wifi (802.11b/g/n) made by a company called Espressif.  It comes in several flavors, each one with its own part number, but most people refer them collectively as 'ESP8266'.\n\nIt was originally designed and released as a wifi bridge to be used in conjunction with other microcontrollers and was initially released with only 8 pins exposed on a module known as an ESP-01.  It is super cheap, and when everyone realized that it was much more capable than being just a wifi bridge, people started using it in projects and products.  Espressif heard about what was being done with their chips and started releasing different modules with all of the pins exposed.\n\nThere aren't very many pins, though, and some of them are a bit... quirky to use.  But, because they're cheap, many smart home gadget companies started using them as the main chip in their products.  (Sonoff, Shelly, and Tuya being three you'll see thrown around in here.)\n\nGenerally, we only recommend the bare chips for advanced users who are designing their own circuit boards.  If you are looking to include one in your project, there are many options for pre-built development boards that have everything you'll need for a successful integration. Please see the links for board options.",
     "category": [
       "microcontroller"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Zigbee": {
@@ -91,6 +106,9 @@
       "infrastructure",
       "bridge",
       "utilities"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "ESP32": {
@@ -110,6 +128,9 @@
     "description": "The ESP32 is a microcontroller with built-in 2.4GHz Wifi (802.11b/g/n) and Bluetooth (Classic and BLE) made by a company called Espressif.  It comes in several flavors, each one with its own part number, but most people refer them collectively as 'ESP32'.\n\nIt was created as a successor to the wildly popular ESP8266, and has many more pins and available on-board functions, such as Bluetooth, Capacitive Touch, Analog Pins (both ADC and DAC), PWM, I2C, I2S, SPI, and many others.  While they are more expensive than the ESP8266-based chips and boards, the ESP32 is still a good value for any projects requiring many inputs or outputs, bluetooth connectivity, or sensor integration.\n\nGenerally, we only recommend the bare chips for advanced users who are designing their own circuit boards.  If you are looking to include one in your project, there are many options for pre-built development boards that have everything you'll need for a successful integration.  Please see the links for board options.",
     "category": [
       "microcontroller"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Tuya": {
@@ -124,6 +145,9 @@
     "category": [
       "microcontroller",
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "TuyaConvert": {
@@ -146,6 +170,9 @@
     "description": "NodeMCU is a popular development board that has an ESP8266 Module on it.  It has a USB port for both power and Serial-to-USB connectivity, as well as duplicate power pins.  It's convenient for adding multiple accessories to because you don't need to deal with splicing the power pins.  Product link is available in the links list.\n\nSee also: {prefix}ESP8266",
     "category": [
       "microcontroller"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "WLED": {
@@ -157,6 +184,9 @@
     "category": [
       "lights",
       "applications"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "NeoPixel": {
@@ -177,6 +207,9 @@
     "description": "Individually Addressable LEDs come in many varieties; you may find them referred to as NeoPixels, or by their part numbers, which include WS2811, WS2812b, WS2813, WS2815, SK9822, SK9812, or APA106.  You will need a microcontroller of some kind to run them; the most popular in the home automation space are the ESP8266 and ESP32 Boards.  Depending upon the length of your installation, you may also need to procure a high-amperage power supply and additional wire for power injection.\n\nSee also {prefix}WLED",
     "category": [
       "microcontroller"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "RF433": {
@@ -199,6 +232,9 @@
     "category": [
       "microcontroller",
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Pull-Request": {
@@ -215,6 +251,9 @@
     "description": "A pull request is a part of GIT workflow.  Developers collaborate on pieces of a project then when ready to update the master file, they submit pull requests to allow other developers in most cases, to review, adjust, and then commit the changes to the master file.  This allows multiple developers to work simultaneously on the same project without conflict in most cases.\n\nWith the HIVE-References project, we are accepting submissions from anyone and everyone.  Be sure to check out repo in the links section.",
     "category": [
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "esphome": {
@@ -231,6 +270,9 @@
       "microcontroller",
       "infrastructure",
       "switching-applications"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Deconz": {
@@ -244,6 +286,9 @@
       "bridge",
       "infrastructure",
       "switching-applications"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "MQTT": {
@@ -263,6 +308,9 @@
       "infrastructure",
       "applications",
       "utilities"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Sonoff": {
@@ -277,6 +325,9 @@
     "category": [
       "microcontroller",
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Shelly": {
@@ -291,6 +342,9 @@
     "category": [
       "microcontroller",
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "SpinningButtonCard": {
@@ -311,6 +365,9 @@
     "category": [
       "applications",
       "user-interface"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "HA Supervised": {
@@ -325,7 +382,7 @@
     ],
     "installation": "Home Assistant Supervised can be installed on top of Docker on any generic linux system, a Debian based system is recommended. Below you will find links to tutorials and resources.",
     "links": [
-      "https://mathesonsteplock.ca/install-home-assistant-supervised-on-ubuntu-20-04/",
+      "https://mathesonsteplock.ca/install-home-assistant-supervised-on-debian/",
       "https://youtu.be/ekVfLXnoM7k",
       "https://github.com/home-assistant/supervised-installer",
       "https://docs.docker.com/engine/install/"
@@ -334,6 +391,9 @@
     "category": [
       "infrastructure",
       "home-assistant"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "No State History": {
@@ -356,6 +416,9 @@
     "category": [
       "applications",
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   },
   "Power Over Ethernet": {
@@ -375,6 +438,9 @@
     "description": "Power Over Ethernet is a way to supply power to devices over the network cable from a central point.  It enables us to use electronics where there are no electrical outlets nearby and increases ease of management by having power supplies centrally located for devices in hard-to-reach locations.\n\nPOE comes in three standard flavors:\n\n1) POE (802.3af) Delivers 15W @ 48V\n2)POE+ (802.3at) Delivers 30W @ 48V\n3)POE++ or 4PPoE (802.3bt) Delivers 60W-100W @ 48V (Depending upon type of 802.3bt used)\n\nBe certain to review the power requirements of any POE Device prior to purchase to ensure that you're getting everything you need.\n\nPOE will work with CAT5e, CAT6, and CAT7. As for non-POE installations, care should be taken to not kink or bed the cable too sharply as it will create problems.\n\nDevices do not need to have ethernet ports!  There are POE Converters that can go from 48V DC to 5V DC or 12V DC, and can be plugged into ESP Wifi chips, or Single Board Computers.",
     "category": [
       "infrastructure"
+    ],
+    "keywords": [
+      ""
     ]
   }
 }

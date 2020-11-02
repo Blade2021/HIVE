@@ -87,6 +87,7 @@ public class ReactionListener extends ListenerAdapter {
             }
 
             if (suggestionHandler.checkSuggestionPool(event.getMessageId())) {
+                System.out.println("Suggestion Pool: Message ID Found");
                 // Test to see if reaction was check or X emoji
                 if (event.getReactionEmote().isEmoji() && ((event.getReactionEmote().getEmoji().equalsIgnoreCase("✅")) || (event.getReactionEmote().getEmoji().equalsIgnoreCase("❌")))){
 

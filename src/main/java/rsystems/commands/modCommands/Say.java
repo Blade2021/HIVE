@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;

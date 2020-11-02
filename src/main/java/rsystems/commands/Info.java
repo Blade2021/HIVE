@@ -38,8 +38,6 @@ public class Info extends ListenerAdapter {
             event.getChannel().sendMessage("Current Version: " + HiveBot.version).queue();
         }
 
-
-
         //Info command
         if (HiveBot.commands.get(2).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(2).getCommand() + " called by " + event.getAuthor().getAsTag());
@@ -67,13 +65,6 @@ public class Info extends ListenerAdapter {
         //Change Log Command
         if (HiveBot.commands.get(36).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(36).getCommand() + " called by " + event.getAuthor().getAsTag());
-            /*
-            try {
-                event.getMessage().delete().queue();
-            } catch (PermissionException e) {
-                LOGGER.warning("Unable to delete trigger msg from " + event.getChannel().getName());
-            }
-            */
 
             try {
                 EmbedBuilder info = new EmbedBuilder();

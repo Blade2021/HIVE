@@ -7,20 +7,31 @@ import java.util.HashMap;
 public class SQLHandler {
 
     protected static Connection connection = null;
-    private String DatabaseURL = "";
+
+    protected final String DatabaseURL;
+    protected final String DatabaseUser;
+    protected final String DatabaseUserPass;
 
 
-    public SQLHandler(String DatabaseURL) {
+    public SQLHandler(String DatabaseURL, String DatabaseUser, String DatabaseUserPass) {
         this.DatabaseURL = DatabaseURL;
+        this.DatabaseUser = DatabaseUser;
+        this.DatabaseUserPass = DatabaseUserPass;
         connect();
     }
 
     public void connect() {
         try {
-            connection = DriverManager.getConnection(DatabaseURL);
+            connection = DriverManager.getConnection(DatabaseURL, DatabaseUser, DatabaseUserPass);
+
+            if (connection.isValid(30)) {
+                System.out.println("Database connected");
+            }
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
+
+
     }
 
     // Get date of last seen using ID
@@ -30,6 +41,8 @@ public class SQLHandler {
         try {
 
             if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }if ((connection == null) || (connection.isClosed())) {
                 connect();
             }
 

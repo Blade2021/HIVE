@@ -7,8 +7,8 @@ import java.util.*;
 
 public class KarmaSQLHandler extends SQLHandler {
 
-    public KarmaSQLHandler(String databaseURL) {
-        super(databaseURL);
+    public KarmaSQLHandler(String DatabaseURL, String DatabaseUser, String DatabaseUserPass) {
+        super(DatabaseURL,DatabaseUser,DatabaseUserPass);
         connect();
     }
 
@@ -41,6 +41,10 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public void addKarmaPoints(String id, String date, boolean staff) {
         try {
+            if ((connection == null) || (connection.isClosed())) {
+                connect();
+            }
+
             Statement st = connection.createStatement();
 
             /*
@@ -56,6 +60,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
             if(availablePoints < 10) {
                 if(staff){
+                    System.out.println("Staff Found");
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = 5 WHERE ID = " + id);
                 } else {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS + 1 WHERE ID = " + id);
@@ -120,7 +125,7 @@ public class KarmaSQLHandler extends SQLHandler {
     }
 
     public int updateKarma(String sender, String receiver, Boolean direction) {
-        //direction (True = Positive karma | False = Negative karma)
+        System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s",sender,receiver));
 
         try {
             if ((connection == null) || (connection.isClosed())) {
@@ -142,15 +147,19 @@ public class KarmaSQLHandler extends SQLHandler {
             // User has enough points
             if (availableKarma >= 1) {
 
+
+
                 if (direction) {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender);
                     st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver);
-                    st.executeUpdate("INSERT INTO karmaTracker (ID) VALUES (" + receiver + ")");
+                    st.executeUpdate("INSERT INTO karmaTracker (ID, DATE) VALUES (" + receiver + ", CURRENT_DATE())");
 
                 } else {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender);
                     st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver);
                 }
+
+
 
                 return 4;
             } else {
@@ -158,8 +167,7 @@ public class KarmaSQLHandler extends SQLHandler {
                 return 2;
             }
         } catch (SQLException throwables) {
-            //System.out.println("Error:");
-            //System.out.println(throwables.getMessage());
+            System.out.println("Karma Update Handler Exception");
             throwables.getCause();
         } catch (NullPointerException e) {
             System.out.println("Could not find user");
@@ -192,7 +200,7 @@ public class KarmaSQLHandler extends SQLHandler {
             Statement st = connection.createStatement();
 
             int indexesFound = 0;
-            ResultSet rs = st.executeQuery("SELECT COUNT(ID) FROM karmaTracker WHERE (ID = " + id + " AND DATE > (SELECT DATETIME('now', '-7 day')))");
+            ResultSet rs = st.executeQuery(String.format("SELECT COUNT(ID) FROM karmaTracker WHERE (ID = %s AND DATE > (current_date() - '7 days'))",id));
             while(rs.next()){
                 indexesFound = rs.getInt(1);
             }
@@ -445,7 +453,7 @@ public class KarmaSQLHandler extends SQLHandler {
             }
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT DISTINCT ID FROM karmaTracker WHERE (DATE > (SELECT DATETIME('now', '-7 day')))");
+            ResultSet rs = st.executeQuery("SELECT DISTINCT ID FROM karmaTracker WHERE (DATE > (current_date - '-7 days'))");
             while (rs.next()) {
                 Statement nestedSt = connection.createStatement();
                 ResultSet nestedRs = nestedSt.executeQuery("SELECT ID, COUNT(ID) FROM karmaTracker WHERE (ID = " + rs.getLong("ID") + " AND DATE > (SELECT DATETIME('now', '-7 day')))");

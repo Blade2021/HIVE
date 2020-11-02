@@ -90,7 +90,7 @@
     "commandType": "user-control"
   },
   "resign": {
-    "id": 10,
+    "id": 38,
     "rank": 2,
     "alias": [],
     "syntax": "resign [role] @user",
@@ -99,7 +99,7 @@
     "commandType": "user-control"
   },
   "poll": {
-    "id": 11,
+    "id": 10,
     "rank": 1,
     "alias": [],
     "syntax": "poll [option1],[option2],[option3]",
@@ -108,7 +108,7 @@
     "commandType": "utility-admin"
   },
   "analyze": {
-    "id": 12,
+    "id": 11,
     "rank": 3,
     "alias": [],
     "syntax": "analyze",
@@ -117,7 +117,7 @@
     "commandType": "utility-admin"
   },
   "ask": {
-    "id": 13,
+    "id": 12,
     "rank": 0,
     "alias": [],
     "syntax": "ask [Question]",
@@ -126,7 +126,7 @@
     "commandType": "utility"
   },
   "admin": {
-    "id": 14,
+    "id": 13,
     "rank": 1,
     "alias": [],
     "syntax": "admin",
@@ -135,7 +135,7 @@
     "commandType": "utility-admin"
   },
   "Threelawssafe": {
-    "id": 15,
+    "id": 14,
     "rank": 0,
     "alias": ["botlaws"],
     "syntax": "threelawssafe",
@@ -144,7 +144,7 @@
     "commandType": "fun"
   },
   "Version": {
-    "id": 16,
+    "id": 15,
     "rank": 0,
     "alias": [],
     "syntax": "version",
@@ -153,7 +153,7 @@
     "commandType": "information"
   },
   "Execute order 66": {
-    "id": 17,
+    "id": 16,
     "rank": 0,
     "alias": ["execute"],
     "syntax": "execute order 66",
@@ -162,7 +162,7 @@
     "commandType": "fun"
   },
   "Rule34": {
-    "id": 18,
+    "id": 17,
     "rank": 0,
     "alias": ["rule 34"],
     "syntax": "rule34",
@@ -171,7 +171,7 @@
     "commandType": "fun"
   },
   "Request": {
-    "id": 19,
+    "id": 18,
     "rank": 0,
     "alias": ["bug","bugs","requests"],
     "syntax": "request",
@@ -180,7 +180,7 @@
     "commandType": "information"
   },
   "Twitchsub": {
-    "id": 20,
+    "id": 19,
     "rank": 0,
     "alias": [],
     "syntax": "twitchsub",
@@ -189,7 +189,7 @@
     "commandType": "information"
   },
   "Stats": {
-    "id": 21,
+    "id": 20,
     "rank": 1,
     "alias": [],
     "syntax": "stats",
@@ -198,7 +198,7 @@
     "commandType": "utility-admin"
   },
   "Getdata": {
-    "id": 22,
+    "id": 21,
     "rank": 3,
     "alias": [],
     "syntax": "getdata | getdata [key]",
@@ -207,7 +207,7 @@
     "commandType": "botControl"
   },
   "WhoIs": {
-    "id": 23,
+    "id": 22,
     "rank": 0,
     "alias": ["who"],
     "syntax": "who | who @USER | who id",
@@ -216,7 +216,7 @@
     "commandType": "user-control"
   },
   "Help": {
-    "id": 24,
+    "id": 23,
     "rank": 0,
     "alias": [],
     "syntax": "help [command]",
@@ -225,7 +225,7 @@
     "commandType": "information"
   },
   "SendMarkers": {
-    "id": 25,
+    "id": 24,
     "rank": 2,
     "alias": ["mark"],
     "syntax": "sendmarkers",
@@ -234,7 +234,7 @@
     "commandType": "utility-admin"
   },
   "getStreamMode": {
-    "id": 26,
+    "id": 25,
     "rank": 1,
     "alias": ["getstmode"],
     "syntax": "getstreammode",
@@ -243,7 +243,7 @@
     "commandType": "botControl"
   },
   "setStreamMode": {
-    "id": 27,
+    "id": 26,
     "rank": 2,
     "alias": ["setstmode"],
     "syntax": "setstreammode [boolean]",
@@ -252,7 +252,7 @@
     "commandType": "botControl"
   },
   "commands": {
-    "id": 28,
+    "id": 27,
     "rank": 0,
     "alias": [],
     "syntax": "commmands",
@@ -261,7 +261,7 @@
     "commandType": "information"
   },
   "sponge": {
-    "id": 29,
+    "id": 28,
     "rank": 1,
     "alias": [],
     "syntax": "sponge [text]",
@@ -270,7 +270,7 @@
     "commandType": "botControl"
   },
   "welcome": {
-    "id": 30,
+    "id": 29,
     "rank": 1,
     "alias": [],
     "syntax": "welcome",
@@ -279,7 +279,7 @@
     "commandType": "utility-admin"
   },
   "uptime": {
-    "id": 31,
+    "id": 30,
     "rank": 0,
     "alias": ["ut"],
     "syntax": "uptime",
@@ -288,7 +288,7 @@
     "commandType": "information"
   },
   "updateReference": {
-    "id": 32,
+    "id": 31,
     "rank": 1,
     "alias": ["updateRef"],
     "syntax": "updateReference",
@@ -297,7 +297,7 @@
     "commandType": "utility-admin"
   },
   "reloadAll": {
-    "id": 33,
+    "id": 32,
     "rank": 4,
     "alias": [],
     "syntax": "reloadAll",
@@ -306,7 +306,7 @@
     "commandType": "botControl"
   },
   "appendData": {
-    "id": 34,
+    "id": 33,
     "rank": 4,
     "alias": ["addData"],
     "syntax": "appendData [Key] [Value]",
@@ -315,7 +315,7 @@
     "commandType": "botControl"
   },
   "writeData": {
-    "id": 35,
+    "id": 34,
     "rank": 4,
     "alias": [],
     "syntax": "writeData [Key] [Value]",
@@ -324,7 +324,7 @@
     "commandType": "botControl"
   },
   "removeData": {
-    "id": 36,
+    "id": 35,
     "rank": 4,
     "alias": [],
     "syntax": "removeData [Key] | removeData [Key] [Value]",
@@ -333,7 +333,7 @@
     "commandType": "botControl"
   },
   "Changelog": {
-    "id": 37,
+    "id": 36,
     "rank": 0,
     "alias": ["cl"],
     "syntax": "changelog",
@@ -342,7 +342,7 @@
     "commandType": "information"
   },
   "ReferenceList": {
-    "id": 38,
+    "id": 37,
     "rank": 0,
     "alias": ["refList"],
     "syntax": "ReferenceList",
@@ -586,7 +586,7 @@
   },
   "cleanse": {
     "id": 65,
-    "rank": 4,
+    "rank": 3,
     "alias": [],
     "syntax": "cleanse",
     "description": "",

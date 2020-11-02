@@ -13,7 +13,9 @@ import org.yaml.snakeyaml.error.YAMLException;
 import rsystems.HiveBot;
 
 import java.awt.*;
+import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static rsystems.HiveBot.LOGGER;
 
 public class Code extends ListenerAdapter {

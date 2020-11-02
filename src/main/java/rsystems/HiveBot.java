@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rsystems.adapters.*;
 import rsystems.commands.*;
+import rsystems.commands.modCommands.*;
 import rsystems.events.*;
 import rsystems.handlers.*;
 
@@ -26,7 +27,7 @@ public class HiveBot{
     public static String helpPrefix = Config.get("helpprefix");
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
-    public static String version = "0.17.7";
+    public static String version = "0.19.1";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
@@ -36,6 +37,8 @@ public class HiveBot{
     public static Guild docGuild = null;
     public static Guild steelVein = null;
 
+    public static GuildLoader guildLoader = new GuildLoader();
+    //public static Map<String, GuildObject> guilds = new HashMap<>();
 
     // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
@@ -48,12 +51,12 @@ public class HiveBot{
     // Load Reference data
     public static ReferenceLoader referenceLoader = new ReferenceLoader();
     //SQL Handler
-    public static SQLHandler sqlHandler = new SQLHandler(Config.get("DATABASE_URL"));
+    public static SQLHandler sqlHandler = new SQLHandler(Config.get("Database_Host"),Config.get("Database_User"),Config.get("Database_Pass"));
     //Karma SQL Handler
-    public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("DATABASE_URL"));
+    public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("Database_Host"),Config.get("Database_User"),Config.get("Database_Pass"));
     //Suggestion SQL Handler
     public static SuggestionHandler suggestionHandler = new SuggestionHandler(
-            Config.get("DATABASE_URL"),
+            Config.get("Database_Host"),Config.get("Database_User"),Config.get("Database_Pass"),
             HiveBot.dataFile.getData("SuggestionsRequestsChannel").toString(),
             HiveBot.dataFile.getData("SuggestionsReviewChannel").toString(),
             HiveBot.dataFile.getData("SuggestionsPostChannel").toString()
@@ -85,7 +88,7 @@ public class HiveBot{
         api.addEventListener(new Clear());
         api.addEventListener(new Code());
         api.addEventListener(new DatabaseCommands());
-        api.addEventListener(hallMonitor);
+        //api.addEventListener(hallMonitor);
         api.addEventListener(new Mentionable());
         api.addEventListener(new Info());
         api.addEventListener(new LinkGrabber());
@@ -113,7 +116,9 @@ public class HiveBot{
         api.addEventListener(new GratitudeListener());
         api.addEventListener(new SuggestionInterface());
         api.addEventListener(new Mute());
+        api.addEventListener(new CheckForCode());
         api.addEventListener(nickname);
+        api.addEventListener(new NicknameListener());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 

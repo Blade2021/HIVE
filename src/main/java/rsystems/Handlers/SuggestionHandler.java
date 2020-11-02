@@ -25,8 +25,8 @@ public class SuggestionHandler extends SQLHandler {
     private String suggestionsArchiveChannel;
 
 
-    public SuggestionHandler(String databaseURL, String pullChannel, String reviewChannel, String postChannel) {
-        super(databaseURL);
+    public SuggestionHandler(String DatabaseURL, String DatabaseUser, String DatabaseUserPass, String pullChannel, String reviewChannel, String postChannel) {
+        super(DatabaseURL,DatabaseUser,DatabaseUserPass);
 
         suggestionsPullChannel = pullChannel;
         suggestionsReviewChannel = reviewChannel;
@@ -162,7 +162,7 @@ public class SuggestionHandler extends SQLHandler {
             }
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT pollMessageID FROM suggestionPool WHERE pollMessageID == " + messageID);
+            ResultSet rs = st.executeQuery("SELECT pollMessageID FROM suggestionPool WHERE pollMessageID = " + messageID);
 
             while (rs.next()) {
                 rowsFound++;
