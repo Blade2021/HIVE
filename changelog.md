@@ -23,7 +23,6 @@
 - Added new References class to help support simple commands/output
   - Added references.json file to support new commands
 
-
 ### 0.17.3
 - Changed referenceTriggers to send direct message unless -show used
 - Updated who command with more information
