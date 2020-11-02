@@ -46,7 +46,9 @@ public class OnlineStatusListener extends ListenerAdapter {
             } else {
                 long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
                 if (daysPassed >= 1) {
-                    if(RoleCheck.getRank(event.getGuild(),event.getMember().getId()) >= 1){
+                    int rankCheck = RoleCheck.getRank(event.getGuild(),event.getMember().getId());
+                    System.out.println("RankCheck: " + rankCheck);
+                    if(rankCheck >= 1){
                         System.out.println(event.getUser().getAsTag() + " | STAFF: TRUE");
                         karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate,true);
                     } else {
