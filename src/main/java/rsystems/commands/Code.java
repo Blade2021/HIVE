@@ -13,7 +13,9 @@ import org.yaml.snakeyaml.error.YAMLException;
 import rsystems.HiveBot;
 
 import java.awt.*;
+import java.util.Map;
 
+import static org.junit.Assert.assertEquals;
 import static rsystems.HiveBot.LOGGER;
 
 public class Code extends ListenerAdapter {
@@ -39,7 +41,7 @@ public class Code extends ListenerAdapter {
                 EmbedBuilder info = new EmbedBuilder();
                 info.setTitle("Formatting code in Discord:");
                 info.setDescription("Paste your code in the following format Replacing `{language}` with your desired language:\n \\`\\`\\``{language}` \nCode Here\n\\`\\`\\`");
-                info.appendDescription("\n`Before:`\n{\"greeting\":\"Hello World\"}\n\n`After:` ```json\n{\"greeting\":\"Hello World\"}```");
+                info.appendDescription("\n`Before:`\n{\"greeting\":\"Hello World\"}\n\n`After:` ```json\n{\"greeting\":\"Hello World\"}```[More information](https://github.com/Blade2021/HIVE/wiki/Code-Formatting-&-Validation)");
                 info.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl());
                 info.setColor(Color.CYAN);
                 event.getChannel().sendTyping().queue();

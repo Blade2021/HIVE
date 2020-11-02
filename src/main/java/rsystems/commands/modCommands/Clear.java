@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -12,9 +12,11 @@ import rsystems.HiveBot;
 import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static rsystems.HiveBot.LOGGER;
+import static rsystems.HiveBot.karmaSQLHandler;
 
 public class Clear extends ListenerAdapter {
 
@@ -53,6 +55,20 @@ public class Clear extends ListenerAdapter {
                 event.getChannel().sendMessage("Something went wrong...").queue();
             }
         }
+
+        if(HiveBot.commands.get(65).checkCommand(event.getMessage().getContentRaw())){
+            try{
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(65))){
+                    cleanseChannel(event);
+                }
+            } catch (PermissionException e){
+                // Most likely missing embed permissions
+                event.getChannel().sendMessage("Missing Permission: " + e.getPermission().getName()).queue();
+            } catch (NullPointerException e){
+                // Could not grab role from user
+                event.getChannel().sendMessage("Something went wrong...").queue();
+            }
+        }
     }
 
     private void clearMessage(GuildMessageReceivedEvent event, int msgcount){
@@ -70,6 +86,60 @@ public class Clear extends ListenerAdapter {
                 // Missing Permissions for embed
                 event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
             }
+        }
+        catch (IllegalArgumentException illegalArg){
+            try {
+                if (illegalArg.toString().startsWith("java.lang.IllegalArgumentException: Message retrieval")) {
+                    // Too many messages
+                    EmbedBuilder error = new EmbedBuilder();
+                    error.setColor(Color.RED);
+                    error.setTitle("\uD83D\uDEAB Too many messages selected");
+                    error.setDescription("Between 1-99 messages can be deleted at one time.");
+                    event.getChannel().sendMessage(error.build()).queue();
+                    error.clear();
+                } else {
+                    // Messages too old
+                    EmbedBuilder error = new EmbedBuilder();
+                    error.setColor(Color.RED);
+                    error.setTitle("\uD83D\uDEAB Selected messages are older than 2 weeks");
+                    error.setDescription("Messages older than 2 weeks cannot be deleted.");
+                    event.getChannel().sendMessage(error.build()).queue();
+                    error.clear();
+                }
+            } catch (PermissionException e){
+                //Missing permissions for embed
+                event.getChannel().sendMessage("Missing Permission: " + e.getPermission().getName()).queue();
+            }
+        }
+        catch(InsufficientPermissionException e){
+            event.getChannel().sendMessage(event.getMessage().getAuthor().getAsMention() + "Missing Permission: " + e.getPermission().getName()).queue();
+            System.out.println(event.getAuthor().getName() + "attempted to call CLEAR without access");
+        }
+        catch(NullPointerException e){
+            event.getChannel().sendMessage(event.getAuthor().getAsMention() + "You do not have the nessessary permissons for this command").queue();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    private void cleanseChannel(GuildMessageReceivedEvent event){
+        try {
+            /*
+            int size;
+            do {
+                List<Message> messages = event.getChannel().getHistory().retrievePast(100).complete();
+                event.getChannel().deleteMessages(messages).queue();
+                size = event.getChannel().getHistory().retrievePast(100).complete().size();
+            } while(size > 0);
+
+             */
+
+            List<Message> messages = new ArrayList<>();
+            event.getChannel().getIterableHistory()
+                    .cache(false)
+                    .forEachAsync(messages::add)
+                    .thenRun(() -> event.getChannel().purgeMessages(messages));
         }
         catch (IllegalArgumentException illegalArg){
             try {

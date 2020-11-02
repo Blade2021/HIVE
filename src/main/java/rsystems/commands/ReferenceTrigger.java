@@ -8,12 +8,12 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
+import rsystems.adapters.ExtendedReference;
 import rsystems.adapters.Reference;
 import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.concurrent.TimeUnit;
 
 import static rsystems.HiveBot.LOGGER;
 
@@ -22,8 +22,9 @@ public class ReferenceTrigger extends ListenerAdapter {
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
         //Look for reference triggers
-        referenceCommand(event.getMessage());
-
+        if(!checkExtendedReferences(event.getMessage())) {
+            checkReferences(event.getMessage(),true);
+        }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
@@ -47,7 +48,9 @@ public class ReferenceTrigger extends ListenerAdapter {
 
     public void onPrivateMessageReceived(PrivateMessageReceivedEvent event) {
         //Check for references
-        referenceCommand(event.getMessage());
+        if(!checkExtendedReferences(event.getMessage())) {
+            checkReferences(event.getMessage(),false);
+        }
 
         //ReferenceList command
         if (HiveBot.commands.get(37).checkCommand(event.getMessage().getContentRaw())) {
@@ -56,10 +59,10 @@ public class ReferenceTrigger extends ListenerAdapter {
     }
 
 
-    private ArrayList<String> categories(ArrayList<Reference> refList) {
+    private ArrayList<String> categories(ArrayList<ExtendedReference> refList) {
         ArrayList<String> cats = new ArrayList<>();
 
-        for (Reference r : refList) {
+        for (ExtendedReference r : refList) {
             ArrayList<String> tempCat = new ArrayList<>();
             tempCat.addAll(r.getCategory());
             for (String s : tempCat) {
@@ -83,16 +86,40 @@ public class ReferenceTrigger extends ListenerAdapter {
         int index = 0;
 
         //Iterate through each Reference and grab the main ref code
+        for (ExtendedReference r : HiveBot.extendedReferences) {
+            switch (index) {
+                case 0:
+                    output1.append(r.getReferenceCommand()).append("\n");
+                    break;
+                case 1:
+                    output2.append(r.getReferenceCommand()).append("\n");
+                    break;
+                case 2:
+                    output3.append(r.getReferenceCommand()).append("\n");
+                    break;
+            }
+            index++;
+            if (index > 2) {
+                index = 0;
+            }
+        }
+
+        index = 0;
+        StringBuilder output4 = new StringBuilder();
+        StringBuilder output5 = new StringBuilder();
+        StringBuilder output6 = new StringBuilder();
+
+        //Iterate through each Reference and grab the main ref code
         for (Reference r : HiveBot.references) {
             switch (index) {
                 case 0:
-                    output1.append(r.getRefCode()).append("\n");
+                    output4.append(r.getReferenceCommand()).append("\n");
                     break;
                 case 1:
-                    output2.append(r.getRefCode()).append("\n");
+                    output5.append(r.getReferenceCommand()).append("\n");
                     break;
                 case 2:
-                    output3.append(r.getRefCode()).append("\n");
+                    output6.append(r.getReferenceCommand()).append("\n");
                     break;
             }
             index++;
@@ -104,9 +131,15 @@ public class ReferenceTrigger extends ListenerAdapter {
         try {
             EmbedBuilder info = new EmbedBuilder();
             info.setTitle("HIVE Reference List");
-            info.setDescription("https://github.com/Blade2021/HIVE-RefData");
+            info.setDescription("[Public Repo](https://github.com/Blade2021/HIVE-RefData)\n\n**How do I use these?**\n" +
+                    "Just type ~ then the reference you'd like to grab. \n" +
+                    "HIVE will send you a DM (Direct Message) with the information if its an extended reference.\n" +
+                    "```diff\nExample: ~mqtt\n```");
             info.setColor(Color.CYAN);
-            info.addField("", output1.toString(), true);
+            info.addField("References",output4.toString(),true);
+            info.addField("",output5.toString(),true);
+            info.addField("",output6.toString(),true);
+            info.addField("Extended References", output1.toString(), true);
             info.addField("", output2.toString(), true);
             info.addField("", output3.toString(), true);
             info.setFooter("Called by " + message.getAuthor().getName(), message.getAuthor().getAvatarUrl());
@@ -117,20 +150,20 @@ public class ReferenceTrigger extends ListenerAdapter {
         }
     }
 
-    private void referenceCommand(Message message) {
+    private boolean checkExtendedReferences(Message message) {
 
         boolean show = false;
         String[] args = message.getContentRaw().split("\\s+");
 
-        //Parse through all references
-        for (Reference r : HiveBot.references) {
+        //Parse through all extended references
+        for (ExtendedReference r : HiveBot.extendedReferences) {
 
             ArrayList<String> refCheck = new ArrayList<>();
-            refCheck.add(r.getRefCode());
+            refCheck.add(r.getReferenceCommand());
 
             try {
-                if (r.getAlias().size() > 0) {
-                    refCheck.addAll(r.getAlias());
+                if (r.getAliases().size() > 0) {
+                    refCheck.addAll(r.getAliases());
                 }
             } catch (NullPointerException e) {
             }
@@ -138,9 +171,10 @@ public class ReferenceTrigger extends ListenerAdapter {
 
             // Look for reference in the datafile
             for (String s : refCheck) {
-                if ((args[0].equalsIgnoreCase(HiveBot.prefix + s))) {
+                if((message.getContentRaw().toLowerCase().startsWith(HiveBot.prefix + s.toLowerCase())) || (message.getContentRaw().toLowerCase().startsWith(HiveBot.altPrefix + s.toLowerCase()))){
+                //if ((args[0].equalsIgnoreCase(HiveBot.prefix + s)) || (args[0].equalsIgnoreCase(HiveBot.altPrefix + s))) {
                     // A reference was found
-                    LOGGER.info("REF " + s + " : " + r.getRefCode() + " called by " + message.getAuthor().getAsTag());
+                    LOGGER.info("REF " + s + " : " + r.getReferenceCommand() + " called by " + message.getAuthor().getAsTag());
 
                     for (String checkForShow : args) {
                         if (checkForShow.equalsIgnoreCase("-show")) {
@@ -152,7 +186,7 @@ public class ReferenceTrigger extends ListenerAdapter {
 
                     if ((args.length >= 2) && (args[1].equalsIgnoreCase("install"))) {
                         sendReference(message,r.getInstallString(),show);
-                        return;
+                        return true;
                     }
                     if ((args.length >= 2) && (args[1].equalsIgnoreCase("links"))) {
                         StringBuilder output = new StringBuilder();
@@ -164,30 +198,41 @@ public class ReferenceTrigger extends ListenerAdapter {
                         if (output.length() >= 1) {
 
                             sendReference(message,output.toString(),show);
-                            return;
+                            return true;
                         }
                     }
 
                     if ((args.length >= 2) && (args[1].equalsIgnoreCase("alias"))) {
                         StringBuilder output = new StringBuilder();
                         try {
-                            if (r.getAlias().size() > 0) {
-                                output.append(r.getRefCode()).append(",");
-                                r.getAlias().forEach(alias -> {
+                            if (r.getAliases().size() > 0) {
+                                output.append(r.getReferenceCommand()).append(",");
+                                r.getAliases().forEach(alias -> {
                                     output.append(alias).append(", ");
                                 });
 
                                 sendReference(message,output.toString(),show);
-                                return;
+                                return true;
                             } else {
-                                sendReference(message,"There are no aliases assigned to: " + r.getRefCode(),show);
-                                return;
+                                sendReference(message,"There are no aliases assigned to: " + r.getReferenceCommand(),show);
+                                return true;
                             }
                         } catch (NullPointerException e) {
                         }
                     }
 
                     EmbedBuilder info = new EmbedBuilder();
+
+                    StringBuilder aliasList = new StringBuilder();
+                    try {
+                        r.getAliases().forEach(alias -> {
+                            if (!(alias.isEmpty())) {
+                                aliasList.append(alias).append(", ");
+                            }
+                        });
+                    } catch(NullPointerException e){
+                        aliasList.append("No aliases found");
+                    }
 
                     StringBuilder links = new StringBuilder();
                     r.getLinks().forEach(link -> {
@@ -207,21 +252,97 @@ public class ReferenceTrigger extends ListenerAdapter {
                         cats.append(r.getCategory().get(0));
                     }
 
-                    info.setTitle(r.getRefCode());
+                    info.setTitle(r.getReferenceCommand());
                     info.setColor(Color.CYAN);
                     info.setDescription(r.getDescription());
                     info.addField("Links", links.toString(), false);
                     info.addField("Installation", r.getInstallString(), false);
                     info.addField("Category", cats.toString(), false);
+                    info.addField("Aliases", aliasList.toString(),false);
 
                     if(!info.isEmpty()) {
-                        //!IMPORTANT - Send the MessageEmbed and not the EmbedBuilder
-                        sendReference(message, info.build(), show);
+                        try {
+                            //!IMPORTANT - Send the MessageEmbed and not the EmbedBuilder
+                            sendReference(message, info.build(), show);
+                        } catch (IllegalArgumentException e){
+                            System.out.println("Error with Embed: " + r.getReferenceCommand());
+                        }
                     }
                     info.clear();
+                    return true;
                 }
             }
         }
+        return false;
+    }
+
+    private boolean checkReferences(Message message, boolean delete) {
+        String[] args = message.getContentRaw().split("\\s+");
+
+        //Parse through all extended references
+        for (Reference r : HiveBot.references) {
+
+            ArrayList<String> refCheck = new ArrayList<>();
+            refCheck.add(r.getReferenceCommand());
+
+            try {
+                if (r.getAliases().size() > 0) {
+                    refCheck.addAll(r.getAliases());
+                }
+            } catch (NullPointerException e) {
+            }
+
+
+            // Look for reference in the datafile
+            for (String s : refCheck) {
+                if((message.getContentRaw().toLowerCase().startsWith(HiveBot.prefix + s.toLowerCase())) || (message.getContentRaw().toLowerCase().startsWith(HiveBot.altPrefix + s.toLowerCase()))){
+                //if ((args[0].equalsIgnoreCase(HiveBot.prefix + s)) || (args[0].equalsIgnoreCase(HiveBot.altPrefix + s))) {
+                    if(delete) {
+                        try {
+                            message.delete().queue();
+                        } catch (PermissionException | IllegalStateException e) {
+                            System.out.println("Failed to delete trigger");
+                        }
+                    }
+
+                    // A reference was found
+                    LOGGER.info("REF " + s + " : " + r.getReferenceCommand() + " called by " + message.getAuthor().getAsTag());
+
+                    if ((args.length >= 2) && (args[1].equalsIgnoreCase("alias"))) {
+                        StringBuilder output = new StringBuilder();
+                        try {
+                            if (r.getAliases().size() > 0) {
+                                output.append(r.getReferenceCommand()).append(",");
+                                r.getAliases().forEach(alias -> {
+                                    output.append(alias).append(", ");
+                                });
+
+                                sendReference(message,output.toString(),true);
+                                return true;
+                            } else {
+                                sendReference(message,"There are no aliases assigned to: " + r.getReferenceCommand(),true);
+                                return true;
+                            }
+                        } catch (NullPointerException e) {
+                        }
+                    }
+
+                    EmbedBuilder info = new EmbedBuilder();
+
+                    info.setColor(Color.CYAN);
+                    info.setDescription(r.getDescription());
+                    info.setFooter(r.getReferenceCommand() + " called by " + message.getAuthor().getName(), message.getAuthor().getAvatarUrl());
+
+                    if(!info.isEmpty()) {
+                        //!IMPORTANT - Send the MessageEmbed and not the EmbedBuilder
+                        sendReference(message, info.build(), true);
+                    }
+                    info.clear();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void sendReference(Message message, MessageEmbed embedMessage, boolean show){
@@ -263,6 +384,8 @@ public class ReferenceTrigger extends ListenerAdapter {
                 message.getChannel().sendMessage("Missing Permissions: " + e.getPermission()).queue();
             }catch (IllegalStateException e){
                 System.out.println("Empty embed detected");
+            } catch (IllegalArgumentException e){
+                System.out.println("Error with embed");
             }
         } else {
             try {
@@ -282,6 +405,8 @@ public class ReferenceTrigger extends ListenerAdapter {
             } catch (NullPointerException e) {
             }catch (IllegalStateException e){
                 System.out.println("Empty embed detected");
+            } catch (IllegalArgumentException e){
+                System.out.println("Error with embed");
             }
         }
     }

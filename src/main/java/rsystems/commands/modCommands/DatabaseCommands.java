@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -35,8 +35,8 @@ public class DatabaseCommands extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(41))) {
 
-                    SQLHandler sqlHandler = new SQLHandler();
-                    if (sqlHandler.getDate(event.getMember().getId()).isBlank()) {
+                    //SQLHandler sqlHandler = new SQLHandler();
+                    if (HiveBot.sqlHandler.getDate(event.getMember().getId()).isBlank()) {
                         event.getMessage().addReaction("⚠").queue();
                     } else {
                         event.getMessage().addReaction("✅").queue();
@@ -51,9 +51,9 @@ public class DatabaseCommands extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(42))) {
 
-                    SQLHandler sqlHandler = new SQLHandler();
+                    //SQLHandler sqlHandler = new SQLHandler();
                     HashMap<String, String> idMap = new HashMap<>();
-                    idMap.putAll(sqlHandler.getAllUsers());
+                    idMap.putAll(HiveBot.sqlHandler.getAllUsers());
 
                     EmbedBuilder output = new EmbedBuilder();
                     StringBuilder userMap = new StringBuilder();
@@ -85,8 +85,8 @@ public class DatabaseCommands extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(43))) {
 
-                    SQLHandler sqlHandler = new SQLHandler();
-                    if (sqlHandler.setName(args[1], args[2]) > 0) {
+                    //SQLHandler sqlHandler = new SQLHandler();
+                    if (HiveBot.sqlHandler.setName(args[1], args[2]) > 0) {
                         event.getMessage().addReaction("✅").queue();
                     } else {
                         event.getMessage().addReaction("⚠").queue();
@@ -101,8 +101,8 @@ public class DatabaseCommands extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(44))) {
 
-                    SQLHandler sqlHandler = new SQLHandler();
-                    if (sqlHandler.removeUser(args[1])) {
+                    //SQLHandler sqlHandler = new SQLHandler();
+                    if (HiveBot.sqlHandler.removeUser(args[1])) {
                         event.getMessage().addReaction("⚠").queue();
                     } else {
                         event.getMessage().addReaction("✅").queue();
@@ -117,13 +117,13 @@ public class DatabaseCommands extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(45))) {
 
-                    SQLHandler sqlHandler = new SQLHandler();
+                    //SQLHandler sqlHandler = new SQLHandler();
 
                     //Check to see if mentions were used
 
                     // No mentions found
                     if (event.getMessage().getMentionedMembers().size() == 0) {
-                        String date = sqlHandler.getDate(args[1]);
+                        String date = HiveBot.sqlHandler.getDate(args[1]);
 
                         if (date.isBlank()) {
                             event.getMessage().addReaction("⚠").queue();
@@ -137,7 +137,7 @@ public class DatabaseCommands extends ListenerAdapter {
                         StringBuilder dateString = new StringBuilder();
 
                         event.getMessage().getMentionedMembers().forEach(member -> {
-                            String date = sqlHandler.getDate(member.getId());
+                            String date = HiveBot.sqlHandler.getDate(member.getId());
 
                             if (!date.isBlank()) {
                                 dateString.append(member.getUser().getAsTag()).append(" - ").append(date).append("\n");
@@ -156,9 +156,9 @@ public class DatabaseCommands extends ListenerAdapter {
             try {
                 if (RoleCheck.checkRank(event.getMessage(), event.getMember(), HiveBot.commands.get(46))) {
 
-                    SQLHandler sqlHandler = new SQLHandler();
+                    //SQLHandler sqlHandler = new SQLHandler();
                     ArrayList<String> userIDs = new ArrayList<>();
-                    userIDs = sqlHandler.getAllUsers("ID");
+                    userIDs = HiveBot.sqlHandler.getAllUsers("ID");
 
                     EmbedBuilder output = new EmbedBuilder();
 
@@ -168,8 +168,8 @@ public class DatabaseCommands extends ListenerAdapter {
 
                     for (String s : userIDs) {
                         //idString.append(s).append("\n");
-                        nameString.append(sqlHandler.getName(s)).append("\n");
-                        dateString.append(sqlHandler.getDate(s)).append("\n");
+                        nameString.append(HiveBot.sqlHandler.getName(s)).append("\n");
+                        dateString.append(HiveBot.sqlHandler.getDate(s)).append("\n");
                     }
 
                     //output.addField("ID",idString.toString(),true);

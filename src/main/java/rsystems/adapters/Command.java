@@ -9,7 +9,7 @@ public class Command {
     protected String description;
     protected String syntax;
     protected int minimumArgCount;
-    protected int rank;
+    protected int rank = 4;
     protected String commandType;
     protected ArrayList<String> alias = new ArrayList<>();
 
@@ -82,14 +82,42 @@ public class Command {
         this.alias.clear();
     }
 
-    public boolean checkCommand(String message){
+    public boolean checkCommand(String message) {
         String[] args = message.split("\\s+");
-        if(args[0].equalsIgnoreCase(HiveBot.prefix + this.command)){
+        if (args[0].equalsIgnoreCase(HiveBot.prefix + this.command)) {
             return true;
         } else {
             final Boolean[] returnValue = {false};
             this.alias.forEach(alias -> {
-                if(args[0].equalsIgnoreCase(HiveBot.prefix + alias)){
+                if (args[0].equalsIgnoreCase(HiveBot.prefix + alias)) {
+                    returnValue[0] = true;
+                }
+            });
+            return returnValue[0];
+        }
+    }
+
+    public boolean checkCommand(String message, String prefix) {
+        String[] args = message.split("\\s+");
+        if (args[0].equalsIgnoreCase(prefix + this.command)) {
+            return true;
+        } else {
+            final Boolean[] returnValue = {false};
+            this.alias.forEach(alias -> {
+                if (args[0].equalsIgnoreCase(prefix + alias)) {
+                    returnValue[0] = true;
+                }
+            });
+            //return returnValue[0];
+        }
+
+        String formattedMessage = message.toLowerCase();
+        if(formattedMessage.startsWith(prefix + this.command.toLowerCase())){
+            return true;
+        } else {
+            final Boolean[] returnValue = {false};
+            this.alias.forEach(alias -> {
+                if(formattedMessage.startsWith(prefix + alias.toLowerCase())){
                     returnValue[0] = true;
                 }
             });

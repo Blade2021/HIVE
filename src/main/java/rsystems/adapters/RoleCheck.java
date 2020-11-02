@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.guild.GenericGuildMessageEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import rsystems.Config;
-import rsystems.HiveBot;
 
 import java.util.List;
 

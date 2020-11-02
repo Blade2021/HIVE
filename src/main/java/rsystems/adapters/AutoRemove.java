@@ -14,10 +14,11 @@ import java.util.Map;
 import java.util.TimerTask;
 
 import static rsystems.HiveBot.LOGGER;
+import static rsystems.HiveBot.sqlHandler;
 
 public class AutoRemove extends TimerTask {
 
-    private static SQLHandler sqlHandler = new SQLHandler();
+    //private SQLHandler sqlHandler = HiveBot.sqlHandler;
 
     @Override
     public void run() {

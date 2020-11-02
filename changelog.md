@@ -1,8 +1,27 @@
 # Change Log
 
-### 0.18.1
- - Added automatic parsing of code in messages.
- - Added automatic forwarding of big code blocks to hastebin with automatic feedback.
+### 0.17.7
+- Mute User(s) methods
+- Mute Channel(s) methods
+
+### 0.17.6
+- Suggestion Handler
+
+### 0.17.5
+- Added nickname command for setting your nickname on a server.
+
+### 0.17.4
+- Introduced karma system
+  - Karma system developed so members could give or take from other members to help show appreciation.
+  - Admin karma commands added
+- Fixed a bug with who command
+- Fixed a bug with Ask command
+- Changed output of ask command to embedded message vs regular message.
+- Changed reference trigger to include all aliases WITH output
+- Fixed a bug with references
+- Renamed References to now Extended References
+- Added new References class to help support simple commands/output
+  - Added references.json file to support new commands
 
 ### 0.17.3
 - Changed referenceTriggers to send direct message unless -show used

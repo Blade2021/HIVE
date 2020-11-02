@@ -11,10 +11,8 @@ import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import rsystems.adapters.*;
 import rsystems.commands.*;
-import rsystems.events.DocStream;
-import rsystems.events.Mentionable;
-import rsystems.events.OnlineStatusListener;
-import rsystems.events.WelcomeWagon;
+import rsystems.commands.modCommands.*;
+import rsystems.events.*;
 import rsystems.handlers.*;
 
 import javax.security.auth.login.LoginException;
@@ -25,31 +23,56 @@ import java.util.logging.Logger;
 
 public class HiveBot{
     public static String prefix = Config.get("prefix");
+    public static String altPrefix = Config.get("altprefix");
     public static String helpPrefix = Config.get("helpprefix");
-    public static String version = "0.17.3";
+    public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
+    public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
+    public static String version = "0.19.1";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
     public static String docDUID = Config.get("docDUID");
+    public static String botSpamChannel = Config.get("botSpamChannelID");
 
     public static Guild docGuild = null;
+    public static Guild steelVein = null;
 
+    public static GuildLoader guildLoader = new GuildLoader();
+    //public static Map<String, GuildObject> guilds = new HashMap<>();
 
     // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
+    //Extended Reference array
+    public static ArrayList<ExtendedReference> extendedReferences = new ArrayList<>();
     //Reference array
-    public static ArrayList<Reference> references = new ArrayList<Reference>();
+    public static ArrayList<Reference> references = new ArrayList<>();
     // Message Check Class
     public static MessageCheck messageCheck = new MessageCheck();
     // Load Reference data
     public static ReferenceLoader referenceLoader = new ReferenceLoader();
+    //SQL Handler
+    public static SQLHandler sqlHandler = new SQLHandler(Config.get("Database_Host"),Config.get("Database_User"),Config.get("Database_Pass"));
+    //Karma SQL Handler
+    public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(Config.get("Database_Host"),Config.get("Database_User"),Config.get("Database_Pass"));
+    //Suggestion SQL Handler
+    public static SuggestionHandler suggestionHandler = new SuggestionHandler(
+            Config.get("Database_Host"),Config.get("Database_User"),Config.get("Database_Pass"),
+            HiveBot.dataFile.getData("SuggestionsRequestsChannel").toString(),
+            HiveBot.dataFile.getData("SuggestionsReviewChannel").toString(),
+            HiveBot.dataFile.getData("SuggestionsPostChannel").toString()
+    );
 
+    //Static handlers
+    // Hall Monitor Object
     public static HallMonitor hallMonitor = new HallMonitor();
+    // Nickname handler
+    public static Nickname nickname = new Nickname();
 
-    public static SQLHandler sqlHandler = new SQLHandler();
 
-    //Initiate Logger
+    //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
+
+    public final static Logger karmaLogger = Logger.getLogger("karmaLogger");
 
     public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
@@ -65,7 +88,7 @@ public class HiveBot{
         api.addEventListener(new Clear());
         api.addEventListener(new Code());
         api.addEventListener(new DatabaseCommands());
-        api.addEventListener(hallMonitor);
+        //api.addEventListener(hallMonitor);
         api.addEventListener(new Mentionable());
         api.addEventListener(new Info());
         api.addEventListener(new LinkGrabber());
@@ -88,6 +111,14 @@ public class HiveBot{
         api.addEventListener(new Help());
         api.addEventListener(new Janitor());
         api.addEventListener(new OnlineStatusListener());
+        api.addEventListener(new KarmaInterface());
+        api.addEventListener(new ReactionListener());
+        api.addEventListener(new GratitudeListener());
+        api.addEventListener(new SuggestionInterface());
+        api.addEventListener(new Mute());
+        api.addEventListener(new CheckForCode());
+        api.addEventListener(nickname);
+        api.addEventListener(new NicknameListener());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
 
@@ -97,6 +128,7 @@ public class HiveBot{
 
         try{
             MyLogger.setup();
+            MyLogger.setup("karmaLogger");
         }catch(IOException e){
             e.printStackTrace();
         }
@@ -132,7 +164,7 @@ public class HiveBot{
         commands.add(new Command("Twitchsub")); // 19
         commands.add(new Command("Stats")); // 20
         commands.add(new Command("Getdata")); // 21
-        commands.add(new Command("Who")); // 22
+        commands.add(new Command("WhoIs")); // 22
         commands.add(new Command("Help")); // 23
         commands.add(new Command("SendMarkers")); //24
         commands.add(new Command("GetStreamMode")); // 25
@@ -155,11 +187,42 @@ public class HiveBot{
         commands.add(new Command("getDBUsers")); // 42
         commands.add(new Command("setDBUsername")); // 43
         commands.add(new Command("removeDBUser")); // 44
-        commands.add(new Command("getDBdate")); // 45
+        commands.add(new Command("getLSDate")); // 45
         commands.add(new Command("getDBData")); // 46
         commands.add(new Command("Test")); // 47
-
-
+        commands.add(new Command("addKarma")); // 48
+        commands.add(new Command("getKarma")); // 49
+        commands.add(new Command("setPoints")); // 50
+        commands.add(new Command("getPoints")); // 51
+        commands.add(new Command("setKarma")); // 52
+        commands.add(new Command("++")); // 53
+        commands.add(new Command("getUserKarma")); // 54
+        commands.add(new Command("getUserPoints")); // 55
+        commands.add(new Command("getDBSize")); // 56
+        commands.add(new Command("--")); // 57
+        commands.add(new Command("masterOverride")); // 58
+        commands.add(new Command("pollOnlineUsers")); // 59
+        commands.add(new Command("deleteUser")); // 60
+        commands.add(new Command("getTopTen")); //61
+        commands.add(new Command("karma")); //62
+        commands.add(new Command("getDate")); //63
+        commands.add(new Command("getKUserInfo")); //64
+        commands.add(new Command("cleanse")); //65
+        commands.add(new Command("nick")); //66
+        commands.add(new Command("optout")); //67
+        commands.add(new Command("updateKarmaUsers")); //68
+        commands.add(new Command("getActiveKarmaUsers")); //69
+        commands.add(new Command("karmaShort")); //70
+        commands.add(new Command("suggest")); //71
+        commands.add(new Command("suggestionAccept")); //72
+        commands.add(new Command("suggestionReject")); //73
+        commands.add(new Command("suggestionStatus")); //74
+        commands.add(new Command("suggestionApprove")); //75
+        commands.add(new Command("suggestionDeny")); //76
+        commands.add(new Command("suggestionOverrideMessage")); //77
+        commands.add(new Command("suggestionsList")); //78
+        commands.add(new Command("mute")); //79
+        commands.add(new Command("muteChannel")); //80
         CommandData commandData = new CommandData();
 
         try {
@@ -167,6 +230,7 @@ public class HiveBot{
             api.awaitReady();
 
             docGuild = api.getGuildById("469330414121517056");
+            steelVein = api.getGuildById("386701951662030858");
 
             //Load Tasks
             AutoStatus task1 = new AutoStatus(api,"Current Version: " + HiveBot.version);
@@ -175,6 +239,7 @@ public class HiveBot{
             HoneyStatus task4 = new HoneyStatus(api,api.getGuildById("469330414121517056"));
 
             AutoRemove autoRemoveTask = new AutoRemove();
+            AddKarmaPoints addKarmaPoints = new AddKarmaPoints(docGuild);
 
 
             // Schedule Tasks
@@ -187,6 +252,8 @@ public class HiveBot{
             Timer serverTaskTimer = new Timer();
             //Schedule AutoRemove task to run every 6 hours
             serverTaskTimer.schedule(autoRemoveTask,30000,21600000);
+            serverTaskTimer.schedule(addKarmaPoints,600000,21600000);
+
 
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -11,8 +11,11 @@ import org.json.simple.JSONObject;
 import rsystems.HiveBot;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static rsystems.HiveBot.LOGGER;
+import static rsystems.HiveBot.karmaSQLHandler;
 
 public class WelcomeWagon extends ListenerAdapter {
 
@@ -50,6 +53,9 @@ public class WelcomeWagon extends ListenerAdapter {
                 System.out.println("Could not find message for " + event.getGuild().getName());
             }
         }
+
+        checkKarmaTable(event.getMember());
+
     }
 
     private void rerouteWelcomeWagon(Guild guild, String channelID, Member member) {
@@ -78,7 +84,31 @@ public class WelcomeWagon extends ListenerAdapter {
             LOGGER.severe("Something went wrong when sending alternative welcome message");
         }
 
+    }
 
+    private void checkKarmaTable(Member member){
+
+        //Initiate the formatter for formatting the date into a set format
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+
+        //Get the current date
+        LocalDate currentDate = LocalDate.now();
+
+        //Format the current date into a set format
+        String formattedCurrentDate = formatter.format(currentDate);
+
+        //Get the last date of karma increment
+        String lastSeenKarma = karmaSQLHandler.getDate(member.getId());
+
+        //Insert new user if not found in DB
+        if(lastSeenKarma.isEmpty()){
+            if (karmaSQLHandler.insertUser(member.getId(), member.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
+                LOGGER.severe("Failed to add " + member.getUser().getAsTag() + " to honeyCombDB");
+            } else {
+                LOGGER.info("Added " + member.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
+                karmaSQLHandler.overrideKarmaPoints(member.getId(),5);
+            }
+        }
     }
 
 }

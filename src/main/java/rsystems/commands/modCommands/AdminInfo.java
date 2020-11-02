@@ -1,26 +1,33 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
+import com.sun.tools.javac.Main;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.IPermissionHolder;
+import net.dv8tion.jda.api.entities.PermissionOverride;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.json.simple.JSONObject;
 import rsystems.Config;
-import rsystems.adapters.AutoRemove;
 import rsystems.adapters.Command;
 import rsystems.adapters.RoleCheck;
 import rsystems.handlers.DataFile;
 import rsystems.HiveBot;
-import rsystems.handlers.SQLHandler;
+import rsystems.handlers.GuildLoader;
 
 import java.awt.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
+import static rsystems.HiveBot.*;
 import static rsystems.events.DocStream.sendMarkers;
 
 public class AdminInfo extends ListenerAdapter {
@@ -33,7 +40,7 @@ public class AdminInfo extends ListenerAdapter {
             return;
         }
 
-        if(HiveBot.messageCheck.CheckUser(event.getAuthor().getId())){
+        if(messageCheck.CheckUser(event.getAuthor().getId())){
             return;
         }
 
@@ -42,7 +49,7 @@ public class AdminInfo extends ListenerAdapter {
         String[] args = event.getMessage().getContentRaw().split("\\s+");
 
         // Admin Menu command
-        if(HiveBot.commands.get(13).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(13).checkCommand(event.getMessage().getContentRaw())){
             try{
                 int rank = RoleCheck.getRank(event,event.getMember().getId());
                 /*
@@ -51,21 +58,22 @@ public class AdminInfo extends ListenerAdapter {
                 }
 
                  */
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(13))){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(13))){
                     event.getAuthor().openPrivateChannel().queue((channel) ->
                     {
                         EmbedBuilder info = new EmbedBuilder();
                         info.setTitle("HIVE Admin Commands");
-                        info.setDescription("BoT Prefix: " + HiveBot.prefix + "\n" + event.getGuild().getName() + "Current User Count: `" + event.getGuild().getMemberCount() + " Users`");
+                        info.setDescription("BoT Prefix: " + prefix + "\n" + event.getGuild().getName() + "Current User Count: `" + event.getGuild().getMemberCount() + " Users`");
                         info.setThumbnail(event.getJDA().getSelfUser().getAvatarUrl());
 
                         //Initialize categories for each type
                         ArrayList<String> utilityCommands = new ArrayList<>();
                         ArrayList<String> botCommands = new ArrayList<>();
                         ArrayList<String> userCommands = new ArrayList<>();
+                        ArrayList<String> karmaCommands = new ArrayList<>();
 
                         //Assign the commands to categories
-                        for(Command c:HiveBot.commands){
+                        for(Command c: commands){
                             if((rank >= c.getRank()) && (c.getRank() > 0)){
                                 try {
                                     //info.addField("`" + c.getCommand() + "`", c.getDescription(), false);
@@ -80,6 +88,10 @@ public class AdminInfo extends ListenerAdapter {
                                     if (c.getCommandType().equalsIgnoreCase("user-control")) {
                                         //info.addField("",c.getCommand(),true);
                                         userCommands.add(c.getCommand());
+                                    }
+                                    if (c.getCommandType().equalsIgnoreCase("karma-admin")) {
+                                        //info.addField("",c.getCommand(),true);
+                                        karmaCommands.add(c.getCommand());
                                     }
                                 } catch (NullPointerException e){
                                     System.out.println("Found null for command" + c.getCommand());
@@ -102,9 +114,15 @@ public class AdminInfo extends ListenerAdapter {
                             userString.append(s).append("\n");
                         }
 
+                        StringBuilder karmaString = new StringBuilder();
+                        for(String s:karmaCommands){
+                            karmaString.append(s).append("\n");
+                        }
+
                         info.addField("Utility", utilityString.toString(),true);
                         info.addField("Bot Control",botString.toString(),true);
                         info.addField("User Control",userString.toString(),true);
+                        info.addField("Karma Admin",karmaString.toString(),true);
 
                         info.setFooter("Please use these commands responsibly", event.getMember().getUser().getAvatarUrl());
                         info.setColor(Color.RED);
@@ -136,9 +154,9 @@ public class AdminInfo extends ListenerAdapter {
 
 
         // Stats Command
-        if(HiveBot.commands.get(20).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(20).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(20))){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(20))){
                     int textChannelAmt = event.getGuild().getTextChannels().size();
                     int voiceChannelAmt = event.getGuild().getVoiceChannels().size();
                     int memberCount = event.getGuild().getMemberCount();
@@ -161,13 +179,13 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         // Get Data
-        if(HiveBot.commands.get(21).checkCommand(event.getMessage().getContentRaw())){
-            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(21))){
+        if(commands.get(21).checkCommand(event.getMessage().getContentRaw())){
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(21))){
                 EmbedBuilder ainfo = new EmbedBuilder();
                 ainfo.setTitle("HIVE Data File");
                 try {
                     if(args.length >= 2){
-                        Object obj = HiveBot.dataFile.getData(args[1]);
+                        Object obj = dataFile.getData(args[1]);
                         ainfo.setTitle("HIVE Data File | " + args[1]);
                         ainfo.appendDescription(obj.toString());
                     } else {
@@ -200,8 +218,8 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Append Data command
-        if(HiveBot.commands.get(33).checkCommand(event.getMessage().getContentRaw())){
-            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(33))){
+        if(commands.get(33).checkCommand(event.getMessage().getContentRaw())){
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(33))){
                 try {
                     if(args.length > 2){
                         ArrayList<String> values = new ArrayList<>();
@@ -209,11 +227,11 @@ public class AdminInfo extends ListenerAdapter {
                             values.add(args[i]);
                         }
                         System.out.println(values);
-                        HiveBot.dataFile.appendData(args[1],values);
+                        dataFile.appendData(args[1],values);
                         event.getMessage().addReaction("✅").queue();
                     } else {
                         System.out.println("debug");
-                        HiveBot.dataFile.appendData(args[1], args[2]);
+                        dataFile.appendData(args[1], args[2]);
                         event.getMessage().addReaction("✅").queue();
                     }
                 }catch(NullPointerException e){
@@ -224,10 +242,10 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Write Data Command
-        if(HiveBot.commands.get(34).checkCommand(event.getMessage().getContentRaw())){
-            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(34))){
+        if(commands.get(34).checkCommand(event.getMessage().getContentRaw())){
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(34))){
                 try {
-                    HiveBot.dataFile.writeData(args[1], args[2]);
+                    dataFile.writeData(args[1], args[2]);
                     event.getMessage().addReaction("✅").queue();
                 }catch(NullPointerException e){
                     event.getChannel().sendMessage("Something went wrong").queue();
@@ -235,11 +253,10 @@ public class AdminInfo extends ListenerAdapter {
             }
         }
 
-        //todo:Check on usage of this command
-        if (args[0].equalsIgnoreCase((HiveBot.prefix + "reloadData"))) {
+        if (args[0].equalsIgnoreCase((prefix + "reloadData"))) {
             if(event.getAuthor().getId().equals(Config.get("OWNER_ID"))){
                 try {
-                    HiveBot.dataFile.loadDataFile();
+                    dataFile.loadDataFile();
                     event.getMessage().addReaction("✅").queue();
                 }catch(NullPointerException e){
                     event.getChannel().sendMessage("Something went wrong").queue();
@@ -248,14 +265,14 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Remove Data command
-        if(HiveBot.commands.get(35).checkCommand(event.getMessage().getContentRaw())){
-            if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(35))){
+        if(commands.get(35).checkCommand(event.getMessage().getContentRaw())){
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(35))){
                 try {
                     if(args.length >= 3){
-                        HiveBot.dataFile.removeData(args[1],args[2]);
+                        dataFile.removeData(args[1],args[2]);
                         event.getMessage().addReaction("✅").queue();
                     } else if(args.length >= 2) {
-                        HiveBot.dataFile.removeData(args[1]);
+                        dataFile.removeData(args[1]);
                         event.getMessage().addReaction("✅").queue();
                     }
                 }catch(NullPointerException e){
@@ -265,9 +282,9 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         // Send Markers
-        if(HiveBot.commands.get(24).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(24).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(24))){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(24))){
                     sendMarkers(event.getGuild());
                     event.getMessage().addReaction("✅").queue();
                 }else {
@@ -278,10 +295,10 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Trigger welcome message
-        if(HiveBot.commands.get(29).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(29).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(29))){
-                    Object object = HiveBot.dataFile.getData("WelcomeMessage");
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(29))){
+                    Object object = dataFile.getData("WelcomeMessage");
                     JSONObject jsonObject = (JSONObject) object;
 
                     String welcomeMessage = (String) jsonObject.get(event.getGuild().getId());
@@ -295,23 +312,23 @@ public class AdminInfo extends ListenerAdapter {
         }
 
         //Get Stream Mode
-        if(HiveBot.commands.get(25).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(25).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(25))){
-                    event.getChannel().sendMessage("Stream Mode: " + HiveBot.getStreamMode()).queue();
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(25))){
+                    event.getChannel().sendMessage("Stream Mode: " + getStreamMode()).queue();
                 }
             }catch(PermissionException e){
             }
         }
 
         //Set Stream Mode
-        if(HiveBot.commands.get(26).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(26).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(26))){
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(26))){
                     if(args[1].equalsIgnoreCase("true")){
-                        HiveBot.setStreamMode(true);
+                        setStreamMode(true);
                     } else {
-                        HiveBot.setStreamMode(false);
+                        setStreamMode(false);
                     }
                     event.getMessage().addReaction("✅ ").queue();
                 }
@@ -324,36 +341,77 @@ public class AdminInfo extends ListenerAdapter {
 
 
         //Test command
-        if(HiveBot.commands.get(47).checkCommand(event.getMessage().getContentRaw())){
-            try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(47))){
-                    /*
-                    AutoRemove autoRemove = new AutoRemove();
-                    event.getMessage().getMentionedUsers().forEach(user -> {
-                        autoRemove.removeUser(user.getId());
-                    });
-                     */
-                    SQLHandler sqlHandler = new SQLHandler();
-                    sqlHandler.setDate(args[1],args[2]);
+        if(commands.get(47).checkCommand(event.getMessage().getContentRaw())){
+            if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(47))) {
 
-                }
-            }catch(PermissionException e){
-            }catch(IndexOutOfBoundsException e){
-                event.getChannel().sendMessage("Missing parameter").queue();
-                System.out.println("Missing parameter");
+
+                event.getChannel().sendMessage(
+                        GuildLoader.guilds.get(
+                                event.getGuild().getId())
+                                .getAssignableRoles().toString()
+                ).queue();
+                //event.getChannel().sendMessage(GuildLoader.guilds.get(event.getGuild().getId()).getBotNick()).queue();
+                /*try {
+                    int timeout = 0;
+                    try {
+                        // Parse argument 1 into an integer
+                        timeout = Integer.parseInt(args[1]);
+                    } catch (NumberFormatException e){
+                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + " INVALID SYNTAX.").queue();
+                        event.getMessage().addReaction("\uD83E\uDD54").queue();
+                    }
+                    //Initialize the string builder for errors to be put into
+                    StringBuilder errors = new StringBuilder();
+
+                    // Get a list of all Text Channels that were mentioned for processing
+                    List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
+                    for (TextChannel channel : mentionedChannels) {
+                        try {
+                            //Notify the channel
+                            channel.sendMessage("This channel is being put on cooldown.  See you in " + timeout + " minutes").queue();
+
+                            //Attach the deny override
+                            int finalTimeout = timeout;
+                            channel.putPermissionOverride(event.getGuild().getPublicRole()).setDeny(Permission.MESSAGE_WRITE).queue(success -> {
+                                //Clear the deny override after the given amount of time from argument 1
+                                channel.putPermissionOverride(event.getGuild().getPublicRole()).clear(Permission.MESSAGE_WRITE).queueAfter(finalTimeout, TimeUnit.MINUTES);
+                            });
+                        } catch (InsufficientPermissionException e){
+                            // Create a message to notify that the BOT does not have permission to set an override
+                            errors.append("❗").append("Missing permission[" + e.getPermission() + "] for channel: " + channel.getName()).append("\n");
+                        }
+                    }
+
+                    // Were there errors found, If so send a message
+                    if(!errors.toString().isBlank()){
+                        event.getChannel().sendMessage(errors.toString()).queue();
+                    }
+
+                }catch(NullPointerException e){
+                    System.out.println("Found null looking for channel");
+                }*/
             }
         }
 
         // Reload All command
-        if(HiveBot.commands.get(32).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(32).checkCommand(event.getMessage().getContentRaw())){
             try {
-                if (RoleCheck.checkRank(event.getMessage(),event.getMember(),HiveBot.commands.get(32))){
-                    HiveBot.reloadAll();
+                if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(32))){
+                    reloadAll();
                     event.getMessage().addReaction("✅").queue();
                 }
             } catch (NullPointerException e) {
             }
         }
 
+    }
+    private File getJarFile() throws FileNotFoundException {
+        String path = Main.class.getResource(Main.class.getSimpleName() + ".class").getFile();
+        if(path.startsWith("/")) {
+            throw new FileNotFoundException("This is not a jar file: \n" + path);
+        }
+        path = ClassLoader.getSystemClassLoader().getResource(path).getFile();
+
+        return new File(path.substring(0, path.lastIndexOf('!')));
     }
 }
