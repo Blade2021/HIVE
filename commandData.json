@@ -577,7 +577,7 @@
   },
   "getKUserInfo": {
     "id": 64,
-    "rank": 3,
+    "rank": 1,
     "alias": [],
     "syntax": "getKUserInfo",
     "description": "",

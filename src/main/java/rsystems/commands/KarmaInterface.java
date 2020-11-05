@@ -348,7 +348,11 @@ public class KarmaInterface extends ListenerAdapter {
                     if (event.getMessage().getMentionedMembers().size() > 0) {
                         getKarmaInfo(event.getGuild(), event.getMessage(), true, event.getMessage().getMentionedMembers().get(0).getUser().getId());
                     } else {
-                        getKarmaInfo(event.getGuild(), event.getMessage(), true, args[1]);
+                        if(args.length > 1) {
+                            getKarmaInfo(event.getGuild(), event.getMessage(), true, args[1]);
+                        } else {
+                            getKarmaInfo(event.getGuild(),event.getMessage(),true,event.getMember().getId());
+                        }
                     }
                 }
             } catch (NullPointerException e) {
