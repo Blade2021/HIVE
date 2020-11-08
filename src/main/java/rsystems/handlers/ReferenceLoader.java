@@ -27,7 +27,7 @@ public class ReferenceLoader {
             //Create a temporary Reference Object to hold the data
             ExtendedReference tempExtendedReference = new ExtendedReference(
                     keyStr.toString(),
-                    parsedValue.get("description").toString(),
+                    parsedValue.get("description").toString().replace("{prefix}",HiveBot.prefix),
                     parsedValue.get("installation").toString()
             );
 
