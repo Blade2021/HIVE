@@ -1,8 +1,8 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: feature request
+title: "[FR] "
+labels: 'Type: feature request, Status: initial request'
 assignees: Blade2021
 
 ---
