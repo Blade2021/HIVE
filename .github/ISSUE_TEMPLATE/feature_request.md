@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea for this project
 title: "[FR] "
-labels: 'Type: feature request, Status: initial request'
+labels: 'Status: initial request, Type: feature request'
 assignees: Blade2021
 
 ---
