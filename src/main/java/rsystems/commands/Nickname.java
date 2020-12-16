@@ -300,7 +300,7 @@ public class Nickname extends ListenerAdapter {
             String currentNickname = member.getEffectiveName();
 
             Collection<Emoji> collection = new ArrayList<Emoji>();
-            collection.add(EmojiManager.getForAlias("🎄"));
+            collection.add(EmojiManager.getByUnicode("🎄"));
             String nicknameWithoutEmoji = EmojiParser.removeAllEmojisExcept(currentNickname,collection);
 
             String suffix = "";
@@ -330,7 +330,7 @@ public class Nickname extends ListenerAdapter {
             Member member = guild.getMemberById(id);
             String currentNickname = name;
             Collection<Emoji> collection = new ArrayList<Emoji>();
-            collection.add(EmojiManager.getForAlias("🎄"));
+            collection.add(EmojiManager.getByUnicode("🎄"));
             String nicknameWithoutEmoji = EmojiParser.removeAllEmojisExcept(currentNickname,collection);
 
             String suffix = "";
@@ -354,7 +354,10 @@ public class Nickname extends ListenerAdapter {
 
     private void cleanseNickname(Guild guild, Member member) {
         String currentNickname = member.getEffectiveName();
-        String nicknameWithoutEmoji = EmojiParser.removeAllEmojis(currentNickname);
+
+        Collection<Emoji> collection = new ArrayList<Emoji>();
+        collection.add(EmojiManager.getByUnicode("🎄"));
+        String nicknameWithoutEmoji = EmojiParser.removeAllEmojisExcept(currentNickname,collection);
 
         try {
             guild.modifyNickname(member, nicknameWithoutEmoji).queue();
