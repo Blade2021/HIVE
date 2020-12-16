@@ -1,5 +1,7 @@
 package rsystems.commands;
 
+import com.vdurmont.emoji.Emoji;
+import com.vdurmont.emoji.EmojiManager;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
@@ -11,6 +13,9 @@ import rsystems.HiveBot;
 import rsystems.adapters.RoleCheck;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 import static rsystems.HiveBot.*;
 
@@ -24,6 +29,33 @@ public class Nickname extends ListenerAdapter {
         }
 
         String[] args = event.getMessage().getContentRaw().split("\\s+");
+
+        //Change nickname for message author
+        if (HiveBot.commands.get(81).checkCommand(event.getMessage().getContentRaw())) {
+            LOGGER.info(HiveBot.commands.get(81).getCommand() + " called by " + event.getAuthor().getAsTag());
+            try {
+
+                String currentName = event.getMember().getEffectiveName();
+
+                Collection<Emoji> collection = new ArrayList<Emoji>();
+
+                collection.add(EmojiManager.getByUnicode("🎄"));
+
+                if(currentName.contains("🎄")){
+                    currentName = EmojiParser.removeEmojis(currentName,collection);
+
+                    System.out.println(currentName);
+                    event.getMember().modifyNickname(currentName).queue();
+                } else {
+                    event.getMember().modifyNickname(currentName + "🎄").queue();
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
 
         //Change nickname for message author
         if (HiveBot.commands.get(66).checkCommand(event.getMessage().getContentRaw())) {
@@ -155,7 +187,7 @@ public class Nickname extends ListenerAdapter {
                 suffixRank = 4;
             } else {
                 System.out.println("NICKNAME ESCAPED. User already has type 4");
-                return;
+                //return;
             }
         } else {
             rank = getType(id);
@@ -266,7 +298,10 @@ public class Nickname extends ListenerAdapter {
 
             Member member = guild.getMemberById(id);
             String currentNickname = member.getEffectiveName();
-            String nicknameWithoutEmoji = EmojiParser.removeAllEmojis(currentNickname);
+
+            Collection<Emoji> collection = new ArrayList<Emoji>();
+            collection.add(EmojiManager.getForAlias("🎄"));
+            String nicknameWithoutEmoji = EmojiParser.removeAllEmojisExcept(currentNickname,collection);
 
             String suffix = "";
             if (karmaType >= 4) {
@@ -294,7 +329,9 @@ public class Nickname extends ListenerAdapter {
 
             Member member = guild.getMemberById(id);
             String currentNickname = name;
-            String nicknameWithoutEmoji = EmojiParser.removeAllEmojis(currentNickname);
+            Collection<Emoji> collection = new ArrayList<Emoji>();
+            collection.add(EmojiManager.getForAlias("🎄"));
+            String nicknameWithoutEmoji = EmojiParser.removeAllEmojisExcept(currentNickname,collection);
 
             String suffix = "";
             if (karmaType >= 4) {
