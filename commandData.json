@@ -727,5 +727,14 @@
     "description": "Mute a channel for x amount of minutes",
     "minArgCount": 0,
     "commandType": "utility-admin"
+  },
+  "merry": {
+    "id": 81,
+    "rank": 0,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
   }
 }
