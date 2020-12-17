@@ -45,7 +45,9 @@ public class Nickname extends ListenerAdapter {
                     currentName = EmojiParser.removeEmojis(currentName,collection);
 
                     System.out.println(currentName);
-                    event.getMember().modifyNickname(currentName).queue();
+                    event.getMember().modifyNickname(currentName).queue(success -> {
+                        event.getMessage().addReaction("✅").queue();
+                    });
                 } else {
                     event.getMember().modifyNickname(currentName + "🎄").queue(success -> {
 
