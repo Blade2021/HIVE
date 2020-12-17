@@ -47,7 +47,12 @@ public class Nickname extends ListenerAdapter {
                     System.out.println(currentName);
                     event.getMember().modifyNickname(currentName).queue();
                 } else {
-                    event.getMember().modifyNickname(currentName + "🎄").queue();
+                    event.getMember().modifyNickname(currentName + "🎄").queue(success -> {
+
+                        event.getMessage().addReaction("✅").queue();
+                        event.getMessage().addReaction("☃️ ").queue();
+
+                    });
                 }
 
             } catch (Exception e) {
