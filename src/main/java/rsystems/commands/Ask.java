@@ -17,6 +17,7 @@ import rsystems.HiveBot;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Random;
 
 import static rsystems.HiveBot.LOGGER;
 
@@ -75,38 +76,12 @@ public class Ask extends ListenerAdapter {
                     questionBuilder.setTitle("Requester: " + author);
                     questionBuilder.addField("**Question**",question,false);
 
-                    switch(lastColor){
-                        case 0:
-                            questionBuilder.setColor(Color.ORANGE);
-                            break;
-                        case 1:
-                            questionBuilder.setColor(Color.CYAN);
-                            break;
-                        case 2:
-                            questionBuilder.setColor(Color.GRAY);
-                            break;
-                        case 3:
-                            questionBuilder.setColor(Color.GREEN);
-                            break;
-                        case 4:
-                            questionBuilder.setColor(Color.PINK);
-                            break;
-                        case 5:
-                            questionBuilder.setColor(Color.RED);
-                            break;
-                        case 6:
-                            questionBuilder.setColor(Color.BLUE);
-                            break;
-                        case 7:
-                            questionBuilder.setColor(Color.magenta);
-                            break;
-                    }
+                    Random rand = new Random();
+                    float r = rand.nextFloat();
+                    float g = rand.nextFloat();
+                    float b = rand.nextFloat();
 
-                    if(lastColor >= 7){
-                        lastColor = 0;
-                    } else {
-                        lastColor++;
-                    }
+                    Color randomColor = new Color(r,g,b);
 
                     textChannel.sendMessage(questionBuilder.build()).queue();
                     questionBuilder.clear();

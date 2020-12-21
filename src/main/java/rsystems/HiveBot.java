@@ -27,7 +27,7 @@ public class HiveBot{
     public static String helpPrefix = Config.get("helpprefix");
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
-    public static String version = "0.19.7";
+    public static String version = "0.19.8";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
@@ -117,6 +117,7 @@ public class HiveBot{
         api.addEventListener(new SuggestionInterface());
         api.addEventListener(new Mute());
         api.addEventListener(new CheckForCode());
+        api.addEventListener(new MoveMessage());
         api.addEventListener(nickname);
         //api.addEventListener(new NicknameListener());
         api.getPresence().setStatus(OnlineStatus.ONLINE);
@@ -224,6 +225,7 @@ public class HiveBot{
         commands.add(new Command("mute")); //79
         commands.add(new Command("muteChannel")); //80
         commands.add(new Command("merry")); //81
+        commands.add(new Command("moveMessage")); //82
         CommandData commandData = new CommandData();
 
         try {

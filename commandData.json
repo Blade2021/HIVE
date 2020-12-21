@@ -736,5 +736,14 @@
     "description": "",
     "minArgCount": 0,
     "commandType": "utility"
+  },
+  "moveMessage": {
+    "id": 82,
+    "rank": 3,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
   }
 }

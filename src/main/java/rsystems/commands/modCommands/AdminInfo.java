@@ -1,6 +1,7 @@
 package rsystems.commands.modCommands;
 
 import com.sun.tools.javac.Main;
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.IPermissionHolder;
@@ -24,6 +25,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
@@ -341,55 +343,26 @@ public class AdminInfo extends ListenerAdapter {
 
 
         //Test command
-        if(commands.get(47).checkCommand(event.getMessage().getContentRaw())){
+        if(commands.get(26).checkCommand(event.getMessage().getContentRaw())){
             if (RoleCheck.checkRank(event.getMessage(),event.getMember(), commands.get(47))) {
 
+                EmbedBuilder embedBuilder = new EmbedBuilder();
 
-                event.getChannel().sendMessage(
-                        GuildLoader.guilds.get(
-                                event.getGuild().getId())
-                                .getAssignableRoles().toString()
-                ).queue();
-                //event.getChannel().sendMessage(GuildLoader.guilds.get(event.getGuild().getId()).getBotNick()).queue();
-                /*try {
-                    int timeout = 0;
-                    try {
-                        // Parse argument 1 into an integer
-                        timeout = Integer.parseInt(args[1]);
-                    } catch (NumberFormatException e){
-                        event.getChannel().sendMessage(event.getAuthor().getAsMention() + " INVALID SYNTAX.").queue();
-                        event.getMessage().addReaction("\uD83E\uDD54").queue();
-                    }
-                    //Initialize the string builder for errors to be put into
-                    StringBuilder errors = new StringBuilder();
+                Random rand = new Random();
 
-                    // Get a list of all Text Channels that were mentioned for processing
-                    List<TextChannel> mentionedChannels = event.getMessage().getMentionedChannels();
-                    for (TextChannel channel : mentionedChannels) {
-                        try {
-                            //Notify the channel
-                            channel.sendMessage("This channel is being put on cooldown.  See you in " + timeout + " minutes").queue();
+                int r = rand.nextInt(256);
+                int g = rand.nextInt(256);
+                int b = rand.nextInt(256);
 
-                            //Attach the deny override
-                            int finalTimeout = timeout;
-                            channel.putPermissionOverride(event.getGuild().getPublicRole()).setDeny(Permission.MESSAGE_WRITE).queue(success -> {
-                                //Clear the deny override after the given amount of time from argument 1
-                                channel.putPermissionOverride(event.getGuild().getPublicRole()).clear(Permission.MESSAGE_WRITE).queueAfter(finalTimeout, TimeUnit.MINUTES);
-                            });
-                        } catch (InsufficientPermissionException e){
-                            // Create a message to notify that the BOT does not have permission to set an override
-                            errors.append("❗").append("Missing permission[" + e.getPermission() + "] for channel: " + channel.getName()).append("\n");
-                        }
-                    }
+                Color randomColor = new Color(r,g,b);
 
-                    // Were there errors found, If so send a message
-                    if(!errors.toString().isBlank()){
-                        event.getChannel().sendMessage(errors.toString()).queue();
-                    }
+                embedBuilder.setDescription("This is just a test");
+                embedBuilder.setColor(randomColor);
 
-                }catch(NullPointerException e){
-                    System.out.println("Found null looking for channel");
-                }*/
+                event.getMessage().reply(embedBuilder.build()).queue();
+
+                embedBuilder.clear();
+
             }
         }
 
