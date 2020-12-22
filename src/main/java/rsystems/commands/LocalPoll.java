@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.adapters.RoleCheck;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -154,6 +155,8 @@ public class LocalPoll extends ListenerAdapter {
                     if (pollEntry.getKey().equalsIgnoreCase(id)) {
 
                         pollOut.setTitle("HIVE Poll | " + user.getName());
+
+                        pollOut.setColor(Color.ORANGE);
 
                         StringBuilder topics = new StringBuilder();
 
