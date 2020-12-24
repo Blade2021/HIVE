@@ -405,7 +405,8 @@ public class KarmaInterface extends ListenerAdapter {
         //Get karma
         if (HiveBot.commands.get(62).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(62).getCommand() + " called by " + event.getAuthor().getAsTag());
-            karmaExplanation(event.getMessage(), false);
+            //karmaExplanation(event.getMessage(), false);
+            karmaExplanationShort(event.getMessage(),true);
         }
 
         if (HiveBot.commands.get(69).checkCommand(event.getMessage().getContentRaw())) {

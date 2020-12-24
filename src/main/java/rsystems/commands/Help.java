@@ -15,6 +15,7 @@ import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -114,6 +115,7 @@ public class Help extends ListenerAdapter {
                         List<Member> mentions = event.getMessage().getMentionedMembers();
                         for (Member m : mentions) {
                             rank = RoleCheck.getRank(event, m.getId());
+
                             for (Command c : HiveBot.commands) {
                                 if (rank >= c.getRank()) {
                                     commands.add("`" + c.getCommand() + "`");
