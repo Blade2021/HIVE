@@ -17,8 +17,7 @@ import rsystems.handlers.*;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Timer;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class HiveBot{
@@ -27,7 +26,7 @@ public class HiveBot{
     public static String helpPrefix = Config.get("helpprefix");
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
-    public static String version = "0.19.9";
+    public static String version = "0.19.10";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
@@ -43,9 +42,11 @@ public class HiveBot{
     // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
     //Extended Reference array
-    public static ArrayList<ExtendedReference> extendedReferences = new ArrayList<>();
+    public static Map<String, ExtendedReference> extendedReferenceMap = new HashMap<>();
+    //public static ArrayList<ExtendedReference> extendedReferences = new ArrayList<>();
     //Reference array
-    public static ArrayList<Reference> references = new ArrayList<>();
+    //public static ArrayList<Reference> references = new ArrayList<>();
+    public static Map<String, Reference> referenceMap = new HashMap<>();
     // Message Check Class
     public static MessageCheck messageCheck = new MessageCheck();
     // Load Reference data

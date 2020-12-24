@@ -111,6 +111,7 @@ public class Ask extends ListenerAdapter {
     }
 
     private String getAuthor(GuildMessageReceivedEvent event, String message){
+
         // Initialize author
         String author = "";
         // Does message contain brackets?

@@ -40,7 +40,8 @@ public class ReferenceLoader {
             tempExtendedReference.setCategory(getArrayList(parsedValue,"category"));
 
             //Add Reference Object into the references array
-            HiveBot.extendedReferences.add(tempExtendedReference);
+            //HiveBot.extendedReferences.add(tempExtendedReference);
+            HiveBot.extendedReferenceMap.putIfAbsent(keyStr.toString(),tempExtendedReference);
 
         });
 
@@ -63,7 +64,8 @@ public class ReferenceLoader {
             tempReference.setCategory(getArrayList(parsedValue,"category"));
 
             //Add Reference Object into the references array
-            HiveBot.references.add(tempReference);
+            //HiveBot.references.add(tempReference);
+            HiveBot.referenceMap.putIfAbsent(keyStr.toString(),tempReference);
 
         });
     }
@@ -78,8 +80,10 @@ public class ReferenceLoader {
         referenceData = (JSONObject) referenceCommands;
 
         // Clear all references from array to recreate them below.
-        HiveBot.extendedReferences.clear();
-        HiveBot.references.clear();
+        //HiveBot.extendedReferences.clear();
+        HiveBot.extendedReferenceMap.clear();
+        //HiveBot.references.clear();
+        HiveBot.referenceMap.clear();
 
         extendedReferenceData.keySet().forEach(keyStr -> {
             //Form the object into a JSONObject for processing
@@ -102,7 +106,8 @@ public class ReferenceLoader {
                 }
 
                 //Add Reference Object into the references array
-                HiveBot.extendedReferences.add(tempRef);
+                HiveBot.extendedReferenceMap.putIfAbsent(keyStr.toString(),tempRef);
+                //HiveBot.extendedReferences.add(tempRef);
 
         });
 
@@ -125,7 +130,8 @@ public class ReferenceLoader {
             tempReference.setCategory(getArrayList(parsedValue,"category"));
 
             //Add Reference Object into the references array
-            HiveBot.references.add(tempReference);
+            //HiveBot.references.add(tempReference);
+            HiveBot.referenceMap.putIfAbsent(keyStr.toString(), tempReference);
 
         });
     }

@@ -13,7 +13,7 @@ import rsystems.adapters.Reference;
 import rsystems.adapters.RoleCheck;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 
 import static rsystems.HiveBot.LOGGER;
 
@@ -85,8 +85,10 @@ public class ReferenceTrigger extends ListenerAdapter {
         //Track index to add to each list evenly
         int index = 0;
 
+        TreeMap<String, ExtendedReference> sortedmap = new TreeMap<>(HiveBot.extendedReferenceMap);
+
         //Iterate through each Reference and grab the main ref code
-        for (ExtendedReference r : HiveBot.extendedReferences) {
+        for (ExtendedReference r : sortedmap.values()) {
             switch (index) {
                 case 0:
                     output1.append(r.getReferenceCommand()).append("\n");
@@ -109,8 +111,10 @@ public class ReferenceTrigger extends ListenerAdapter {
         StringBuilder output5 = new StringBuilder();
         StringBuilder output6 = new StringBuilder();
 
+        TreeMap<String, Reference> sortedRefMap = new TreeMap<>(HiveBot.referenceMap);
+
         //Iterate through each Reference and grab the main ref code
-        for (Reference r : HiveBot.references) {
+        for (Reference r : sortedRefMap.values()) {
             switch (index) {
                 case 0:
                     output4.append(r.getReferenceCommand()).append("\n");
@@ -156,7 +160,7 @@ public class ReferenceTrigger extends ListenerAdapter {
         String[] args = message.getContentRaw().split("\\s+");
 
         //Parse through all extended references
-        for (ExtendedReference r : HiveBot.extendedReferences) {
+        for (ExtendedReference r : HiveBot.extendedReferenceMap.values()) {
 
             ArrayList<String> refCheck = new ArrayList<>();
             refCheck.add(r.getReferenceCommand());
@@ -280,7 +284,7 @@ public class ReferenceTrigger extends ListenerAdapter {
         String[] args = message.getContentRaw().split("\\s+");
 
         //Parse through all extended references
-        for (Reference r : HiveBot.references) {
+        for (Reference r : HiveBot.referenceMap.values()) {
 
             ArrayList<String> refCheck = new ArrayList<>();
             refCheck.add(r.getReferenceCommand());
