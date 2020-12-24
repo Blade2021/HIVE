@@ -402,11 +402,16 @@ public class KarmaInterface extends ListenerAdapter {
             return;
         }
 
+        boolean source = event.getMessage().isFromGuild();
+
         //Get karma
         if (HiveBot.commands.get(62).checkCommand(event.getMessage().getContentRaw())) {
             LOGGER.info(HiveBot.commands.get(62).getCommand() + " called by " + event.getAuthor().getAsTag());
-            //karmaExplanation(event.getMessage(), false);
-            karmaExplanationShort(event.getMessage(),true);
+            if(source){
+                karmaExplanationShort(event.getMessage(),true);
+            } else {
+                karmaExplanation(event.getMessage(), false);
+            }
         }
 
         if (HiveBot.commands.get(69).checkCommand(event.getMessage().getContentRaw())) {
@@ -451,23 +456,24 @@ public class KarmaInterface extends ListenerAdapter {
 
         // Send to guild channel or not
         if (source) {
-            message.getChannel().sendMessage(finalKarmaExplanation).queue(success -> {
-                success.delete().queueAfter(60,TimeUnit.SECONDS);
+            message.reply(finalKarmaExplanation).queue(success -> {
+                success.delete().queueAfter(120,TimeUnit.SECONDS);
             });
             return;
-        }
+        } else {
 
-        message.getAuthor().openPrivateChannel().queue((channel -> {
-            channel.sendMessage(finalKarmaExplanation).queue(
-                    success -> {
-                        message.addReaction("✅").queue();
-                    },
-                    failure -> {
-                        message.addReaction("⚠").queue();
-                        LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
-                        message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
-                    });
-        }));
+            message.getAuthor().openPrivateChannel().queue((channel -> {
+                channel.sendMessage(finalKarmaExplanation).queue(
+                        success -> {
+                            message.addReaction("✅").queue();
+                        },
+                        failure -> {
+                            message.addReaction("⚠").queue();
+                            LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
+                            message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                        });
+            }));
+        }
     }
 
     private void getKarmaInfo(Guild guild, Message message, boolean source, String id) {
