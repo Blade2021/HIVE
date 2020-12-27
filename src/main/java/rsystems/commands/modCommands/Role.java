@@ -38,7 +38,7 @@ public class Role extends ListenerAdapter {
                         String roleName = event.getMessage().getContentRaw().substring(args[0].length()+1);
                         roleName = roleName.replaceAll(" true","");
 
-                        if((args.length > 2) && (args[2].equalsIgnoreCase("true")) && (RoleCheck.getRank(event,event.getMember().getId()) >= 3)){
+                        if((args.length > 2) && (args[2].equalsIgnoreCase("true")) && (RoleCheck.getRank(event,event.getMember().getId()) >= 2)){
                             getMembers = true;
                         }
 

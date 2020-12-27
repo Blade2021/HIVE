@@ -73,7 +73,7 @@
   },
   "role": {
     "id": 8,
-    "rank": 3,
+    "rank": 2,
     "alias": [],
     "syntax": "role [role]",
     "description": "Grabs the current user count for a role.\n\nSee how many users belong to a role for statistical or administration purposes.",
