@@ -22,7 +22,7 @@ public class Newcomer extends TimerTask {
 
                 if (m.getTimeJoined().toLocalDateTime().plusDays(30).isBefore(localDateTime))
                     HiveBot.drZzzGuild().removeRoleFromMember(m, newComerRole).queue();
-                    System.out.println(String.format("USER:%d Removing newcomer role"));
+                    System.out.println(String.format("USER:%d Removing newcomer role",m.getIdLong()));
 
             }
         }
