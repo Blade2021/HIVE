@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.TimerTask;
 
 public class Newcomer extends TimerTask {
+
     @Override
     public void run() {
 
@@ -19,7 +20,7 @@ public class Newcomer extends TimerTask {
             for (Member m : members) {
                 LocalDateTime localDateTime = LocalDateTime.now();
 
-                if (m.getTimeJoined().toLocalDateTime().isAfter(localDateTime.plusDays(30)))
+                if (m.getTimeJoined().toLocalDateTime().plusDays(30).isBefore(localDateTime))
                     HiveBot.drZzzGuild().removeRoleFromMember(m, newComerRole).queue();
                     System.out.println(String.format("USER:%d Removing newcomer role"));
 
