@@ -267,7 +267,7 @@ public class HiveBot{
             //Schedule AutoRemove task to run every 6 hours
             serverTaskTimer.schedule(autoRemoveTask,30000,21600000);
             serverTaskTimer.schedule(addKarmaPoints,600000,21600000);
-            serverTaskTimer.schedule(new Newcomer(),600000,21600000);
+            serverTaskTimer.schedule(new Newcomer(),60000,21600000);
 
 
         } catch (InterruptedException e) {
