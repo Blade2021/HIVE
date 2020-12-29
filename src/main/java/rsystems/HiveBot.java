@@ -9,11 +9,13 @@ import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
+import net.dv8tion.jda.internal.JDAImpl;
 import rsystems.adapters.*;
 import rsystems.commands.*;
 import rsystems.commands.modCommands.*;
 import rsystems.events.*;
 import rsystems.handlers.*;
+import rsystems.tasks.Newcomer;
 
 import javax.security.auth.login.LoginException;
 import java.io.IOException;
@@ -26,18 +28,24 @@ public class HiveBot{
     public static String helpPrefix = Config.get("helpprefix");
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
-    public static String version = "0.19.12";
+    public static String version = "0.19.13";
     public static String restreamID = Config.get("restreamid");
     public static DataFile dataFile = new DataFile();
     private static Boolean streamMode = false;
     public static String docDUID = Config.get("docDUID");
     public static String botSpamChannel = Config.get("botSpamChannelID");
 
+    public static JDAImpl jda = null;
+
     public static Guild docGuild = null;
     public static Guild steelVein = null;
 
     public static GuildLoader guildLoader = new GuildLoader();
     //public static Map<String, GuildObject> guilds = new HashMap<>();
+
+    public static Guild drZzzGuild(){
+        return jda.getGuildById("469330414121517056");
+    }
 
     // Commands array
     public static ArrayList<Command> commands = new ArrayList<Command>();
@@ -233,6 +241,8 @@ public class HiveBot{
             // Wait for discord jda to completely load
             api.awaitReady();
 
+            jda = (JDAImpl) api;
+
             docGuild = api.getGuildById("469330414121517056");
             steelVein = api.getGuildById("386701951662030858");
 
@@ -257,6 +267,7 @@ public class HiveBot{
             //Schedule AutoRemove task to run every 6 hours
             serverTaskTimer.schedule(autoRemoveTask,30000,21600000);
             serverTaskTimer.schedule(addKarmaPoints,600000,21600000);
+            serverTaskTimer.schedule(new Newcomer(),600000,21600000);
 
 
         } catch (InterruptedException e) {
