@@ -21,6 +21,7 @@ public class Newcomer extends TimerTask {
 
                 if (m.getTimeJoined().toLocalDateTime().isAfter(localDateTime.plusDays(30)))
                     HiveBot.drZzzGuild().removeRoleFromMember(m, newComerRole).queue();
+                    System.out.println(String.format("USER:%d Removing newcomer role"));
 
             }
         }
