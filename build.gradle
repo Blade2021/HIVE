@@ -34,7 +34,8 @@ dependencies {
     //compile 'com.github.philippheuer.credentialmanager:credentialmanager:0.0.5'
     compile 'com.github.philippheuer.events4j:events4j:0.5.0'
 
-    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
+
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.0'
     implementation group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: "2.11.0"
 
     compileOnly 'org.projectlombok:lombok:1.18.12'

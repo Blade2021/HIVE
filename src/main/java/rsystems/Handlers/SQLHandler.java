@@ -4,33 +4,47 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.mariadb.jdbc.MariaDbPoolDataSource;
+
 public class SQLHandler {
+    protected static MariaDbPoolDataSource pool = null;
 
-    protected static Connection connection = null;
+    public SQLHandler(String URL, String user, String pass) {
+        
+        try {
+            pool = new MariaDbPoolDataSource(URL);
+            pool.setUser(user);
+            pool.setPassword(pass);
+            pool.setMaxPoolSize(10);
+            pool.setMinPoolSize(2);
 
-    protected final String DatabaseURL;
-    protected final String DatabaseUser;
-    protected final String DatabaseUserPass;
-
-
-    public SQLHandler(String DatabaseURL, String DatabaseUser, String DatabaseUserPass) {
-        this.DatabaseURL = DatabaseURL;
-        this.DatabaseUser = DatabaseUser;
-        this.DatabaseUserPass = DatabaseUserPass;
-        connect();
+            pool.initialize();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
     }
 
-    public void connect() {
+    public SQLHandler(MariaDbPoolDataSource pool) {
+        SQLHandler.pool = pool;
+    }
+
+    public boolean checkBlacklist(Long userID) {
+        boolean output = false;
         try {
-            connection = DriverManager.getConnection(DatabaseURL, DatabaseUser, DatabaseUserPass);
+            Connection connection = pool.getConnection();
 
-            if (connection.isValid(30)) {
-                System.out.println("Database connected");
+            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT UserID FROM HIVE_Blacklist WHERE UserID = %d", userID));
+            while (rs.next()) {
+                if (rs.getLong("UserID") == userID) {
+                    output = true;
+                }
             }
-        } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        }
 
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return output;
 
     }
 
@@ -40,23 +54,17 @@ public class SQLHandler {
 
         try {
 
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
-
             ResultSet rs = st.executeQuery("SELECT DATE FROM LastSeenTable WHERE ID = " + id);
             while (rs.next()) {
                 date = rs.getString("DATE");
             }
 
+            connection.close();
+
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
 
         return date;
@@ -66,11 +74,7 @@ public class SQLHandler {
         String date = "";
 
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT DATE FROM " + table + " WHERE ID = " + id);
@@ -78,10 +82,9 @@ public class SQLHandler {
                 date = rs.getString("DATE");
             }
 
+            connection.close();
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
 
         return date;
@@ -89,21 +92,20 @@ public class SQLHandler {
 
     // Set the last seen date using id
     public int setDate(String table, String id, String date) {
+
+        int updateCount = 0;
+
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
-            return (st.executeUpdate("UPDATE " + table + " SET DATE = \"" + date + "\" WHERE ID = " + id));
+
+            updateCount = st.executeUpdate("UPDATE " + table + " SET DATE = \"" + date + "\" WHERE ID = " + id);
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-        return 0;
+        return updateCount;
     }
 
     // Get date of last seen using ID
@@ -111,11 +113,7 @@ public class SQLHandler {
         String name = "";
 
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT NAME FROM LastSeenTable WHERE ID = " + id);
@@ -123,10 +121,9 @@ public class SQLHandler {
                 name = rs.getString("NAME");
             }
 
+            connection.close();
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
 
         return name;
@@ -134,92 +131,71 @@ public class SQLHandler {
 
     // Set the name of the user using id
     public int setName(String id, String name) {
+        int output = 0;
+
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
-            return (st.executeUpdate("UPDATE LastSeenTable SET NAME = \"" + name + "\" WHERE ID = " + id));
+
+            output = (st.executeUpdate("UPDATE LastSeenTable SET NAME = \"" + name + "\" WHERE ID = " + id));
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-        return 0;
+        return output;
     }
 
     // Insert NEW users into the DB
     public boolean insertUser(String id, String name, String date) {
+        boolean output = false;
+
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            return st.execute("INSERT INTO LastSeenTable (ID,NAME,DATE) VALUES(" + id + ",\"" + name + "\",\"" + date + "\");");
+            output = st.execute("INSERT INTO LastSeenTable (ID,NAME,DATE) VALUES(" + id + ",\"" + name + "\",\"" + date + "\");");
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-        return false;
+
+        return output;
     }
 
     // Insert NEW users into the DB
     public boolean insertUser(String id, String name, String date, String column) {
+        boolean output = false;
+
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            return st.execute("INSERT INTO " + column + " (ID,NAME,DATE) VALUES(" + id + ",\"" + name + "\",\"" + date + "\");");
+            output = st.execute("INSERT INTO " + column + " (ID,NAME,DATE) VALUES(" + id + ",\"" + name + "\",\"" + date + "\");");
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-        return false;
+
+        return output;
     }
 
     // Remove using from DB
     public boolean removeUser(String id) {
+        boolean output = false;
+
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            return st.execute("DELETE FROM LastSeenTable WHERE ID = " + id);
+            output = st.execute("DELETE FROM LastSeenTable WHERE ID = " + id);
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-        return false;
-    }
-
-    // Close Connection to DB
-    public void closeConnection() {
-        try {
-            if (connection != null) {
-                connection.close();
-            }
-        } catch (SQLException ex) {
-            System.out.println(ex.getMessage());
-        }
+        return output;
     }
 
     // Return an array list of all values in the DB
@@ -227,50 +203,37 @@ public class SQLHandler {
         ArrayList<String> values = new ArrayList<>();
 
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT " + column + " FROM LastSeenTable");
             while (rs.next()) {
                 values.add(rs.getString(column));
             }
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-
         return values;
     }
 
     // Return an array list of all values in the DB
     public HashMap<String, String> getAllUsers() {
         HashMap<String, String> idMap = new HashMap<>();
-
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT ID, NAME FROM LastSeenTable");
             while (rs.next()) {
                 idMap.put(rs.getString("ID"), rs.getString("NAME"));
             }
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-
         return idMap;
     }
 
@@ -279,51 +242,41 @@ public class SQLHandler {
         HashMap<String, String> idMap = new HashMap<>();
 
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT ID, DATE FROM LastSeenTable");
             while (rs.next()) {
                 idMap.put(rs.getString("ID"), rs.getString("DATE"));
             }
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
 
         return idMap;
     }
 
     public int getDBSize() {
+        int output = 0;
         try {
-
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             int rowCount = 0;
             ResultSet rs = st.executeQuery("SELECT COUNT(*) FROM KARMA");
-            while(rs.next()){
+            while (rs.next()) {
                 rowCount = rs.getInt(1);
             }
 
-            return rowCount;
-
+            output = rowCount;
+            connection.close();
 
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
-        } finally {
-            //closeConnection();
+            throwables.printStackTrace();
         }
-        return 0;
+        return output;
     }
 
 }

@@ -1,15 +1,21 @@
 package rsystems.handlers;
 
-import rsystems.adapters.KarmaUserInfo;
+import org.mariadb.jdbc.MariaDbPoolDataSource;
+import rsystems.objects.KarmaUserInfo;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class KarmaSQLHandler extends SQLHandler {
 
-    public KarmaSQLHandler(String DatabaseURL, String DatabaseUser, String DatabaseUserPass) {
-        super(DatabaseURL,DatabaseUser,DatabaseUserPass);
-        connect();
+    public KarmaSQLHandler(MariaDbPoolDataSource pool) {
+        super(pool);
     }
 
     // Get date of last seen using ID
@@ -19,10 +25,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
         try {
 
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT DATE FROM KARMA WHERE ID = " + id);
@@ -41,10 +44,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public void addKarmaPoints(String id, String date, boolean staff) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             /*
@@ -81,10 +81,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
         try {
 
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT USER_KARMA FROM KARMA WHERE ID = " + id);
@@ -106,10 +103,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
         try {
 
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT NAME FROM KARMA WHERE ID = " + id);
@@ -128,10 +122,7 @@ public class KarmaSQLHandler extends SQLHandler {
         System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s",sender,receiver));
 
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             int availableKarma = 0;
@@ -178,10 +169,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public boolean overrideKarma(String id, int value) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET USER_KARMA = " + value + " WHERE ID = " + id);
             return true;
@@ -193,10 +181,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public int checkKarmaRanking(String id){
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             int indexesFound = 0;
@@ -215,10 +200,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public boolean masterOverrideKarma(String value) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET USER_KARMA = " + value + " WHERE USER_KARMA <> " + value);
             return true;
@@ -230,10 +212,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public boolean masterOverridePoints(String value) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET AV_POINTS = " + value + " WHERE AV_POINTS <> " + value);
             return true;
@@ -245,10 +224,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public boolean overrideKarmaPoints(String id, int value) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET AV_POINTS = " + value + " WHERE ID = " + id);
             return true;
@@ -264,10 +240,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
         try {
 
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + id);
@@ -284,10 +257,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public boolean deleteUser(String id) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("DELETE FROM KARMA WHERE ID = " + id);
             return true;
@@ -300,10 +270,7 @@ public class KarmaSQLHandler extends SQLHandler {
     public Map<String, Integer> getTopTen() {
         Map<String, Integer> topRank = new LinkedHashMap<>();
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery("SELECT NAME, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC LIMIT 10");
             while (rs.next()) {
@@ -320,10 +287,7 @@ public class KarmaSQLHandler extends SQLHandler {
     public KarmaUserInfo userInfo(String id) {
         KarmaUserInfo userInfoObject = new KarmaUserInfo();
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery("SELECT ID, NAME, USER_KARMA, AV_POINTS, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + id);
             while (rs.next()) {
@@ -345,16 +309,13 @@ public class KarmaSQLHandler extends SQLHandler {
         return null;
     }
 
-    public int getInt(String column,String id) {
+    public int getInt(String column, String id) {
 
         int value = 0;
 
         try {
 
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT " + column + " FROM KARMA WHERE ID = " + id);
@@ -369,12 +330,9 @@ public class KarmaSQLHandler extends SQLHandler {
         return value;
     }
 
-    public boolean setInt(String id, String column,int value) {
+    public boolean setInt(String id, String column, int value) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET " + column + " = " + value + " WHERE ID = " + id);
             return true;
@@ -384,12 +342,9 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
-    public boolean setType(String id,int type) {
+    public boolean setType(String id, int type) {
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             int currentType = 0;
@@ -412,10 +367,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
     public void clearTracking(){
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("DELETE FROM karmaTracker WHERE DATE < (SELECT DATETIME('now', '-7 day'))");
         } catch (SQLException throwables) {
@@ -427,10 +379,7 @@ public class KarmaSQLHandler extends SQLHandler {
         ArrayList<String> members = new ArrayList<>();
 
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery("SELECT ID FROM KARMA WHERE KTYPE >= 1");
             while (rs.next()) {
@@ -444,14 +393,11 @@ public class KarmaSQLHandler extends SQLHandler {
         return members;
     }
 
-    public Map<String,Integer> getActiveUsers(){
+    public Map<String, Integer> getActiveUsers(){
         Map<String, Integer> activeUsers = new HashMap<>();
 
         try {
-            if ((connection == null) || (connection.isClosed())) {
-                connect();
-            }
-
+            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery("SELECT DISTINCT ID FROM karmaTracker WHERE (DATE > (current_date - '-7 days'))");
             while (rs.next()) {
