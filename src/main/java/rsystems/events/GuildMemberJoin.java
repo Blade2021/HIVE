@@ -19,5 +19,9 @@ public class GuildMemberJoin extends ListenerAdapter {
             else
                 System.out.println("Emoji's found for member: " + event.getMember().getId());
         }
+
+        if(event.getMember().getUser().getAvatarUrl() == null){
+            System.out.println("default avatar detected!");
+        }
     }
 }

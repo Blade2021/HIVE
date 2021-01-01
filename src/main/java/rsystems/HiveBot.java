@@ -12,6 +12,8 @@ import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
 import rsystems.events.GratitudeListener;
 import rsystems.events.GuildMemberJoin;
+import rsystems.events.NicknameListener;
+import rsystems.events.TestEvent;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
 import rsystems.objects.Dispatcher;
@@ -60,6 +62,8 @@ public class HiveBot{
         api.addEventListener(dispatcher = new Dispatcher());
         api.addEventListener(new GuildMemberJoin());
         api.addEventListener(new GratitudeListener());
+        api.addEventListener(new TestEvent());
+        api.addEventListener(new NicknameListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
