@@ -12,15 +12,20 @@ import rsystems.objects.Command;
 import java.time.temporal.ChronoUnit;
 
 public class SetPoints extends Command {
-	
-    @Override
+
+	@Override
+	public Integer getPermissionIndex() {
+		return 2;
+	}
+
+	@Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
 		
 		String[] args = content.split("\\s+");
 		if(args.length >= 2){
 			int karmaPoints = Integer.parseInt(args[0]);
 			
-			Long userID = null;
+			Long userID;
 				try{
 					userID = Long.valueOf(args[1]);
 					if(HiveBot.karmaSQLHandler.overrideKarmaPoints(String.valueOf(userID),karmaPoints))
@@ -46,7 +51,7 @@ public class SetPoints extends Command {
 				}
 				event.getMessage().addReaction("\uD83D\uDCE8").queue();
 			} else {
-				Long userID = null;
+				Long userID;
 				try{
 					userID = Long.valueOf(args[1]);
 					if(HiveBot.karmaSQLHandler.overrideKarmaPoints(String.valueOf(userID),karmaPoints))
@@ -63,11 +68,6 @@ public class SetPoints extends Command {
     @Override
     public String getHelp() {
         return "Just a test";
-    }
-
-    @Override
-    public String getName() {
-        return "SetPoints";
     }
 
 }

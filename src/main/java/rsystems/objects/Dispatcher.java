@@ -1,18 +1,22 @@
 package rsystems.objects;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.commands.CheckRole;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.Ping;
 import rsystems.commands.karmaSystem.GetKarma;
 import rsystems.commands.karmaSystem.GetPoints;
 import rsystems.commands.karmaSystem.Karma;
+import rsystems.commands.karmaSystem.karmaAdmin.SetPoints;
+import rsystems.commands.modCommands.CheckRole;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -33,8 +37,9 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new ThreeLawsSafe());
         this.registerCommand(new Ping());
         this.registerCommand(new CheckRole());
+        this.registerCommand(new SetPoints());
 
-        for(Command c:commands){
+        for (Command c : commands) {
             System.out.println(c.getName());
         }
     }
@@ -126,17 +131,29 @@ public class Dispatcher extends ListenerAdapter {
                                 final GuildMessageReceivedEvent event) {
         this.pool.submit(() ->
         {
-            try {
-                final String content = this.removePrefix(alias, prefix, message);
-                c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
-            } catch (final NumberFormatException numberFormatException) {
-                numberFormatException.printStackTrace();
-                event.getMessage().reply("**ERROR:** Bad format received").queue();
-                //messageOwner(numberFormatException, c, event);
-            } catch (final Exception e) {
-                e.printStackTrace();
-                event.getChannel().sendMessage("**There was an error processing your command!**").queue();
-                //messageOwner(e, c, event);
+
+            boolean authorized = false;
+            if (c.getPermissionIndex() == null) {
+                authorized = true;
+            } else {
+                authorized = checkAuthorized(event.getMember(), c.getPermissionIndex());
+            }
+
+            if (authorized) {
+                try {
+                    final String content = this.removePrefix(alias, prefix, message);
+                    c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
+                } catch (final NumberFormatException numberFormatException) {
+                    numberFormatException.printStackTrace();
+                    event.getMessage().reply("**ERROR:** Bad format received").queue();
+                    //messageOwner(numberFormatException, c, event);
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    event.getChannel().sendMessage("**There was an error processing your command!**").queue();
+                    //messageOwner(e, c, event);
+                }
+            } else {
+                event.getMessage().reply(String.format(event.getAuthor().getAsMention() + " You are not authorized for command: `%s`\nPermission Index: %d", c.getName(), c.getPermissionIndex())).queue();
             }
         });
     }
@@ -145,17 +162,30 @@ public class Dispatcher extends ListenerAdapter {
                                 final PrivateMessageReceivedEvent event) {
         this.pool.submit(() ->
         {
-            try {
-                final String content = this.removePrefix(alias, prefix, message);
-                c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
-            } catch (final NumberFormatException numberFormatException) {
-                numberFormatException.printStackTrace();
-                event.getMessage().reply("**ERROR:** Bad format received").queue();
-                //messageOwner(numberFormatException, c, event);
-            } catch (final Exception e) {
-                e.printStackTrace();
-                event.getChannel().sendMessage("**There was an error processing your command!**").queue();
-                //messageOwner(e, c, event);
+            boolean authorized = false;
+            if (c.getPermissionIndex() == null) {
+                authorized = true;
+            } else {
+                if (HiveBot.drZzzGuild().getMemberById(event.getAuthor().getIdLong()) != null) {
+                    authorized = checkAuthorized(HiveBot.drZzzGuild().getMemberById(event.getAuthor().getIdLong()), c.getPermissionIndex());
+                }
+            }
+            if (authorized) {
+
+                try {
+                    final String content = this.removePrefix(alias, prefix, message);
+                    c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
+                } catch (final NumberFormatException numberFormatException) {
+                    numberFormatException.printStackTrace();
+                    event.getMessage().reply("**ERROR:** Bad format received").queue();
+                    //messageOwner(numberFormatException, c, event);
+                } catch (final Exception e) {
+                    e.printStackTrace();
+                    event.getChannel().sendMessage("**There was an error processing your command!**").queue();
+                    //messageOwner(e, c, event);
+                }
+            } else {
+                event.getMessage().reply(String.format(event.getAuthor().getAsMention() + " You are not authorized for command: `%s`\nPermission Index: %d", c.getName(), c.getPermissionIndex())).queue();
             }
         });
     }
@@ -174,6 +204,58 @@ public class Dispatcher extends ListenerAdapter {
             t.setDaemon(isdaemon);
             return t;
         };
+    }
+
+    @Override
+    public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
+        Command.removeResponses(event.getChannel(), event.getMessageIdLong());
+    }
+
+    private boolean checkAuthorized(final Member member, final Integer commandPermission) {
+        boolean authorized = false;
+
+        for (Role r : member.getRoles()) {
+            if (HiveBot.authMap.containsKey(r.getIdLong())) {
+                int modRoleValue = HiveBot.authMap.get(r.getIdLong());
+
+                /*
+                Form a binary string based on the permission level integer found.
+                Example: 24 = 11000
+                 */
+                String binaryString = Integer.toBinaryString(modRoleValue);
+
+                //Reverse the string for processing
+                //Example 24 = 11000 -> 00011
+                String reverseString = new StringBuilder(binaryString).reverse().toString();
+
+                //Turn the command rank into a binary string
+                //Example 8 = 1000
+                String binaryIndexString = Integer.toBinaryString(commandPermission);
+
+                //Reverse the string for lookup
+                //Example 8 = 1000 -> 0001
+                String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
+
+                int realIndex = reverseLookupString.indexOf('1');
+
+                char indexChar = '0';
+                try {
+
+                    indexChar = reverseString.charAt(realIndex);
+
+                } catch (IndexOutOfBoundsException e) {
+
+                } finally {
+                    if (indexChar == '1') {
+                        authorized = true;
+                    }
+                }
+
+                if (authorized)
+                    break;
+            }
+        }
+        return authorized;
     }
 
 }

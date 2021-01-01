@@ -1,4 +1,4 @@
-package rsystems.commands;
+package rsystems.commands.modCommands;
 
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
@@ -35,9 +35,12 @@ public class CheckRole extends Command {
 				}
 			} catch (NumberFormatException e){
 				
-				String roleName = event.getMessage().getContentRaw().substring(args[0].length()+1);
+				String roleName = content;
                 roleName = roleName.replaceAll(" true","");
-				
+
+				if(HiveBot.debug)
+					System.out.println("Lookup Name:"+roleName);
+
 				for(Role r:event.getGuild().getRoles()){
 					if(r.getName().equalsIgnoreCase(roleName)){
 						role = r;
@@ -64,9 +67,7 @@ public class CheckRole extends Command {
 						memberList.add(m.getUser().getAsTag());
 				}
 
-				reply(event,"test");
-
-				reply(event,String.format("Role:`%s` has %d users.",role.getName(),count));
+				reply(event,String.format("Role:`%s` has %d users.\nID: %d",role.getName(),count,role.getIdLong()));
 				if(getMembers){
 					Role finalRole = role;
 					event.getAuthor().openPrivateChannel().queue(privateChannel -> {
@@ -77,6 +78,7 @@ public class CheckRole extends Command {
 				
 			
 			} else {
+				event.getMessage().addReaction("⚠").queue();
 				reply(event,"Could not find role");
 			}
 			

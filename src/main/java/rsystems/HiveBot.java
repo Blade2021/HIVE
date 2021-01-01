@@ -10,12 +10,16 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
+import rsystems.events.GratitudeListener;
+import rsystems.events.GuildMemberJoin;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
 import rsystems.objects.Dispatcher;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 
 public class HiveBot{
@@ -34,8 +38,12 @@ public class HiveBot{
     public static JDAImpl jda = null;
 
     public static Guild drZzzGuild(){
-        return jda.getGuildById("469330414121517056");
+        //return jda.getGuildById("469330414121517056");
+        return jda.getGuildById("386701951662030858");
     }
+    public static Map<Long,Integer> authMap = new HashMap<>();
+
+    public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
 
 
     //Initiate Loggers
@@ -50,6 +58,8 @@ public class HiveBot{
                 .build();
 
         api.addEventListener(dispatcher = new Dispatcher());
+        api.addEventListener(new GuildMemberJoin());
+        api.addEventListener(new GratitudeListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
@@ -58,6 +68,8 @@ public class HiveBot{
             // Wait for discord jda to completely load
             api.awaitReady();
             jda = (JDAImpl) api;
+
+            HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),31);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

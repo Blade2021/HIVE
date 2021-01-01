@@ -3,10 +3,7 @@ package rsystems.objects;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
@@ -14,6 +11,16 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import java.util.function.Consumer;
 
 public abstract class Command {
+
+    private Integer permissionIndex = null;
+
+    public Integer getPermissionIndex() {
+        return permissionIndex;
+    }
+
+    public void setPermissionIndex(int permissionIndex) {
+        this.permissionIndex = permissionIndex;
+    }
 
     private static final FixedSizeCache<Long, TLongSet> MESSAGE_LINK_MAP = new FixedSizeCache<>(20);
 
@@ -29,11 +36,12 @@ public abstract class Command {
 
 
     protected void reply(GuildMessageReceivedEvent event, String message){
-        event.getMessage().reply(message).queue();
+        reply(event,message,null);
     }
 
     protected void reply(GuildMessageReceivedEvent event, Message message){
-        event.getMessage().reply(message).queue();
+        //event.getMessage().reply(message).queue();
+        reply(event,message,null);
     }
 
     protected void reply(GuildMessageReceivedEvent event, String message, Consumer<Message> successConsumer)
@@ -109,6 +117,15 @@ public abstract class Command {
             set = MESSAGE_LINK_MAP.get(commandId);
         }
         set.add(responseId);
+    }
+
+    static void removeResponses(TextChannel channel, long messageId)
+    {
+        TLongSet responses = MESSAGE_LINK_MAP.get(messageId);
+        if(responses != null)
+        {
+            channel.purgeMessagesById(responses.toArray());
+        }
     }
 
     public String[] getAliases(){
