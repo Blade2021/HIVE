@@ -456,24 +456,23 @@ public class KarmaInterface extends ListenerAdapter {
 
         // Send to guild channel or not
         if (source) {
-            message.reply(finalKarmaExplanation).queue(success -> {
-                success.delete().queueAfter(120,TimeUnit.SECONDS);
+            message.getChannel().sendMessage(finalKarmaExplanation).queue(success -> {
+                success.delete().queueAfter(60,TimeUnit.SECONDS);
             });
             return;
-        } else {
-
-            message.getAuthor().openPrivateChannel().queue((channel -> {
-                channel.sendMessage(finalKarmaExplanation).queue(
-                        success -> {
-                            message.addReaction("✅").queue();
-                        },
-                        failure -> {
-                            message.addReaction("⚠").queue();
-                            LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
-                            message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
-                        });
-            }));
         }
+
+        message.getAuthor().openPrivateChannel().queue((channel -> {
+            channel.sendMessage(finalKarmaExplanation).queue(
+                    success -> {
+                        message.addReaction("✅").queue();
+                    },
+                    failure -> {
+                        message.addReaction("⚠").queue();
+                        LOGGER.warning(HiveBot.commands.get(2).getCommand() + " failed due to privacy settings.  Called by " + message.getAuthor().getAsTag());
+                        message.getChannel().sendMessage(message.getAuthor().getAsMention() + " I am unable to DM you due to your privacy settings. Please update and try again.").queue();
+                    });
+        }));
     }
 
     private void getKarmaInfo(Guild guild, Message message, boolean source, String id) {
