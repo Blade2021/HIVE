@@ -28,7 +28,7 @@ public class ThreeLawsSafe extends Command {
 		.setThumbnail("http://marc-jennings.co.uk/wp-content/uploads/2020/04/robot_1f916.png")
 		.addField("`Law 1`", "A BoT will **NOT** trigger another bot", false)
 		.addField("`Law 2`", "A BoT will **NOT** trigger itself", false)
-		.addField("`Law 3`", "A BoT will **NOT** kill hoomans", false)
+		.addField("`Law 3`", "A BoT will **NOT** kill hoomans.... \n__**ERROR! Third law aborted.**__", false)
 		.setFooter("Called by " + event.getMessage().getAuthor().getName(), event.getMember().getUser().getAvatarUrl())
 		.setColor(Color.CYAN);
 

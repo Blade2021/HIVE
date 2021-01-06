@@ -7,16 +7,23 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.internal.requests.RateLimiter;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.commands.adminCommands.Cleanse;
+import rsystems.commands.adminCommands.Clear;
+import rsystems.commands.adminCommands.Test;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.Ping;
 import rsystems.commands.karmaSystem.GetKarma;
 import rsystems.commands.karmaSystem.GetPoints;
+import rsystems.commands.karmaSystem.KUserInfo;
 import rsystems.commands.karmaSystem.Karma;
+import rsystems.commands.karmaSystem.karmaAdmin.SetKarma;
 import rsystems.commands.karmaSystem.karmaAdmin.SetPoints;
 import rsystems.commands.modCommands.CheckRole;
+import rsystems.commands.streamRelated.Ask;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,6 +45,12 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Ping());
         this.registerCommand(new CheckRole());
         this.registerCommand(new SetPoints());
+        this.registerCommand(new Test());
+        this.registerCommand(new SetKarma());
+        this.registerCommand(new KUserInfo());
+        this.registerCommand(new Cleanse());
+        this.registerCommand(new Clear());
+        this.registerCommand(new Ask());
 
         for (Command c : commands) {
             System.out.println(c.getName());
@@ -143,6 +156,8 @@ public class Dispatcher extends ListenerAdapter {
                 try {
                     final String content = this.removePrefix(alias, prefix, message);
                     c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
+
+                    HiveBot.sqlHandler.logCommandUsage(c.getName());
                 } catch (final NumberFormatException numberFormatException) {
                     numberFormatException.printStackTrace();
                     event.getMessage().reply("**ERROR:** Bad format received").queue();
@@ -175,6 +190,8 @@ public class Dispatcher extends ListenerAdapter {
                 try {
                     final String content = this.removePrefix(alias, prefix, message);
                     c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
+
+                    HiveBot.sqlHandler.logCommandUsage(c.getName());
                 } catch (final NumberFormatException numberFormatException) {
                     numberFormatException.printStackTrace();
                     event.getMessage().reply("**ERROR:** Bad format received").queue();

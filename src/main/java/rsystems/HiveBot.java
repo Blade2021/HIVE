@@ -41,7 +41,7 @@ public class HiveBot{
 
     public static Guild drZzzGuild(){
         //return jda.getGuildById("469330414121517056");
-        return jda.getGuildById("386701951662030858");
+        return jda.getGuildById(Config.get("GUILD_ID"));
     }
     public static Map<Long,Integer> authMap = new HashMap<>();
 
@@ -62,7 +62,7 @@ public class HiveBot{
         api.addEventListener(dispatcher = new Dispatcher());
         api.addEventListener(new GuildMemberJoin());
         api.addEventListener(new GratitudeListener());
-        api.addEventListener(new TestEvent());
+        //api.addEventListener(new TestEvent());
         api.addEventListener(new NicknameListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);

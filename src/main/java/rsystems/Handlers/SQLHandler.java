@@ -279,6 +279,28 @@ public class SQLHandler {
         return output;
     }
 
+    public void logCommandUsage(String commandName){
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
 
+            ResultSet rs = st.executeQuery(String.format("SELECT UsageCount FROM HIVE_CommandTracker WHERE Name = \"%s\"",commandName));
+
+            boolean commandFound = false;
+            while(rs.next()){
+                commandFound = true;
+                int newCount = rs.getInt(1) + 1;
+
+                st.execute(String.format("UPDATE HIVE_CommandTracker SET UsageCount = %d, LastUsage = current_timestamp WHERE Name = \"%s\"", newCount,commandName));
+            }
+            if(!commandFound){
+                st.execute(String.format("INSERT INTO HIVE_CommandTracker (Name, UsageCount) VALUES (\"%s\", 1)",commandName));
+            }
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
 
 }

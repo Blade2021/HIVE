@@ -301,7 +301,7 @@ public class KarmaSQLHandler extends SQLHandler {
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
-        if (userInfoObject.getId() > 0) {
+        if (userInfoObject.getId() != null) {
             return userInfoObject;
         }
         return null;
@@ -326,6 +326,30 @@ public class KarmaSQLHandler extends SQLHandler {
         }
 
         return value;
+    }
+
+    public int getRank(String id){
+        int output = 0;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT USER_KARMA FROM KARMA WHERE ID = " + id);
+
+            int currentKarma = 0;
+            while (rs.next()) {
+                currentKarma = rs.getInt("USER_KARMA");
+            }
+
+            rs = st.executeQuery("SELECT COUNT(USER_KARMA) FROM KARMA WHERE USER_KARMA > " + currentKarma);
+            while(rs.next()){
+                output = rs.getInt(1);
+            }
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return output;
+
     }
 
     public boolean setInt(String id, String column, int value) {

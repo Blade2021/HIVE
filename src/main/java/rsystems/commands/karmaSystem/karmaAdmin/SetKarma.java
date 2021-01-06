@@ -10,6 +10,11 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 public class SetKarma extends Command {
+
+	@Override
+	public Integer getPermissionIndex() {
+		return 2;
+	}
 	
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
