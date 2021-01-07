@@ -13,7 +13,7 @@ public class Newcomer extends TimerTask {
     @Override
     public void run() {
 
-        Role newComerRole = HiveBot.drZzzGuild().getRoleById("777160509715775519");
+        Role newComerRole = HiveBot.drZzzGuild().getRoleById(Config.get("NewComerRoleID"));
 
         if(newComerRole != null) {
             List<Member> members = HiveBot.drZzzGuild().getMembersWithRoles(newComerRole);

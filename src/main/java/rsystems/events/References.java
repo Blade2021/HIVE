@@ -27,6 +27,8 @@ public class References extends ListenerAdapter {
 
 
     public static void loadReferences(){
+		
+		// Clear out old references
         referenceMap.clear();
         extendedReferenceMap.clear();
 
@@ -56,7 +58,6 @@ public class References extends ListenerAdapter {
             tempExtendedReference.setCategory(getArrayList(parsedValue,"category"));
 
             //Add Reference Object into the references array
-            //HiveBot.extendedReferences.add(tempExtendedReference);
             extendedReferenceMap.putIfAbsent(keyStr.toString(),tempExtendedReference);
 
         });
@@ -68,6 +69,7 @@ public class References extends ListenerAdapter {
 
         // Load Simple references
         referenceData.keySet().forEach(keyStr -> {
+			
             //Form the object into a JSONObject for processing
             Object keyValue = referenceData.get(keyStr);
             JSONObject parsedValue = (JSONObject) keyValue;
@@ -80,12 +82,13 @@ public class References extends ListenerAdapter {
 
             try{
                 tempReference.setAliases(getArrayList(parsedValue,"alias"));
+				
             } catch(NullPointerException e){
+				
             }
             tempReference.setCategory(getArrayList(parsedValue,"category"));
 
             //Add Reference Object into the references array
-            //HiveBot.references.add(tempReference);
             referenceMap.putIfAbsent(keyStr.toString(), tempReference);
 
         });
@@ -100,47 +103,74 @@ public class References extends ListenerAdapter {
             return;
         }
 
+		//Replace the first occurance of the bot's prefix with null
         String content = event.getMessage().getContentRaw().replaceFirst(HiveBot.prefix,"");
 
+		//Remove all mentions for checking the message for reference
         if(!event.getMessage().getMentionedMembers().isEmpty()){
             for(Member m:event.getMessage().getMentionedMembers()){
                 content = content.replaceAll(m.getAsMention().toLowerCase(),"");
             }
         }
 
+		//Trim the whitespace on the end
         content = content.trim();
 
         // CHECK REFERENCE MAP
         for(Map.Entry<String,Reference> entry:referenceMap.entrySet()){
+			
+			//Initiate a variable to determine wether the reference was found on this index.
+			boolean referenceFound = false;
 
+			//Message equals root Reference Name
             if(content.equalsIgnoreCase(entry.getKey())){
-                replyToGuild(event,entry.getValue());
-                return;
-            }
-
-            for(String alias:entry.getValue().getAliases()){
-                if(content.equalsIgnoreCase(alias)){
-                    replyToGuild(event,entry.getValue());
-                    return;
-                }
-            }
+                referenceFound = true;
+            } else {
+				//Check if the reference has aliases
+				if(entry.getValue().getAliases() != null){
+					
+					//Parse through each alias to see if message equals alias
+					for(String alias:entry.getValue().getAliases()){
+						if(content.equalsIgnoreCase(alias)){
+							referenceFound = true;
+							break;
+						}
+					}
+				}
+			}
+			
+			//Reference was found!
+			if(referenceFound){
+				//Reply to the original request with the data.
+				replyToGuild(event,entry.getValue());
+				//Log the command was used to the database.
+				HiveBot.sqlHandler.logCommandUsage(entry.getKey());
+			}
         }
 
         // CHECK EXTENDED REFERENCE MAP
         for(Map.Entry<String,ExtendedReference> entry:extendedReferenceMap.entrySet()){
+			
+			boolean referenceFound = false;
+			
             if(content.equalsIgnoreCase(entry.getKey())){
-                replyToGuild(event,entry.getValue());
-                return;
-            }
-
-            if(entry.getValue().getAliases() != null) {
-                for (String alias : entry.getValue().getAliases()) {
-                    if (content.equalsIgnoreCase(alias)) {
-                        replyToGuild(event, entry.getValue());
-                        return;
-                    }
-                }
-            }
+                referenceFound = true;
+            } else {
+				if(entry.getValue().getAliases() != null) {
+					for (String alias : entry.getValue().getAliases()) {
+						if (content.equalsIgnoreCase(alias)) {
+							referenceFound = true;
+							break;
+						}
+					}
+				}
+			}
+			
+			if(referenceFound){
+				replyToGuild(event,entry.getValue());
+				HiveBot.sqlHandler.logCommandUsage(entry.getKey());
+				return;
+			}
         }
 
     }

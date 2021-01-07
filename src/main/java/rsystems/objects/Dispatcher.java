@@ -230,7 +230,7 @@ public class Dispatcher extends ListenerAdapter {
         Command.removeResponses(event.getChannel(), event.getMessageIdLong());
     }
 
-    private boolean checkAuthorized(final Member member, final Integer commandPermission) {
+    public boolean checkAuthorized(final Member member, final Integer commandPermission) {
         boolean authorized = false;
 
         for (Role r : member.getRoles()) {
@@ -276,5 +276,18 @@ public class Dispatcher extends ListenerAdapter {
         }
         return authorized;
     }
+	
+	public Map<String,Integer> getCommandMap(){
+		
+		Map<String,Integer> commandMap = new HashMap<>();
+		
+		for (final Command c : this.getCommands()) {
+			
+			commandMap.putIfAbsent(c.getName(),c.getPermissionIndex());
+			
+		}
+		
+		return commandMap;
+	}
 
 }
