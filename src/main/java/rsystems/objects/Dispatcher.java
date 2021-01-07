@@ -16,6 +16,7 @@ import rsystems.commands.adminCommands.Reload;
 import rsystems.commands.adminCommands.Test;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
+import rsystems.commands.generic.Commands;
 import rsystems.commands.generic.Ping;
 import rsystems.commands.karmaSystem.GetKarma;
 import rsystems.commands.karmaSystem.GetPoints;
@@ -53,6 +54,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Clear());
         this.registerCommand(new Ask());
         this.registerCommand(new Reload());
+        this.registerCommand(new Commands());
 
         for (Command c : commands) {
             System.out.println(c.getName());
