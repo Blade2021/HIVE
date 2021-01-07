@@ -110,8 +110,6 @@ public class References extends ListenerAdapter {
 
         content = content.trim();
 
-        System.out.println(content);
-
         // CHECK REFERENCE MAP
         for(Map.Entry<String,Reference> entry:referenceMap.entrySet()){
 
@@ -150,7 +148,7 @@ public class References extends ListenerAdapter {
     private void replyToGuild(GuildMessageReceivedEvent event, Reference reference){
         MessageBuilder messageBuilder = new MessageBuilder();
         for(Member m:event.getMessage().getMentionedMembers()){
-            messageBuilder.append(m.getAsMention());
+            messageBuilder.append(m.getAsMention() + " ");
         }
 
         EmbedBuilder embedBuilder = new EmbedBuilder();

@@ -12,6 +12,7 @@ import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.adminCommands.Cleanse;
 import rsystems.commands.adminCommands.Clear;
+import rsystems.commands.adminCommands.Reload;
 import rsystems.commands.adminCommands.Test;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
@@ -51,6 +52,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Cleanse());
         this.registerCommand(new Clear());
         this.registerCommand(new Ask());
+        this.registerCommand(new Reload());
 
         for (Command c : commands) {
             System.out.println(c.getName());
