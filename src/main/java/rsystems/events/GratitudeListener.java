@@ -51,6 +51,8 @@ public class GratitudeListener extends ListenerAdapter {
                             event.getMessage().addReaction(stageReaction).queue();
                             event.getMessage().addReaction("❌").queue();
 
+                            event.getMessage().removeReaction(stageReaction,event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
+                            event.getMessage().removeReaction("❌",event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
 
                             if (!HiveBot.karmaSQLHandler.insertStaging(event.getChannel().getIdLong(), event.getMessageIdLong(), sendingMember.getIdLong())) {
                                 event.getMessage().addReaction("⚠").queue();
@@ -137,8 +139,11 @@ public class GratitudeListener extends ListenerAdapter {
                 final String finalEmojiID = emojiID;
                 event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
+                    HiveBot.karmaSQLHandler.deleteFromStaging(messageID);
+
                     // Clear all reactions
                     message.clearReactions().queue();
+                    message.addReaction("\uD83D\uDCEC").queue();
 
                     User receiver = null;
                     if (message.getMentionedMembers().isEmpty()) {

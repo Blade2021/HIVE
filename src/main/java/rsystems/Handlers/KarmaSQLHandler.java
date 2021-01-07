@@ -118,7 +118,7 @@ public class KarmaSQLHandler extends SQLHandler {
         return tag;
     }
 
-    public int updateKarma(String sender, String receiver, Boolean direction) {
+    public int updateKarma(Long messageID, String sender, String receiver, Boolean direction) {
         System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s", sender, receiver));
 
         try {
@@ -142,7 +142,7 @@ public class KarmaSQLHandler extends SQLHandler {
                 if (direction) {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender);
                     st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver);
-                    st.executeUpdate("INSERT INTO karmaTracker (ID, DATE) VALUES (" + receiver + ", CURRENT_DATE())");
+                    st.execute(String.format("INSERT INTO KARMA_TrackerTable (MessageID, ReceivingUser, SendingUser, Timestamp) VALUES (%d, %d, %d, current_timestamp)",messageID,Long.valueOf(receiver),Long.valueOf(sender)));
 
                 } else {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender);
@@ -157,7 +157,7 @@ public class KarmaSQLHandler extends SQLHandler {
             }
         } catch (SQLException throwables) {
             System.out.println("Karma Update Handler Exception");
-            throwables.getCause();
+            throwables.printStackTrace();
         } catch (NullPointerException e) {
             System.out.println("Could not find user");
         }
