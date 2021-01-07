@@ -14,6 +14,8 @@ public class GratitudeListener extends ListenerAdapter {
 
     private static ArrayList<String> coolDownChannels = new ArrayList<>();
     private static Long karmaPosReaction = Long.valueOf(Config.get("KARMA_POS_REACTION"));
+    private static Long karmaNegReaction = Long.valueOf(Config.get("KARMA_NEG_REACTION"));
+    private static String stageReaction = "\uD83D\uDCE6";
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -30,33 +32,39 @@ public class GratitudeListener extends ListenerAdapter {
             if (event.getMessage().getContentDisplay().toLowerCase().contains(trigger)) {
                 if ((!event.getMessage().getMentionedMembers().isEmpty()) || (event.getMessage().getReferencedMessage() != null)) {
 
-                    Member receivingMember = null;
-                    if (!event.getMessage().getMentionedMembers().isEmpty()) {
-                        // Assign the receiver to the first mentioned member
-                        receivingMember = event.getMessage().getMentionedMembers().get(0);
-                    } else {
-                        if (event.getMessage().getReferencedMessage().getMember() != null) {
-                            // Assign the receiver to the replied message's author
-                            receivingMember = event.getMessage().getReferencedMessage().getMember();
+                    if (HiveBot.karmaSQLHandler.getAvailableKarmaPoints(event.getAuthor().getId()) >= 1) {
+                        Member receivingMember = null;
+                        if (!event.getMessage().getMentionedMembers().isEmpty()) {
+                            // Assign the receiver to the first mentioned member
+                            receivingMember = event.getMessage().getMentionedMembers().get(0);
+                        } else {
+                            if (event.getMessage().getReferencedMessage().getMember() != null) {
+                                // Assign the receiver to the replied message's author
+                                receivingMember = event.getMessage().getReferencedMessage().getMember();
+                            }
                         }
-                    }
 
-                    Member sendingMember = event.getMember();
+                        Member sendingMember = event.getMember();
 
-                    if ((receivingMember != null) && (!receivingMember.getUser().isBot()) && (receivingMember != sendingMember)) {
+                        if ((receivingMember != null) && (!receivingMember.getUser().isBot()) && (receivingMember != sendingMember)) {
 
-                        event.getMessage().addReaction("FailFish:763254562026815489").queue();
-                        event.getMessage().addReaction("❌").queue();
+                            event.getMessage().addReaction(stageReaction).queue();
+                            event.getMessage().addReaction("❌").queue();
 
-                        //karmaStagingMap.putIfAbsent(event.getMessageIdLong(), event.getMember().getIdLong());
 
-                        if(!HiveBot.karmaSQLHandler.insertStaging(event.getChannel().getIdLong(), event.getMessageIdLong(),sendingMember.getIdLong())){
-                            event.getMessage().addReaction("⚠").queue();
+                            if (!HiveBot.karmaSQLHandler.insertStaging(event.getChannel().getIdLong(), event.getMessageIdLong(), sendingMember.getIdLong())) {
+                                event.getMessage().addReaction("⚠").queue();
+                            }
+
+                            return;
+                        } else {
+
+                            //ADD A POTATO
+                            event.getMessage().addReaction("\uD83E\uDD54").queue();
+                            return;
                         }
-                    } else {
-                        event.getMessage().addReaction("\uD83E\uDD54").queue();
-                    }
 
+                    }
                 } else {
                     if (!coolDownChannels.contains(event.getChannel().getId())) {
 
@@ -88,6 +96,7 @@ public class GratitudeListener extends ListenerAdapter {
                             }
                         }
                     }
+
                 }
             }
         }
@@ -103,157 +112,97 @@ public class GratitudeListener extends ListenerAdapter {
         final boolean reactionEmote = event.getReactionEmote().isEmote();
 
         Long reactionID = null;
-        if(reactionEmote)
+        if (reactionEmote)
             reactionID = event.getReaction().getReactionEmote().getIdLong();
 
         String emojiID = null;
-        if(!reactionEmote)
+        if (!reactionEmote)
             emojiID = event.getReactionEmote().getEmoji();
 
-        //Did event contain a karma reaction?
-        if(((reactionEmote) && (reactionID.equals(karmaPosReaction))) || (emojiID.equalsIgnoreCase("❌"))){
-
-            final Long finalReactionID = reactionID;
-            final String finalEmojiID = emojiID;
-            event.getChannel().retrieveMessageById(messageID).queue(message -> {
-
-                final Member messageAuthor = message.getMember();
-                final Member reactionAuthor = event.getMember();
-
-                Member karmaReciever = null;
-
-                if(messageAuthor == reactionAuthor){
-                    //Check Staging for Message ID and Author ID
-                    if (HiveBot.karmaSQLHandler.checkStaging(messageID, event.getMember().getIdLong())) {
-
-                        if (reactionEmote) {
-                            if (finalReactionID.equals(karmaPosReaction)) {
-                                message.removeReaction("❌", HiveBot.jda.getSelfUser()).queue();
-
-                            }
-                        } else {
-                            if (finalEmojiID.equalsIgnoreCase("❌")) {
-                                final Emote karmaReaction =  HiveBot.drZzzGuild().getEmoteById(karmaPosReaction);
-                                if(karmaReaction != null)
-                                    message.removeReaction(HiveBot.drZzzGuild().getEmoteById(karmaPosReaction),HiveBot.jda.getSelfUser()).queue();
-                                message.clearReactions("❌").queue();
-                            }
-
-                        }
 
 
-                        HiveBot.karmaSQLHandler.deleteFromStaging(event.getMessageIdLong());
-                    }
-                }
+		/*
+			REACTION RELATED TO STAGING
+		*/
 
 
+        //If reaction was an emoji & emoji was a thumbs up or X
+        if ((!reactionEmote) && ((emojiID.equalsIgnoreCase(stageReaction)) || (emojiID.equalsIgnoreCase("❌")))) {
 
 
-
-
-
-            });
-            /*
-            //Check Staging for Message ID and Author ID
+            //Check karma staging table to see if messageID was found
             if (HiveBot.karmaSQLHandler.checkStaging(messageID, event.getMember().getIdLong())) {
 
-                String removalEmote = null;
+                //Message was found in the staging table.
+                final String finalEmojiID = emojiID;
+                event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
-                if (reactionEmote) {
-                    if (reactionID.equals(karmaPosReaction)) {
-                        removalEmote = "❌";
+                    // Clear all reactions
+                    message.clearReactions().queue();
 
-                        //Send Karma
+                    User receiver = null;
+                    if (message.getMentionedMembers().isEmpty()) {
+                        receiver = message.getReferencedMessage().getAuthor();
+                    } else {
+                        receiver = message.getMentionedMembers().get(0).getUser();
                     }
-                } else {
-                    if (emojiID.equalsIgnoreCase("❌")) {
-                        removalEmote = String.valueOf(karmaPosReaction);
-                    }
 
-                }
-
-                if (removalEmote != null) {
-                    //Get a list of the past 100 messages
-                    String finalRemovalEmote = removalEmote;
-
-                    event.getChannel().retrieveMessageById(event.getMessageId()).queue(success -> {
-                        if (finalRemovalEmote.equalsIgnoreCase("❌")) {
-                            success.removeReaction("❌", HiveBot.jda.getSelfUser()).queue();
-                        } else {
-                            success.removeReaction(event.getGuild().getEmoteById(karmaPosReaction), HiveBot.jda.getSelfUser()).queue();
+                    if (receiver != null) {
+                        if (receiver.isBot()) {
+                            event.getChannel().sendMessage("Nice try!").queue();
+                            return;
                         }
 
-                        HiveBot.karmaSQLHandler.deleteFromStaging(event.getMessageIdLong());
-                    });
-                }
+                        //Send positive karma
+                        if (finalEmojiID.equalsIgnoreCase(stageReaction)) {
+                            //send karma to original user
+                            // add reaction to message to confirm karma was sent.
+                            HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getMember().getId(), receiver.getId(), true);
+                            //System.out.println("FAKE: Sending karma to User: " + receiver.getAsTag());
+                        }
+                    }
+
+                });
 
             }
-
-
-
-
 
         }
 
-        //Check Staging Table for Reaction
-        if (HiveBot.karmaSQLHandler.checkStaging(messageID, event.getMember().getIdLong())) {
 
-            System.out.println("KarmaStagingMap ID Found: " + messageID);
+		/*
+			KARMA REACTIONS
+		*/
 
-            //Is the reaction an emote?
+        if ((reactionEmote) && ((reactionID.equals(karmaPosReaction)) || (reactionID.equals(karmaNegReaction)))) {
 
-            if(((reactionEmote) && (reactionID.equals(karmaPosReaction))) || (emojiID.equalsIgnoreCase("❌"))){
-                String removalEmote = null;
+            if (HiveBot.karmaSQLHandler.getAvailableKarmaPoints(event.getUserId()) >= 1) {
 
-                if (reactionEmote) {
-                    if (reactionID.equals(karmaPosReaction)) {
-                        removalEmote = "❌";
+                final Long finalReactionID = reactionID;
+                event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
-                        //Send Karma
-                    }
-                } else {
-                    if (emojiID.equalsIgnoreCase("❌")) {
-                        removalEmote = String.valueOf(karmaPosReaction);
-                    }
+                    final Member sendingMember = event.getMember();
+                    final Member receivingMember = message.getMember();
 
-                }
+                    if ((sendingMember != null) && (receivingMember != null)) {
 
-                if (removalEmote != null) {
-                    //Get a list of the past 100 messages
-                    String finalRemovalEmote = removalEmote;
+                        if (sendingMember != receivingMember) {
 
-                    event.getChannel().retrieveMessageById(event.getMessageId()).queue(success -> {
-                        if (finalRemovalEmote.equalsIgnoreCase("❌")) {
-                            success.removeReaction("❌", HiveBot.jda.getSelfUser()).queue();
+                            boolean direction = finalReactionID.equals(karmaPosReaction);
+                            System.out.println(String.format("Sending %s karma from %s to %s", direction, sendingMember.getEffectiveName(), receivingMember.getEffectiveName()));
+                            HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingMember.getId(), receivingMember.getId(), direction);
+
                         } else {
-                            success.removeReaction(event.getGuild().getEmoteById(karmaPosReaction), HiveBot.jda.getSelfUser()).queue();
+
+                            //Remove reaction
+                            event.getReaction().removeReaction(event.getUser()).queue();
                         }
+                    }
+                });
 
-                        HiveBot.karmaSQLHandler.deleteFromStaging(event.getMessageIdLong());
-                    });
-                }
+            } else {
+                event.getReaction().removeReaction(event.getUser()).queue();
             }
-        } else {
-
-            //Message was not in staging
-            if (reactionEmote) {
-
-                if (reactionID.equals(karmaPosReaction)){
-
-
-                }
-
-            }
-
-             */
         }
-
-    }
-
-    private void handleKarmaTransaction(MessageReactionAddEvent event){
-
-
-
     }
 
 }
