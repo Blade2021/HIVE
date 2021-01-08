@@ -56,6 +56,19 @@ public class NicknameListener extends ListenerAdapter {
         }
     }
 
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+
+        // Remove emoji's from username on join
+        final String currentNick = event.getMember().getEffectiveName();
+        if (!EmojiParser.extractEmojis(currentNick).isEmpty()) {
+            if (HiveBot.drZzzGuild().getSelfMember().hasPermission(Permission.NICKNAME_MANAGE))
+                event.getGuild().modifyNickname(event.getMember(), EmojiParser.removeAllEmojis(currentNick)).reason("Removing emoji's on join").queue();
+            else
+                System.out.println("Emoji's found for member: " + event.getMember().getId());
+        }
+    }
+
     public static String processName(Member member, String name) {
         if (HiveBot.drZzzGuild().getSelfMember().canInteract(member)) {
 

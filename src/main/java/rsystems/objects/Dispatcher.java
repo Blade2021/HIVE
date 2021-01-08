@@ -234,7 +234,7 @@ public class Dispatcher extends ListenerAdapter {
         Command.removeResponses(event.getChannel(), event.getMessageIdLong());
     }
 
-    public boolean checkAuthorized(final Member member, final Integer commandPermission) {
+    public static boolean checkAuthorized(final Member member, final Integer commandPermission) {
         boolean authorized = false;
 
         for (Role r : member.getRoles()) {
