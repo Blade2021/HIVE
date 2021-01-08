@@ -18,6 +18,7 @@ import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.Commands;
 import rsystems.commands.generic.Ping;
+import rsystems.commands.generic.ReferenceList;
 import rsystems.commands.karmaSystem.GetKarma;
 import rsystems.commands.karmaSystem.GetPoints;
 import rsystems.commands.karmaSystem.KUserInfo;
@@ -55,6 +56,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Ask());
         this.registerCommand(new Reload());
         this.registerCommand(new Commands());
+        this.registerCommand(new ReferenceList());
 
         for (Command c : commands) {
             System.out.println(c.getName());

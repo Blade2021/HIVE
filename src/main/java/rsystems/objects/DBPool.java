@@ -14,8 +14,8 @@ public class DBPool {
             pool = new MariaDbPoolDataSource(URL);
             pool.setUser(user);
             pool.setPassword(pass);
-            pool.setMaxPoolSize(14);
-            pool.setMinPoolSize(4);
+            pool.setMaxPoolSize(10);
+            pool.setMinPoolSize(2);
 
             pool.initialize();
         } catch (SQLException throwables) {

@@ -17,6 +17,11 @@ import java.util.Collections;
 
 public class Test extends Command {
     @Override
+    public Integer getPermissionIndex() {
+        return 2;
+    }
+
+    @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
 
     }

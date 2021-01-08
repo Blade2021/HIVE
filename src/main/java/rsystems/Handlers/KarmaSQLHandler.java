@@ -7,6 +7,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -70,14 +72,16 @@ public class KarmaSQLHandler extends SQLHandler {
             // SET DATE TO FINISH QUERY
             st.executeUpdate("UPDATE KARMA SET DATE = \"" + date + "\" WHERE ID = " + id);
 
+            connection.close();
+
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
     }
 
-    public int getKarma(String id) {
+    public Integer getKarma(String id) {
 
-        int value = 0;
+        Integer value = null;
 
         try {
 
@@ -89,6 +93,8 @@ public class KarmaSQLHandler extends SQLHandler {
                 value = rs.getInt("USER_KARMA");
                 System.out.println(value);
             }
+
+            connection.close();
 
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -111,6 +117,8 @@ public class KarmaSQLHandler extends SQLHandler {
                 tag = rs.getString("NAME");
             }
 
+            connection.close();
+
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
@@ -121,6 +129,7 @@ public class KarmaSQLHandler extends SQLHandler {
     public int updateKarma(Long messageID, String sender, String receiver, Boolean direction) {
         System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s", sender, receiver));
 
+        int output = 0;
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
@@ -149,11 +158,11 @@ public class KarmaSQLHandler extends SQLHandler {
                     st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver);
                 }
 
-
-                return 4;
+                connection.close();
+                output = 4;
             } else {
                 // User does not have enough points
-                return 2;
+                output = 2;
             }
         } catch (SQLException throwables) {
             System.out.println("Karma Update Handler Exception");
@@ -162,7 +171,7 @@ public class KarmaSQLHandler extends SQLHandler {
             System.out.println("Could not find user");
         }
         // Return default
-        return 0;
+        return output;
     }
 
     public boolean overrideKarma(String id, int value) {
@@ -170,6 +179,7 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET USER_KARMA = " + value + " WHERE ID = " + id);
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -187,7 +197,7 @@ public class KarmaSQLHandler extends SQLHandler {
             while (rs.next()) {
                 indexesFound = rs.getInt(1);
             }
-
+            connection.close();
             return indexesFound;
 
         } catch (SQLException throwables) {
@@ -201,6 +211,7 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET USER_KARMA = " + value + " WHERE USER_KARMA <> " + value);
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -213,6 +224,7 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET AV_POINTS = " + value + " WHERE AV_POINTS <> " + value);
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -225,6 +237,7 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET AV_POINTS = " + value + " WHERE ID = " + id);
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -245,12 +258,33 @@ public class KarmaSQLHandler extends SQLHandler {
             while (rs.next()) {
                 value = rs.getInt("AV_POINTS");
             }
+            connection.close();
 
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
-
         return value;
+    }
+
+    public boolean insertUser(String id, String name) {
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            //Initiate the formatter for formatting the date into a set format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            //Get the current date
+            LocalDate currentDate = LocalDate.now();
+            //Format the current date into a set format
+            String formattedCurrentDate = formatter.format(currentDate);
+
+            st.executeUpdate(String.format("INSERT INTO KARMA (ID,NAME,DATE) VALUES (\"%s\", \"%s\",\"%s\")",id,name,formattedCurrentDate));
+            connection.close();
+            return true;
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return false;
     }
 
     public boolean deleteUser(String id) {
@@ -258,6 +292,7 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("DELETE FROM KARMA WHERE ID = " + id);
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -275,6 +310,7 @@ public class KarmaSQLHandler extends SQLHandler {
                 topRank.put(rs.getString("NAME"), rs.getInt("USER_KARMA"));
             }
 
+            connection.close();
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
@@ -298,6 +334,8 @@ public class KarmaSQLHandler extends SQLHandler {
 
             }
 
+            connection.close();
+
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
@@ -320,6 +358,8 @@ public class KarmaSQLHandler extends SQLHandler {
             while (rs.next()) {
                 value = rs.getInt(column);
             }
+
+            connection.close();
 
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -345,6 +385,9 @@ public class KarmaSQLHandler extends SQLHandler {
             while(rs.next()){
                 output = rs.getInt(1);
             }
+
+            connection.close();
+
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
@@ -357,10 +400,14 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("UPDATE KARMA SET " + column + " = " + value + " WHERE ID = " + id);
+
+            connection.close();
             return true;
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
+
+
         return false;
     }
 
@@ -374,6 +421,8 @@ public class KarmaSQLHandler extends SQLHandler {
             while (rs.next()) {
                 currentType = rs.getInt("KTYPE");
             }
+
+            connection.close();
 
             if (currentType < 4) {
                 st.executeUpdate("UPDATE KARMA SET KTYPE = " + type + " WHERE ID = " + id);
@@ -392,6 +441,8 @@ public class KarmaSQLHandler extends SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
             st.executeUpdate("DELETE FROM karmaTracker WHERE DATE < (SELECT DATETIME('now', '-7 day'))");
+
+            connection.close();
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }
@@ -407,6 +458,8 @@ public class KarmaSQLHandler extends SQLHandler {
             while (rs.next()) {
                 members.add(String.valueOf(rs.getLong("ID")));
             }
+
+            connection.close();
 
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
@@ -430,6 +483,7 @@ public class KarmaSQLHandler extends SQLHandler {
                 }
             }
 
+            connection.close();
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         }

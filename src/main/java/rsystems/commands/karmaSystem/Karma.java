@@ -9,8 +9,11 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.time.temporal.ChronoUnit;
+import java.util.concurrent.TimeUnit;
 
 public class Karma extends Command {
+
+    private static final String[] ALIASES = new String[] {"ks"};
 	
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
@@ -21,8 +24,11 @@ public class Karma extends Command {
 	
 	@Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+        event.getMessage().delete().queue();
+        channelReply(event, karmaString(), success -> {
 
-        reply(event, karmaString());
+            success.delete().queueAfter(60, TimeUnit.SECONDS);
+        });
 		
     }
 	
@@ -38,6 +44,11 @@ public class Karma extends Command {
     @Override
     public String getHelp() {
         return "Just a test";
+    }
+
+    @Override
+    public String[] getAliases(){
+        return ALIASES;
     }
 
 }

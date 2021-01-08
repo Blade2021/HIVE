@@ -10,7 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CheckRole extends Command {
-	
+	@Override
+	public Integer getPermissionIndex() {
+		return 2;
+	}
+
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
 		

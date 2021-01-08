@@ -104,12 +104,12 @@ public class References extends ListenerAdapter {
         }
 
 		//Replace the first occurance of the bot's prefix with null
-        String content = event.getMessage().getContentRaw().replaceFirst(HiveBot.prefix,"");
+        String content = event.getMessage().getContentDisplay().replaceFirst(HiveBot.prefix,"");
 
 		//Remove all mentions for checking the message for reference
         if(!event.getMessage().getMentionedMembers().isEmpty()){
             for(Member m:event.getMessage().getMentionedMembers()){
-                content = content.replaceAll(m.getAsMention().toLowerCase(),"");
+                content = content.replaceAll("@" + m.getEffectiveName(),"");
             }
         }
 

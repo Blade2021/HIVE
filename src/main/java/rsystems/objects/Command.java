@@ -78,6 +78,28 @@ public abstract class Command {
          */
     }
 
+    protected void channelReply(GuildMessageReceivedEvent event, Message message){
+        channelReply(event,message,null);
+    }
+
+    protected void channelReply(GuildMessageReceivedEvent event, String message){
+        channelReply(event,message,null);
+    }
+
+    protected void channelReply(GuildMessageReceivedEvent event, String message, Consumer<Message> successConsumer)
+    {
+        channelReply(event, new MessageBuilder(message).build(), successConsumer);
+    }
+
+    protected void channelReply(GuildMessageReceivedEvent event, Message message, Consumer<Message> successConsumer){
+        event.getChannel().sendMessage(message).queue(msg -> {
+
+            linkMessage(event.getMessageIdLong(),msg.getIdLong());
+            if(successConsumer != null)
+                successConsumer.accept(msg);
+        });
+    }
+
 
 
     protected void reply(PrivateMessageReceivedEvent event, String message){

@@ -40,6 +40,7 @@ public class Ask extends Command {
             if (content.length() <= 5) {
                 //Link was not long enough to verify
                 System.out.println("Question was to short");
+                reply(event,"Your question was too short");
                 return;
             }
 

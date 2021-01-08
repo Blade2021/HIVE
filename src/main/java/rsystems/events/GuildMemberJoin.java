@@ -23,5 +23,10 @@ public class GuildMemberJoin extends ListenerAdapter {
         if(event.getMember().getUser().getAvatarUrl() == null){
             System.out.println("default avatar detected!");
         }
+
+        if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
+            System.out.println("Adding member: " + event.getMember().getId());
+            HiveBot.karmaSQLHandler.insertUser(event.getMember().getId(),event.getMember().getUser().getAsTag());
+        }
     }
 }

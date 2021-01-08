@@ -22,7 +22,11 @@ public class KUserInfo extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
-        reply(event,karmaMessage(sender));
+
+        if(!event.getMessage().getMentionedMembers().isEmpty()){
+            reply(event,karmaMessage(event.getMessage().getMentionedMembers().get(0).getUser()));
+        } else
+            reply(event,karmaMessage(sender));
     }
 
     @Override
