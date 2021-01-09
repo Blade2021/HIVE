@@ -377,5 +377,27 @@
 		],
 		"keywords": [
 		]
+	},
+	"request": {
+		"alias": ["bug","bugs","requests"],
+		"minRank": 0,
+		"title": "Bug Report / Feature Requests",
+		"description": "Wanna request a new feature, or found a bug, Submit an issue on GitHub: https://github.com/Blade2021/HIVE/issues",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
+	},
+	"code": {
+		"alias": [],
+		"minRank": 0,
+		"title": "Formatting code in Discord",
+		"description": "Paste your code in the following format Replacing `{language}` with your desired language:\n \\`\\`\\``{language}` \nCode Here\n\\`\\`\\`\n`Before:`\n{\"greeting\":\"Hello World\"}\n\n`After:` ```json\n{\"greeting\":\"Hello World\"}```[More information](https://github.com/Blade2021/HIVE/wiki/Code-Formatting-&-Validation)",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
 	}
 }

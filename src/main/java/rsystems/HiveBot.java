@@ -75,7 +75,7 @@ public class HiveBot{
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),31);
+            HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

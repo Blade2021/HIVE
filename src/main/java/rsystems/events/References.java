@@ -88,6 +88,10 @@ public class References extends ListenerAdapter {
             }
             tempReference.setCategory(getArrayList(parsedValue,"category"));
 
+            if(parsedValue.get("title") != null){
+                tempReference.setTitle(parsedValue.get("title").toString());
+            }
+
             //Add Reference Object into the references array
             referenceMap.putIfAbsent(keyStr.toString(), tempReference);
 
@@ -185,6 +189,10 @@ public class References extends ListenerAdapter {
         embedBuilder.setColor(Color.CYAN)
                 .setFooter(String.format("%s called by %s",reference.getReferenceCommand(),event.getMember().getEffectiveName()))
                 .setDescription(reference.getDescription());
+
+        if(reference.getTitle() != null){
+            embedBuilder.setTitle(reference.getTitle());
+        }
 
         messageBuilder.setEmbed(embedBuilder.build());
         event.getMessage().reply(messageBuilder.build()).queue();

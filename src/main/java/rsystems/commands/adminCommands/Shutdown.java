@@ -5,14 +5,16 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.HiveBot;
 import rsystems.objects.Command;
 
-import java.util.List;
+public class Shutdown extends Command {
 
-public class Clear extends Command {
+    private static final String[] ALIASES = new String[] {"sd"};
+
     @Override
     public Integer getPermissionIndex() {
-        return 32;
+        return 1024;
     }
 
     @Override
@@ -22,23 +24,20 @@ public class Clear extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
-        String[] args = content.split("\\s+");
+        HiveBot.dbPool.getPool().close();
 
-        Integer msgCount = null;
-        
-        try{
-            msgCount = Integer.parseInt(args[0]);
-        }catch(NumberFormatException e){
-        }
-        
-        if(msgCount != null) {
-            List<Message> messages = event.getChannel().getHistory().retrievePast(msgCount + 1).complete();
-            event.getChannel().deleteMessages(messages).queue();
-        }
+        event.getMessage().reply("Goodbye...").queue();
+
+        event.getJDA().shutdown();
     }
 
     @Override
     public String getHelp() {
         return null;
+    }
+
+    @Override
+    public String[] getAliases(){
+        return ALIASES;
     }
 }

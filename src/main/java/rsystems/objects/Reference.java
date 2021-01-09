@@ -7,6 +7,7 @@ public class Reference {
     protected String description;
     protected ArrayList<String> aliases;
     protected ArrayList<String> category;
+    protected String title = null;
 
     public Reference(String referenceCommand, String description) {
         this.referenceCommand = referenceCommand;
@@ -64,5 +65,13 @@ public class Reference {
 
     public void addCategory(String category){
         this.category.add(category);
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 }

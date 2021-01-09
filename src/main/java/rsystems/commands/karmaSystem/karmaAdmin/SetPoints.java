@@ -15,7 +15,7 @@ public class SetPoints extends Command {
 
 	@Override
 	public Integer getPermissionIndex() {
-		return 2;
+		return 32768;
 	}
 
 	@Override

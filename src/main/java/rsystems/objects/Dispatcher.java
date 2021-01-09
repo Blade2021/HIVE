@@ -13,6 +13,7 @@ import rsystems.HiveBot;
 import rsystems.commands.adminCommands.Cleanse;
 import rsystems.commands.adminCommands.Clear;
 import rsystems.commands.adminCommands.Reload;
+import rsystems.commands.adminCommands.Shutdown;
 import rsystems.commands.adminCommands.Test;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
@@ -26,6 +27,7 @@ import rsystems.commands.karmaSystem.Karma;
 import rsystems.commands.karmaSystem.karmaAdmin.SetKarma;
 import rsystems.commands.karmaSystem.karmaAdmin.SetPoints;
 import rsystems.commands.modCommands.CheckRole;
+import rsystems.commands.modCommands.GetEmoji;
 import rsystems.commands.streamRelated.Ask;
 
 import java.util.*;
@@ -57,6 +59,8 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Reload());
         this.registerCommand(new Commands());
         this.registerCommand(new ReferenceList());
+        this.registerCommand(new Shutdown());
+        this.registerCommand(new GetEmoji());
 
         for (Command c : commands) {
             System.out.println(c.getName());

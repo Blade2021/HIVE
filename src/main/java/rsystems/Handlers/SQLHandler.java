@@ -303,4 +303,84 @@ public class SQLHandler {
         }
     }
 
+    public boolean addAuthRole(Long roleID, String roleName, Integer authLevel){
+        boolean output = false;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("INSERT INTO HIVE_AuthRole (RoleID, RoleName, AuthLevel) VALUES (%d, \"%s\",%d)",roleID,roleName,authLevel));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean removeAuthRole(Long roleID){
+        boolean output = false;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("DELETE FROM HIVE_AuthRole WHERE (RoleID = %d)",roleID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean updateAuthRole(Long roleID, String roleName){
+        boolean output = false;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("UPDATE HIVE_AuthRole SET (RoleName = \"%s\") WHERE (RoleID = %d)",roleName, roleID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean updateAuthRole(Long roleID, Integer authLevel){
+        boolean output = false;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("UPDATE HIVE_AuthRole SET (AuthLevel = %d) WHERE (RoleID = %d)",authLevel, roleID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
 }

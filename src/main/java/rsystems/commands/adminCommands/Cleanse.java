@@ -17,7 +17,7 @@ import java.util.List;
 public class Cleanse extends Command {
     @Override
     public Integer getPermissionIndex() {
-        return 2;
+        return 256;
     }
 
     @Override
