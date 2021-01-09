@@ -17,6 +17,7 @@ import rsystems.objects.Dispatcher;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -39,10 +40,13 @@ public class HiveBot{
     public static JDAImpl jda = null;
 
     public static Guild drZzzGuild(){
-        //return jda.getGuildById("469330414121517056");
         return jda.getGuildById(Config.get("GUILD_ID"));
     }
+
+    //AuthMap used for command authorization
     public static Map<Long,Integer> authMap = new HashMap<>();
+
+    public static Map<Long, ArrayList<String>> emojiPerkMap = new HashMap<>();
 
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
 
@@ -76,6 +80,7 @@ public class HiveBot{
             jda = (JDAImpl) api;
 
             HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
+            HiveBot.sqlHandler.loadPerkEmojis();
 
         } catch (InterruptedException e) {
             e.printStackTrace();

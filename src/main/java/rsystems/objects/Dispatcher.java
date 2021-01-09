@@ -10,11 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.internal.requests.RateLimiter;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.commands.adminCommands.Cleanse;
-import rsystems.commands.adminCommands.Clear;
-import rsystems.commands.adminCommands.Reload;
-import rsystems.commands.adminCommands.Shutdown;
-import rsystems.commands.adminCommands.Test;
+import rsystems.commands.adminCommands.*;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.Commands;
@@ -61,6 +57,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new ReferenceList());
         this.registerCommand(new Shutdown());
         this.registerCommand(new GetEmoji());
+        this.registerCommand(new EmojiWhitelist());
 
         for (Command c : commands) {
             System.out.println(c.getName());

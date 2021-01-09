@@ -3,13 +3,16 @@ package rsystems.events;
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateNameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,8 +60,19 @@ public class NicknameListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+    public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
+        final Member member = HiveBot.drZzzGuild().getMemberById(event.getUser().getIdLong());
+        if(member != null){
+            String nickname = member.getEffectiveName();
+            String processedNickname = processName(member, nickname);
+            if(processedNickname != null){
+                HiveBot.drZzzGuild().modifyNickname(member,processedNickname).queue();
+            }
+        }
+    }
 
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         // Remove emoji's from username on join
         final String currentNick = event.getMember().getEffectiveName();
         if (!EmojiParser.extractEmojis(currentNick).isEmpty()) {
@@ -72,9 +86,7 @@ public class NicknameListener extends ListenerAdapter {
     public static String processName(Member member, String name) {
         if (HiveBot.drZzzGuild().getSelfMember().canInteract(member)) {
 
-            if (inProcess.contains(member)) {
-                return null;
-            } else {
+            if (!inProcess.contains(member)) {
                 inProcess.add(member);
 
                 String newName = name;
@@ -83,8 +95,11 @@ public class NicknameListener extends ListenerAdapter {
                     return null;
 
                 List<String> acceptedEmoji = new ArrayList<>();
-                acceptedEmoji.add(":toolbox:");
-                acceptedEmoji.add(":snowman:");
+                for(Role role:member.getRoles()){
+                    if(HiveBot.emojiPerkMap.containsKey(role.getIdLong())){
+                        acceptedEmoji.addAll(HiveBot.emojiPerkMap.get(role.getIdLong()));
+                    }
+                }
 
 
                 if (EmojiParser.extractEmojis(name).size() >= 1) {

@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
+import rsystems.HiveBot;
+
+import javax.swing.plaf.nimbus.State;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
 
     public SQLHandler(String URL, String user, String pass) {
-        
+
         try {
             pool = new MariaDbPoolDataSource(URL);
             pool.setUser(user);
@@ -279,22 +282,22 @@ public class SQLHandler {
         return output;
     }
 
-    public void logCommandUsage(String commandName){
+    public void logCommandUsage(String commandName) {
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT UsageCount FROM HIVE_CommandTracker WHERE Name = \"%s\"",commandName));
+            ResultSet rs = st.executeQuery(String.format("SELECT UsageCount FROM HIVE_CommandTracker WHERE Name = \"%s\"", commandName));
 
             boolean commandFound = false;
-            while(rs.next()){
+            while (rs.next()) {
                 commandFound = true;
                 int newCount = rs.getInt(1) + 1;
 
-                st.execute(String.format("UPDATE HIVE_CommandTracker SET UsageCount = %d, LastUsage = current_timestamp WHERE Name = \"%s\"", newCount,commandName));
+                st.execute(String.format("UPDATE HIVE_CommandTracker SET UsageCount = %d, LastUsage = current_timestamp WHERE Name = \"%s\"", newCount, commandName));
             }
-            if(!commandFound){
-                st.execute(String.format("INSERT INTO HIVE_CommandTracker (Name, UsageCount) VALUES (\"%s\", 1)",commandName));
+            if (!commandFound) {
+                st.execute(String.format("INSERT INTO HIVE_CommandTracker (Name, UsageCount) VALUES (\"%s\", 1)", commandName));
             }
             connection.close();
 
@@ -303,15 +306,15 @@ public class SQLHandler {
         }
     }
 
-    public boolean addAuthRole(Long roleID, String roleName, Integer authLevel){
+    public boolean addAuthRole(Long roleID, String roleName, Integer authLevel) {
         boolean output = false;
 
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            st.execute(String.format("INSERT INTO HIVE_AuthRole (RoleID, RoleName, AuthLevel) VALUES (%d, \"%s\",%d)",roleID,roleName,authLevel));
-            if(st.getUpdateCount() >= 1){
+            st.execute(String.format("INSERT INTO HIVE_AuthRole (RoleID, RoleName, AuthLevel) VALUES (%d, \"%s\",%d)", roleID, roleName, authLevel));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
             connection.close();
@@ -323,15 +326,15 @@ public class SQLHandler {
         return output;
     }
 
-    public boolean removeAuthRole(Long roleID){
+    public boolean removeAuthRole(Long roleID) {
         boolean output = false;
 
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            st.execute(String.format("DELETE FROM HIVE_AuthRole WHERE (RoleID = %d)",roleID));
-            if(st.getUpdateCount() >= 1){
+            st.execute(String.format("DELETE FROM HIVE_AuthRole WHERE (RoleID = %d)", roleID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
             connection.close();
@@ -343,15 +346,15 @@ public class SQLHandler {
         return output;
     }
 
-    public boolean updateAuthRole(Long roleID, String roleName){
+    public boolean updateAuthRole(Long roleID, String roleName) {
         boolean output = false;
 
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            st.execute(String.format("UPDATE HIVE_AuthRole SET (RoleName = \"%s\") WHERE (RoleID = %d)",roleName, roleID));
-            if(st.getUpdateCount() >= 1){
+            st.execute(String.format("UPDATE HIVE_AuthRole SET (RoleName = \"%s\") WHERE (RoleID = %d)", roleName, roleID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
             connection.close();
@@ -363,15 +366,15 @@ public class SQLHandler {
         return output;
     }
 
-    public boolean updateAuthRole(Long roleID, Integer authLevel){
+    public boolean updateAuthRole(Long roleID, Integer authLevel) {
         boolean output = false;
 
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            st.execute(String.format("UPDATE HIVE_AuthRole SET (AuthLevel = %d) WHERE (RoleID = %d)",authLevel, roleID));
-            if(st.getUpdateCount() >= 1){
+            st.execute(String.format("UPDATE HIVE_AuthRole SET (AuthLevel = %d) WHERE (RoleID = %d)", authLevel, roleID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
             connection.close();
@@ -381,6 +384,86 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public boolean addEmojiToWhitelist(Long roleID, String emojiUnicode) {
+        boolean output = false;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            boolean emojiFound = false;
+
+            ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_PerksEmoji WHERE (RoleID = %d) AND (EmojiUnicode = \"%s\")", roleID, emojiUnicode));
+            while (rs.next()) {
+                emojiFound = true;
+            }
+
+            if (!emojiFound) {
+                st.execute(String.format("INSERT INTO HIVE_PerksEmoji (RoleID, EmojiUnicode) VALUES (%d, \"%s\")", roleID, emojiUnicode));
+                if (st.getUpdateCount() >= 1) {
+                    output = true;
+                }
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean removeEmojiFromWhitelist(Long roleID, String emoji) {
+
+        boolean output = false;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("DELETE FROM HIVE_PerksEmoji WHERE RoleID = %d AND EmojiUnicode = \"%s\"", roleID, emoji));
+            if (st.getUpdateCount() >= 1) {
+                output = true;
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public void loadPerkEmojis(){
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            HiveBot.emojiPerkMap.clear();
+
+            ResultSet rs = st.executeQuery("SELECT RoleID, EmojiUnicode FROM HIVE_PerksEmoji");
+            while(rs.next()){
+
+                Long roleID = rs.getLong("RoleID");
+                String emoji = rs.getString("EmojiUnicode");
+
+                if(HiveBot.emojiPerkMap.containsKey(roleID)){
+                    HiveBot.emojiPerkMap.get(roleID).add(emoji);
+                } else {
+                    HiveBot.emojiPerkMap.putIfAbsent(roleID,new ArrayList<String>());
+                    HiveBot.emojiPerkMap.get(roleID).add(emoji);
+                }
+
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
     }
 
 }
