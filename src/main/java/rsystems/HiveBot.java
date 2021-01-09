@@ -50,6 +50,8 @@ public class HiveBot{
 
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
 
+    public static boolean streamMode = false;
+
 
     //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
