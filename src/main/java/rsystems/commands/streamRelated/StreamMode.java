@@ -26,15 +26,15 @@ public class StreamMode extends Command {
 
         if((args != null) && (!args[0].isEmpty())){
             if(args[0].equalsIgnoreCase("true")){
-                HiveBot.streamMode = true;
+                HiveBot.setStreamMode(true);
             } else {
-                HiveBot.streamMode = false;
+                HiveBot.setStreamMode(false);
             }
 
-            reply(event,"Setting stream mode to: " + String.valueOf(HiveBot.streamMode).toUpperCase());
+            reply(event,"Setting stream mode to: " + String.valueOf(HiveBot.getStreamMode()).toUpperCase());
 
         } else {
-            reply(event, "Stream mode is currently `" + String.valueOf(HiveBot.streamMode).toUpperCase() + "`");
+            reply(event, "Stream mode is currently `" + String.valueOf(HiveBot.getStreamMode()).toUpperCase() + "`");
         }
     }
 

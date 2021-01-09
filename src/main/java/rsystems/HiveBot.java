@@ -50,7 +50,7 @@ public class HiveBot{
 
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
 
-    public static boolean streamMode = false;
+    private static boolean streamMode = false;
 
 
     //Initiate Loggers
@@ -70,6 +70,7 @@ public class HiveBot{
         //api.addEventListener(new TestEvent());
         api.addEventListener(new NicknameListener());
         api.addEventListener(references = new References());
+        api.addEventListener(new LinkCatcher());
 
         References.loadReferences();
 
@@ -87,6 +88,14 @@ public class HiveBot{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    public static boolean getStreamMode() {
+        return streamMode;
+    }
+
+    public static void setStreamMode(boolean streamMode) {
+        HiveBot.streamMode = streamMode;
     }
 }
 

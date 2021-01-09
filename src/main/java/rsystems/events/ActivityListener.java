@@ -28,9 +28,9 @@ public class ActivityListener extends ListenerAdapter {
     private void checkStreaming(final Activity activity){
 
         if(activity == null){
-            HiveBot.streamMode = false;
+            HiveBot.setStreamMode(false);
         } else {
-            HiveBot.streamMode = true;
+            HiveBot.setStreamMode(true);
         }
 
     }
