@@ -399,5 +399,16 @@
 		],
 		"keywords": [
 		]
+	},
+	"twitchSub": {
+		"alias": [],
+		"minRank": 0,
+		"title": "Twitch Subscription",
+		"description":"To receive the twitch sub role, you **MUST** be a subscriber to the DrZzz's Twitch Channel.  This is **100% Free** if you have Amazon Prime.\n\nFind out more about Twitch Prime Here: https://twitch.amazon.com/tp\nDrZzz's Twitch Channel: https://www.twitch.tv/drzzs\n\n**Please remember to link your discord account to twitch to receive this role.**\nTwitch Integration Help: (Scroll down to `For Viewers`: https://support.discordapp.com/hc/en-us/articles/212112068-Twitch-Integration-FAQ\n\nRemember the Twitch subscriber roles are updated every hour automatically.",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
 	}
 }
