@@ -16,6 +16,7 @@ import rsystems.commands.adminCommands.authorization.roleManager;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.Commands;
+import rsystems.commands.generic.EmojiList;
 import rsystems.commands.generic.Ping;
 import rsystems.commands.generic.ReferenceList;
 import rsystems.commands.karmaSystem.GetKarma;
@@ -66,6 +67,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new LocalPoll());
         this.registerCommand(new listRoles());
         this.registerCommand(new roleManager());
+        this.registerCommand(new EmojiList());
 
         for (Command c : commands) {
             System.out.println(c.getName());

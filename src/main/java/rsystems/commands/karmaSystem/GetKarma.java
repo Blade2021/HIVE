@@ -1,5 +1,6 @@
 package rsystems.commands.karmaSystem;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -12,22 +13,28 @@ public class GetKarma extends Command {
 	
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
-		
-        reply(event, karmaString(sender));
+
+        Member member = HiveBot.drZzzGuild().getMemberById(sender.getIdLong());
+        if(member != null) {
+            reply(event, karmaString(member));
+        }
 		
     }
 	
 	@Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
 
-        reply(event, karmaString(sender));
+        Member member = HiveBot.drZzzGuild().getMemberById(sender.getIdLong());
+        if(member != null) {
+            reply(event, karmaString(member));
+        }
 		
     }
 	
-	private String karmaString(User user){
+	private String karmaString(Member member){
 		
-		int currentKarma = HiveBot.karmaSQLHandler.getKarma(user.getId());
-		return String.format("%s, You currently have %d Karma",user.getName(),currentKarma);
+		int currentKarma = HiveBot.karmaSQLHandler.getKarma(member.getId());
+		return String.format("%s, You currently have %d Karma",member.getEffectiveName(),currentKarma);
 		
 	}
 

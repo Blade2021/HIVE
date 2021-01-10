@@ -1,5 +1,6 @@
 package rsystems.handlers;
 
+import net.dv8tion.jda.api.entities.Member;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.objects.KarmaUserInfo;
 
@@ -9,10 +10,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class KarmaSQLHandler extends SQLHandler {
 
@@ -126,7 +124,7 @@ public class KarmaSQLHandler extends SQLHandler {
         return tag;
     }
 
-    public int updateKarma(Long messageID, String sender, String receiver, Boolean direction) {
+    public int updateKarma(final Long messageID, final Member sender, final Member receiver, final boolean direction) {
         System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s", sender, receiver));
 
         int output = 0;
@@ -136,26 +134,29 @@ public class KarmaSQLHandler extends SQLHandler {
 
             int availableKarma = 0;
 
-            ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + sender);
+            if(getKarma(receiver.getId()) == null){
+                insertUser(receiver.getId(),receiver.getUser().getAsTag());
+            }
+
+            ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + sender.getId());
 
             // ID was found, get available points
             while (rs.next()) {
                 availableKarma = rs.getInt("AV_POINTS");
             }
 
-
             // User has enough points
             if (availableKarma >= 1) {
 
 
                 if (direction) {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender);
-                    st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver);
-                    st.execute(String.format("INSERT INTO KARMA_TrackerTable (MessageID, ReceivingUser, SendingUser, Timestamp) VALUES (%d, %d, %d, current_timestamp)",messageID,Long.valueOf(receiver),Long.valueOf(sender)));
+                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender.getId());
+                    st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver.getId());
+                    st.execute(String.format("INSERT INTO KARMA_TrackerTable (MessageID, ReceivingUser, SendingUser, Timestamp) VALUES (%d, %d, %d, current_timestamp)",messageID,receiver.getIdLong(),sender.getIdLong()));
 
                 } else {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender);
-                    st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver);
+                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender.getId());
+                    st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver.getId());
                 }
 
                 connection.close();
@@ -282,7 +283,7 @@ public class KarmaSQLHandler extends SQLHandler {
             connection.close();
             return true;
         } catch (SQLException throwables) {
-            System.out.println(throwables.getMessage());
+            throwables.printStackTrace();
         }
         return false;
     }
@@ -466,6 +467,46 @@ public class KarmaSQLHandler extends SQLHandler {
         }
 
         return members;
+    }
+
+    public List<String> getAllKarmaSymbols(){
+        List<String> output = new ArrayList<>();
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT Symbol FROM KARMA_SymbolTable");
+            while (rs.next()) {
+                output.add(rs.getString("Symbol"));
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return output;
+    }
+
+    public String getKarmaSymbol(String userID){
+        Integer karmaAmount = getKarma(userID);
+        String output = null;
+
+        try {
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT Symbol FROM KARMA_SymbolTable WHERE %d >= Minimum ORDER BY Minimum DESC",karmaAmount));
+            while (rs.next()) {
+                output = rs.getString("Symbol");
+                break;
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            System.out.println(throwables.getMessage());
+        }
+        return output;
     }
 
     public Map<String, Integer> getActiveUsers() {

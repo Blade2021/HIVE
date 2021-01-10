@@ -14,7 +14,11 @@ public class GuildMemberJoin extends ListenerAdapter {
 
         if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
             System.out.println("Adding member: " + event.getMember().getId());
-            HiveBot.karmaSQLHandler.insertUser(event.getMember().getId(),event.getMember().getUser().getAsTag());
+            if(HiveBot.karmaSQLHandler.insertUser(event.getMember().getId(),event.getMember().getUser().getAsTag())){
+                System.out.println("success!");
+            } else {
+                System.out.println("failed to add member");
+            }
         }
     }
 }

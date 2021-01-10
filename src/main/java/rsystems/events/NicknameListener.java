@@ -101,6 +101,10 @@ public class NicknameListener extends ListenerAdapter {
                     }
                 }
 
+                String newKarmaSymbol = HiveBot.karmaSQLHandler.getKarmaSymbol(member.getId());
+                if(newKarmaSymbol != null){
+                    acceptedEmoji.add(newKarmaSymbol);
+                }
 
                 if (EmojiParser.extractEmojis(name).size() >= 1) {
                     for (String s : EmojiParser.extractEmojis(name)) {
@@ -126,5 +130,41 @@ public class NicknameListener extends ListenerAdapter {
             }
         }
         return null;
+    }
+
+    public static void handleKarmaNickname(Long userID){
+
+        Member member = HiveBot.drZzzGuild().getMemberById(userID);
+        if(member != null) {
+
+            String newKarmaSymbol = HiveBot.karmaSQLHandler.getKarmaSymbol(String.valueOf(userID));
+
+            if(newKarmaSymbol != null) {
+                List<String> allKarmaSymbols = HiveBot.karmaSQLHandler.getAllKarmaSymbols();
+
+                String currentNickname = member.getEffectiveName();
+                for (String emoji : allKarmaSymbols) {
+                    System.out.println("OLD:" + emoji);
+                    System.out.println("NEW:" + newKarmaSymbol);
+
+                    if (currentNickname.contains(EmojiParser.parseToUnicode(emoji))) {
+                        System.out.println("karma emoji found on current name");
+
+                        if (!newKarmaSymbol.equalsIgnoreCase(emoji)) {
+                            System.out.println("emoji doens't equal new symbol");
+                            String newNick = currentNickname;
+                            newNick = newNick.replace(EmojiParser.parseToUnicode(emoji), EmojiParser.parseToUnicode(newKarmaSymbol));
+                            HiveBot.drZzzGuild().modifyNickname(member, newNick).queue();
+                            return;
+                        }
+                    }
+                }
+
+                String newNick = currentNickname;
+                newNick = newNick + EmojiParser.parseToUnicode(newKarmaSymbol);
+                HiveBot.drZzzGuild().modifyNickname(member, newNick).queue();
+            }
+        }
+
     }
 }

@@ -145,15 +145,15 @@ public class GratitudeListener extends ListenerAdapter {
                     message.clearReactions().queue();
                     message.addReaction("\uD83D\uDCEC").queue();
 
-                    User receiver = null;
+                    Member receiver = null;
                     if (message.getMentionedMembers().isEmpty()) {
-                        receiver = message.getReferencedMessage().getAuthor();
+                        receiver = message.getReferencedMessage().getMember();
                     } else {
-                        receiver = message.getMentionedMembers().get(0).getUser();
+                        receiver = message.getMentionedMembers().get(0);
                     }
 
                     if (receiver != null) {
-                        if (receiver.isBot()) {
+                        if (receiver.getUser().isBot()) {
                             event.getChannel().sendMessage("Nice try!").queue();
                             return;
                         }
@@ -162,8 +162,8 @@ public class GratitudeListener extends ListenerAdapter {
                         if (finalEmojiID.equalsIgnoreCase(stageReaction)) {
                             //send karma to original user
                             // add reaction to message to confirm karma was sent.
-                            HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getMember().getId(), receiver.getId(), true);
-                            //System.out.println("FAKE: Sending karma to User: " + receiver.getAsTag());
+                            HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getMember(), receiver, true);
+
                         }
                     }
 
@@ -194,8 +194,8 @@ public class GratitudeListener extends ListenerAdapter {
 
                             boolean direction = finalReactionID.equals(karmaPosReaction);
                             System.out.println(String.format("Sending %s karma from %s to %s", direction, sendingMember.getEffectiveName(), receivingMember.getEffectiveName()));
-                            HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingMember.getId(), receivingMember.getId(), direction);
-
+                            HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingMember, receivingMember, direction);
+                            NicknameListener.handleKarmaNickname(receivingMember.getIdLong());
                         } else {
 
                             //Remove reaction
