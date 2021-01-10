@@ -3,6 +3,7 @@ package rsystems.handlers;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.HiveBot;
@@ -384,6 +385,27 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public Map<Long,Integer> getAuthRoles(){
+        Map<Long, Integer> authMap = new HashMap<>();
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT RoleID, AuthLevel FROM HIVE_AuthRole");
+            while(rs.next()){
+                authMap.putIfAbsent(rs.getLong("RoleID"),rs.getInt("AuthLevel"));
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return authMap;
     }
 
     public boolean addEmojiToWhitelist(Long roleID, String emojiUnicode) {

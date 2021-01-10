@@ -44,9 +44,6 @@ public class HiveBot{
         return jda.getGuildById(Config.get("GUILD_ID"));
     }
 
-    //AuthMap used for command authorization
-    public static Map<Long,Integer> authMap = new HashMap<>();
-
     public static Map<Long, ArrayList<String>> emojiPerkMap = new HashMap<>();
 
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
@@ -85,7 +82,7 @@ public class HiveBot{
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
+            //HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
             HiveBot.sqlHandler.loadPerkEmojis();
 
         } catch (InterruptedException e) {

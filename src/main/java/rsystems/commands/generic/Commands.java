@@ -60,7 +60,12 @@ public class Commands extends Command {
             	authCommandString.append("`" + authCommmand + "`").append(", ");
 			}
 
-			reply(event,String.format("**Generic Commands:**\n%s\n\n**Mod Commands:**\n%s",genericCommandString.toString(),authCommandString.toString()));
+            String outputString = "**Generic Commands:**\n"+genericCommandString.toString();
+            if(!authCommandString.toString().isEmpty()){
+                outputString = outputString + "\n\n**Moderator/Admin Commands:**\n"+authCommandString.toString();
+            }
+
+			reply(event,outputString);
 			System.out.println(authorizedCommands);
 			System.out.println(genericCommands);
         }

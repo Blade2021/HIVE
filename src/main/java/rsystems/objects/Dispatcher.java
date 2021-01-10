@@ -11,6 +11,8 @@ import net.dv8tion.jda.internal.requests.RateLimiter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.adminCommands.*;
+import rsystems.commands.adminCommands.authorization.listRoles;
+import rsystems.commands.adminCommands.authorization.roleManager;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.Commands;
@@ -62,6 +64,8 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new EmojiWhitelist());
         this.registerCommand(new StreamMode());
         this.registerCommand(new LocalPoll());
+        this.registerCommand(new listRoles());
+        this.registerCommand(new roleManager());
 
         for (Command c : commands) {
             System.out.println(c.getName());
@@ -242,9 +246,11 @@ public class Dispatcher extends ListenerAdapter {
     public static boolean checkAuthorized(final Member member, final Integer commandPermission) {
         boolean authorized = false;
 
+        Map<Long, Integer> authmap = HiveBot.sqlHandler.getAuthRoles();
+
         for (Role r : member.getRoles()) {
-            if (HiveBot.authMap.containsKey(r.getIdLong())) {
-                int modRoleValue = HiveBot.authMap.get(r.getIdLong());
+            if (authmap.containsKey(r.getIdLong())) {
+                int modRoleValue = authmap.get(r.getIdLong());
 
                 /*
                 Form a binary string based on the permission level integer found.
