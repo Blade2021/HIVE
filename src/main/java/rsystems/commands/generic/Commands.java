@@ -20,8 +20,6 @@ public class Commands extends Command {
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
 
-
-
     }
 
     @Override
@@ -62,7 +60,7 @@ public class Commands extends Command {
             	authCommandString.append("`" + authCommmand + "`").append(", ");
 			}
 
-			reply(event,String.format("Generic Commands:\n%s\n\nMod Commands:\n%s",genericCommandString.toString(),authCommandString.toString()));
+			reply(event,String.format("**Generic Commands:**\n%s\n\n**Mod Commands:**\n%s",genericCommandString.toString(),authCommandString.toString()));
 			System.out.println(authorizedCommands);
 			System.out.println(genericCommands);
         }

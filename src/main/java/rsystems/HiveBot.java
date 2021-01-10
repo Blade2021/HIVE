@@ -34,6 +34,7 @@ public class HiveBot{
 
     public static DataFile dataFile = new DataFile();
     public static Dispatcher dispatcher;
+    public static LocalPollHandler localPollHandler = new LocalPollHandler();
 
     public static References references;
 
@@ -71,6 +72,8 @@ public class HiveBot{
         api.addEventListener(new NicknameListener());
         api.addEventListener(references = new References());
         api.addEventListener(new LinkCatcher());
+        api.addEventListener(new ActivityListener());
+        api.addEventListener(new PrivateMessageListener());
 
         References.loadReferences();
 

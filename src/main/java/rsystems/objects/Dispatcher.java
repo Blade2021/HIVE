@@ -24,6 +24,7 @@ import rsystems.commands.karmaSystem.karmaAdmin.SetKarma;
 import rsystems.commands.karmaSystem.karmaAdmin.SetPoints;
 import rsystems.commands.modCommands.CheckRole;
 import rsystems.commands.modCommands.GetEmoji;
+import rsystems.commands.modCommands.LocalPoll;
 import rsystems.commands.streamRelated.Ask;
 import rsystems.commands.streamRelated.StreamMode;
 
@@ -60,6 +61,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new GetEmoji());
         this.registerCommand(new EmojiWhitelist());
         this.registerCommand(new StreamMode());
+        this.registerCommand(new LocalPoll());
 
         for (Command c : commands) {
             System.out.println(c.getName());

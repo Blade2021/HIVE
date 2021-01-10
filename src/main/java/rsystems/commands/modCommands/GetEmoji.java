@@ -11,6 +11,7 @@ import rsystems.objects.Command;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GetEmoji extends Command {
@@ -23,16 +24,21 @@ public class GetEmoji extends Command {
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
         int index = 0;
 
-        for(String emojiString:EmojiParser.extractEmojis(message.getContentDisplay())) {
-            if(index < 5) {
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setDescription(String.format("Emoji: %s\n\nUnicode: `%s`\nHTML Decimal: `%s`\nAliases: `%s`", emojiString, emojiToUnicode(emojiString), EmojiParser.parseToHtmlDecimal(emojiString), EmojiParser.parseToAliases(emojiString)));
-                embedBuilder.setColor(Color.green);
-                reply(event, embedBuilder.build());
-                embedBuilder.clear();
-                index++;
-            } else
-                break;
+        List<String> emojiList = EmojiParser.extractEmojis(message.getContentDisplay());
+        if(emojiList.isEmpty()){
+            reply(event,"No emoji's found on that message. :potato:");
+        } else {
+            for (String emojiString : emojiList) {
+                if (index < 5) {
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setDescription(String.format("Emoji: %s\n\nUnicode: `%s`\nHTML Decimal: `%s`\nAliases: `%s`", emojiString, emojiToUnicode(emojiString), EmojiParser.parseToHtmlDecimal(emojiString), EmojiParser.parseToAliases(emojiString)));
+                    embedBuilder.setColor(Color.green);
+                    reply(event, embedBuilder.build());
+                    embedBuilder.clear();
+                    index++;
+                } else
+                    break;
+            }
         }
     }
 
