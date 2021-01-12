@@ -1,0 +1,414 @@
+{
+	"troubleshooting": {
+		"alias": [
+			"ts"
+		],
+		"minRank": 0,
+		"description": "If you're having problems with your updates to your configuration, check the troubleshooting steps in <https://home-assistant.io/docs/configuration/troubleshooting/>",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			"troubleshooting", "trouble", "configuration"
+		]
+	},
+	"group": {
+		"alias": [
+			"groups"
+		],
+		"minRank": 0,
+		"description": "Groups allow the user to combine multiple entities into one, and create views in the default dashboard. See <https://home-assistant.io/components/group/> for information.",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			"group"
+		]
+	},
+	"splitConfig": {
+		"alias": [
+			"split config"
+		],
+		"minRank": 0,
+		"description": "Split Configuration: <https://home-assistant.io/docs/configuration/splitting_configuration/>",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			"config", "split"
+		]
+	},
+	"checkconfig": {
+		"alias": [],
+		"minRank": 0,
+		"description": "http://quadflightdiy.com/wp-content/uploads/2017/07/Home-Assistant-1.png",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			"config", "check"
+		]
+	},
+	"config": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Enable the \"Configuration\" section of the UI by adding `config:` to your configuration.yaml file, docs: <https://home-assistant.io/components/config/>",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"input_number": {
+		"alias": [
+			"input number"
+		],
+		"minRank": 0,
+		"description": "The `input_number` component allows the user to define values that can be controlled via the frontend and can be used within conditions of automation. The frontend can display a slider, or a numeric input box. Changes to the slider or numeric input box generate state events. These state events can be utilized as `automation` triggers as well.\n```yaml\n# Example configuration.yaml entry\ninput_number:\n  slider1:\n    name: Slider\n    initial: 30\n    min: -20\n    max: 35\n    step: 1\n  box1:\n    name: Numeric Input Box\n    initial: 30\n    min: -20\n    max: 35\n    step: 1\n    mode: box\n```\nMore information: <https://home-assistant.io/components/input_number/>",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			"input number", "input"
+		]
+	},
+	"getting_started": {
+		"alias": [
+			"getting started"
+		],
+		"minRank": 0,
+		"description": "When you're getting started, take the time to read [HA Docs Link](https://home-assistant.io/docs/) and have a look at the supported components [Supported Components](https://home-assistant.io/components/). You can find some worked examples at [HA Cookbook](https://home-assistant.io/cookbook/).",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"secrets": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Rather than putting sensitive information (passwords, locations, etc) into your configuration, you can store them in secrets to make sharing easier. See <https://home-assistant.io/docs/configuration/secrets/> for more.",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"backup": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Be sure to regularly, automatically, back up your Home Assistant install. There are various critical files and configuration options (like the Z-Wave network key), plus all your time. Hass.io has snapshots, and for unix type installs see <https://blog.ceard.tech/2017/10/backing-up-home-assistant.html>.  Oh, and most important of all **test your ability to restore regularly**.",
+		"category": [
+			"home-assistant"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"wiki": {
+		"alias": [],
+		"minRank": 0,
+		"description": "You can find command info and other general information about HIVE on the wiki: [More information](https://github.com/Blade2021/HIVE/wiki)",
+		"category": [
+			"information"
+		],
+		"keywords": [
+			"HIVE"
+		]
+	},
+	"drZzzGithub": {
+		"alias": [
+			"drzzz github",
+			"docs github"
+		],
+		"minRank": 0,
+		"description": "You can find the docs public github here: [Link](https://github.com/Snipercaine)",
+		"category": [
+			"user-base"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"points": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Points are used to give karma to other users.  Use ~getpoints to see how many points you have. [More information](https://github.com/Blade2021/HIVE/wiki/Karma)",
+		"category": [
+			"user-base"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"suggestHelp": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Wanna submit a suggestion?  Use ~suggest followed by your suggestion.  This will send your suggestion to our staff to review before being posted as a poll for the community to vote.",
+		"category": [
+			"information"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"codeshare": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Need to work with someone on writing code?  Try using https://codeshare.io",
+		"category": [
+			"information"
+		],
+		"keywords": [
+			"code", "code share"
+		]
+	},
+	"input_boolean": {
+		"alias": [
+			"boolean"
+		],
+		"minRank": 0,
+		"description": "Input booleans allow an entity to be created to save a toggleable state.  You can find more about them here: [More information](https://www.home-assistant.io/integrations/input_boolean/)",
+		"category": [
+			"information"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"faq": {
+		"alias": [],
+		"minRank": 0,
+		"description": "You can find rules, common bot commands, and answers to frequently asked questions in the #faq-and-rules channel.",
+		"category": [
+			"information"
+		],
+		"keywords": [
+			""
+		]
+	},
+	"led_Hardware": {
+		"alias": [
+			"led hardware"
+		],
+		"minRank": 0,
+		"description": "[RGBMan](https://www.rgb-man.com/)\n[wallyslights](https://www.wallyslights.com/)\n[wiredwatts](https://www.wiredwatts.com/)\n[Ray wu's store](https://www.aliexpress.com/store/701799?fbclid=IwAR1yDm6ygs_IuAz13ggWv2wPSHJH34M7205U4l473jGqtVUNjIbLjrQAdFM)\n[PIXELHEADS](https://shop.pixelheads.info/)\n[Paul Zhang Direct-US](https://www.amazon.com/s?i=merchant-items&me=A1HD6W29M3RXPC)\n[Hanson Electronics](http://www.hansonelectronics.com.au/)\n[jboards](https://jboards.ecwid.com/)\n[mattosdesigns](https://mattosdesigns.com/)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_Controllers": {
+		"alias": [
+			"LED controller"
+		],
+		"minRank": 0,
+		"description": "[USA-Dig-Uno](https://drzzs.com/shop/dig-uno-diy-rgb-led-controller-w-wled-preassembled/)\n[USA-Dig-Quad](https://drzzs.com/shop/digquad/)\n[kulplights controllers](https://kulplights.com/)\n[Falcon Pixel controller](https://www.pixelcontroller.com/store/index.php)\n[Pixel2Things- Ac to pixel controller](https://www.pixel2things.com/)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_Props": {
+		"alias": [
+			"LED Props"
+		],
+		"minRank": 0,
+		"description": "[BoscoyoStudio](https://boscoyostudio.com/) - Outdoor lightning display props for Residential and Commercial displays.\n[Gilbert Engineering USA](https://gilbertengineeringusa.com/) - Coro props, Pixel props, holiday coro, magical, holiday decor, holiday lighting, outdoor lighting, xlights, light o rama, Coro, Christmas Props, Animated Lighting\n[CustomChristmasCreationsCCC](https://customchristmascreationsccc.com/) - Unique Coro Christmas,Halloween,random props\n[EFL Designs](https://www.facebook.com/EFLDesigns) - custom coro cutter find him on facebook or xlights zoom room",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_espdriver": {
+		"alias": [
+			"LED espdriver", "led esp driver"
+		],
+		"minRank": 0,
+		"description": "WLED ESP Driver download [click here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_xlights": {
+		"alias": [
+			"LED xlights"
+		],
+		"minRank": 0,
+		"description": "[xlights website-xLights](https://xlights.org/) is a free and open source program that enables you to design, create and play amazing lighting displays through the use of DMX controllers, E1.31 Ethernet controllers and more.\n\n[Xlights download page](https://xlights.org/releases/)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_sequences": {
+		"alias": [
+			"LED sequences", "led seq","led_seq"
+		],
+		"minRank": 0,
+		"description": "[Xlights Free Sequences (Google Drive)](https://drive.google.com/drive/folders/0B2ozCEidtWh3MUVzX0ZMc1pzY00?fref=gc&dti=628061113896314)\n[Pixel Pro Displays](https://www.pixelprodisplays.com/)\n[Xtreme Sequences](https://www.xtremesequences.com/)\n[ShowStopperSequences](https://showstoppersequences-com.3dcartstores.com/)\n[Magical Light Shows](https://magicallightshows.com/)\n[SyracuseLights](https://www.syracuselights.org/sequences)\n[VCS 2020 xLights: Basic Sequencing - Michael Stoffregen - VIDEO](https://www.youtube.com/watch?v=EvK7AUJ1Nrk)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_inject": {
+		"alias": [
+			"LED inject"
+		],
+		"minRank": 0,
+		"description": "Solutions for Power Injection & Data Signal Boosting Permanent Christmas Lights:by Dr.zzs [YouTube](https://www.youtube.com/watch?v=wSGfkL1AGKs)\nPower Distro Power Injection by:Bill Porter [YouTube](https://youtu.be/eR3QbzjpZy8)\nEver Wonder Why You Pixels Flicker and How to Fix It by:Keith Wesley [YouTube](https://www.youtube.com/watch?v=9ttEAyiyTAI)\nThis is a great calculator to help with judging the size of wire , power supplies , distance ,votage drop and much more [RGB Pixel Power Calculator](http://spikerlights.com/calcpower.aspx)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledfpp": {
+		"alias": [
+			"LED fpp"
+		],
+		"minRank": 0,
+		"description": "FPP Manual can be found [here](https://falconchristmas.github.io/FPP_Manual.pdf)\nFPP releases can be found [here](https://github.com/FalconChristmas/fpp/releases)\nThe Falcon [Christmas Forum](http://falconchristmas.com/forum/) - support for fpp, kulp and falcon\nFPP Installing and Configuring Your Controller Step by Step - Rick Harris [YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0)\nFPP In Detail Master / Remote / Schedule / Playlist - Rick Harris - [YouTube](https://www.youtube.com/watch?v=y27EarxYW6Y)\nFPP Plugins & Scripts - Daniel Kulp [YouTube](https://www.youtube.com/watch?v=pE4I5igbAuE&t=2s)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledkulp": {
+		"alias": [
+			"LED kulp"
+		],
+		"minRank": 0,
+		"description": "kulplights.com -Home of FPP based pixel controllers that can each drive 800 Pixels at 40FPS 1500 Pixels at 20fps per port ws281x ONLY [Link](https://kulplights.com/)\nFPP releases can be found [here](https://github.com/FalconChristmas/fpp/releases) newest is at top\nkulp k16- A 16 port controller that runs FPP Input voltage 5, or 12V selectable. *ADD-ONS NEEDED SCREEN,SDCARD,BEAGLEBONE,fm-transmitter* [Link](https://kulplights.com/product/k16a-b/)\nkulp 32 port controller Input voltage 5, or 12V selectable. *ADD-ONS NEEDED SCREEN,SDCARD,BEAGLEBONE,fm-transmitter*[Link](https://kulplights.com/product/k32a-b/)\nkulp k8-8 port controller Input voltage 5, or 12V selectable. *ADD-ONS NEEDED SCREEN,SDCARD,BEAGLEBONE*[Link](https://kulplights.com/product/k8-b/)\n\nIF RUNNING WIFI YOU WILL NEED THIS ADAPTER. [Link](https://kulplights.com/product/1200mbs-antenna-wifi/)\nYou might also need this usb hub. [Link](https://kulplights.com/product/usb-gigabit-ethernet-adapter/)\n\nThe 4-String Differential Smart Receiver Board can be connected to many different controller options allowing 4 strings to be placed up to 300+ feet from the controllers . Input voltage 5, or 12V . The Smart Receiver can be daisy-chained together up to three.[Link](https://kulplights.com/product/smart-receiver/)\nKulp's user manual *listed as f8-b but works for all boards*. [Link](https://kulplights.com/manuals/F8-B-Manual.pdf)\nFPP Installing and Configuring Your Controller Step by Step - Rick Harris - [YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0)\nVCS 2020 Kulp Boards - Daniel Kulp - [YouTube](https://www.youtube.com/watch?v=sceGQMZ0dHw&t=2720s)\nFPP Plugins & Scripts - Daniel Kulp [YouTube](https://www.youtube.com/watch?v=pE4I5igbAuE&t=2s)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledfalcon": {
+		"alias": [
+			"LED falcon"
+		],
+		"minRank": 0,
+		"description": "[pixelcontroller.com](https://www.pixelcontroller.com/store/index.php) -Home of the Falcon controllers that can drive 1024 lights per port can drive many different types of pixels ie.WS,TM,SM,INK,TL,CY,LPD,D705,ETC.\n[Falcon controller support page](https://www.pixelcontroller.com/store/index.php?id_cms_category=5&controller=cms) *you will run these from fpp or your computer through xSchedule* *new firmware might change this*.\n\nF16V3- 16 port Pixel Controller- 1024 pixels per output pixel controller. [Link](https://www.pixelcontroller.com/store/index.php?id_product=48&controller=product)\nF48 Differential Controller- Can drive up to 16384 pixels. 48 Differential Outputs no local ports-Can connect up to 12 Falcon Differential Receivers. [Link](https://www.pixelcontroller.com/store/index.php?id_product=52&controller=product)\n\nFalcon PiCap for a pi3 or pi4 Can control two strings 800+ WS2811 pixels with fused and buffered outputs. Dedicated RS-485 DMX Output (Renard, DMX, LOR selectable). Input voltage 5, or 12V selectable.[Link](https://www.pixelcontroller.com/store/index.php?id_product=47&controller=product)\nFPP releases can be found here newest is at top.[Github](https://github.com/FalconChristmas/fpp/releases)\nFPP Installing and Configuring Your Controller Step by Step - Rick Harris [YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0)\nVCS 2020 Falcon Controllers - Scott Hanson- [YouTube](https://www.youtube.com/watch?v=J9KDQvYBoe0)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledcalcpower": {
+		"alias": [
+			"LED calcpower","led power","led_power"
+		],
+		"minRank": 0,
+		"description": "What is Power Injection? At its lowest level power injection is nothing more than adding additional power to a string of lights at a point in which the voltage drop starts to affect the lights[more info here](http://spikerlights.com/pwrinjection.aspx)\nThis is a great calculator to help with judging the size of wire , power supplies , distance ,votage drop and much more [RGB Pixel Power Calculator](http://spikerlights.com/calcpower.aspx)\nHow much power do addressable LEDs use?, Digitally Addressable LED Sheet[info found here](https://quinled.info/2020/03/12/digital-led-power-usage/)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledprints": {
+		"alias": [
+			"LED prints","3d prints","3d_print"
+		],
+		"minRank": 0,
+		"description": "PIXELHEADS 3D PRINT COLLECTION[find them here](https://shop.pixelheads.info/pixelheads-3d-print-collection/)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"helpdesk": {
+		"alias": ["order help"],
+		"minRank": 0,
+		"description": "Need help with an order from [DrZzs.com](https://drzzs.com)?  Submit a ticket to the HelpDesk. [https://helpdesk.drzzs.com](https://helpdesk.drzzs.com)",
+		"category": [
+			"LED"
+		],
+		"keywords": [
+			"Helpdesk", "Support", "QuinDuo", "QuinQuad"
+		]
+	},
+	"justask": {
+		"alias": [],
+		"minRank": 0,
+		"description": "Need assistance with something?  Just ask your question, instead of asking for permission.  If anyone knows the answer, they will reply.  \n\nhttps://dontasktoask.com/",
+		"category": [
+			"general"
+		],
+		"keywords": [
+			"ask"
+		]
+	},
+	"reply": {
+		"alias": [],
+		"minRank": 0,
+		"description": "If there are multiple conversations going at once, try using the reply feature in discord.  This helps everyone know who they are replying to and from.",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
+	},
+	"request": {
+		"alias": ["bug","bugs","requests"],
+		"minRank": 0,
+		"title": "Bug Report / Feature Requests",
+		"description": "Wanna request a new feature, or found a bug, Submit an issue on GitHub: https://github.com/Blade2021/HIVE/issues",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
+	},
+	"code": {
+		"alias": [],
+		"minRank": 0,
+		"title": "Formatting code in Discord",
+		"description": "Paste your code in the following format Replacing `{language}` with your desired language:\n \\`\\`\\``{language}` \nCode Here\n\\`\\`\\`\n`Before:`\n{\"greeting\":\"Hello World\"}\n\n`After:` ```json\n{\"greeting\":\"Hello World\"}```[More information](https://github.com/Blade2021/HIVE/wiki/Code-Formatting-&-Validation)",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
+	},
+	"twitchSub": {
+		"alias": [],
+		"minRank": 0,
+		"title": "Twitch Subscription",
+		"description":"To receive the twitch sub role, you **MUST** be a subscriber to the DrZzz's Twitch Channel.  This is **100% Free** if you have Amazon Prime.\n\nFind out more about Twitch Prime Here: https://twitch.amazon.com/tp\nDrZzz's Twitch Channel: https://www.twitch.tv/drzzs\n\n**Please remember to link your discord account to twitch to receive this role.**\nTwitch Integration Help: (Scroll down to `For Viewers`: https://support.discordapp.com/hc/en-us/articles/212112068-Twitch-Integration-FAQ\n\nRemember the Twitch subscriber roles are updated every hour automatically.",
+		"category": [
+			"general"
+		],
+		"keywords": [
+		]
+	}
+}
