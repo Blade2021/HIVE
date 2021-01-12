@@ -14,12 +14,15 @@ import rsystems.events.*;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
 import rsystems.objects.Dispatcher;
+import rsystems.tasks.AddKarmaPoints;
+import rsystems.tasks.Newcomer;
 
 import javax.security.auth.login.LoginException;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
 import java.util.logging.Logger;
 
 public class HiveBot{
@@ -71,6 +74,7 @@ public class HiveBot{
         api.addEventListener(new LinkCatcher());
         api.addEventListener(new ActivityListener());
         api.addEventListener(new PrivateMessageListener());
+        api.addEventListener(new OnlineStatusListener());
 
         References.loadReferences();
 
@@ -84,6 +88,10 @@ public class HiveBot{
 
             //HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
             HiveBot.sqlHandler.loadPerkEmojis();
+
+            Timer timer = new Timer();
+            timer.schedule(new AddKarmaPoints(), 600000, 21600000);
+            timer.schedule(new Newcomer(),60000,21600000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

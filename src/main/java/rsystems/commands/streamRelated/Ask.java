@@ -57,9 +57,9 @@ public class Ask extends Command {
                                 if (checkContent.equalsIgnoreCase(content)) {
                                     msgCount++;
                                     if (msgCount >= 2) {
-                                        System.out.println(checkContent);
-                                        System.out.println(content);
-                                        System.out.println(msgCount);
+                                        //System.out.println(checkContent);
+                                        //System.out.println(content);
+                                        //System.out.println(msgCount);
                                         event.getMessage().addReaction("⚠").queue();
                                         return;
                                     }

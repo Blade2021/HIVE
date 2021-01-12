@@ -374,7 +374,7 @@ public class SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            st.execute(String.format("UPDATE HIVE_AuthRole SET (AuthLevel = %d) WHERE (RoleID = %d)", authLevel, roleID));
+            st.execute(String.format("UPDATE HIVE_AuthRole SET AuthLevel = %d WHERE RoleID = %d", authLevel, roleID));
             if (st.getUpdateCount() >= 1) {
                 output = true;
             }
@@ -482,10 +482,31 @@ public class SQLHandler {
                 }
 
             }
+            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
 
+    }
+
+    public Integer checkUsage(String commandName){
+        Integer output = null;
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT UsageCount, LastUsage FROM HIVE_CommandTracker WHERE Name = \"%s\"", commandName));
+            while(rs.next()){
+
+                output = rs.getInt("UsageCount");
+
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return output;
     }
 
 }

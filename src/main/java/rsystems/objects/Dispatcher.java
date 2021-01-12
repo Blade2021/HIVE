@@ -15,10 +15,7 @@ import rsystems.commands.adminCommands.authorization.listRoles;
 import rsystems.commands.adminCommands.authorization.roleManager;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
-import rsystems.commands.generic.Commands;
-import rsystems.commands.generic.EmojiList;
-import rsystems.commands.generic.Ping;
-import rsystems.commands.generic.ReferenceList;
+import rsystems.commands.generic.*;
 import rsystems.commands.karmaSystem.GetKarma;
 import rsystems.commands.karmaSystem.GetPoints;
 import rsystems.commands.karmaSystem.KUserInfo;
@@ -68,6 +65,8 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new listRoles());
         this.registerCommand(new roleManager());
         this.registerCommand(new EmojiList());
+        this.registerCommand(new CommandUsage());
+        this.registerCommand(new Help());
 
         for (Command c : commands) {
             System.out.println(c.getName());
@@ -245,7 +244,7 @@ public class Dispatcher extends ListenerAdapter {
         Command.removeResponses(event.getChannel(), event.getMessageIdLong());
     }
 
-    public static boolean checkAuthorized(final Member member, final Integer commandPermission) {
+    public boolean checkAuthorized(final Member member, final Integer commandPermission) {
         boolean authorized = false;
 
         Map<Long, Integer> authmap = HiveBot.sqlHandler.getAuthRoles();

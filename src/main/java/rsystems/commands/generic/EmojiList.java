@@ -1,14 +1,15 @@
 package rsystems.commands.generic;
 
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import rsystems.HiveBot;
+import rsystems.events.NicknameListener;
 import rsystems.objects.Command;
 
-import javax.naming.directory.InvalidSearchControlsException;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,6 +51,10 @@ public class EmojiList extends Command {
             for(Map.Entry<Role,ArrayList<String>> entry:emojiMap.entrySet()){
                 embedBuilder.addField(entry.getKey().getName(),entry.getValue().toString(),false);
             }
+
+            String allowedKarmaSymbol = HiveBot.karmaSQLHandler.getKarmaSymbol(member.getId());
+
+            embedBuilder.addField("KARMA:", EmojiParser.parseToUnicode(allowedKarmaSymbol),false);
 
             MessageBuilder messageBuilder = new MessageBuilder();
             messageBuilder.setEmbed(embedBuilder.build());

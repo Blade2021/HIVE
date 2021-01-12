@@ -163,7 +163,7 @@ public class GratitudeListener extends ListenerAdapter {
                             //send karma to original user
                             // add reaction to message to confirm karma was sent.
                             HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getMember(), receiver, true);
-
+                            NicknameListener.handleKarmaNickname(receiver.getIdLong());
                         }
                     }
 

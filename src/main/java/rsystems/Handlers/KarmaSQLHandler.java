@@ -89,7 +89,7 @@ public class KarmaSQLHandler extends SQLHandler {
             ResultSet rs = st.executeQuery("SELECT USER_KARMA FROM KARMA WHERE ID = " + id);
             while (rs.next()) {
                 value = rs.getInt("USER_KARMA");
-                System.out.println(value);
+                //System.out.println(value);
             }
 
             connection.close();

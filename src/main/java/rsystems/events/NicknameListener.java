@@ -151,7 +151,7 @@ public class NicknameListener extends ListenerAdapter {
                         System.out.println("karma emoji found on current name");
 
                         if (!newKarmaSymbol.equalsIgnoreCase(emoji)) {
-                            System.out.println("emoji doens't equal new symbol");
+                            System.out.println("emoji doesn't equal new symbol");
                             String newNick = currentNickname;
                             newNick = newNick.replace(EmojiParser.parseToUnicode(emoji), EmojiParser.parseToUnicode(newKarmaSymbol));
                             HiveBot.drZzzGuild().modifyNickname(member, newNick).queue();

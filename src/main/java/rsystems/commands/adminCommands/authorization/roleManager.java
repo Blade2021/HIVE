@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
@@ -68,7 +69,14 @@ public class roleManager extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString = ("{prefix}{command} [Sub-Command] [args]\n\n" +
+                "**Add**\n`{prefix}{command} add [RoleID] [AuthLevel]`\nThis will add the role to the authorization table with the permission value given.\n\n" +
+                "**Remove**\n`{prefix}{command} remove [RoleID]`\nThis will remove the role from the authorization table.\n\n" +
+                "**Update**\n`{prefix}{command} update [RoleID] [AuthLevel]`\nThis will update the role (if found) on the authorization table with the new authorization level.\n");
+        returnString = returnString.replaceAll("\\{prefix}",Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     @Override
