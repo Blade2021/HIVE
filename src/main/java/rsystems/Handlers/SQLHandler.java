@@ -8,8 +8,6 @@ import java.util.Map;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.HiveBot;
 
-import javax.swing.plaf.nimbus.State;
-
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
 
