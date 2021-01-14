@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.events.NicknameListener;
 import rsystems.objects.Command;
@@ -29,7 +30,12 @@ public class EmojiList extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString = ("{prefix}{command}\n\n" +
+                "This will tell you what emoji's you have access to, to attach to your name.\n\n");
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     private Message handleEvent(User sender){

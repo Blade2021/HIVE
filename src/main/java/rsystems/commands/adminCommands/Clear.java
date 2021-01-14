@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.objects.Command;
 
 import java.util.List;
@@ -39,6 +40,11 @@ public class Clear extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString = ("`{prefix}{command} [# of messages]`\n" +
+                "Clear the number of messages provided (Less than 100) from the channel in reverse order.");
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 }

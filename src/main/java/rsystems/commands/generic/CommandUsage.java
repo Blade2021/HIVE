@@ -1,6 +1,5 @@
 package rsystems.commands.generic;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -26,7 +25,7 @@ public class CommandUsage extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+        return "don't use this command yet. - Blade";
     }
 
     private Integer handleEvent(String content){

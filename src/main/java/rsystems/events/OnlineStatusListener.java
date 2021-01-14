@@ -3,13 +3,12 @@ package rsystems.events;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import rsystems.HiveBot;
 
 import javax.annotation.Nonnull;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-
-import static rsystems.HiveBot.karmaSQLHandler;
 
 public class OnlineStatusListener extends ListenerAdapter {
 
@@ -32,19 +31,21 @@ public class OnlineStatusListener extends ListenerAdapter {
             String formattedCurrentDate = formatter.format(currentDate);
 
             //Get the last date of karma increment
-            String lastSeenKarma = karmaSQLHandler.getDate(event.getMember().getId());
+            String lastSeenKarma = HiveBot.karmaSQLHandler.getDate(event.getMember().getId());
 
             //Insert new user if not found in DB
             if (lastSeenKarma.isEmpty()) {
-                if (karmaSQLHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
+                /*if (karmaSQLHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
                     System.out.println("Failed to add member to database");
                 } else {
                     karmaSQLHandler.overrideKarmaPoints(event.getMember().getId(), 5);
                 }
+
+                 */
             } else {
                 long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
                 if (daysPassed >= 1) {
-                    karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
+                    HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
                 }
             }
         }

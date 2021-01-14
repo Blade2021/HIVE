@@ -6,10 +6,16 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 public class LocalPoll extends Command {
+
+    @Override
+    public Integer getPermissionIndex() {
+        return 4;
+    }
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
@@ -38,6 +44,13 @@ public class LocalPoll extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        StringBuilder returnString = new StringBuilder();
+        returnString.append("");
+
+        returnString.append(String.format("SYNTAX: %s%s {ChannelID}\n\n", Config.get("prefix"),this.getName()));
+        returnString.append("This command will help create an embeded message containging a poll formed message.  After you initiate this command, HIVE will send you a direct message with further instructions.\n\n");
+        returnString.append("Once complete, the poll will be posted in the channel that the command was called, Unless otherwise specified!");
+        return returnString.toString();
     }
 }

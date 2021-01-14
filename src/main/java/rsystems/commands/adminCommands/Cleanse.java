@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
+import rsystems.Config;
 import rsystems.objects.Command;
 
 import java.awt.*;
@@ -71,6 +72,11 @@ public class Cleanse extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString = ("`{prefix}{command}`\n" +
+                "Clear all messages in a channel.  This should be used **infrequently** as will use many API calls.\n\n");
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 }

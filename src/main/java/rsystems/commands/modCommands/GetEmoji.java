@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.objects.Command;
 
 import java.awt.*;
@@ -44,7 +45,13 @@ public class GetEmoji extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString ="`{prefix}{command} [Emoji]`\n\n" +
+                "Not all emoji's can be used by HIVE.  This is due to the library we use.  Also not all reactions are emojis.\n";
+
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     private String emojiToUnicode(String emoji){

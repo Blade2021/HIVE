@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.requests.RestAction;
 import rsystems.Config;
 import rsystems.HiveBot;
 
@@ -142,8 +143,9 @@ public class GratitudeListener extends ListenerAdapter {
                     HiveBot.karmaSQLHandler.deleteFromStaging(messageID);
 
                     // Clear all reactions
-                    message.clearReactions().queue();
-                    message.addReaction("\uD83D\uDCEC").queue();
+                    message.clearReactions().queue(success -> {
+                        message.addReaction("\uD83D\uDCEC").queue();
+                    });
 
                     Member receiver = null;
                     if (message.getMentionedMembers().isEmpty()) {

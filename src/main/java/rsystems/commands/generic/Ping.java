@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.objects.Command;
 
 import java.time.temporal.ChronoUnit;
@@ -24,7 +25,13 @@ public class Ping extends Command {
 
     @Override
     public String getHelp() {
-        return "Just a test";
+
+        String returnString ="`{prefix}{command}`\n" +
+                "Returns the latency of the BOT.";
+
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     @Override

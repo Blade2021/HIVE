@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
@@ -31,10 +32,30 @@ public class EmojiWhitelist extends Command {
         if((args != null) && (args.length >= 1)){
 
             if(args[0].equalsIgnoreCase("add")){
-                if(subCommand_AddEmoji(content.substring(args[0].length()+1))){
-                    reply(event,"Added Emoji");
-                } else
-                    reply(event,"Did not add Emoji");
+                if(args.length >= 2){
+                    Long associatedRole = Long.valueOf(args[1]);
+                    if(HiveBot.drZzzGuild().getRoleById(associatedRole) != null) {
+
+                        List<String> emojiList = EmojiParser.extractEmojis(content);
+
+                        if(emojiList.isEmpty()){
+                            reply(event,"No compatible emoji's found");
+                        } else {
+                            for (String emoji : emojiList) {
+                                System.out.println(EmojiParser.parseToAliases(emoji));
+
+                                if (HiveBot.sqlHandler.addEmojiToWhitelist(associatedRole, EmojiParser.parseToAliases(emoji))) {
+                                    if (HiveBot.emojiPerkMap.get(associatedRole) != null) {
+                                        HiveBot.emojiPerkMap.get(associatedRole).add(emoji);
+                                    } else {
+                                        HiveBot.emojiPerkMap.put(associatedRole, new ArrayList<String>());
+                                        HiveBot.emojiPerkMap.get(associatedRole).add(emoji);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
 
                 return;
             }
@@ -73,7 +94,15 @@ public class EmojiWhitelist extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString ="`{prefix}{command} [Sub-Command] [args]`\n\n" +
+        "**Add**\n`{prefix}{command} add [RoleID] [Emoji(s)]`\nThis will add all emojis found to the whitelist the role.\n\n"+
+        "**Remove**\n`{prefix}{command} remove [RoleID]`\nThis will remove all emojis from the whitelist for a role.\n\n"+
+        "**List**\n`{prefix}{command} list`\nThis will list all emojis found on the whitelist.\n";
+
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     private boolean subCommand_AddEmoji(String content){
@@ -87,6 +116,8 @@ public class EmojiWhitelist extends Command {
                 List<String> emojiList = EmojiParser.extractEmojis(content);
 
                 for (String emoji : emojiList) {
+                    System.out.println(EmojiParser.parseToAliases(emoji));
+
                     if(HiveBot.sqlHandler.addEmojiToWhitelist(associatedRole,EmojiParser.parseToAliases(emoji))){
                         if(HiveBot.emojiPerkMap.get(associatedRole) != null){
                             HiveBot.emojiPerkMap.get(associatedRole).add(emoji);

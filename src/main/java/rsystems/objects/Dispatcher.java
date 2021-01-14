@@ -67,6 +67,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new EmojiList());
         this.registerCommand(new CommandUsage());
         this.registerCommand(new Help());
+        this.registerCommand(new CheckNick());
 
         for (Command c : commands) {
             System.out.println(c.getName());

@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.events.References;
 import rsystems.objects.Command;
 import rsystems.objects.ExtendedReference;
@@ -32,7 +33,15 @@ public class ReferenceList extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString ="`{prefix}{command}`\n\n" +
+                "`What are References!`\n"+
+                "References are bits of information that have been stored for easy access from HIVE.  These snippets are written by many of the staff but can be submitted by anyone who wants to write one.\n\n"+
+                "If you would like to help us out and submit one yourself.  See the instructions found [here](https://github.com/Blade2021/HIVE-RefData)";
+
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     private Message referenceListCommand(Message message) {

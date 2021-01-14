@@ -18,6 +18,9 @@ public class DBPool {
             pool.setMinPoolSize(2);
 
             pool.initialize();
+
+            System.out.println("Database connected");
+            System.out.println(pool.getPoolName());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

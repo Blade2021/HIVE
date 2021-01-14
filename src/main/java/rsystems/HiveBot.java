@@ -90,8 +90,8 @@ public class HiveBot{
             HiveBot.sqlHandler.loadPerkEmojis();
 
             Timer timer = new Timer();
-            timer.schedule(new AddKarmaPoints(), 600000, 21600000);
-            timer.schedule(new Newcomer(),60000,21600000);
+            //timer.schedule(new AddKarmaPoints(), 600000, 21600000);
+            //timer.schedule(new Newcomer(),60000,21600000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
