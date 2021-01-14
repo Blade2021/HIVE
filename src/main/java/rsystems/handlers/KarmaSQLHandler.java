@@ -33,6 +33,9 @@ public class KarmaSQLHandler extends SQLHandler {
                 date = rs.getString("DATE");
             }
 
+
+            connection.close();
+
         } catch (SQLException throwables) {
             System.out.println(throwables.getMessage());
         } finally {
@@ -159,12 +162,14 @@ public class KarmaSQLHandler extends SQLHandler {
                     st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver.getId());
                 }
 
-                connection.close();
                 output = 4;
             } else {
                 // User does not have enough points
                 output = 2;
             }
+
+
+            connection.close();
         } catch (SQLException throwables) {
             System.out.println("Karma Update Handler Exception");
             throwables.printStackTrace();

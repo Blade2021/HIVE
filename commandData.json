@@ -1,0 +1,749 @@
+{
+  "shutdown": {
+    "id": 0,
+    "rank": 3,
+    "alias": ["sd"],
+    "syntax": "shutdown",
+    "description": "Shutdown HIVE\nOnly do this if **REQUIRED**\n\nAfter HIVE shuts down, the only way to reload it is to contact Blade.  Please use this option with caution.",
+    "minArgCount": 0,
+    "commandType": "botControl"
+  },
+  "notify": {
+    "id": 1,
+    "rank": 0,
+    "alias": [],
+    "syntax": "notify",
+    "description": "This command is used to add/remove the notify role from yourself.  The notify role is used to give you a notifications channel for streaming events instead of spamming everyone.",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "info": {
+    "id": 2,
+    "rank": 0,
+    "alias": [],
+    "syntax": "info",
+    "description": "Get helpful information about HIVE.\n\nHIVE is very powerful and growing by the day.  There are many commands, many hidden functions, and many cool things that it can do.  Use the info command to get a list of commands sent to you via DM.(This of course requires you to have private messages allowed)",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "who": {
+    "id": 3,
+    "rank": 0,
+    "alias": ["hive"],
+    "syntax": "who",
+    "description": "Display information about HIVE.\n\nHIVE is a helpful buzzy little bot that is here to assist!  It is growing stronger each day as it pollenates and grows its colony.  Wanna see what it can do?  Type ~info to get a DM of commands accessible to you.",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "ping": {
+    "id": 4,
+    "rank": 0,
+    "alias": [],
+    "syntax": "ping",
+    "description": "Display the latency for HIVE.",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "code": {
+    "id": 5,
+    "rank": 0,
+    "alias": [],
+    "syntax": "code",
+    "description": "Formatting code is very important on discord.  To take full advantage of the tools provided we ask that users format code properly.  For instance if you want to validate your JSON or YAML code right here in discord, just follow the formatting steps and HIVE will take care of the rest!",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "page": {
+    "id": 6,
+    "rank": 2,
+    "alias": [],
+    "syntax": "page",
+    "description": "Send a page request to the doc to get his attention.\n\nThis of course, assuming he didn't break it. \uD83E\uDDD0",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "clear": {
+    "id": 7,
+    "rank": 3,
+    "alias": [],
+    "syntax": "clear [int]",
+    "description": "Clears x amount of messages from a channel.  This command will delete the messages from newest to oldest.  Please use with caution as this action cannot be undone.",
+    "minArgCount": 1,
+    "commandType": "server-control"
+  },
+  "role": {
+    "id": 8,
+    "rank": 2,
+    "alias": [],
+    "syntax": "role [role]",
+    "description": "Grabs the current user count for a role.\n\nSee how many users belong to a role for statistical or administration purposes.",
+    "minArgCount": 1,
+    "commandType": "utility-admin"
+  },
+  "assign": {
+    "id": 9,
+    "rank": 2,
+    "alias": [],
+    "syntax": "assign [role] @user",
+    "description": "Assign an \"assignable role\" to a user\n\nThis command allows you to assign a authorized role to another user.  This gives better access to mods to assign certain roles to users without having to wait on an admin.\n\nPlease also see its counterpart ~resign",
+    "minArgCount": 2,
+    "commandType": "user-control"
+  },
+  "resign": {
+    "id": 38,
+    "rank": 2,
+    "alias": [],
+    "syntax": "resign [role] @user",
+    "description": "Remove an \"assignable role\" to a user\n\nThis command will remove an authorized role from a user.  This allows a mod to remove the role from a user without having to wait on an admin.  Please see its counterpart ~assign",
+    "minArgCount": 2,
+    "commandType": "user-control"
+  },
+  "poll": {
+    "id": 10,
+    "rank": 1,
+    "alias": [],
+    "syntax": "poll [option1],[option2],[option3]",
+    "description": "Start a strawpoll with HIVE\n\nAfter the poll is created, HIVE will automatically post the URL in the channel of which the command was called.",
+    "minArgCount": 2,
+    "commandType": "utility-admin"
+  },
+  "analyze": {
+    "id": 11,
+    "rank": 3,
+    "alias": [],
+    "syntax": "analyze",
+    "description": "Analyze the guild channels for the date of last message.  This is used to make judgements on channel cleanup.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "ask": {
+    "id": 12,
+    "rank": 0,
+    "alias": [],
+    "syntax": "ask [Question]",
+    "description": "Used to send a question to a special channel for the doc/staff to answer.  Please remember **NOT** to send your question more then once.  It is essential that each person gets a turn at asking questions.",
+    "minArgCount": 1,
+    "commandType": "utility"
+  },
+  "admin": {
+    "id": 13,
+    "rank": 1,
+    "alias": [],
+    "syntax": "admin",
+    "description": "Get a list of available admin commands sent to you via DM.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "Threelawssafe": {
+    "id": 14,
+    "rank": 0,
+    "alias": ["botlaws"],
+    "syntax": "threelawssafe",
+    "description": "Information about the bot LaWs\n\nDiscord BoTs have a unspoken and unwritten set of rules.  These rules allow the bots to continue existence and flourish into wonderful creations.  Without these rules the discord dev program would most likely cease to exist, so lets all do ourselves a favor and respect the laws.",
+    "minArgCount": 0,
+    "commandType": "fun"
+  },
+  "Version": {
+    "id": 15,
+    "rank": 0,
+    "alias": [],
+    "syntax": "version",
+    "description": "Get HIVE's current version.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "Execute order 66": {
+    "id": 16,
+    "rank": 0,
+    "alias": ["execute"],
+    "syntax": "execute order 66",
+    "description": "Show the true power of the dark side.\n\nUse it... if you dare!",
+    "minArgCount": 0,
+    "commandType": "fun"
+  },
+  "Rule34": {
+    "id": 17,
+    "rank": 0,
+    "alias": ["rule 34"],
+    "syntax": "rule34",
+    "description": "If you have to ask what it is, you're not ready.",
+    "minArgCount": 0,
+    "commandType": "fun"
+  },
+  "Request": {
+    "id": 18,
+    "rank": 0,
+    "alias": ["bug","bugs","requests"],
+    "syntax": "request",
+    "description": "Found a bug or wanna submit a feature request?  Use this command to get the github page for HIVE\n\nAll requests are welcomed!",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "Twitchsub": {
+    "id": 19,
+    "rank": 0,
+    "alias": [],
+    "syntax": "twitchsub",
+    "description": "Get information about connecting your Twitch to your discord to receive awesome perks when subscribing.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "Stats": {
+    "id": 20,
+    "rank": 1,
+    "alias": [],
+    "syntax": "stats",
+    "description": "Get the discord server stats like current channel count and other useful stats.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "Getdata": {
+    "id": 21,
+    "rank": 3,
+    "alias": [],
+    "syntax": "getdata | getdata [key]",
+    "description": "Get data from the data file.",
+    "minArgCount": 0,
+    "commandType": "botControl"
+  },
+  "WhoIs": {
+    "id": 22,
+    "rank": 0,
+    "alias": ["who"],
+    "syntax": "who | who @USER | who id",
+    "description": "Get details about a user.  This will output the user's roles, join date, and UserID",
+    "minArgCount": 1,
+    "commandType": "user-control"
+  },
+  "Help": {
+    "id": 23,
+    "rank": 0,
+    "alias": [],
+    "syntax": "help [command]",
+    "description": "Gets command description and syntax for a command.\n\nEach command has a helpful description telling what it does, and how to use it.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "SendMarkers": {
+    "id": 24,
+    "rank": 2,
+    "alias": ["mark"],
+    "syntax": "sendmarkers",
+    "description": "Manually trigger HIVE to send channel markers for a streaming event.\n\nMarkers are sent to all channels described in the datafile.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "getStreamMode": {
+    "id": 25,
+    "rank": 1,
+    "alias": ["getstmode"],
+    "syntax": "getstreammode",
+    "description": "Gets the current Stream Mode for passing questions and links.\n\nHIVE is set to change this mode automatically when the doc begins streaming.  Please use the ~setStreamMode command if this does not ever take place.",
+    "minArgCount": 0,
+    "commandType": "botControl"
+  },
+  "setStreamMode": {
+    "id": 26,
+    "rank": 2,
+    "alias": ["setstmode"],
+    "syntax": "setstreammode [boolean]",
+    "description": "Sets the current Stream Mode for passing questions and links",
+    "minArgCount": 1,
+    "commandType": "botControl"
+  },
+  "commands": {
+    "id": 27,
+    "rank": 0,
+    "alias": [],
+    "syntax": "commmands",
+    "description": "Get a list of all available commands for your access level posted to the channel.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "sponge": {
+    "id": 28,
+    "rank": 1,
+    "alias": [],
+    "syntax": "sponge [text]",
+    "description": "Turn a string into a spongy text",
+    "minArgCount": 1,
+    "commandType": "botControl"
+  },
+  "welcome": {
+    "id": 29,
+    "rank": 1,
+    "alias": [],
+    "syntax": "welcome",
+    "description": "Trigger the welcome message to be displayed.  The welcome message is the message sent to new users when joining the discord server.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "uptime": {
+    "id": 30,
+    "rank": 0,
+    "alias": ["ut"],
+    "syntax": "uptime",
+    "description": "See how long HIVE has been running",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "updateReference": {
+    "id": 31,
+    "rank": 1,
+    "alias": ["updateRef"],
+    "syntax": "updateReference",
+    "description": "Update the references from the reference datafile.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "reloadAll": {
+    "id": 32,
+    "rank": 4,
+    "alias": [],
+    "syntax": "reloadAll",
+    "description": "Update all memory for HIVE",
+    "minArgCount": 0,
+    "commandType": "botControl"
+  },
+  "appendData": {
+    "id": 33,
+    "rank": 4,
+    "alias": ["addData"],
+    "syntax": "appendData [Key] [Value]",
+    "description": "Add to existing data stored in datafile for key.",
+    "minArgCount": 2,
+    "commandType": "botControl"
+  },
+  "writeData": {
+    "id": 34,
+    "rank": 4,
+    "alias": [],
+    "syntax": "writeData [Key] [Value]",
+    "description": "Overwrite existing data stored in datafile for key.",
+    "minArgCount": 2,
+    "commandType": "botControl"
+  },
+  "removeData": {
+    "id": 35,
+    "rank": 4,
+    "alias": [],
+    "syntax": "removeData [Key] | removeData [Key] [Value]",
+    "description": "Remove a value from a key or the entire key from the datafile.",
+    "minArgCount": 1,
+    "commandType": "botControl"
+  },
+  "Changelog": {
+    "id": 36,
+    "rank": 0,
+    "alias": ["cl"],
+    "syntax": "changelog",
+    "description": "Post a link to the HIVE github page to view the changelog file.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "ReferenceList": {
+    "id": 37,
+    "rank": 0,
+    "alias": ["refList"],
+    "syntax": "ReferenceList",
+    "description": "Get a list of all references.\n\nWhat are references?  A request was made for HIVE to catalog a data library of common acronyms and products.  We took this request and are constantly devloping the data library to a helpful list of information.",
+    "minArgCount": 0,
+    "commandType": "information"
+  },
+  "getAssignableRoles": {
+    "id": 39,
+    "rank": 2,
+    "alias": ["getaroles"],
+    "syntax": "getAssignableRoles",
+    "description": "Get a list of all roles that are assignable using the assign command.",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "localPoll": {
+    "id": 40,
+    "rank": 2,
+    "alias": [],
+    "syntax": "localPoll",
+    "description": "Start a poll that will not be sent to strawpoll.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "CheckDB": {
+    "id": 41,
+    "rank": 1,
+    "alias": [],
+    "syntax": "checkDB",
+    "description": "Check the database to see if your entered into it or not.",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "getDBUsers": {
+    "id": 42,
+    "rank": 4,
+    "alias": [],
+    "syntax": "getDBUsers",
+    "description": "Get a list of all users in the DB.",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "setDBUsername": {
+    "id": 43,
+    "rank": 4,
+    "alias": [],
+    "syntax": "setDBUsername",
+    "description": "Set the name of a user in the DB.",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "removeDBUser": {
+    "id": 44,
+    "rank": 4,
+    "alias": [],
+    "syntax": "removeDBUser",
+    "description": "Remove a user from the DB.",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "getLSDate": {
+    "id": 45,
+    "rank": 3,
+    "alias": [],
+    "syntax": "getLSDate id",
+    "description": "Get the last seen date of the user specified.",
+    "minArgCount": 1,
+    "commandType": "user-control"
+  },
+  "getDBData": {
+    "id": 46,
+    "rank": 4,
+    "alias": [],
+    "syntax": "getDBData",
+    "description": "Get all data from dB",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "Test": {
+    "id": 47,
+    "rank": 3,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "bot-control"
+  },
+  "addKarma": {
+    "id": 48,
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getKarma": {
+    "id": 49,
+    "rank": 0,
+    "alias": [],
+    "syntax": "Test",
+    "description": "Check to see your Karma score.  Your karma is influenced by other users.  Try helping others to receive points from them.",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "setPoints": {
+    "id": 50,
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "setKarma": {
+    "id": 51,
+    "rank": 4,
+    "alias": [],
+    "syntax": "Test",
+    "description": "If you have to ask, you shouldn't use it.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getPoints": {
+    "id": 52,
+    "rank": 0,
+    "alias": [],
+    "syntax": "getPoints",
+    "description": "Check to see how many points you have to send karma to other users.",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "++": {
+    "id": 53,
+    "rank": 0,
+    "alias": [],
+    "syntax": "++ @User",
+    "description": "Using this command, ++ @user or the Karma Positive reactions, you can use your points to influence another users karma.\n\nPlease use this RESPONSIBLY!",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "getUserKarma": {
+    "id": 54,
+    "rank": 1,
+    "alias": ["getKarma"],
+    "syntax": "Test",
+    "description": "Get the current karma status of another user.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getUserPoints": {
+    "id": 55,
+    "rank": 1,
+    "alias": ["getPoints"],
+    "syntax": "Test",
+    "description": "See how many points another user has.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getDBSize": {
+    "id": 56,
+    "rank": 3,
+    "alias": [],
+    "syntax": "getDBSize",
+    "description": "Get the current KARMA table size.",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "--": {
+    "id": 57,
+    "rank": 0,
+    "alias": [],
+    "syntax": "-- @User",
+    "description": "Using this command, -- @user or the Karma Negative reactions, you can use your points to influence another users karma.\n\nPlease use this RESPONSIBLY!",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "masterOverride": {
+    "id": 58,
+    "rank": 4,
+    "alias": [],
+    "syntax": "masterOverride",
+    "description": "Master Override the database",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "pollOnlineUsers": {
+    "id": 59,
+    "rank": 4,
+    "alias": [],
+    "syntax": "pollOnlineUsers",
+    "description": "Grab all online users",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "deleteUser": {
+    "id": 60,
+    "rank": 4,
+    "alias": [],
+    "syntax": "deleteUser",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma-admin"
+  },
+  "getTopTen": {
+    "id": 61,
+    "rank": 0,
+    "alias": ["getTop10"],
+    "syntax": "getTopTen",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "karma": {
+    "id": 62,
+    "rank": 0,
+    "alias": [],
+    "syntax": "karma",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "getDate": {
+    "id": 63,
+    "rank": 1,
+    "alias": [],
+    "syntax": "getDate | getDate @USER",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "getKUserInfo": {
+    "id": 64,
+    "rank": 1,
+    "alias": [],
+    "syntax": "getKUserInfo",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "karma"
+  },
+  "cleanse": {
+    "id": 65,
+    "rank": 3,
+    "alias": [],
+    "syntax": "cleanse",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "nick": {
+    "id": 66,
+    "rank": 0,
+    "alias": [],
+    "syntax": "nick [desired nickname]",
+    "description": "Set your nickname on the server.  (No emojis or vulgar language allowed)",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "optout": {
+    "id": 67,
+    "rank": 0,
+    "alias": [],
+    "syntax": "optout | optout [true/false]",
+    "description": "Opt IN/OUT of including your karma rank emoji on your nickname in the server.",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "updateKarmaUsers": {
+    "id": 68,
+    "rank": 4,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "getActiveKarmaUsers": {
+    "id": 69,
+    "rank": 4,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "karmaShort": {
+    "id": 70,
+    "rank": 0,
+    "alias": ["ks"],
+    "syntax": "",
+    "description": "Get a short summary of how to use karma",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggest": {
+    "id": 71,
+    "rank": 0,
+    "alias": ["suggestion"],
+    "syntax": "suggest [Suggestion]",
+    "description": "Submit a suggestion.  This can be related to discord, HIVE, or anything stream related\n\n",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionAccept": {
+    "id": 72,
+    "rank": 1,
+    "alias": ["suggestAccept"],
+    "syntax": "suggestionAccept [Suggestion ID]",
+    "description": "Approve a suggestion request",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionReject": {
+    "id": 73,
+    "rank": 1,
+    "alias": ["suggestionReject"],
+    "syntax": "suggestionReject [Suggestion ID]",
+    "description": "Reject a suggestion request",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionStatus": {
+    "id": 74,
+    "rank": 4,
+    "alias": [],
+    "syntax": "",
+    "description": "Get a short summary of how to use karma",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionApprove": {
+    "id": 75,
+    "rank": 3,
+    "alias": [],
+    "syntax": "",
+    "description": "Approve a suggestion",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionDeny": {
+    "id": 76,
+    "rank": 3,
+    "alias": [],
+    "syntax": "",
+    "description": "Deny a suggestion",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionOverrideMessage": {
+    "id": 77,
+    "rank": 4,
+    "alias": [],
+    "syntax": "",
+    "description": "Get a short summary of how to use karma",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "suggestionsList": {
+    "id": 78,
+    "rank": 1,
+    "alias": ["suggestionList"],
+    "syntax": "",
+    "description": "Get a list of all OPEN suggestions",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "mute": {
+    "id": 79,
+    "rank": 1,
+    "alias": [],
+    "syntax": "mute [Minutes] @Users",
+    "description": "Mute a user for x amount of minutes",
+    "minArgCount": 0,
+    "commandType": "user-control"
+  },
+  "muteChannel": {
+    "id": 80,
+    "rank": 3,
+    "alias": [],
+    "syntax": "muteChannel [Minutes] #Channel",
+    "description": "Mute a channel for x amount of minutes",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  },
+  "merry": {
+    "id": 81,
+    "rank": 0,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility"
+  },
+  "moveMessage": {
+    "id": 82,
+    "rank": 3,
+    "alias": [],
+    "syntax": "",
+    "description": "",
+    "minArgCount": 0,
+    "commandType": "utility-admin"
+  }
+}
