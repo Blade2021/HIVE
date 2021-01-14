@@ -96,7 +96,7 @@ public class EmojiWhitelist extends Command {
     public String getHelp() {
 
         String returnString ="`{prefix}{command} [Sub-Command] [args]`\n\n" +
-        "**Add**\n`{prefix}{command} add [RoleID] [Emoji(s)]`\nThis will add all emojis found to the whitelist the role.\n\n"+
+        "**Add**\n`{prefix}{command} add [RoleID] [Emoji(s)]`\nThis will add all emojis found, to the whitelist for the role.\n\n"+
         "**Remove**\n`{prefix}{command} remove [RoleID]`\nThis will remove all emojis from the whitelist for a role.\n\n"+
         "**List**\n`{prefix}{command} list`\nThis will list all emojis found on the whitelist.\n";
 
