@@ -38,3 +38,4 @@ build/libs/HiveV2-Production-0.19.14.jar
 build/libs/HiveV2-Production-0.19.15.jar
 build/libs/HiveV2-Production-0.19.16.jar
 build/libs/referenceData.json
+.env
