@@ -4,6 +4,7 @@ import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
@@ -73,15 +74,20 @@ public class EmojiWhitelist extends Command {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
 
                 for(Map.Entry<Long, ArrayList<String>> entry:HiveBot.emojiPerkMap.entrySet()){
-                    embedBuilder.appendDescription("**Role:**  "+entry.getKey()+"\n");
 
-                    StringBuilder emojiString = new StringBuilder();
+                    Role role = HiveBot.drZzzGuild().getRoleById(entry.getKey());
+                    if(role != null) {
+                        embedBuilder.appendDescription("**Role:**  " + role.getName() + "\n");
+                        embedBuilder.appendDescription("**ID:**  " + entry.getKey() + "\n");
 
-                    for(String emoji:entry.getValue()){
-                        emojiString.append(EmojiParser.parseToUnicode(emoji)).append("......").append("`").append(emoji).append("`\n");
+                        StringBuilder emojiString = new StringBuilder();
+
+                        for (String emoji : entry.getValue()) {
+                            emojiString.append(EmojiParser.parseToUnicode(emoji)).append("......").append("`").append(emoji).append("`\n");
+                        }
+
+                        embedBuilder.appendDescription(emojiString.toString()).appendDescription("\n");
                     }
-
-                    embedBuilder.appendDescription(emojiString.toString());
 
                 }
 
