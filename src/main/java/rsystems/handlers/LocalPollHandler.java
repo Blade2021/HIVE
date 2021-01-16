@@ -67,6 +67,8 @@ public class LocalPollHandler {
                         userMap.remove(userID);
                         pollMap.remove(userID);
 
+                        success.pin().queue();
+
                         success.addReaction("\u0031\uFE0F\u20E3").queue();
                         success.addReaction("\u0032\uFE0F\u20E3").queueAfter(100, TimeUnit.MILLISECONDS);
                         if (finalIndex > 2) {

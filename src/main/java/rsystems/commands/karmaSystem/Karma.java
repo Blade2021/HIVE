@@ -8,7 +8,6 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.TimeUnit;
 
 public class Karma extends Command {
@@ -25,14 +24,16 @@ public class Karma extends Command {
 	@Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
         event.getMessage().delete().queue();
-        channelReply(event, karmaString(), success -> {
-
-            success.delete().queueAfter(60, TimeUnit.SECONDS);
-        });
+        channelReply(event, karmaString(), m -> m.delete().queueAfter(60, TimeUnit.SECONDS));
 		
     }
-	
-	private String karmaString(){
+
+    @Override
+    public String getHelp() {
+        return null;
+    }
+
+    private String karmaString(){
 		
 		String karmaExplanation = (String) HiveBot.dataFile.getData("KarmaExplanationShort");
         karmaExplanation = karmaExplanation.replace("{kPosIcon}", "<:KU:717177145717424180>");
@@ -40,11 +41,6 @@ public class Karma extends Command {
 		
 		return karmaExplanation;
 	}
-
-    @Override
-    public String getHelp() {
-        return "Just a test";
-    }
 
     @Override
     public String[] getAliases(){

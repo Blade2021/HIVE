@@ -28,10 +28,10 @@ public class LocalPoll extends Command {
         if(HiveBot.localPollHandler.checkForUser(event.getAuthor().getIdLong())){
             reply(event,"You already have a poll request started.");
         } else {
-
             // Open private message to receive information
             event.getAuthor().openPrivateChannel().queue((privateChannel) ->
             {
+                reply(event,"Check your direct messages");
                 privateChannel.sendMessage("Starting POLL Request\nPlease observe the following:\n\nUse the keyword **CANCEL** at any time to cancel this request\nUse the keyword **SUBMIT** at any time to submit your poll request\n\nLets get started!\n\nPlease enter a description for your poll:").queue(success -> {
                             HiveBot.localPollHandler.setupPoll(sender.getIdLong(), channel.getIdLong());
                         },
