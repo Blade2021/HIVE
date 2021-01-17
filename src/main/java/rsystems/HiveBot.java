@@ -75,6 +75,7 @@ public class HiveBot{
         api.addEventListener(new ActivityListener());
         api.addEventListener(new PrivateMessageListener());
         api.addEventListener(new OnlineStatusListener());
+        api.addEventListener(new AskCommand());
 
         References.loadReferences();
 
