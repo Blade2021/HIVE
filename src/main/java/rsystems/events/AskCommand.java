@@ -76,6 +76,8 @@ public class AskCommand extends ListenerAdapter {
 
                     Color randomColor = new Color(r,g,b);
 
+                    questionBuilder.setColor(randomColor);
+
                     textChannel.sendMessage(questionBuilder.build()).queue();
                     questionBuilder.clear();
                     event.getMessage().addReaction("\uD83D\uDCE8").queue();
