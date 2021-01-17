@@ -53,7 +53,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new KUserInfo());
         this.registerCommand(new Cleanse());
         this.registerCommand(new Clear());
-        this.registerCommand(new Ask());
+        //this.registerCommand(new Ask());
         this.registerCommand(new Reload());
         this.registerCommand(new Commands());
         this.registerCommand(new ReferenceList());
