@@ -4,7 +4,6 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Member;
 import rsystems.HiveBot;
 
-import java.awt.event.HierarchyBoundsAdapter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -18,7 +17,7 @@ public class AddKarmaPoints extends TimerTask {
     @Override
     public void run() {
 
-        for (Member member : HiveBot.drZzzGuild().getMembers()) {
+        for (Member member : HiveBot.mainGuild().getMembers()) {
 
             if (member.getUser().isBot()) {
                 return;

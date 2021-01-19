@@ -43,7 +43,7 @@ public class HiveBot{
 
     public static JDAImpl jda = null;
 
-    public static Guild drZzzGuild(){
+    public static Guild mainGuild(){
         return jda.getGuildById(Config.get("GUILD_ID"));
     }
 

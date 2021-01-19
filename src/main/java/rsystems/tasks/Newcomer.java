@@ -14,15 +14,15 @@ public class Newcomer extends TimerTask {
     @Override
     public void run() {
 
-        Role newComerRole = HiveBot.drZzzGuild().getRoleById(Config.get("NewComerRoleID"));
+        Role newComerRole = HiveBot.mainGuild().getRoleById(Config.get("NewComerRoleID"));
 
         if(newComerRole != null) {
-            List<Member> members = HiveBot.drZzzGuild().getMembersWithRoles(newComerRole);
+            List<Member> members = HiveBot.mainGuild().getMembersWithRoles(newComerRole);
             for (Member m : members) {
                 LocalDateTime localDateTime = LocalDateTime.now();
 
                 if (m.getTimeJoined().toLocalDateTime().plusDays(30).isBefore(localDateTime))
-                    HiveBot.drZzzGuild().removeRoleFromMember(m, newComerRole).queue();
+                    HiveBot.mainGuild().removeRoleFromMember(m, newComerRole).queue();
                     System.out.println(String.format("USER:%d Removing newcomer role",m.getIdLong()));
 
             }

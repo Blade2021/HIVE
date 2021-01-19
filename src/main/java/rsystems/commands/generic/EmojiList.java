@@ -8,13 +8,11 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.events.NicknameListener;
 import rsystems.objects.Command;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class EmojiList extends Command {
@@ -39,7 +37,7 @@ public class EmojiList extends Command {
     }
 
     private Message handleEvent(User sender){
-        Member member = HiveBot.drZzzGuild().getMemberById(sender.getIdLong());
+        Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         if(member != null){
 
             Map<Role,ArrayList<String>> emojiMap = new HashMap<>();

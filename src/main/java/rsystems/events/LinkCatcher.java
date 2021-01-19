@@ -3,7 +3,6 @@ package rsystems.events;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
@@ -18,11 +17,11 @@ public class LinkCatcher extends ListenerAdapter {
 	public static Long pushChannelID = Long.valueOf(Config.get("link_pushChannel"));;
 
     public void updateChannels(Long pullChannel, Long pushChannel){
-        if(HiveBot.drZzzGuild().getTextChannelById(pullChannel) != null){
+        if(HiveBot.mainGuild().getTextChannelById(pullChannel) != null){
         	LinkCatcher.pullChannelID = pullChannel;
 		}
 		
-		if(HiveBot.drZzzGuild().getTextChannelById(pushChannel) != null){
+		if(HiveBot.mainGuild().getTextChannelById(pushChannel) != null){
 			LinkCatcher.pushChannelID = pushChannel;
 		}
     }
@@ -35,7 +34,7 @@ public class LinkCatcher extends ListenerAdapter {
 				if(HiveBot.getStreamMode()) {
 
 					final String messageraw = event.getMessage().getContentRaw();
-					final TextChannel pushChannel = HiveBot.drZzzGuild().getTextChannelById(pushChannelID);
+					final TextChannel pushChannel = HiveBot.mainGuild().getTextChannelById(pushChannelID);
 
 					// Call method to get link
 					String link = getLink(messageraw);

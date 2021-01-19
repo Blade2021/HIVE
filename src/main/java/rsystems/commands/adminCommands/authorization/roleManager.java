@@ -31,11 +31,11 @@ public class roleManager extends Command {
         if((args != null) && (args.length >= 1)){
 
             final Long roleID = Long.valueOf(args[1]);
-            if(HiveBot.drZzzGuild().getRoleById(roleID) == null){
+            if(HiveBot.mainGuild().getRoleById(roleID) == null){
                 return;
             } else {
 
-                final Role role = HiveBot.drZzzGuild().getRoleById(roleID);
+                final Role role = HiveBot.mainGuild().getRoleById(roleID);
 
                 if (args[0].equalsIgnoreCase("add")) {
                     final Integer authLevel = Integer.parseInt(args[2]);

@@ -7,7 +7,6 @@ import net.dv8tion.jda.api.events.message.guild.GuildMessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.internal.requests.RateLimiter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.adminCommands.*;
@@ -25,7 +24,7 @@ import rsystems.commands.karmaSystem.karmaAdmin.SetPoints;
 import rsystems.commands.modCommands.CheckRole;
 import rsystems.commands.modCommands.GetEmoji;
 import rsystems.commands.modCommands.LocalPoll;
-import rsystems.commands.streamRelated.Ask;
+import rsystems.commands.modCommands.UserRole;
 import rsystems.commands.streamRelated.StreamMode;
 
 import java.util.*;
@@ -54,6 +53,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Cleanse());
         this.registerCommand(new Clear());
         //this.registerCommand(new Ask());
+        this.registerCommand(new UserRole());
         this.registerCommand(new Reload());
         this.registerCommand(new Commands());
         this.registerCommand(new ReferenceList());
@@ -198,8 +198,8 @@ public class Dispatcher extends ListenerAdapter {
             if (c.getPermissionIndex() == null) {
                 authorized = true;
             } else {
-                if (HiveBot.drZzzGuild().getMemberById(event.getAuthor().getIdLong()) != null) {
-                    authorized = checkAuthorized(HiveBot.drZzzGuild().getMemberById(event.getAuthor().getIdLong()), c.getPermissionIndex());
+                if (HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()) != null) {
+                    authorized = checkAuthorized(HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()), c.getPermissionIndex());
                 }
             }
             if (authorized) {

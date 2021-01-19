@@ -35,7 +35,7 @@ public class EmojiWhitelist extends Command {
             if(args[0].equalsIgnoreCase("add")){
                 if(args.length >= 2){
                     Long associatedRole = Long.valueOf(args[1]);
-                    if(HiveBot.drZzzGuild().getRoleById(associatedRole) != null) {
+                    if(HiveBot.mainGuild().getRoleById(associatedRole) != null) {
 
                         List<String> emojiList = EmojiParser.extractEmojis(content);
 
@@ -75,7 +75,7 @@ public class EmojiWhitelist extends Command {
 
                 for(Map.Entry<Long, ArrayList<String>> entry:HiveBot.emojiPerkMap.entrySet()){
 
-                    Role role = HiveBot.drZzzGuild().getRoleById(entry.getKey());
+                    Role role = HiveBot.mainGuild().getRoleById(entry.getKey());
                     if(role != null) {
                         embedBuilder.appendDescription("**Role:**  " + role.getName() + "\n");
                         embedBuilder.appendDescription("**ID:**  " + entry.getKey() + "\n");
@@ -117,7 +117,7 @@ public class EmojiWhitelist extends Command {
         String[] args = content.split("\\s+");
         if(args.length >= 2){
             Long associatedRole = Long.valueOf(args[0]);
-            if(HiveBot.drZzzGuild().getRoleById(associatedRole) != null) {
+            if(HiveBot.mainGuild().getRoleById(associatedRole) != null) {
 
                 List<String> emojiList = EmojiParser.extractEmojis(content);
 

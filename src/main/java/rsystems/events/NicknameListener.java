@@ -36,12 +36,12 @@ public class NicknameListener extends ListenerAdapter {
 
     @Override
     public void onUserUpdateName(UserUpdateNameEvent event) {
-        final Member member = HiveBot.drZzzGuild().getMemberById(event.getUser().getIdLong());
+        final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             if(member.getEffectiveName().equalsIgnoreCase(event.getNewName())){
                 String newNick = processName(member, event.getNewName());
                 if(newNick != null){
-                    HiveBot.drZzzGuild().modifyNickname(member,newNick).reason("Nickname Parser").queue();
+                    HiveBot.mainGuild().modifyNickname(member,newNick).reason("Nickname Parser").queue();
                 }
             }
         }
@@ -49,24 +49,24 @@ public class NicknameListener extends ListenerAdapter {
 
     @Override
     public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event){
-        final Member member = HiveBot.drZzzGuild().getMemberById(event.getUser().getIdLong());
+        final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             String nickname = member.getEffectiveName();
             String processedNickname = processName(member, nickname);
             if(processedNickname != null){
-                HiveBot.drZzzGuild().modifyNickname(member,processedNickname).reason("Nickname Parser").queue();
+                HiveBot.mainGuild().modifyNickname(member,processedNickname).reason("Nickname Parser").queue();
             }
         }
     }
 
     @Override
     public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
-        final Member member = HiveBot.drZzzGuild().getMemberById(event.getUser().getIdLong());
+        final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             String nickname = member.getEffectiveName();
             String processedNickname = processName(member, nickname);
             if(processedNickname != null){
-                HiveBot.drZzzGuild().modifyNickname(member,processedNickname).reason("Nickname Parser").queue();
+                HiveBot.mainGuild().modifyNickname(member,processedNickname).reason("Nickname Parser").queue();
             }
         }
     }
@@ -76,7 +76,7 @@ public class NicknameListener extends ListenerAdapter {
         // Remove emoji's from username on join
         final String currentNick = event.getMember().getEffectiveName();
         if (!EmojiParser.extractEmojis(currentNick).isEmpty()) {
-            if (HiveBot.drZzzGuild().getSelfMember().hasPermission(Permission.NICKNAME_MANAGE))
+            if (HiveBot.mainGuild().getSelfMember().hasPermission(Permission.NICKNAME_MANAGE))
                 event.getGuild().modifyNickname(event.getMember(), EmojiParser.removeAllEmojis(currentNick)).reason("Removing emoji's on join").reason("Nickname Parser").queue();
             else
                 System.out.println("Emoji's found for member: " + event.getMember().getId());
@@ -84,7 +84,7 @@ public class NicknameListener extends ListenerAdapter {
     }
 
     public static String processName(Member member, String name) {
-        if (HiveBot.drZzzGuild().getSelfMember().canInteract(HiveBot.drZzzGuild().getMemberById(member.getIdLong()))) {
+        if (HiveBot.mainGuild().getSelfMember().canInteract(HiveBot.mainGuild().getMemberById(member.getIdLong()))) {
 
             if (!inProcess.contains(member)) {
                 inProcess.add(member);
@@ -134,7 +134,7 @@ public class NicknameListener extends ListenerAdapter {
 
     public static void handleKarmaNickname(Long userID){
 
-        Member member = HiveBot.drZzzGuild().getMemberById(userID);
+        Member member = HiveBot.mainGuild().getMemberById(userID);
         if(member != null) {
             String newKarmaSymbol = HiveBot.karmaSQLHandler.getKarmaSymbol(String.valueOf(userID));
 
@@ -153,7 +153,7 @@ public class NicknameListener extends ListenerAdapter {
 
                             String newNick = currentNickname;
                             newNick = newNick.replace(EmojiParser.parseToUnicode(emoji), EmojiParser.parseToUnicode(newKarmaSymbol));
-                            HiveBot.drZzzGuild().modifyNickname(member, newNick).queue();
+                            HiveBot.mainGuild().modifyNickname(member, newNick).queue();
                             return;
                         }
                     }
@@ -162,7 +162,7 @@ public class NicknameListener extends ListenerAdapter {
                 if(!karmaEmojiFound) {
                     String newNick = currentNickname;
                     newNick = newNick + EmojiParser.parseToUnicode(newKarmaSymbol);
-                    HiveBot.drZzzGuild().modifyNickname(member, newNick).queue();
+                    HiveBot.mainGuild().modifyNickname(member, newNick).queue();
                 }
             }
         }

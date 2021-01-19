@@ -3,6 +3,7 @@ package rsystems.handlers;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
@@ -498,6 +499,44 @@ public class SQLHandler {
 
                 output = rs.getInt("UsageCount");
 
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return output;
+    }
+
+    public boolean checkAssignableRole(Long roleID){
+
+        Boolean output = false;
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_AssignRole WHERE RoleID = %d", roleID));
+            while(rs.next()){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return output;
+    }
+
+    public List<Long> assignableRoleList(){
+
+        List<Long> output = new ArrayList<>();
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_AssignRole"));
+            while(rs.next()){
+                output.add(rs.getLong("RoleID"));
             }
 
             connection.close();

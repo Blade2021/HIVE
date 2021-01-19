@@ -32,7 +32,7 @@ public class CheckNick extends Command {
             if(!message.getMentionedMembers().isEmpty()){
                 member = message.getMentionedMembers().get(0);
             } else {
-                member = HiveBot.drZzzGuild().getMemberById(Long.valueOf(args[0]));
+                member = HiveBot.mainGuild().getMemberById(Long.valueOf(args[0]));
             }
 
 

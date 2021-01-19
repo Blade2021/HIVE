@@ -32,7 +32,7 @@ public class Page extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
-        if(HiveBot.drZzzGuild().getMemberById(sender.getIdLong()) != null){
+        if(HiveBot.mainGuild().getMemberById(sender.getIdLong()) != null){
             String[] args = event.getMessage().getContentRaw().split("\\s+");
             String data = "";
             if(args.length > 1){

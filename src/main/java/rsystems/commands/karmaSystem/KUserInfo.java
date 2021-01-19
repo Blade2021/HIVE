@@ -38,7 +38,7 @@ public class KUserInfo extends Command {
         MessageBuilder messageBuilder = new MessageBuilder();
 
         KarmaUserInfo karmaUserInfo;
-        Member member = HiveBot.drZzzGuild().getMemberById(sender.getIdLong());
+        Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         EmbedBuilder userInfo = new EmbedBuilder();
 
         if(member != null) {

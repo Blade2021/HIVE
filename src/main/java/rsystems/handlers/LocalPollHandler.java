@@ -5,10 +5,8 @@ import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.PermissionException;
-import net.dv8tion.jda.api.requests.RestAction;
 import rsystems.HiveBot;
 
 import java.awt.*;
@@ -54,9 +52,9 @@ public class LocalPollHandler {
         if ((userMap.containsKey(userID) && (pollMap.containsKey(userID)))) {
 
             //Does the channel exist
-            if (HiveBot.drZzzGuild().getTextChannelById(userMap.get(userID)) != null) {
-                TextChannel channel = HiveBot.drZzzGuild().getTextChannelById(userMap.get(userID));
-                Member member = HiveBot.drZzzGuild().getMemberById(userID);
+            if (HiveBot.mainGuild().getTextChannelById(userMap.get(userID)) != null) {
+                TextChannel channel = HiveBot.mainGuild().getTextChannelById(userMap.get(userID));
+                Member member = HiveBot.mainGuild().getMemberById(userID);
 
                 int index = pollMap.get(userID).size() - 1;
 
@@ -105,7 +103,7 @@ public class LocalPollHandler {
         if ((userMap.containsKey(userID) && (pollMap.containsKey(userID)))) {
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
-            Member member = HiveBot.drZzzGuild().getMemberById(userID);
+            Member member = HiveBot.mainGuild().getMemberById(userID);
 
             if(member != null) {
 

@@ -14,7 +14,7 @@ public class GetKarma extends Command {
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
 
-        Member member = HiveBot.drZzzGuild().getMemberById(sender.getIdLong());
+        Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         if(member != null) {
             reply(event, karmaString(member));
         }
@@ -24,7 +24,7 @@ public class GetKarma extends Command {
 	@Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
 
-        Member member = HiveBot.drZzzGuild().getMemberById(sender.getIdLong());
+        Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         if(member != null) {
             reply(event, karmaString(member));
         }
