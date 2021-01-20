@@ -287,6 +287,11 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Record the amount of times a command/reference has been used.  If the command/reference does not exist in the database table yet.  It will add it.
+     *
+     * @param commandName The command/reference to be logged.
+     */
     public void logCommandUsage(String commandName) {
         try {
             Connection connection = pool.getConnection();
@@ -412,6 +417,13 @@ public class SQLHandler {
         return authMap;
     }
 
+    /**
+     * Add an emoji alias to the Emoji Whitelist for a role.
+     *
+     * @param roleID The roleID that is receiving the emoji to its whitelist.
+     * @param emojiUnicode The emoji in ALIAS form that will get stored as a varchar in the database.
+     * @return True = Successful insertion | False = Database Error
+     */
     public boolean addEmojiToWhitelist(Long roleID, String emojiUnicode) {
         boolean output = false;
 
@@ -493,6 +505,12 @@ public class SQLHandler {
 
     }
 
+    /**
+     * Grab the amount of times a command OR reference has been used.
+     *
+     * @param commandName The command name.
+     * @return # of times the command/reference has been called.
+     */
     public Integer checkUsage(String commandName){
         Integer output = null;
         try{
@@ -513,6 +531,13 @@ public class SQLHandler {
         return output;
     }
 
+
+    /**
+     * Compare the assignable role table to see if it contains the provided role ID.
+     *
+     * @param roleID The roleID to compare to the database.
+     * @return If role is found on the Assignable role table, then returns true.  Otherwise return false.
+     */
     public boolean checkAssignableRole(Long roleID){
 
         Boolean output = false;
@@ -553,7 +578,7 @@ public class SQLHandler {
 
 
     /**
-     * This method will store the channel and message IDs into a table to allow pulling the message in the future for edits.
+     * Store the channel and message IDs into a table to allow pulling the message in the future for edits.
      *
      *
      * @param channelID The channelID is used in the future to know what channel to pull from.
