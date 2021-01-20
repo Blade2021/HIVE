@@ -27,6 +27,11 @@ public class SQLHandler {
         }
     }
 
+    /**
+     * Initialize the class using a pool that is already created.
+     *
+     * @param pool The PoolDataSource
+     */
     public SQLHandler(MariaDbPoolDataSource pool) {
         SQLHandler.pool = pool;
     }
@@ -543,6 +548,62 @@ public class SQLHandler {
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
+        return output;
+    }
+
+
+    /**
+     * This method will store the channel and message IDs into a table to allow pulling the message in the future for edits.
+     *
+     *
+     * @param channelID The channelID is used in the future to know what channel to pull from.
+     * @param messageID The messageID, to allow grabbing the message in the future.
+     * @return true = Successful insert into database | false = Database insertion error
+     */
+    public boolean storeEmbedData(Long channelID, Long messageID){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("INSERT INTO HIVE_EmbedTable (ChannelID, MessageID) VALUES (%d, %d)",channelID,messageID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    /**
+     * Get the channelID associated with a messageID from the database.
+     *
+     *
+     * @param messageID The ID of the message to lookup.
+     * @return Returns channelID if messageID was found.  Otherwise returns null.
+     */
+    public Long getEmbedChannel(Long messageID){
+        Long output = null;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT ChannelID FROM HIVE_EmbedTable WHERE MessageID = %d",messageID));
+            while(rs.next()){
+                output = rs.getLong("ChannelID");
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
         return output;
     }
 
