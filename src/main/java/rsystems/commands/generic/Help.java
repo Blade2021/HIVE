@@ -2,10 +2,7 @@ package rsystems.commands.generic;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
-import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -32,26 +29,51 @@ public class Help extends Command {
         } else {
 
             builder.setDescription("No help file found for that command.\n\nCheck back later or fill out a request [here](https://github.com/blade2021/HIVE).");
+            boolean unauthorizedAccess = false;
+
             for (Command c : HiveBot.dispatcher.getCommands()) {
                 if (c.getHelp() != null) {
-
                     if (c.getName().equalsIgnoreCase(args[0])) {
-                        builder.setTitle("Help | " + c.getName());
-                        builder.setDescription(c.getHelp());
+                        Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
+                        if(member != null) {
+                            if(HiveBot.dispatcher.checkAuthorized(member,c.getPermissionIndex())) {
+                                builder.setTitle("Help | " + c.getName());
+                                builder.setDescription(c.getHelp());
+                            } else {
+                                builder.setTitle("Unauthorized Request | " + c.getName());
+                                builder.setDescription("You do not have access to that command");
+                                builder.addField("Permission Required:",c.getPermissionIndex().toString(),true);
+                                unauthorizedAccess = true;
+                            }
+                        }
                     } else {
                         if(c.getAliases().length >= 1){
                             for(String alias:c.getAliases()){
                                 if(args[0].equalsIgnoreCase(alias)){
-                                    builder.setTitle("Help | " + c.getName());
-                                    builder.setDescription(c.getHelp());
+                                    Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
+                                    if(member != null) {
+                                        if (HiveBot.dispatcher.checkAuthorized(member, c.getPermissionIndex())) {
+
+                                            builder.setTitle("Help | " + c.getName());
+                                            builder.setDescription(c.getHelp());
+                                        } else {
+                                            builder.setTitle("Unauthorized Request | " + c.getName());
+                                            builder.setDescription("You do not have access to that command");
+                                            builder.addField("Permission Required:",c.getPermissionIndex().toString(),false);
+                                            unauthorizedAccess = true;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
                 }
             }
+            if(unauthorizedAccess){
+                reply(event, new MessageBuilder().setEmbed(builder.build()).build());
+                return;
+            }
         }
-
         channelReply(event, new MessageBuilder().setEmbed(builder.build()).build());
     }
 
