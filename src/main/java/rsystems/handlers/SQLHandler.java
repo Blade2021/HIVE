@@ -632,4 +632,24 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer deleteValue(String tableName, String identifierColumn, Long identifier){
+        Integer output = null;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            while(rs.next()){
+                output++;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
 }

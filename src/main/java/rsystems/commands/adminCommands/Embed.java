@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
@@ -92,7 +93,14 @@ public class Embed extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString = ("{prefix}{command} [Sub-Command] [args]\n\n" +
+                "**Create Embed**\n`{prefix}{command} [MentionChannel] [-color #000000] [-text]`\nCreate an embed in the mentioned channel.  Color is optional however, Any text after the -text will be posted in embed form.\n\n" +
+                "**Update**\n`{prefix}{command} update [-m (MessageID)] [-text]`\nUpdate an embed by grabbing the **POSTED** embed's messageID and add it after the -m tag.  This function will replace all the text from the posted embed so be sure to copy any text you would like to keep back into the text field.\n\n" +
+                "**setColor**\n`{prefix}{command} setColor [-m (MessageID)] [-color #000000]`\nChange the color of an embed **without** affecting the text.\n");
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     private String grabData(String identifier, String content) {
