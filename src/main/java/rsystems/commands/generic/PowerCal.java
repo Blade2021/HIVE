@@ -121,7 +121,8 @@ public class PowerCal extends Command {
                 "**volts**\n`{prefix}{command} volts [args]`\n" +
                 "**amps**\n`{prefix}{command} amps [args]`\n" +
                 "**watts**\n`{prefix}{command} watts [args]`\n" +
-                "**ohms**\n`{prefix}{command} ohms [args]`\n");
+                "**ohms**\n`{prefix}{command} ohms [args]`\n\n" +
+                "Full Example:\n{prefix}{command} watts V:120 A:10");
         returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
         returnString = returnString.replaceAll("\\{command}",this.getName());
         return returnString;
