@@ -5,6 +5,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.objects.Command;
 
 public class PowerCal extends Command {
@@ -113,7 +114,17 @@ public class PowerCal extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+        String returnString = ("{prefix}{command} [Sub-Command] [args]\n" +
+                "Calculate any of power stats below using any two known arguments.\n\n" +
+                "Examples: \nVoltage: `V:120`    |  Amps: `A:10`\n"+
+                "Ohms: `O:10.2`    |  Watts: `W:1300`\n\n" +
+                "**volts**\n`{prefix}{command} volts [args]`\n" +
+                "**amps**\n`{prefix}{command} amps [args]`\n" +
+                "**watts**\n`{prefix}{command} watts [args]`\n" +
+                "**ohms**\n`{prefix}{command} ohms [args]`\n");
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 
     private String grabData(String identifier, String content) {
