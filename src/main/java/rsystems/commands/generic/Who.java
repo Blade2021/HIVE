@@ -39,8 +39,8 @@ public class Who extends Command {
                     .addField("User:",lookupMember.getAsMention(),true)
                     .addField("Tag",lookupMember.getUser().getAsTag(),true)
                     .addField("UserID",lookupMember.getId(),true)
-                    .addField("Joined Server",lookupMember.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),true)
-                    .addField("Joined Discord",lookupMember.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME),true)
+                    .addField("Joined Server",lookupMember.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),true)
+                    .addField("Joined Discord",lookupMember.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true)
                     .addField("Karma:","🔹 " + HiveBot.karmaSQLHandler.getKarma(lookupMember.getId()).toString(),true)
                     .setThumbnail(lookupMember.getUser().getEffectiveAvatarUrl());
 
