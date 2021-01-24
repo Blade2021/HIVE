@@ -35,7 +35,7 @@ public class Who extends Command {
         if(lookupMember != null){
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle("User Info:")
-                    .setColor(Color.decode(""))
+                    .setColor(Color.decode("#4334eb"))
                     .addField("User:",lookupMember.getAsMention(),true)
                     .addField("Tag",lookupMember.getUser().getAsTag(),true)
                     .addField("UserID",lookupMember.getId(),true)
