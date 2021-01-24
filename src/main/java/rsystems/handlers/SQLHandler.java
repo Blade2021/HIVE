@@ -652,4 +652,34 @@ public class SQLHandler {
         return output;
     }
 
+    public String nextActivity(Integer currentIndex){
+        String output = null;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT ActivityString FROM HIVE_ActivityList WHERE ID = %d+1",currentIndex));
+            while(rs.next()){
+                output = rs.getString("ActivityString");
+            }
+
+            if(output == null){
+                rs = st.executeQuery(String.format("SELECT ActivityString FROM HIVE_ActivityList WHERE ID = 1"));
+                while(rs.next()){
+                    output = rs.getString("ActivityString");
+                }
+                HiveBot.activityStatusIndex = 1;
+            }
+
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+
+    }
+
 }

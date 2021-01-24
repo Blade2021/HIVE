@@ -67,15 +67,6 @@ public abstract class Command {
             if(successConsumer != null)
                 successConsumer.accept(msg);
         });
-        /*
-        event.getChannel().sendMessage(message).queue(msg ->
-        {
-            linkMessage(event.getMessageIdLong(), msg.getIdLong());
-            if(successConsumer != null)
-                successConsumer.accept(msg);
-        });
-
-         */
     }
 
     protected void channelReply(GuildMessageReceivedEvent event, Message message){

@@ -15,6 +15,7 @@ import rsystems.handlers.*;
 import rsystems.objects.DBPool;
 import rsystems.objects.Dispatcher;
 import rsystems.tasks.AddKarmaPoints;
+import rsystems.tasks.BotActivity;
 import rsystems.tasks.Newcomer;
 
 import javax.security.auth.login.LoginException;
@@ -27,6 +28,7 @@ import java.util.logging.Logger;
 
 public class HiveBot{
     public static String prefix = Config.get("prefix");
+    public static int activityStatusIndex = 0;
     public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
     public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
     public static String version = "0.19.13";
@@ -94,6 +96,7 @@ public class HiveBot{
             Timer timer = new Timer();
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);
             timer.schedule(new Newcomer(),60000,21600000);
+            timer.scheduleAtFixedRate(new BotActivity(),30000,30000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
