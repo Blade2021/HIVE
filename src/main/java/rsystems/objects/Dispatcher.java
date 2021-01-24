@@ -69,6 +69,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new CommandUsage());
         this.registerCommand(new Help());
         this.registerCommand(new CheckNick());
+        this.registerCommand(new Who());
 
         for (Command c : commands) {
             System.out.println(c.getName());
