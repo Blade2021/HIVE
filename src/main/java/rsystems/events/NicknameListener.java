@@ -13,6 +13,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
 import javax.annotation.Nonnull;
+import javax.lang.model.element.ElementVisitor;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,6 +24,10 @@ public class NicknameListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberUpdateNickname(GuildMemberUpdateNicknameEvent event){
+        if(event.getUser().isBot()){
+            return;
+        }
+
         final Member member = event.getMember();
         if(member != null) {
             String name = member.getEffectiveName();
@@ -36,6 +41,10 @@ public class NicknameListener extends ListenerAdapter {
 
     @Override
     public void onUserUpdateName(UserUpdateNameEvent event) {
+        if(event.getUser().isBot()){
+            return;
+        }
+
         final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             if(member.getEffectiveName().equalsIgnoreCase(event.getNewName())){
@@ -49,6 +58,10 @@ public class NicknameListener extends ListenerAdapter {
 
     @Override
     public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event){
+        if(event.getUser().isBot()){
+            return;
+        }
+
         final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             String nickname = member.getEffectiveName();
@@ -61,6 +74,10 @@ public class NicknameListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberRoleRemove(@Nonnull GuildMemberRoleRemoveEvent event) {
+        if(event.getUser().isBot()){
+            return;
+        }
+
         final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             String nickname = member.getEffectiveName();
