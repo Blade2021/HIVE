@@ -19,11 +19,16 @@ public class Newcomer extends TimerTask {
         if(newComerRole != null) {
             List<Member> members = HiveBot.mainGuild().getMembersWithRoles(newComerRole);
             for (Member m : members) {
-                LocalDateTime localDateTime = LocalDateTime.now();
+                try {
+                    LocalDateTime localDateTime = LocalDateTime.now();
 
-                if (m.getTimeJoined().toLocalDateTime().plusDays(30).isBefore(localDateTime))
-                    HiveBot.mainGuild().removeRoleFromMember(m, newComerRole).queue();
-                    System.out.println(String.format("USER:%d Removing newcomer role",m.getIdLong()));
+                    if (m.getTimeJoined().toLocalDateTime().plusDays(30).isBefore(localDateTime)) {
+                        HiveBot.mainGuild().removeRoleFromMember(m, newComerRole).queue();
+                        System.out.println(String.format("USER:%d Removing newcomer role", m.getIdLong()));
+                    }
+                }catch(NullPointerException | IllegalArgumentException e){
+                    System.out.println("An error occured for Member:" + m.getEffectiveName());
+                }
 
             }
         }
