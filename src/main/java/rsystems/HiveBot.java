@@ -96,7 +96,7 @@ public class HiveBot{
             Timer timer = new Timer();
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);
             timer.schedule(new Newcomer(),60000,21600000);
-            //timer.scheduleAtFixedRate(new BotActivity(),30000,30000);
+            timer.scheduleAtFixedRate(new BotActivity(),30000,30000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

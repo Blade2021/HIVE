@@ -71,6 +71,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new CheckNick());
         this.registerCommand(new Who());
         this.registerCommand(new PowerCal());
+        this.registerCommand(new ActivityString());
 
         for (Command c : commands) {
             System.out.println(c.getName());

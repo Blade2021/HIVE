@@ -1,10 +1,7 @@
 package rsystems.handlers;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.HiveBot;
@@ -639,9 +636,50 @@ public class SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
-            while(rs.next()){
-                output++;
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public Integer deleteValue(String tableName, String identifierColumn, Integer identifier){
+        Integer output = null;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public Integer insertActivity(String activity){
+        Integer output = 0;
+
+        try{
+            Connection connection = pool.getConnection();
+            //PreparedStatement st = connection.createStatement();
+
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO HIVE_ActivityList (ActivityString) VALUES (\"%s\")",activity),new String[] {"ID"});
+            st.execute();
+
+            if(st.getUpdateCount() >= 1){
+                ResultSet rs = st.getGeneratedKeys();
+                while(rs.next()) {
+                    output = rs.getInt("ID");
+                }
             }
 
             connection.close();
@@ -652,6 +690,27 @@ public class SQLHandler {
         return output;
     }
 
+    public TreeMap<Integer, String> getActivityMap(){
+        TreeMap<Integer, String> activityMap = new TreeMap<>();
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT ID, ActivityString FROM HIVE_ActivityList");
+            while(rs.next()){
+                activityMap.putIfAbsent(rs.getInt("ID"),rs.getString("ActivityString"));
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return activityMap;
+
+    }
+
     public String nextActivity(Integer currentIndex){
         String output = null;
 
@@ -659,9 +718,10 @@ public class SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT ActivityString FROM HIVE_ActivityList WHERE ID = %d+1",currentIndex));
+            ResultSet rs = st.executeQuery(String.format("SELECT ID, ActivityString FROM HIVE_ActivityList WHERE ID > %d LIMIT 1",currentIndex));
             while(rs.next()){
                 output = rs.getString("ActivityString");
+                HiveBot.activityStatusIndex = rs.getInt("ID");
             }
 
             if(output == null){
@@ -669,9 +729,9 @@ public class SQLHandler {
                 while(rs.next()){
                     output = rs.getString("ActivityString");
                 }
+
                 HiveBot.activityStatusIndex = 1;
             }
-
 
             connection.close();
         } catch (SQLException throwables) {

@@ -11,7 +11,9 @@ public class BotActivity extends TimerTask {
     public void run() {
         final int currentIndex = HiveBot.activityStatusIndex;
         String newActivity = HiveBot.sqlHandler.nextActivity(currentIndex);
-        HiveBot.jda.getPresence().setActivity(Activity.playing(newActivity));
-        HiveBot.activityStatusIndex++;
+        String currentActivity = HiveBot.jda.getPresence().getActivity().getName();
+        if(!currentActivity.equals(newActivity)) {
+            HiveBot.jda.getPresence().setActivity(Activity.playing(newActivity));
+        }
     }
 }
