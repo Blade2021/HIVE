@@ -11,6 +11,7 @@ import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.awt.*;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -46,6 +47,7 @@ public class ActivityString extends Command {
                 }
 
                 embedBuilder.setTitle("Activity Message List")
+                        .setColor(Color.decode("#5742f5"))
                         .addField("ID",activityIDString.toString(),true)
                         .addField("String",activityString.toString(),true);
 

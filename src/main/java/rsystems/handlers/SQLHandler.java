@@ -742,4 +742,104 @@ public class SQLHandler {
 
     }
 
+    public Integer checkAuthOverride(Long userID){
+        Integer output = null;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT AuthLevel FROM HIVE_AuthUser WHERE UserID = %d LIMIT 1",userID));
+            while(rs.next()){
+                output = rs.getInt("AuthLevel");
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean insertAuthUser(Long userID, int authLevel, String userTag){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("INSERT INTO HIVE_AuthUser (UserID, AuthLevel, UserTag) VALUES (%d, %d, '%s')",userID,authLevel,userTag));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean removeAuthUser(Long userID){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM HIVE_AuthUser WHERE UserID = %d",userID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean updateAuthUser(Long userID, Integer newAuthLevel){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET AuthLevel = %d WHERE UserID = %d",newAuthLevel, userID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean updateAuthUser(Long userID, String userTag){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET UserTag = '%s' WHERE UserID = %d",userTag, userID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
 }

@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.adminCommands.*;
+import rsystems.commands.adminCommands.authorization.UserAuth;
 import rsystems.commands.adminCommands.authorization.listRoles;
 import rsystems.commands.adminCommands.authorization.roleManager;
 import rsystems.commands.funCommands.Order66;
@@ -72,6 +73,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new Who());
         this.registerCommand(new PowerCal());
         this.registerCommand(new ActivityString());
+        this.registerCommand(new UserAuth());
 
         for (Command c : commands) {
             System.out.println(c.getName());
@@ -252,47 +254,79 @@ public class Dispatcher extends ListenerAdapter {
     public boolean checkAuthorized(final Member member, final Integer commandPermission) {
         boolean authorized = false;
 
-        Map<Long, Integer> authmap = HiveBot.sqlHandler.getAuthRoles();
+        Integer userAuthOverride = HiveBot.sqlHandler.checkAuthOverride(member.getIdLong());
+        if(userAuthOverride != null){
+            String binaryString = Integer.toBinaryString(userAuthOverride);
 
-        for (Role r : member.getRoles()) {
-            if (authmap.containsKey(r.getIdLong())) {
-                int modRoleValue = authmap.get(r.getIdLong());
+            //Reverse the string for processing
+            //Example 24 = 11000 -> 00011
+            String reverseString = new StringBuilder(binaryString).reverse().toString();
+
+            //Turn the command rank into a binary string
+            //Example 8 = 1000
+            String binaryIndexString = Integer.toBinaryString(commandPermission);
+
+            //Reverse the string for lookup
+            //Example 8 = 1000 -> 0001
+            String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
+
+            int realIndex = reverseLookupString.indexOf('1');
+
+            char indexChar = '0';
+            try {
+
+                indexChar = reverseString.charAt(realIndex);
+
+            } catch (IndexOutOfBoundsException e) {
+
+            } finally {
+                if (indexChar == '1') {
+                    authorized = true;
+                }
+            }
+        } else {
+            Map<Long, Integer> authmap = HiveBot.sqlHandler.getAuthRoles();
+
+            for (Role r : member.getRoles()) {
+                if (authmap.containsKey(r.getIdLong())) {
+                    int modRoleValue = authmap.get(r.getIdLong());
 
                 /*
                 Form a binary string based on the permission level integer found.
                 Example: 24 = 11000
                  */
-                String binaryString = Integer.toBinaryString(modRoleValue);
+                    String binaryString = Integer.toBinaryString(modRoleValue);
 
-                //Reverse the string for processing
-                //Example 24 = 11000 -> 00011
-                String reverseString = new StringBuilder(binaryString).reverse().toString();
+                    //Reverse the string for processing
+                    //Example 24 = 11000 -> 00011
+                    String reverseString = new StringBuilder(binaryString).reverse().toString();
 
-                //Turn the command rank into a binary string
-                //Example 8 = 1000
-                String binaryIndexString = Integer.toBinaryString(commandPermission);
+                    //Turn the command rank into a binary string
+                    //Example 8 = 1000
+                    String binaryIndexString = Integer.toBinaryString(commandPermission);
 
-                //Reverse the string for lookup
-                //Example 8 = 1000 -> 0001
-                String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
+                    //Reverse the string for lookup
+                    //Example 8 = 1000 -> 0001
+                    String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
 
-                int realIndex = reverseLookupString.indexOf('1');
+                    int realIndex = reverseLookupString.indexOf('1');
 
-                char indexChar = '0';
-                try {
+                    char indexChar = '0';
+                    try {
 
-                    indexChar = reverseString.charAt(realIndex);
+                        indexChar = reverseString.charAt(realIndex);
 
-                } catch (IndexOutOfBoundsException e) {
+                    } catch (IndexOutOfBoundsException e) {
 
-                } finally {
-                    if (indexChar == '1') {
-                        authorized = true;
+                    } finally {
+                        if (indexChar == '1') {
+                            authorized = true;
+                        }
                     }
-                }
 
-                if (authorized)
-                    break;
+                    if (authorized)
+                        break;
+                }
             }
         }
         return authorized;

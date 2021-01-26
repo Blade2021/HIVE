@@ -16,7 +16,7 @@ import java.util.Map;
 public class listRoles extends Command {
     @Override
     public Integer getPermissionIndex() {
-        return 32768;
+        return 16384;
     }
 
     @Override
