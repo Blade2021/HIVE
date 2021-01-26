@@ -40,7 +40,7 @@ public class roleManager extends Command {
                 if (args[0].equalsIgnoreCase("add")) {
                     final Integer authLevel = Integer.parseInt(args[2]);
                     if (authLevel != null) {
-                        if (authLevel <= 32768) {
+                        if (authLevel <= 32767) {
                             if (HiveBot.sqlHandler.addAuthRole(roleID, role.getName(), authLevel)) {
                                 message.addReaction("✅ ").queue();
                                 return;
@@ -54,7 +54,7 @@ public class roleManager extends Command {
                 if (args[0].equalsIgnoreCase("update")) {
                     final Integer authLevel = Integer.parseInt(args[2]);
                     if (authLevel != null) {
-                        if (authLevel <= 32768) {
+                        if (authLevel <= 32767) {
                             if (HiveBot.sqlHandler.updateAuthRole(roleID, authLevel)) {
                                 message.addReaction("✅ ").queue();
                                 return;
