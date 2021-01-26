@@ -10,7 +10,7 @@ import rsystems.objects.Command;
 public class UserAuth extends Command {
     @Override
     public Integer getPermissionIndex() {
-        return 65535;
+        return 32768;
     }
 
     @Override
