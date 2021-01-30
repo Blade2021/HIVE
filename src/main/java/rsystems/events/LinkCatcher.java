@@ -31,7 +31,8 @@ public class LinkCatcher extends ListenerAdapter {
 		if(event.getChannel().getIdLong() == pullChannelID){
 
 			if ((event.getMessage().getContentRaw().contains("http://")) || (event.getMessage().getContentRaw().contains("https://")) || (event.getMessage().getContentRaw().contains("www."))) {
-				if(HiveBot.getStreamMode()) {
+				//if(HiveBot.getStreamMode()) {
+				if(HiveBot.activityListener.getStreamMode()){
 
 					final String messageraw = event.getMessage().getContentRaw();
 					final TextChannel pushChannel = HiveBot.mainGuild().getTextChannelById(pushChannelID);

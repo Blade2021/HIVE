@@ -39,6 +39,7 @@ public class HiveBot{
 
     public static DataFile dataFile = new DataFile();
     public static Dispatcher dispatcher;
+    public static ActivityListener activityListener;
     public static LocalPollHandler localPollHandler = new LocalPollHandler();
 
     public static References references;
@@ -52,8 +53,6 @@ public class HiveBot{
     public static Map<Long, ArrayList<String>> emojiPerkMap = new HashMap<>();
 
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
-
-    private static boolean streamMode = false;
 
 
     //Initiate Loggers
@@ -74,7 +73,7 @@ public class HiveBot{
         api.addEventListener(new NicknameListener());
         api.addEventListener(references = new References());
         api.addEventListener(new LinkCatcher());
-        api.addEventListener(new ActivityListener());
+        api.addEventListener(activityListener = new ActivityListener());
         api.addEventListener(new PrivateMessageListener());
         api.addEventListener(new OnlineStatusListener());
         api.addEventListener(new AskCommand());
@@ -101,14 +100,6 @@ public class HiveBot{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-    }
-
-    public static boolean getStreamMode() {
-        return streamMode;
-    }
-
-    public static void setStreamMode(boolean streamMode) {
-        HiveBot.streamMode = streamMode;
     }
 }
 
