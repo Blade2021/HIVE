@@ -306,14 +306,14 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
-    public Map<String, Integer> getTopTen() {
-        Map<String, Integer> topRank = new LinkedHashMap<>();
+    public LinkedHashMap<Long, Integer> getTopTen() {
+        LinkedHashMap<Long, Integer> topRank = new LinkedHashMap<>();
         try {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT NAME, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC LIMIT 10");
+            ResultSet rs = st.executeQuery("SELECT ID, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC LIMIT 10");
             while (rs.next()) {
-                topRank.put(rs.getString("NAME"), rs.getInt("USER_KARMA"));
+                topRank.put(rs.getLong("ID"), rs.getInt("USER_KARMA"));
             }
 
             connection.close();

@@ -16,10 +16,7 @@ import rsystems.commands.adminCommands.authorization.roleManager;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.*;
-import rsystems.commands.karmaSystem.GetKarma;
-import rsystems.commands.karmaSystem.GetPoints;
-import rsystems.commands.karmaSystem.KUserInfo;
-import rsystems.commands.karmaSystem.Karma;
+import rsystems.commands.karmaSystem.*;
 import rsystems.commands.karmaSystem.karmaAdmin.SetKarma;
 import rsystems.commands.karmaSystem.karmaAdmin.SetPoints;
 import rsystems.commands.modCommands.CheckRole;
@@ -74,6 +71,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new PowerCal());
         this.registerCommand(new ActivityString());
         this.registerCommand(new UserAuth());
+        this.registerCommand(new GetTopTen());
 
         for (Command c : commands) {
             System.out.println(c.getName());
