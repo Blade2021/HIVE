@@ -72,6 +72,7 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new ActivityString());
         this.registerCommand(new UserAuth());
         this.registerCommand(new GetTopTen());
+        this.registerCommand(new UserMiniMessage());
 
         for (Command c : commands) {
             System.out.println(c.getName());

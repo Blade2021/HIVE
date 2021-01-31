@@ -77,6 +77,16 @@ public abstract class Command {
         channelReply(event,message,null);
     }
 
+    protected void channelReply(GuildMessageReceivedEvent event, MessageEmbed embed)
+    {
+        channelReply(event, embed, null);
+    }
+
+    protected void channelReply(GuildMessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
+    {
+        channelReply(event, new MessageBuilder(embed).build(), successConsumer);
+    }
+
     protected void channelReply(GuildMessageReceivedEvent event, String message, Consumer<Message> successConsumer)
     {
         channelReply(event, new MessageBuilder(message).build(), successConsumer);

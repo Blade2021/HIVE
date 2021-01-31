@@ -33,6 +33,30 @@ public class SQLHandler {
         SQLHandler.pool = pool;
     }
 
+    public String getValue(String tableName, String valueColumn, String identifierColumn, Long identifier){
+        String output = null;
+        try {
+            Connection connection = pool.getConnection();
+
+            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn,tableName,identifierColumn,identifier));
+            while (rs.next()) {
+                output = rs.getString(valueColumn);
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+        return output;
+
+    }
+
+    /**
+     * Check the blacklist table for a userID, if found Ignore the user.
+     *
+     * @param userID The userid of the user to be checked.
+     * @return Wether of not the user is blacklisted
+     */
     public boolean checkBlacklist(Long userID) {
         boolean output = false;
         try {
@@ -313,6 +337,14 @@ public class SQLHandler {
         }
     }
 
+    /**
+     * Add a role to the database as as a role with permissions.  This database table controls what roles have what permissions to the bot.
+     *
+     * @param roleID The role to be given mod permissions.
+     * @param roleName The name of the role.
+     * @param authLevel The permission index that the role will have.  This uses the binary system as before.
+     * @return True - No errors | False - Errors occured on insert
+     */
     public boolean addAuthRole(Long roleID, String roleName, Integer authLevel) {
         boolean output = false;
 
@@ -333,6 +365,12 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Remove a role from the autheniation table.
+     *
+     * @param roleID The role to be removed from the authentication table.
+     * @return True - No errors | False - Errors occured on removal
+     */
     public boolean removeAuthRole(Long roleID) {
         boolean output = false;
 
@@ -353,6 +391,13 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Update a role that is already in the auth table with a new name
+     *
+     * @param roleID The role to be updated.
+     * @param roleName The new name of the role.
+     * @return True - No errors | False - Errors occured on insert
+     */
     public boolean updateAuthRole(Long roleID, String roleName) {
         boolean output = false;
 
@@ -373,6 +418,13 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Update a role that is already in the auth table with a new permissions
+     *
+     * @param roleID The role to be updated.
+     * @param authLevel The new permissions for the role.
+     * @return True - No errors | False - Errors occured on insert
+     */
     public boolean updateAuthRole(Long roleID, Integer authLevel) {
         boolean output = false;
 
@@ -393,6 +445,11 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Get a map of the roleID and Permissions for all roles in the auth table.
+     *
+     * @return Map[RoleID,Role Permissions]
+     */
     public Map<Long,Integer> getAuthRoles(){
         Map<Long, Integer> authMap = new HashMap<>();
 
@@ -554,6 +611,11 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Get a list of assignable Roles
+     *
+     * @return List[RoleIDs] of assignable roles.
+     */
     public List<Long> assignableRoleList(){
 
         List<Long> output = new ArrayList<>();
@@ -628,6 +690,8 @@ public class SQLHandler {
 
         return output;
     }
+
+
 
     public Integer deleteValue(String tableName, String identifierColumn, Long identifier){
         Integer output = null;
@@ -841,5 +905,46 @@ public class SQLHandler {
 
         return output;
     }
+
+    public boolean insertUserMessage(Long userID, String message){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("INSERT INTO HIVE_UserMessageTable (UserID, Message) VALUES (%d, '%s')",userID,message));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
+    public boolean updateUserMessage(Long userID, String message){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Message = '%s' WHERE UserID = %d",message,userID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
+
 
 }
