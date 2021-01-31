@@ -65,6 +65,8 @@ public class UserMiniMessage extends Command {
                 final String userMessage = HiveBot.sqlHandler.getValue("HIVE_UserMessageTable","Message","UserID",member.getIdLong());
                 if(userMessage != null){
                     postMessage(event,member,userMessage);
+                } else {
+                    reply(event,"⚠ Sorry, that user doesn't have a custom mini setup yet.");
                 }
             } else {
                 try{
@@ -74,6 +76,8 @@ public class UserMiniMessage extends Command {
                         final String userMessage = HiveBot.sqlHandler.getValue("HIVE_UserMessageTable", "Message", "UserID", userID);
                         if (userMessage != null) {
                             postMessage(event, member, userMessage);
+                        } else {
+                            reply(event,"⚠ Sorry, that user doesn't have a custom mini setup yet.");
                         }
                     }
                 } catch(IllegalArgumentException e){
