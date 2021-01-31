@@ -933,7 +933,7 @@ public class SQLHandler {
             Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Message = '%s' WHERE UserID = %d",message,userID));
+            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Message = \"%s\" WHERE UserID = %d",message,userID));
             if(st.getUpdateCount() >= 1){
                 output = true;
             }

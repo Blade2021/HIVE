@@ -41,15 +41,26 @@ public class UserMiniMessage extends Command {
                         update = true;
                     }
 
-                    Integer handleInsertResult = handleInsertMessage(sender.getIdLong(),content,update);
-                    if (handleInsertResult == 200) {
-                        //success
-                        event.getMessage().addReaction("✅").queue();
+                    final String customMessage = content.substring(7);
+                    if(customMessage.length() > 200){
+                        reply(event, "Your message was too long.  Character limit: 200\nYour message had: " + customMessage.length() + " characters");
+                        return;
                     } else {
-                        //failure
-                        event.getMessage().addReaction("\u274C").queue();
-                        if(handleInsertResult == 400){
-                            reply(event, "Your message was too long.  Character limit: 200");
+
+                        Boolean returnValue = null;
+
+                        if (update) {
+                            returnValue = HiveBot.sqlHandler.updateUserMessage(sender.getIdLong(), customMessage);
+                        } else {
+                            returnValue = HiveBot.sqlHandler.insertUserMessage(sender.getIdLong(), customMessage);
+                        }
+
+                        if(returnValue){
+                            //success
+                            event.getMessage().addReaction("✅").queue();
+                        } else {
+                            //failure
+                            event.getMessage().addReaction("\u274C").queue();
                         }
                     }
                 }
