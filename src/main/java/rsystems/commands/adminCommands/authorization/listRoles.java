@@ -36,17 +36,23 @@ public class listRoles extends Command {
 
         StringBuilder roleIDString = new StringBuilder();
         StringBuilder roleValueString = new StringBuilder();
+        StringBuilder roleNameString = new StringBuilder();
 
         for(Map.Entry<Long,Integer> entry:authRoleMap.entrySet()){
             roleIDString.append(entry.getKey()).append("\n");
             roleValueString.append(entry.getValue()).append("\n");
+
+            if(HiveBot.mainGuild().getRoleById(entry.getKey()) != null){
+                roleNameString.append(HiveBot.mainGuild().getRoleById(entry.getKey()).getName()).append("\n");
+            }
         }
 
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle("Auth Role Table:")
-                .setColor(Color.RED);
-        embedBuilder.addField("RoleID",roleIDString.toString(),true);
-        embedBuilder.addField("Role Value",roleValueString.toString(),true);
+                .setColor(Color.RED)
+                .addField("Role Name",roleNameString.toString(),true)
+                .addField("RoleID",roleIDString.toString(),true)
+                .addField("Role Value",roleValueString.toString(),true);
 
         MessageBuilder messageBuilder = new MessageBuilder();
         output = messageBuilder.setEmbed(embedBuilder.build()).build();
