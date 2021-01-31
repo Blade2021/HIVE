@@ -35,7 +35,7 @@ public class GetPoints extends Command {
 
     @Override
     public String getHelp() {
-        return "Just a test";
+        return null;
     }
 
 }
