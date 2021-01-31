@@ -41,12 +41,16 @@ public class UserMiniMessage extends Command {
                         update = true;
                     }
 
-                    if (handleInsertMessage(sender.getIdLong(), content, update)) {
+                    Integer handleInsertResult = handleInsertMessage(sender.getIdLong(),content,update);
+                    if (handleInsertResult == 200) {
                         //success
                         event.getMessage().addReaction("✅").queue();
                     } else {
                         //failure
                         event.getMessage().addReaction("\u274C").queue();
+                        if(handleInsertResult == 400){
+                            reply(event, "Your message was too long.  Character limit: 200");
+                        }
                     }
                 }
 
@@ -107,17 +111,21 @@ public class UserMiniMessage extends Command {
         return returnString;
     }
 
-    private boolean handleInsertMessage(Long userID, String content, boolean update) {
+    private Integer handleInsertMessage(Long userID, String content, boolean update) {
         boolean returnValue = false;
 
         final String customMessage = content.substring(7);
+        if(customMessage.length() > 200){
+            return 400;
+        }
+
         if (update) {
             returnValue = HiveBot.sqlHandler.updateUserMessage(userID, customMessage);
         } else {
             returnValue = HiveBot.sqlHandler.insertUserMessage(userID, customMessage);
         }
 
-        return returnValue;
+        return 200;
     }
 
     private void postMessage(GuildMessageReceivedEvent event, Member member, String userMessage){
