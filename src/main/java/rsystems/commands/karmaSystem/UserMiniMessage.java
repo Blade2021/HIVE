@@ -113,6 +113,7 @@ public class UserMiniMessage extends Command {
                 } else {
                     reply(event,"⚠ Sorry, that user doesn't have a custom mini setup yet.");
                 }
+                return;
             } else {
                 try{
                     final Long userID = Long.valueOf(args[0]);
@@ -124,12 +125,18 @@ public class UserMiniMessage extends Command {
                         } else {
                             reply(event,"⚠ Sorry, that user doesn't have a custom mini setup yet.");
                         }
+                        return;
                     }
                 } catch(IllegalArgumentException e){
 
                 }
             }
 
+            //Message did not contain any other arguments.
+            final String userMessage = HiveBot.sqlHandler.getValue("HIVE_UserMessageTable", "Message", "UserID", sender.getIdLong());
+            if(userMessage != null){
+                postMessage(event,event.getMember(),userMessage);
+            }
         }
 
     }
@@ -149,23 +156,6 @@ public class UserMiniMessage extends Command {
         returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
         returnString = returnString.replaceAll("\\{command}",this.getName());
         return returnString;
-    }
-
-    private Integer handleInsertMessage(Long userID, String content, boolean update) {
-        boolean returnValue = false;
-
-        final String customMessage = content.substring(7);
-        if(customMessage.length() > 200){
-            return 400;
-        }
-
-        if (update) {
-            returnValue = HiveBot.sqlHandler.updateUserMessage(userID, customMessage);
-        } else {
-            returnValue = HiveBot.sqlHandler.insertUserMessage(userID, customMessage);
-        }
-
-        return 200;
     }
 
     private void postMessage(GuildMessageReceivedEvent event, Member member, String userMessage){
