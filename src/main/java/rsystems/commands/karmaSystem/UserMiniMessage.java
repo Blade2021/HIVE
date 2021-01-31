@@ -144,7 +144,6 @@ public class UserMiniMessage extends Command {
         String returnString = ("{prefix}{command} [Sub-Command] [args]\n\n" +
                 "After reaching karma level 1, you can create a custom message for yourself that will be sent when someone types {prefix}{command} @YOU or uses your User ID.\n\n" +
                 "**Call**\n`{prefix}{command} [@mention / UserID]`\nGet a user's custom mini message.\n\n" +
-                "**Insert**\n`{prefix}{command} Insert [Custom Message]`\nSet a custom message for yourself.\n\n" +
                 "**Update**\n`{prefix}{command} Update [Custom Message]`\nUpdate your custom message for yourself.\n\n" +
                 "**Remove**\n`{prefix}{command} Remove [Custom Message]`\nDelete your custom message from the database.\n\n");
         returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
