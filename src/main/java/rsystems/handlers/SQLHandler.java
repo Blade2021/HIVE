@@ -691,8 +691,15 @@ public class SQLHandler {
         return output;
     }
 
-
-
+    /**
+     * Get the channelID associated with a messageID from the database.
+     *
+     *
+     * @param tableName The name of the table to update.
+     * @param identifierColumn The column name that holds the identifier to use to identify what row to delete.
+     * @param identifier The identifier that will determine what row to delete.
+     * @return Returns how many rows were deleted.
+     */
     public Integer deleteValue(String tableName, String identifierColumn, Long identifier){
         Integer output = null;
 
@@ -734,7 +741,6 @@ public class SQLHandler {
 
         try{
             Connection connection = pool.getConnection();
-            //PreparedStatement st = connection.createStatement();
 
             PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO HIVE_ActivityList (ActivityString) VALUES (\"%s\")",activity),new String[] {"ID"});
             st.execute();

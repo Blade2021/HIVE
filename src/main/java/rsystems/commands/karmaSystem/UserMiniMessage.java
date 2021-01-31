@@ -66,12 +66,42 @@ public class UserMiniMessage extends Command {
                 }
 
                 if ((args[0].equalsIgnoreCase("remove")) || args[0].equalsIgnoreCase("delete")) {
-                    boolean update = false;
+                    if(args.length > 1){
+                        Member callingMember = HiveBot.mainGuild().getMember(sender);
+                        if(callingMember != null) {
+                            Long userID = null;
+                            if(!event.getMessage().getMentionedMembers().isEmpty()){
+                                userID = event.getMessage().getMentionedMembers().get(0).getIdLong();
+                            } else {
+                                try{
+                                    userID = Long.valueOf(args[1]);
+                                } catch(IllegalArgumentException e)
+                                {
 
+                                }
+                            }
+
+                            if(userID != null) {
+                                if (HiveBot.dispatcher.checkAuthorized(callingMember, 2048)) {
+                                    if(HiveBot.sqlHandler.deleteValue("HIVE_UserMessageTable", "UserID",userID) >= 1){
+                                        //success
+                                        event.getMessage().addReaction("✅").queue();
+                                    } else {
+                                        //failure
+                                        event.getMessage().addReaction("\u274C").queue();
+                                    }
+
+                                    return;
+                                }
+                            }
+                        }
+                    }
                     if (HiveBot.sqlHandler.deleteValue("HIVE_UserMessageTable", "UserID", sender.getIdLong()) >= 1) {
-                        // success
+                        //success
+                        event.getMessage().addReaction("✅").queue();
                     }
                 }
+
                 return;
             }
 
