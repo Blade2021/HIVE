@@ -50,10 +50,10 @@ public class GratitudeListener extends ListenerAdapter {
                         if ((receivingMember != null) && (!receivingMember.getUser().isBot()) && (receivingMember != sendingMember)) {
 
                             event.getMessage().addReaction(stageReaction).queue();
-                            event.getMessage().addReaction("❌").queue();
+                            event.getMessage().addReaction("\u274C").queue();
 
                             event.getMessage().removeReaction(stageReaction,event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
-                            event.getMessage().removeReaction("❌",event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
+                            event.getMessage().removeReaction("\u274C",event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
 
                             if (!HiveBot.karmaSQLHandler.insertStaging(event.getChannel().getIdLong(), event.getMessageIdLong(), sendingMember.getIdLong())) {
                                 event.getMessage().addReaction("⚠").queue();
@@ -130,7 +130,7 @@ public class GratitudeListener extends ListenerAdapter {
 
 
         //If reaction was an emoji & emoji was a thumbs up or X
-        if ((!reactionEmote) && ((emojiID.equalsIgnoreCase(stageReaction)) || (emojiID.equalsIgnoreCase("❌")))) {
+        if ((!reactionEmote) && ((emojiID.equalsIgnoreCase(stageReaction)) || (emojiID.equalsIgnoreCase("\u274C")))) {
 
 
             //Check karma staging table to see if messageID was found

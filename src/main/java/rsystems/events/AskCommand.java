@@ -106,7 +106,7 @@ public class AskCommand extends ListenerAdapter {
                     textChannel.sendMessage(questionBuilder.build()).queue(success -> {
                         keeperList.add(success.getIdLong());
                         success.addReaction("✅").queue();
-                        success.addReaction("❌").queue();
+                        success.addReaction("\u274C").queue();
                     });
                     questionBuilder.clear();
                     event.getMessage().addReaction("\uD83D\uDCE8").queue();
@@ -207,7 +207,7 @@ public class AskCommand extends ListenerAdapter {
                         });
                     }
 
-                    if (reaction.equals("❌")) {
+                    if (reaction.equals("\u274C")) {
                         pushChannel.retrieveMessageById(messageID).queue(success -> {
 
                             if (!success.getEmbeds().isEmpty()) {
