@@ -14,7 +14,7 @@ public class Embed extends Command {
 
     @Override
     public Integer getPermissionIndex() {
-        return 512;
+        return 16;
     }
 
     @Override
