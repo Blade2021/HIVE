@@ -3,6 +3,7 @@ package rsystems.commands.modCommands;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
@@ -90,10 +91,15 @@ public class CheckRole extends Command {
 		
     }
 
-    @Override
-    public String getHelp() {
-        return "Just a test";
-    }
+	@Override
+	public String getHelp() {
+		String returnString = ("{prefix}{command} [RoleID] {true}\n" +
+				"See how many users belong to a certain role.  (DO NOT USE THE EVERYONE ROLE!)\n\n" +
+				"If you attach true on the end, You will get a list of the users sent to your direct messages.");
+		returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+		returnString = returnString.replaceAll("\\{command}",this.getName());
+		return returnString;
+	}
 
     @Override
     public String getName() {
