@@ -250,6 +250,12 @@ public class Dispatcher extends ListenerAdapter {
         Command.removeResponses(event.getChannel(), event.getMessageIdLong());
     }
 
+    /**
+     * Check to see if a user is authorized for a command.  Any command that doesn't have a permission index set is automatically approved.
+     * @param member The member to be checked.
+     * @param commandPermission The permission index of the command.  (Can be null!)
+     * @return True = Authorized | False = Not Authorized
+     */
     public boolean checkAuthorized(final Member member, final Integer commandPermission) {
         boolean authorized = false;
 

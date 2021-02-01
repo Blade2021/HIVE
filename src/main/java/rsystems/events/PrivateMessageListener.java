@@ -8,6 +8,10 @@ import javax.annotation.Nonnull;
 
 public class PrivateMessageListener extends ListenerAdapter {
 
+    /**
+     * This method is used to pass messages to the localPoll handler for processing.  All commands that allow private messages are handled inside the command class.
+     * @param event
+     */
     @Override
     public void onPrivateMessageReceived(@Nonnull PrivateMessageReceivedEvent event) {
         if(HiveBot.localPollHandler.checkForUser(event.getAuthor().getIdLong())){

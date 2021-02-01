@@ -19,25 +19,29 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 
 public class AskCommand extends ListenerAdapter {
-    //String pullChannel = HiveBot.dataFile.getDatafileData().get("QuestionPullChannel").toString();
-    //String pushChannel = HiveBot.dataFile.getDatafileData().get("QuestionPushChannel").toString();
     String pullChannelID = Config.get("QuestionPullChannel");
     String pushChannelID = Config.get("QuestionPushChannel");
 
+    /**
+     * A list of posted question Message IDs
+     */
     private static List<Long> keeperList = new ArrayList<>();
 
+    /**
+     * Restream's userID, for processing chat messages.
+     */
     String restreamID = HiveBot.dataFile.getData("RestreamID").toString();
 
-    private static int lastColor = 0;
-
+    /**
+     * Checks if a message contained the ask command.  If it did, process it and post it into the questions channel.
+     * @param event
+     */
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
-        //System.out.println("Debug" + event.getMessage().getContentRaw());
 
         TextChannel textChannel = event.getGuild().getTextChannelById(pushChannelID);
 
@@ -122,6 +126,11 @@ public class AskCommand extends ListenerAdapter {
         }
     }
 
+    /**
+     * This will return the platform that the question came from by processing the string.
+     * @param message
+     * @return Which platform the question originated from.  aka. Discord, YouTube, Twitch
+     */
     private String getPlatform(Message message){
         String platform = null;
         if(message.getAuthor().isBot()){
@@ -138,6 +147,11 @@ public class AskCommand extends ListenerAdapter {
         return platform;
     }
 
+    /**
+     * Parse out the question from the text provided.
+     * @param message
+     * @return The question the user provided.
+     */
     private String getQuestion(String message){
         String question = "";
         try{
@@ -150,6 +164,12 @@ public class AskCommand extends ListenerAdapter {
         return question;
     }
 
+    /**
+     * Grab the author of the question
+     * @param event
+     * @param message
+     * @return The author of the question
+     */
     private String getAuthor(GuildMessageReceivedEvent event, String message){
 
         // Initialize author
@@ -175,6 +195,10 @@ public class AskCommand extends ListenerAdapter {
         return author;
     }
 
+    /**
+     * Detect when a reaction was added to a matching question.  If the reaction came from an authorized user, process the question.  Otherwise remove the reaction.
+     * @param event
+     */
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
         if(event.getUser().isBot()){
@@ -233,6 +257,10 @@ public class AskCommand extends ListenerAdapter {
         }
     }
 
+    /**
+     * Remove the messageID from the arrayList if the message was deleted.
+     * @param event
+     */
     @Override
     public void onMessageDelete(@Nonnull MessageDeleteEvent event) {
         if(keeperList.contains(event.getMessageIdLong())){

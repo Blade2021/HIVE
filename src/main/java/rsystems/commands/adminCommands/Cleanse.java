@@ -1,6 +1,7 @@
 package rsystems.commands.adminCommands;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -9,6 +10,7 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.exceptions.PermissionException;
 import rsystems.Config;
+import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
@@ -34,33 +36,9 @@ public class Cleanse extends Command {
             event.getChannel().getIterableHistory()
                     .cache(false)
                     .forEachAsync(messages::add)
-                    .thenRun(() -> event.getChannel().purgeMessages(messages));
+                    .thenRun(() -> event.getChannel().purgeMessages(messages)).thenRun(() -> HiveBot.jda.getPresence().setStatus(OnlineStatus.ONLINE));
         }
 
-        catch (IllegalArgumentException illegalArg){
-            try {
-                if (illegalArg.toString().startsWith("java.lang.IllegalArgumentException: Message retrieval")) {
-                    // Too many messages
-                    EmbedBuilder error = new EmbedBuilder();
-                    error.setColor(Color.RED);
-                    error.setTitle("\uD83D\uDEAB Too many messages selected");
-                    error.setDescription("Between 1-99 messages can be deleted at one time.");
-                    reply(event,error.build());
-                    error.clear();
-                } else {
-                    // Messages too old
-                    EmbedBuilder error = new EmbedBuilder();
-                    error.setColor(Color.RED);
-                    error.setTitle("\uD83D\uDEAB Selected messages are older than 2 weeks");
-                    error.setDescription("Messages older than 2 weeks cannot be deleted.");
-                    reply(event,error.build());
-                    error.clear();
-                }
-            } catch (PermissionException e){
-                //Missing permissions for embed
-                reply(event,"Missing Permission: " + e.getPermission().getName());
-            }
-        }
         catch(InsufficientPermissionException e){
             reply(event,"Missing Permission: " + e.getPermission().getName());
             System.out.println(event.getAuthor().getName() + "attempted to call CLEAR without access");

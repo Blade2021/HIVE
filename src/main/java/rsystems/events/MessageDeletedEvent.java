@@ -6,6 +6,10 @@ import rsystems.HiveBot;
 
 public class MessageDeletedEvent extends ListenerAdapter {
 
+    /**
+     * Delete any rows found in the embed table with the corresponding message ID.
+     * @param event
+     */
     @Override
     public void onGuildMessageDelete(GuildMessageDeleteEvent event) {
         if(HiveBot.sqlHandler.getEmbedChannel(event.getMessageIdLong()) != null){

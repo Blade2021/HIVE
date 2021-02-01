@@ -99,6 +99,7 @@ public class SQLHandler {
         return date;
     }
 
+    @Deprecated
     public String getDate(String id, String table) {
         String date = "";
 
@@ -120,6 +121,7 @@ public class SQLHandler {
     }
 
     // Set the last seen date using id
+    @Deprecated
     public int setDate(String table, String id, String date) {
 
         int updateCount = 0;
@@ -159,6 +161,7 @@ public class SQLHandler {
     }
 
     // Set the name of the user using id
+    @Deprecated
     public int setName(String id, String name) {
         int output = 0;
 
@@ -175,6 +178,7 @@ public class SQLHandler {
     }
 
     // Insert NEW users into the DB
+    @Deprecated
     public boolean insertUser(String id, String name, String date) {
         boolean output = false;
 
@@ -211,6 +215,7 @@ public class SQLHandler {
     }
 
     // Remove using from DB
+    @Deprecated
     public boolean removeUser(String id) {
         boolean output = false;
 
@@ -228,6 +233,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
+    @Deprecated
     public ArrayList<String> getAllUsers(String column) {
         ArrayList<String> values = new ArrayList<>();
 
@@ -248,6 +254,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
+    @Deprecated
     public HashMap<String, String> getAllUsers() {
         HashMap<String, String> idMap = new HashMap<>();
         try {
@@ -267,6 +274,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
+    @Deprecated
     public HashMap<String, String> getAllUserDates() {
         HashMap<String, String> idMap = new HashMap<>();
 
@@ -287,6 +295,7 @@ public class SQLHandler {
         return idMap;
     }
 
+    @Deprecated
     public int getDBSize() {
         int output = 0;
         try {
@@ -508,6 +517,12 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Remove an emoji from the whitelist.  This will affect the users nicknames.
+     * @param roleID The role to remove the emoji FROM
+     * @param emoji The emoji to be removed from the whitelist.
+     * @return True - Emoji found and removed | False - No matches found
+     */
     public boolean removeEmojiFromWhitelist(Long roleID, String emoji) {
 
         boolean output = false;
@@ -718,6 +733,13 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Delete a row(s) from the table with a identifier.
+     * @param tableName The table referencing the row(s) to be deleted
+     * @param identifierColumn The column name that holds the identifier
+     * @param identifier The identifier, this is used to query what rows to delete
+     * @return The amount of rows deleted.
+     */
     public Integer deleteValue(String tableName, String identifierColumn, Integer identifier){
         Integer output = null;
 
@@ -736,6 +758,11 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * This method will place a string in the rolling queue of the activity pool.
+     * @param activity What to add to the queue of messages that get displayed in the activity field.  Limit 32 characters
+     * @return Returns the ID of the inserted row
+     */
     public Integer insertActivity(String activity){
         Integer output = 0;
 
@@ -760,6 +787,10 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Get a TreeMap of the activities that are in the database pool.
+     * @return TreeMap of entries
+     */
     public TreeMap<Integer, String> getActivityMap(){
         TreeMap<Integer, String> activityMap = new TreeMap<>();
 
@@ -781,6 +812,11 @@ public class SQLHandler {
 
     }
 
+    /**
+     * This method pulls the next activity from the pool.  If the next activity is null, it returns back to the first row.
+     * @param currentIndex The current activities ID
+     * @return The next activity found in the database.
+     */
     public String nextActivity(Integer currentIndex){
         String output = null;
 
@@ -812,6 +848,11 @@ public class SQLHandler {
 
     }
 
+    /**
+     * This method will check the database for any user authorization overrides.  This is used to add permissions to a certain user rather then a role.  Allowing more control of permissions.
+     * @param userID The userid of the user to be checked
+     * @return True - Authorized | False - Unauthorized
+     */
     public Integer checkAuthOverride(Long userID){
         Integer output = null;
 
@@ -832,6 +873,13 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Add a user to the authentication override table.
+     * @param userID The userID of the user to be added.
+     * @param authLevel The authentication level of the user.
+     * @param userTag The user's tag for reference purposes only.
+     * @return True - Insert transaction completed | False - Errors Occurred
+     */
     public boolean insertAuthUser(Long userID, int authLevel, String userTag){
         boolean output = false;
 
@@ -912,6 +960,12 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * This method will add a string to the database to be pulled when a user uses the Mini command.
+     * @param userID The userid of the user requesting the insert
+     * @param message The message to be added
+     * @return True - Successful Transaction | False - Error
+     */
     public boolean insertUserMessage(Long userID, String message){
         boolean output = false;
 
@@ -932,6 +986,12 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Update the user mini message
+     * @param userID The user's ID to be updated
+     * @param message The updated message to overwrite the current one.
+     * @return True - Successful Transaction | False - Errors
+     */
     public boolean updateUserMessage(Long userID, String message){
         boolean output = false;
 

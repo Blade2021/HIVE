@@ -34,13 +34,16 @@ public abstract class Command {
         return this.getClass().getSimpleName();
     };
 
-
+    /**
+     * Reply to the message.
+     * @param event
+     * @param message
+     */
     protected void reply(GuildMessageReceivedEvent event, String message){
         reply(event,message,null);
     }
 
     protected void reply(GuildMessageReceivedEvent event, Message message){
-        //event.getMessage().reply(message).queue();
         reply(event,message,null);
     }
 
