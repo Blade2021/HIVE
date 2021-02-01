@@ -192,7 +192,7 @@ public class GratitudeListener extends ListenerAdapter {
 
                     if ((sendingMember != null) && (receivingMember != null)) {
 
-                        if (sendingMember != receivingMember) {
+                        if ((sendingMember != receivingMember) && (!receivingMember.getUser().isBot())) {
 
                             boolean direction = finalReactionID.equals(karmaPosReaction);
                             System.out.println(String.format("Sending %s karma from %s to %s", direction, sendingMember.getEffectiveName(), receivingMember.getEffectiveName()));
