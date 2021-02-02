@@ -1012,5 +1012,30 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Update the user mini message color
+     * @param userID The user's ID to be updated
+     * @param colorCode The updated color to overwrite the current one.
+     * @return True - Successful Transaction | False - Errors
+     */
+    public boolean updateUserMessageColor(Long userID, String colorCode){
+        boolean output = false;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Color = \"%s\" WHERE UserID = %d",colorCode,userID));
+            if(st.getUpdateCount() >= 1){
+                output = true;
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return output;
+    }
 
 }

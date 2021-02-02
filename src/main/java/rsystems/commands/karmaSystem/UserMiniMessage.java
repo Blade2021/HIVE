@@ -105,6 +105,36 @@ public class UserMiniMessage extends Command {
                 return;
             }
 
+            if(args[0].equalsIgnoreCase("setColor")){
+                Integer karma = HiveBot.karmaSQLHandler.getKarma(sender.getId());
+                if(karma >= 40){
+
+                    if(content.contains("#")){
+                        String colorCode = null;
+
+                        int colorIndexStart = content.indexOf("#");
+                        try{
+                            colorCode = content.substring(colorIndexStart,colorIndexStart+7);
+                        } catch(IndexOutOfBoundsException e){
+                            reply(event,"Your color code string was malformed.  Try again");
+                        }
+
+                        if(colorCode != null){
+                            System.out.println(colorCode);
+                            if(HiveBot.sqlHandler.updateUserMessageColor(sender.getIdLong(),colorCode)){
+                                //success
+                                event.getMessage().addReaction("✅").queue();
+                            }
+                        }
+
+                    }
+
+                } else {
+                    reply(event,"Sorry, you need karma level 2 to do that");
+                }
+                return;
+            }
+
             if(!message.getMentionedMembers().isEmpty()){
                 final Member member = message.getMentionedMembers().get(0);
                 final String userMessage = HiveBot.sqlHandler.getValue("HIVE_UserMessageTable","Message","UserID",member.getIdLong());
@@ -152,17 +182,21 @@ public class UserMiniMessage extends Command {
                 "After reaching karma level 1, you can create a custom message for yourself that will be sent when someone types {prefix}{command} @YOU or uses your User ID.\n\n" +
                 "**Call**\n`{prefix}{command} [@mention / UserID]`\nGet a user's custom mini message.\n\n" +
                 "**Update**\n`{prefix}{command} Update [Custom Message]`\nUpdate your custom message for yourself.\n\n" +
-                "**Remove**\n`{prefix}{command} Remove [Custom Message]`\nDelete your custom message from the database.\n\n");
+                "**Remove**\n`{prefix}{command} Remove [Custom Message]`\nDelete your custom message from the database.\n\n"+
+                "**SetColor**\n`{prefix}{command} setColor [#color hex code]`\nSet your mini message color. (Karma Rank 2+ Only)\n\n");
         returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
         returnString = returnString.replaceAll("\\{command}",this.getName());
         return returnString;
     }
 
     private void postMessage(GuildMessageReceivedEvent event, Member member, String userMessage){
+        String color = "#5742f5";
+        color = HiveBot.sqlHandler.getValue("HIVE_UserMessageTable","Color","UserID",member.getIdLong());
+
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setDescription(userMessage)
                 .setTitle("User Mini:  " + member.getEffectiveName())
-                .setColor(Color.decode("#5742f5"));
+                .setColor(Color.decode(color));
 
         channelReply(event, embedBuilder.build());
     }
