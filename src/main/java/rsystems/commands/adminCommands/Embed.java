@@ -157,22 +157,29 @@ public class Embed extends Command {
             if (originalMessage != null) {
                 int messageStartIndex = content.indexOf("-text") + 5;
 
-                if(messageStartIndex == 0){
+                //Check to see if index = 4 due to not found = -1 + 5 (see above)
+                if(messageStartIndex == 4){
                     reply(event,"Malformed command.  Did you forget to include -text?");
                     return;
                 }
 
+                System.out.println(messageStartIndex);
+
                 String messageText = content.substring(messageStartIndex);
 
-                MessageEmbed originEmbed = originalMessage.getEmbeds().get(0);
+                if(messageText.isEmpty()){
+                    reply(event,"Cannot send an empty message");
+                } else {
+                    MessageEmbed originEmbed = originalMessage.getEmbeds().get(0);
 
-                EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setDescription(messageText);
-                embedBuilder.setColor(originEmbed.getColor());
+                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                    embedBuilder.setDescription(messageText);
+                    embedBuilder.setColor(originEmbed.getColor());
 
-                MessageEmbed embed = embedBuilder.build();
+                    MessageEmbed embed = embedBuilder.build();
 
-                originalMessage.editMessage(embed).override(true).queue();
+                    originalMessage.editMessage(embed).override(true).queue();
+                }
             }
         }
     }
