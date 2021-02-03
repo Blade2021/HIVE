@@ -33,7 +33,7 @@ public class Embed extends Command {
 
                 Long channelID = HiveBot.sqlHandler.getEmbedChannel(messageID);
                 if (channelID != null) {
-                    updateMessage(channelID, messageID, content);
+                    updateMessage(event, channelID, messageID, content);
                 }
             }
             return;
@@ -150,12 +150,18 @@ public class Embed extends Command {
         return null;
     }
 
-    private void updateMessage(Long channelID, Long messageID, String content) {
+    private void updateMessage(GuildMessageReceivedEvent event, Long channelID, Long messageID, String content) {
         if (HiveBot.mainGuild().getTextChannelById(channelID) != null) {
             TextChannel embedChannel = HiveBot.mainGuild().getTextChannelById(channelID);
             Message originalMessage = getMessage(content, embedChannel);
             if (originalMessage != null) {
                 int messageStartIndex = content.indexOf("-text") + 5;
+
+                if(messageStartIndex == 0){
+                    reply(event,"Malformed command.  Did you forget to include -text?");
+                    return;
+                }
+
                 String messageText = content.substring(messageStartIndex);
 
                 MessageEmbed originEmbed = originalMessage.getEmbeds().get(0);
