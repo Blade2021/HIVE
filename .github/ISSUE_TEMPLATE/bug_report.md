@@ -2,7 +2,7 @@
 name: Bug report
 about: Create a report to help us improve
 title: ''
-labels: 'Type: bug, Priority: medium, Status: approved'
+labels: 'Type: bug, Priority: medium'
 assignees: Blade2021
 
 ---
