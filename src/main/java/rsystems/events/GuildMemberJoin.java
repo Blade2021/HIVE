@@ -1,7 +1,12 @@
 package rsystems.events;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import rsystems.Config;
 import rsystems.HiveBot;
+
+import java.awt.*;
 
 
 public class GuildMemberJoin extends ListenerAdapter {
@@ -20,5 +25,24 @@ public class GuildMemberJoin extends ListenerAdapter {
                 System.out.println("failed to add member");
             }
         }
+
+        String greetingMessage = HiveBot.sqlHandler.grabRandomGreeting();
+        if(greetingMessage != null){
+
+            greetingMessage = greetingMessage.replace("{user}",String.format("**%s**",event.getMember().getEffectiveName()));
+
+            EmbedBuilder embedBuilder = new EmbedBuilder();
+            embedBuilder.setTitle("Welcome")
+                    .setThumbnail(event.getMember().getUser().getEffectiveAvatarUrl())
+                    .setColor(Color.decode("#69f591"))
+                    .setDescription(greetingMessage);
+
+            TextChannel welcomeChannel = HiveBot.mainGuild().getTextChannelById(Config.get("WELCOME_CHANNEL"));
+            if(welcomeChannel != null){
+                welcomeChannel.sendMessage(embedBuilder.build()).queue();
+            }
+            embedBuilder.clear();
+        }
+
     }
 }

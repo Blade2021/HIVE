@@ -1,0 +1,11 @@
+{
+  "greetings":[
+    "Welcome {user} to discord!",
+    "{user} is here with pizza",
+    "Open the pod bay doors, {user}",
+    "Watch out! {user} just landed!",
+    "Its a bird, its a plane!, its {user}!",
+    "oy! {user} is here! crank up the music!",
+    "Nuts! nuts everywhere!  oh wait its just {user}"
+  ]
+}

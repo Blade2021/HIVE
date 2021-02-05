@@ -1038,4 +1038,24 @@ public class SQLHandler {
         return output;
     }
 
+    public String grabRandomGreeting(){
+        String returnString = null;
+
+        try{
+            Connection connection = pool.getConnection();
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT Message FROM HIVE_Greetings ORDER BY RAND() LIMIT 1");
+            while(rs.next()){
+                returnString = rs.getString("Message");
+            }
+
+            connection.close();
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+
+        return returnString;
+    }
+
 }
