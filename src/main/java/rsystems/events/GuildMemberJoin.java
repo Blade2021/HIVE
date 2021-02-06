@@ -29,7 +29,7 @@ public class GuildMemberJoin extends ListenerAdapter {
         String greetingMessage = HiveBot.sqlHandler.grabRandomGreeting();
         if(greetingMessage != null){
 
-            greetingMessage = greetingMessage.replace("{user}",String.format("**%s**",event.getMember().getEffectiveName()));
+            greetingMessage = greetingMessage.replace("{user}",String.format("**%s**",event.getUser().getAsMention()));
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle("Welcome")
