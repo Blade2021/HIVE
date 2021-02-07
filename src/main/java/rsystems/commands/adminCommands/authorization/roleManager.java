@@ -89,6 +89,6 @@ public class roleManager extends Command {
 
     @Override
     public String getName() {
-        return "authRoleManager";
+        return "AuthRoleManager";
     }
 }

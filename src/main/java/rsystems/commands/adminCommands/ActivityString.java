@@ -117,6 +117,6 @@ public class ActivityString extends Command {
 
     @Override
     public String getName(){
-        return "activity";
+        return "Activity";
     }
 }

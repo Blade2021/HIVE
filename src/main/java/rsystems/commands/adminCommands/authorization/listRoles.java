@@ -68,6 +68,6 @@ public class listRoles extends Command {
 
     @Override
     public String getName(){
-        return "listAuthRoles";
+        return "ListAuthRoles";
     }
 }

@@ -141,6 +141,6 @@ public class EmojiWhitelist extends Command {
 
     @Override
     public String getName() {
-        return "nickEmoji";
+        return "NickEmoji";
     }
 }
