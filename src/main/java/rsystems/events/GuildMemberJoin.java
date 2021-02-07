@@ -29,13 +29,17 @@ public class GuildMemberJoin extends ListenerAdapter {
         String greetingMessage = HiveBot.sqlHandler.grabRandomGreeting();
         if(greetingMessage != null){
 
-            greetingMessage = greetingMessage.replace("{user}",String.format("**%s**",event.getUser().getAsMention()));
+            greetingMessage = greetingMessage.replace("{user}",String.format("**%s**",event.getMember().getEffectiveName()));
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle("Welcome")
                     .setThumbnail(event.getMember().getUser().getEffectiveAvatarUrl())
                     .setColor(Color.decode("#69f591"))
                     .setDescription(greetingMessage);
+
+            if(event.getUser().getAvatarUrl() == null){
+                embedBuilder.appendDescription("\n\nWe encourage all members to use a custom avatar here on discord.  However this is __**NOT**__ required.");
+            }
 
             TextChannel welcomeChannel = HiveBot.mainGuild().getTextChannelById(Config.get("WELCOME_CHANNEL"));
             if(welcomeChannel != null){
