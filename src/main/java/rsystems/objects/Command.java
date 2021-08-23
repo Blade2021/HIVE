@@ -4,11 +4,12 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
 import java.util.function.Consumer;
+
+
 
 public abstract class Command {
 

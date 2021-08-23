@@ -20,6 +20,9 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+
+import static rsystems.HiveBot.prefix;
 
 public class References extends ListenerAdapter {
 
@@ -46,7 +49,7 @@ public class References extends ListenerAdapter {
             //Create a temporary Reference Object to hold the data
             ExtendedReference tempExtendedReference = new ExtendedReference(
                     keyStr.toString(),
-                    parsedValue.get("description").toString().replace("{prefix}",HiveBot.prefix),
+                    parsedValue.get("description").toString().replace("{prefix}", prefix),
                     parsedValue.get("installation").toString()
             );
 
@@ -75,10 +78,21 @@ public class References extends ListenerAdapter {
             Object keyValue = referenceData.get(keyStr);
             JSONObject parsedValue = (JSONObject) keyValue;
 
+            String tempReferenceDescriptionString = "";
+
+            try {
+                tempReferenceDescriptionString = parsedValue.get("description").toString();
+                tempReferenceDescriptionString = tempReferenceDescriptionString.replaceAll("\\{prefix\\}", prefix);
+            } catch (NullPointerException nullPointerException){
+                System.out.println(String.format("Skipping %s Reference.  No description found.",keyStr.toString()));
+                return;
+            }
+
             //Create a temporary Reference Object to hold the data
             Reference tempReference = new Reference(
                     keyStr.toString(),
-                    parsedValue.get("description").toString()
+                    //parsedValue.get("description").toString().replace("\\{prefix\\}", prefix)
+                    tempReferenceDescriptionString
             );
 
             try{
@@ -113,7 +127,7 @@ public class References extends ListenerAdapter {
         if((args != null) && (args[0].toLowerCase().startsWith(Config.get("Prefix")))) {
 
             //Replace the first occurance of the bot's prefix with null
-            String content = event.getMessage().getContentDisplay().replaceFirst(HiveBot.prefix, "");
+            String content = event.getMessage().getContentDisplay().replaceFirst(prefix, "");
 
             //Remove all mentions for checking the message for reference
             if (!event.getMessage().getMentionedMembers().isEmpty()) {
