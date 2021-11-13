@@ -9,8 +9,6 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 
 import java.util.function.Consumer;
 
-
-
 public abstract class Command {
 
     private Integer permissionIndex = null;

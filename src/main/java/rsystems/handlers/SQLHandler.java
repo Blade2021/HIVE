@@ -5,6 +5,7 @@ import java.util.*;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.HiveBot;
+import rsystems.objects.LED;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
@@ -99,7 +100,101 @@ public class SQLHandler {
         return date;
     }
 
-    @Deprecated
+
+    // Get date of last seen using ID
+    public LED getLED(String ledName) throws SQLException {
+        String date = "";
+
+        Connection connection = pool.getConnection();
+
+        LED led = new LED(ledName);
+        boolean ledFound = false;
+
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table WHERE ledname = \"%s\"", ledName));
+
+            while (rs.next()) {
+                ledFound = true;
+                led.setLedVoltage(rs.getInt("Voltage"));
+                led.setWhiteIncluded(rs.getBoolean("WhitePixel"));
+                led.setWattagePerPixel_Tested(rs.getFloat("WattageTested"));
+                led.setWattagePerPixel_Theoretical(rs.getFloat("WattageTheory"));
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        if(ledFound)
+            return led;
+        else
+            return null;
+    }
+
+    public ArrayList<String> getLEDList() throws SQLException {
+        Connection connection = pool.getConnection();
+
+        ArrayList<String> ledList = new ArrayList<>();
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ledName FROM LED_Table");
+
+            while (rs.next()) {
+
+                ledList.add(rs.getString("ledName"));
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return ledList;
+    }
+
+
+    public Map<String, LED> getLEDMap() throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Map<String, LED> ledList = new HashMap();
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ledName, Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table");
+
+            while (rs.next()) {
+
+                LED led = new LED(rs.getString("ledName"));
+                led.setLedVoltage(rs.getInt("Voltage"));
+                led.setWhiteIncluded(rs.getBoolean("WhitePixel"));
+                led.setWattagePerPixel_Tested(rs.getFloat("WattageTested"));
+                led.setWattagePerPixel_Theoretical(rs.getFloat("WattageTheory"));
+
+                ledList.putIfAbsent(led.getLedName(),led);
+            }
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return ledList;
+    }
+
+    
     public String getDate(String id, String table) {
         String date = "";
 
@@ -121,7 +216,7 @@ public class SQLHandler {
     }
 
     // Set the last seen date using id
-    @Deprecated
+    
     public int setDate(String table, String id, String date) {
 
         int updateCount = 0;
@@ -161,7 +256,6 @@ public class SQLHandler {
     }
 
     // Set the name of the user using id
-    @Deprecated
     public int setName(String id, String name) {
         int output = 0;
 
@@ -178,7 +272,6 @@ public class SQLHandler {
     }
 
     // Insert NEW users into the DB
-    @Deprecated
     public boolean insertUser(String id, String name, String date) {
         boolean output = false;
 
@@ -215,7 +308,6 @@ public class SQLHandler {
     }
 
     // Remove using from DB
-    @Deprecated
     public boolean removeUser(String id) {
         boolean output = false;
 
@@ -233,7 +325,6 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
-    @Deprecated
     public ArrayList<String> getAllUsers(String column) {
         ArrayList<String> values = new ArrayList<>();
 
@@ -254,7 +345,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
-    @Deprecated
+    
     public HashMap<String, String> getAllUsers() {
         HashMap<String, String> idMap = new HashMap<>();
         try {
@@ -274,7 +365,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
-    @Deprecated
+    
     public HashMap<String, String> getAllUserDates() {
         HashMap<String, String> idMap = new HashMap<>();
 
@@ -295,7 +386,7 @@ public class SQLHandler {
         return idMap;
     }
 
-    @Deprecated
+    
     public int getDBSize() {
         int output = 0;
         try {
