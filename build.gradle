@@ -6,9 +6,9 @@ plugins {
 
 mainClassName = 'rsystems.HiveBot'
 
-version '1.4.0'
+version '1.4.2'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 11
 targetCompatibility = 11
 
 repositories {

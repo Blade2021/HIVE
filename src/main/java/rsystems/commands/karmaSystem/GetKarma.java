@@ -9,10 +9,12 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
+
 public class GetKarma extends Command {
 	
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
 
         Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         if(member != null) {
@@ -22,7 +24,7 @@ public class GetKarma extends Command {
     }
 	
 	@Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
 
         Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         if(member != null) {
@@ -31,7 +33,7 @@ public class GetKarma extends Command {
 		
     }
 	
-	private String karmaString(Member member){
+	private String karmaString(Member member) throws SQLException {
 		
 		int currentKarma = HiveBot.karmaSQLHandler.getKarma(member.getId());
 		return String.format("%s, You currently have %d Karma",member.getEffectiveName(),currentKarma);

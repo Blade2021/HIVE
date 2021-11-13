@@ -16,6 +16,7 @@ import rsystems.commands.adminCommands.Embed;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -208,51 +209,55 @@ public class AskCommand extends ListenerAdapter {
         final Long messageID = event.getMessageIdLong();
         if(keeperList.contains(messageID)){
 
-            if(HiveBot.dispatcher.checkAuthorized(event.getMember(),8)) {
+            try {
+                if(HiveBot.dispatcher.checkAuthorized(event.getMember(),8)) {
 
-                if (event.getReaction().getReactionEmote().isEmoji()) {
+                    if (event.getReaction().getReactionEmote().isEmoji()) {
 
-                    final String reaction = event.getReaction().getReactionEmote().getEmoji();
-                    final TextChannel pushChannel = HiveBot.mainGuild().getTextChannelById(pushChannelID);
+                        final String reaction = event.getReaction().getReactionEmote().getEmoji();
+                        final TextChannel pushChannel = HiveBot.mainGuild().getTextChannelById(pushChannelID);
 
-                    if (reaction.equals("✅")) {
-                        pushChannel.retrieveMessageById(messageID).queue(success -> {
-                            if (!success.getEmbeds().isEmpty()) {
-                                MessageEmbed embed = success.getEmbeds().get(0);
-                                EmbedBuilder embedBuilder = new EmbedBuilder(embed);
-                                embedBuilder.setColor(Color.GREEN);
-                                embedBuilder.setFooter("ANSWERED | " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
+                        if (reaction.equals("✅")) {
+                            pushChannel.retrieveMessageById(messageID).queue(success -> {
+                                if (!success.getEmbeds().isEmpty()) {
+                                    MessageEmbed embed = success.getEmbeds().get(0);
+                                    EmbedBuilder embedBuilder = new EmbedBuilder(embed);
+                                    embedBuilder.setColor(Color.GREEN);
+                                    embedBuilder.setFooter("ANSWERED | " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
 
-                                success.editMessage(embedBuilder.build()).override(true).queue();
+                                    success.editMessage(embedBuilder.build()).override(true).queue();
 
-                                //success.delete().queueAfter(60, TimeUnit.SECONDS);
-                                //keeperList.remove(messageID);
-                            }
-                        });
+                                    //success.delete().queueAfter(60, TimeUnit.SECONDS);
+                                    //keeperList.remove(messageID);
+                                }
+                            });
+                        }
+
+                        if (reaction.equals("\u274C")) {
+                            pushChannel.retrieveMessageById(messageID).queue(success -> {
+
+                                if (!success.getEmbeds().isEmpty()) {
+                                    MessageEmbed embed = success.getEmbeds().get(0);
+                                    EmbedBuilder embedBuilder = new EmbedBuilder();
+                                    embedBuilder.setColor(Color.red);
+                                    embedBuilder.setTitle(embed.getTitle());
+                                    embedBuilder.setDescription("**Question Removed by Moderator/Admin**\n\nPlease review our regulations for proper question etiquette.");
+                                    embedBuilder.setFooter("Removed by: " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
+
+                                    success.editMessage(embedBuilder.build()).override(true).queue();
+
+                                    //success.delete().queueAfter(60, TimeUnit.SECONDS);
+                                    //keeperList.remove(messageID);
+                                }
+                            });
+
+                        }
                     }
-
-                    if (reaction.equals("\u274C")) {
-                        pushChannel.retrieveMessageById(messageID).queue(success -> {
-
-                            if (!success.getEmbeds().isEmpty()) {
-                                MessageEmbed embed = success.getEmbeds().get(0);
-                                EmbedBuilder embedBuilder = new EmbedBuilder();
-                                embedBuilder.setColor(Color.red);
-                                embedBuilder.setTitle(embed.getTitle());
-                                embedBuilder.setDescription("**Question Removed by Moderator/Admin**\n\nPlease review our regulations for proper question etiquette.");
-                                embedBuilder.setFooter("Removed by: " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
-
-                                success.editMessage(embedBuilder.build()).override(true).queue();
-
-                                //success.delete().queueAfter(60, TimeUnit.SECONDS);
-                                //keeperList.remove(messageID);
-                            }
-                        });
-
-                    }
+                } else {
+                    event.getReaction().removeReaction(event.getUser()).queue();
                 }
-            } else {
-                event.getReaction().removeReaction(event.getUser()).queue();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }

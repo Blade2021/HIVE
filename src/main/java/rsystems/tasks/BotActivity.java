@@ -3,6 +3,7 @@ package rsystems.tasks;
 import net.dv8tion.jda.api.entities.Activity;
 import rsystems.HiveBot;
 
+import java.sql.SQLException;
 import java.util.TimerTask;
 
 public class BotActivity extends TimerTask {
@@ -10,7 +11,12 @@ public class BotActivity extends TimerTask {
     @Override
     public void run() {
         final int currentIndex = HiveBot.activityStatusIndex;
-        String newActivity = HiveBot.sqlHandler.nextActivity(currentIndex);
+        String newActivity = null;
+        try {
+            newActivity = HiveBot.sqlHandler.nextActivity(currentIndex);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
 
         newActivity = newActivity.replace("{usercount}",String.valueOf(HiveBot.mainGuild().getMemberCount()));
 

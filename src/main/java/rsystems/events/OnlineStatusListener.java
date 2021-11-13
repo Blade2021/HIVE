@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 
 import javax.annotation.Nonnull;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -31,7 +32,12 @@ public class OnlineStatusListener extends ListenerAdapter {
             String formattedCurrentDate = formatter.format(currentDate);
 
             //Get the last date of karma increment
-            String lastSeenKarma = HiveBot.karmaSQLHandler.getDate(event.getMember().getId());
+            String lastSeenKarma = null;
+            try {
+                lastSeenKarma = HiveBot.karmaSQLHandler.getDate(event.getMember().getId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             //Insert new user if not found in DB
             if (lastSeenKarma.isEmpty()) {
@@ -45,7 +51,11 @@ public class OnlineStatusListener extends ListenerAdapter {
             } else {
                 long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
                 if (daysPassed >= 1) {
-                    HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
+                    try {
+                        HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

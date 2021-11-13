@@ -11,6 +11,7 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.Map;
 
 public class listRoles extends Command {
@@ -20,16 +21,16 @@ public class listRoles extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
         reply(event,handleEvent(message));
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         reply(event,handleEvent(message));
     }
 
-    private Message handleEvent(Message message){
+    private Message handleEvent(Message message) throws SQLException {
         Message output = null;
 
         Map<Long,Integer> authRoleMap = HiveBot.sqlHandler.getAuthRoles();

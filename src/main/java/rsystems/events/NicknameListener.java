@@ -14,6 +14,7 @@ import rsystems.HiveBot;
 
 import javax.annotation.Nonnull;
 import javax.lang.model.element.ElementVisitor;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +32,12 @@ public class NicknameListener extends ListenerAdapter {
         final Member member = event.getMember();
         if(member != null) {
             String name = member.getEffectiveName();
-            String newNick = processName(member, name);
+            String newNick = null;
+            try {
+                newNick = processName(member, name);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
 
             if (newNick != null) {
                 event.getGuild().modifyNickname(event.getMember(), newNick).reason("Nickname Parser").queue();
@@ -48,7 +54,12 @@ public class NicknameListener extends ListenerAdapter {
         final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             if(member.getEffectiveName().equalsIgnoreCase(event.getNewName())){
-                String newNick = processName(member, event.getNewName());
+                String newNick = null;
+                try {
+                    newNick = processName(member, event.getNewName());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
                 if(newNick != null){
                     HiveBot.mainGuild().modifyNickname(member,newNick).reason("Nickname Parser").queue();
                 }
@@ -65,7 +76,12 @@ public class NicknameListener extends ListenerAdapter {
         final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             String nickname = member.getEffectiveName();
-            String processedNickname = processName(member, nickname);
+            String processedNickname = null;
+            try {
+                processedNickname = processName(member, nickname);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             if(processedNickname != null){
                 HiveBot.mainGuild().modifyNickname(member,processedNickname).reason("Nickname Parser").queue();
             }
@@ -81,7 +97,12 @@ public class NicknameListener extends ListenerAdapter {
         final Member member = HiveBot.mainGuild().getMemberById(event.getUser().getIdLong());
         if(member != null){
             String nickname = member.getEffectiveName();
-            String processedNickname = processName(member, nickname);
+            String processedNickname = null;
+            try {
+                processedNickname = processName(member, nickname);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
             if(processedNickname != null){
                 HiveBot.mainGuild().modifyNickname(member,processedNickname).reason("Nickname Parser").queue();
             }
@@ -100,7 +121,7 @@ public class NicknameListener extends ListenerAdapter {
         }
     }
 
-    public static String processName(Member member, String name) {
+    public static String processName(Member member, String name) throws SQLException {
         if (HiveBot.mainGuild().getSelfMember().canInteract(HiveBot.mainGuild().getMemberById(member.getIdLong()))) {
 
             if (!inProcess.contains(member)) {
@@ -149,7 +170,7 @@ public class NicknameListener extends ListenerAdapter {
         return null;
     }
 
-    public static void handleKarmaNickname(Long userID){
+    public static void handleKarmaNickname(Long userID) throws SQLException {
 
         Member member = HiveBot.mainGuild().getMemberById(userID);
         if(member != null) {

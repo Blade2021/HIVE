@@ -7,6 +7,7 @@ import rsystems.Config;
 import rsystems.HiveBot;
 
 import java.awt.*;
+import java.sql.SQLException;
 
 
 public class GuildMemberJoin extends ListenerAdapter {
@@ -17,16 +18,25 @@ public class GuildMemberJoin extends ListenerAdapter {
             System.out.println("default avatar detected!");
         }
 
-        if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
-            System.out.println("Adding member: " + event.getMember().getId());
-            if(HiveBot.karmaSQLHandler.insertUser(event.getMember().getId(),event.getMember().getUser().getAsTag())){
-                System.out.println("success!");
-            } else {
-                System.out.println("failed to add member");
+        try {
+            if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
+                System.out.println("Adding member: " + event.getMember().getId());
+                if(HiveBot.karmaSQLHandler.insertUser(event.getMember().getId(),event.getMember().getUser().getAsTag())){
+                    System.out.println("success!");
+                } else {
+                    System.out.println("failed to add member");
+                }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
 
-        String greetingMessage = HiveBot.sqlHandler.grabRandomGreeting();
+        String greetingMessage = null;
+        try {
+            greetingMessage = HiveBot.sqlHandler.grabRandomGreeting();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
         if(greetingMessage != null){
 
             greetingMessage = greetingMessage.replace("{user}",String.format("**%s**",event.getMember().getEffectiveName()));

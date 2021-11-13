@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 
 public class SetPoints extends Command {
@@ -19,7 +20,7 @@ public class SetPoints extends Command {
 	}
 
 	@Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
 		
 		String[] args = content.split("\\s+");
 		if(args.length >= 2){
@@ -39,7 +40,7 @@ public class SetPoints extends Command {
     }
 	
 	@Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
 
         String[] args = content.split("\\s+");
 		if(args.length >= 2){

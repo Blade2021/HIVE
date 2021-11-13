@@ -11,13 +11,14 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public class Help extends Command {
 
     @Override
-    public void dispatch(final User sender, final MessageChannel channel, final Message message, final String content, final GuildMessageReceivedEvent event) {
+    public void dispatch(final User sender, final MessageChannel channel, final Message message, final String content, final GuildMessageReceivedEvent event) throws SQLException {
         final EmbedBuilder builder = new EmbedBuilder();
         builder.setColor(Color.decode("#21ff67"));
 

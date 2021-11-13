@@ -10,6 +10,7 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,7 +21,7 @@ public class UserRole extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
         Message returnMessage = handleCommand(sender,message,content);
         if(returnMessage != null){
             reply(event,returnMessage);
@@ -28,7 +29,7 @@ public class UserRole extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         Message returnMessage = handleCommand(sender,message,content);
         if(returnMessage != null){
             reply(event,returnMessage);
@@ -48,7 +49,7 @@ public class UserRole extends Command {
         return returnString;
     }
 
-    private Message handleCommand(User sender, Message message, String content){
+    private Message handleCommand(User sender, Message message, String content) throws SQLException {
         MessageBuilder mb = new MessageBuilder();
 
         String[] args = content.split("\\s+");

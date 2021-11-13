@@ -17,6 +17,7 @@ import rsystems.objects.Reference;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -167,7 +168,11 @@ public class References extends ListenerAdapter {
                     //Reply to the original request with the data.
                     replyToGuild(event, entry.getValue());
                     //Log the command was used to the database.
-                    HiveBot.sqlHandler.logCommandUsage(entry.getKey());
+                    try {
+                        HiveBot.sqlHandler.logCommandUsage(entry.getKey());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
 
@@ -191,7 +196,11 @@ public class References extends ListenerAdapter {
 
                 if (referenceFound) {
                     replyToGuild(event, entry.getValue());
-                    HiveBot.sqlHandler.logCommandUsage(entry.getKey());
+                    try {
+                        HiveBot.sqlHandler.logCommandUsage(entry.getKey());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                     return;
                 }
             }
