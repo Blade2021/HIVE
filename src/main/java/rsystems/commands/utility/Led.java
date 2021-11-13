@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.LED;
@@ -79,28 +80,6 @@ public class Led extends Command {
                 embedBuilder.addBlankField(true);
             }
 
-            /*
-            embedBuilder.addField("Theoretical Wattage\nPer Pixel",String.format("%.3f",led.getWattagePerPixel_Theoretical()),true);
-            embedBuilder.addBlankField(true);
-            embedBuilder.addField("Theoretical Amperage\nPer Pixel",String.format("%.3f",amperageTheoretical),true);
-
-
-            embedBuilder.addField("Tested Wattage\nPer Pixel",String.format("%.3f",led.getWattagePerPixel_Tested()),true);
-            embedBuilder.addBlankField(true);
-            embedBuilder.addField("Tested Amperage\nPer Pixel",String.format("%.3f",amperageTested),true);
-
-            if((args.length > 1) && (Integer.parseInt(args[1]) > 0)){
-                //embedBuilder.addBlankField(false);
-
-                int qty = Integer.parseInt(args[1]);
-
-                embedBuilder.addField(String.format("Theoretical\nWattage * %d",qty),String.format("%.3f",led.getWattagePerPixel_Theoretical()*qty),true);
-                embedBuilder.addBlankField(true);
-                embedBuilder.addField(String.format("Tested\nWattage * %d",qty),String.format("%.3f",led.getWattagePerPixel_Tested()*qty),true);
-            }
-
-             */
-
             reply(event,embedBuilder.build());
             embedBuilder.clear();
         }
@@ -108,6 +87,15 @@ public class Led extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString ="`{prefix}{command} (Sub-Command) [args]`\n\n" +
+                "**{prefix}{command} (LED Name)**\n`{prefix}{command} ws2815`\nGet some information about an LED.\n\n"+
+                "**{prefix}{command} (LED Name) [QTY]**\n`{prefix}{command} ws2815 1200`\nGet calculated wattage/amperage for an LED";
+
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
+
+
     }
 }
