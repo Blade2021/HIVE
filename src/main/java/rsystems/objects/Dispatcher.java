@@ -24,6 +24,8 @@ import rsystems.commands.modCommands.GetEmoji;
 import rsystems.commands.modCommands.LocalPoll;
 import rsystems.commands.modCommands.UserRole;
 import rsystems.commands.streamRelated.StreamMode;
+import rsystems.commands.utility.Led;
+import rsystems.commands.utility.LedList;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -73,6 +75,8 @@ public class Dispatcher extends ListenerAdapter {
         this.registerCommand(new UserAuth());
         this.registerCommand(new GetTopTen());
         this.registerCommand(new UserMiniMessage());
+        this.registerCommand(new Led());
+        this.registerCommand(new LedList());
 
         for (Command c : commands) {
             System.out.println(c.getName());
