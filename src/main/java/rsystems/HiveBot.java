@@ -90,7 +90,11 @@ public class HiveBot{
             jda = (JDAImpl) api;
 
             //HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
-            HiveBot.sqlHandler.loadPerkEmojis();
+            try {
+                HiveBot.sqlHandler.loadPerkEmojis();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
 
             Timer timer = new Timer();
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);

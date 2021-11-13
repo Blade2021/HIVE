@@ -7,6 +7,8 @@ import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
+
 public class UserAuth extends Command {
     @Override
     public Integer getPermissionIndex() {
@@ -14,16 +16,16 @@ public class UserAuth extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
         handleEvent(content,message);
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         handleEvent(content,message);
     }
 
-    private void handleEvent(String content, Message message){
+    private void handleEvent(String content, Message message) throws SQLException {
         String[] args = content.split("\\s+");
         if((args != null) && (args.length >= 1)){
 

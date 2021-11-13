@@ -11,18 +11,19 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class EmojiList extends Command {
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
         handleEvent(sender);
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         reply(event,handleEvent(sender));
     }
 
@@ -36,7 +37,7 @@ public class EmojiList extends Command {
         return returnString;
     }
 
-    private Message handleEvent(User sender){
+    private Message handleEvent(User sender) throws SQLException {
         Member member = HiveBot.mainGuild().getMemberById(sender.getIdLong());
         if(member != null){
 

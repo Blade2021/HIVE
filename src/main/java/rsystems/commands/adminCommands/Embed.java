@@ -9,6 +9,7 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 
 public class Embed extends Command {
 
@@ -23,7 +24,7 @@ public class Embed extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         String[] args = content.split("\\s+");
 
         // UPDATE MESSAGE
@@ -80,11 +81,19 @@ public class Embed extends Command {
 
         if(outChannel == null) {
             channel.sendMessage(embed).queue(success -> {
-                HiveBot.sqlHandler.storeEmbedData(success.getChannel().getIdLong(), success.getIdLong());
+                try {
+                    HiveBot.sqlHandler.storeEmbedData(success.getChannel().getIdLong(), success.getIdLong());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             });
         } else {
             outChannel.sendMessage(embed).queue(success -> {
-                HiveBot.sqlHandler.storeEmbedData(success.getChannel().getIdLong(), success.getIdLong());
+                try {
+                    HiveBot.sqlHandler.storeEmbedData(success.getChannel().getIdLong(), success.getIdLong());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             });
         }
 
@@ -188,7 +197,7 @@ public class Embed extends Command {
     SET COLOR SUB-COMMAND
      */
 
-    private void setColor(Long messageID, String colorCode) {
+    private void setColor(Long messageID, String colorCode) throws SQLException {
         TextChannel embedChannel = HiveBot.mainGuild().getTextChannelById(HiveBot.sqlHandler.getEmbedChannel(messageID));
         if (embedChannel != null) {
             Message embedMessage = embedChannel.retrieveMessageById(messageID).complete();

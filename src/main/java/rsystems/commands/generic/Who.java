@@ -11,6 +11,7 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.time.format.DateTimeFormatter;
 
 public class Who extends Command {
@@ -20,7 +21,7 @@ public class Who extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         Member lookupMember = null;
         if(!event.getMessage().getMentionedMembers().isEmpty()){
             lookupMember = event.getMessage().getMentionedMembers().get(0);

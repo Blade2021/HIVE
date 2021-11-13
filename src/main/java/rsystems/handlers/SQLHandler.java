@@ -34,19 +34,19 @@ public class SQLHandler {
         SQLHandler.pool = pool;
     }
 
-    public String getValue(String tableName, String valueColumn, String identifierColumn, Long identifier){
+    public String getValue(String tableName, String valueColumn, String identifierColumn, Long identifier) throws SQLException {
         String output = null;
-        try {
-            Connection connection = pool.getConnection();
+        Connection connection = pool.getConnection();
 
+        try {
             ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn,tableName,identifierColumn,identifier));
             while (rs.next()) {
                 output = rs.getString(valueColumn);
             }
-
-            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
 
@@ -58,43 +58,44 @@ public class SQLHandler {
      * @param userID The userid of the user to be checked.
      * @return Wether of not the user is blacklisted
      */
-    public boolean checkBlacklist(Long userID) {
+    public boolean checkBlacklist(Long userID) throws SQLException {
         boolean output = false;
-        try {
-            Connection connection = pool.getConnection();
 
+        Connection connection = pool.getConnection();
+
+        try {
             ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT UserID FROM HIVE_Blacklist WHERE UserID = %d", userID));
             while (rs.next()) {
                 if (rs.getLong("UserID") == userID) {
                     output = true;
                 }
             }
-
-            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
 
     }
 
     // Get date of last seen using ID
-    public String getDate(String id) {
+    public String getDate(String id) throws SQLException {
         String date = "";
 
-        try {
+        Connection connection = pool.getConnection();
 
-            Connection connection = pool.getConnection();
+        try {
             Statement st = connection.createStatement();
             ResultSet rs = st.executeQuery("SELECT DATE FROM LastSeenTable WHERE ID = " + id);
             while (rs.next()) {
                 date = rs.getString("DATE");
             }
 
-            connection.close();
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return date;
@@ -195,11 +196,12 @@ public class SQLHandler {
     }
 
     
-    public String getDate(String id, String table) {
+    public String getDate(String id, String table) throws SQLException {
         String date = "";
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT DATE FROM " + table + " WHERE ID = " + id);
@@ -207,9 +209,10 @@ public class SQLHandler {
                 date = rs.getString("DATE");
             }
 
-            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return date;
@@ -217,12 +220,12 @@ public class SQLHandler {
 
     // Set the last seen date using id
     
-    public int setDate(String table, String id, String date) {
+    public int setDate(String table, String id, String date) throws SQLException {
 
         int updateCount = 0;
+        Connection connection = pool.getConnection();
 
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             updateCount = st.executeUpdate("UPDATE " + table + " SET DATE = \"" + date + "\" WHERE ID = " + id);
@@ -230,16 +233,18 @@ public class SQLHandler {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return updateCount;
     }
 
     // Get date of last seen using ID
-    public String getName(String id) {
+    public String getName(String id) throws SQLException {
         String name = "";
+        Connection connection = pool.getConnection();
 
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT NAME FROM LastSeenTable WHERE ID = " + id);
@@ -247,54 +252,60 @@ public class SQLHandler {
                 name = rs.getString("NAME");
             }
 
-            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return name;
     }
 
     // Set the name of the user using id
-    public int setName(String id, String name) {
+    public int setName(String id, String name) throws SQLException {
         int output = 0;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             output = (st.executeUpdate("UPDATE LastSeenTable SET NAME = \"" + name + "\" WHERE ID = " + id));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
     }
 
     // Insert NEW users into the DB
-    public boolean insertUser(String id, String name, String date) {
+    public boolean insertUser(String id, String name, String date) throws SQLException {
         boolean output = false;
+        Connection connection = pool.getConnection();
 
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             output = st.execute("INSERT INTO LastSeenTable (ID,NAME,DATE) VALUES(" + id + ",\"" + name + "\",\"" + date + "\");");
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
     // Insert NEW users into the DB
-    public boolean insertUser(String id, String name, String date, String column) {
+    public boolean insertUser(String id, String name, String date, String column) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             output = st.execute("INSERT INTO " + column + " (ID,NAME,DATE) VALUES(" + id + ",\"" + name + "\",\"" + date + "\");");
@@ -302,44 +313,50 @@ public class SQLHandler {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
     // Remove using from DB
-    public boolean removeUser(String id) {
+    public boolean removeUser(String id) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             output = st.execute("DELETE FROM LastSeenTable WHERE ID = " + id);
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
     }
 
     // Return an array list of all values in the DB
-    public ArrayList<String> getAllUsers(String column) {
+    public ArrayList<String> getAllUsers(String column) throws SQLException {
         ArrayList<String> values = new ArrayList<>();
+        Connection connection = pool.getConnection();
 
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT " + column + " FROM LastSeenTable");
             while (rs.next()) {
                 values.add(rs.getString(column));
             }
-            connection.close();
+
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return values;
     }
@@ -413,9 +430,11 @@ public class SQLHandler {
      *
      * @param commandName The command/reference to be logged.
      */
-    public void logCommandUsage(String commandName) {
+    public void logCommandUsage(String commandName) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT UsageCount FROM HIVE_CommandTracker WHERE Name = \"%s\"", commandName));
@@ -430,10 +449,11 @@ public class SQLHandler {
             if (!commandFound) {
                 st.execute(String.format("INSERT INTO HIVE_CommandTracker (Name, UsageCount) VALUES (\"%s\", 1)", commandName));
             }
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
     }
 
@@ -445,21 +465,23 @@ public class SQLHandler {
      * @param authLevel The permission index that the role will have.  This uses the binary system as before.
      * @return True - No errors | False - Errors occured on insert
      */
-    public boolean addAuthRole(Long roleID, String roleName, Integer authLevel) {
+    public boolean addAuthRole(Long roleID, String roleName, Integer authLevel) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             st.execute(String.format("INSERT INTO HIVE_AuthRole (RoleID, RoleName, AuthLevel) VALUES (%d, \"%s\",%d)", roleID, roleName, authLevel));
             if (st.getUpdateCount() >= 1) {
                 output = true;
             }
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -471,11 +493,12 @@ public class SQLHandler {
      * @param roleID The role to be removed from the authentication table.
      * @return True - No errors | False - Errors occured on removal
      */
-    public boolean removeAuthRole(Long roleID) {
+    public boolean removeAuthRole(Long roleID) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             st.execute(String.format("DELETE FROM HIVE_AuthRole WHERE (RoleID = %d)", roleID));
@@ -486,6 +509,8 @@ public class SQLHandler {
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -498,21 +523,23 @@ public class SQLHandler {
      * @param roleName The new name of the role.
      * @return True - No errors | False - Errors occured on insert
      */
-    public boolean updateAuthRole(Long roleID, String roleName) {
+    public boolean updateAuthRole(Long roleID, String roleName) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             st.execute(String.format("UPDATE HIVE_AuthRole SET (RoleName = \"%s\") WHERE (RoleID = %d)", roleName, roleID));
             if (st.getUpdateCount() >= 1) {
                 output = true;
             }
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -525,21 +552,23 @@ public class SQLHandler {
      * @param authLevel The new permissions for the role.
      * @return True - No errors | False - Errors occured on insert
      */
-    public boolean updateAuthRole(Long roleID, Integer authLevel) {
+    public boolean updateAuthRole(Long roleID, Integer authLevel) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             st.execute(String.format("UPDATE HIVE_AuthRole SET AuthLevel = %d WHERE RoleID = %d", authLevel, roleID));
             if (st.getUpdateCount() >= 1) {
                 output = true;
             }
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -550,11 +579,12 @@ public class SQLHandler {
      *
      * @return Map[RoleID,Role Permissions]
      */
-    public Map<Long,Integer> getAuthRoles(){
+    public Map<Long,Integer> getAuthRoles() throws SQLException {
         Map<Long, Integer> authMap = new HashMap<>();
 
+        Connection connection = pool.getConnection();
+
         try{
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT RoleID, AuthLevel FROM HIVE_AuthRole");
@@ -562,10 +592,10 @@ public class SQLHandler {
                 authMap.putIfAbsent(rs.getLong("RoleID"),rs.getInt("AuthLevel"));
             }
 
-            connection.close();
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return authMap;
@@ -578,11 +608,12 @@ public class SQLHandler {
      * @param emojiUnicode The emoji in ALIAS form that will get stored as a varchar in the database.
      * @return True = Successful insertion | False = Database Error
      */
-    public boolean addEmojiToWhitelist(Long roleID, String emojiUnicode) {
+    public boolean addEmojiToWhitelist(Long roleID, String emojiUnicode) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
             Statement st = connection.createStatement();
 
             boolean emojiFound = false;
@@ -599,10 +630,10 @@ public class SQLHandler {
                 }
             }
 
-            connection.close();
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -614,12 +645,14 @@ public class SQLHandler {
      * @param emoji The emoji to be removed from the whitelist.
      * @return True - Emoji found and removed | False - No matches found
      */
-    public boolean removeEmojiFromWhitelist(Long roleID, String emoji) {
+    public boolean removeEmojiFromWhitelist(Long roleID, String emoji) throws SQLException {
 
         boolean output = false;
 
+        Connection connection = pool.getConnection();
+
         try {
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.execute(String.format("DELETE FROM HIVE_PerksEmoji WHERE RoleID = %d AND EmojiUnicode = \"%s\"", roleID, emoji));
@@ -627,19 +660,23 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
-    public void loadPerkEmojis(){
+    public void loadPerkEmojis() throws SQLException {
+
+        Connection connection = pool.getConnection();
 
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             HiveBot.emojiPerkMap.clear();
@@ -658,9 +695,11 @@ public class SQLHandler {
                 }
 
             }
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
     }
@@ -671,10 +710,12 @@ public class SQLHandler {
      * @param commandName The command name.
      * @return # of times the command/reference has been called.
      */
-    public Integer checkUsage(String commandName){
+    public Integer checkUsage(String commandName) throws SQLException {
         Integer output = null;
+
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT UsageCount, LastUsage FROM HIVE_CommandTracker WHERE Name = \"%s\"", commandName));
@@ -684,9 +725,11 @@ public class SQLHandler {
 
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
     }
@@ -698,11 +741,13 @@ public class SQLHandler {
      * @param roleID The roleID to compare to the database.
      * @return If role is found on the Assignable role table, then returns true.  Otherwise return false.
      */
-    public boolean checkAssignableRole(Long roleID){
+    public boolean checkAssignableRole(Long roleID) throws SQLException {
 
         Boolean output = false;
+
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_AssignRole WHERE RoleID = %d", roleID));
@@ -710,9 +755,11 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
     }
@@ -722,11 +769,13 @@ public class SQLHandler {
      *
      * @return List[RoleIDs] of assignable roles.
      */
-    public List<Long> assignableRoleList(){
+    public List<Long> assignableRoleList() throws SQLException {
 
         List<Long> output = new ArrayList<>();
+
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_AssignRole"));
@@ -734,9 +783,11 @@ public class SQLHandler {
                 output.add(rs.getLong("RoleID"));
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
         return output;
     }
@@ -750,11 +801,12 @@ public class SQLHandler {
      * @param messageID The messageID, to allow grabbing the message in the future.
      * @return true = Successful insert into database | false = Database insertion error
      */
-    public boolean storeEmbedData(Long channelID, Long messageID){
+    public boolean storeEmbedData(Long channelID, Long messageID) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.execute(String.format("INSERT INTO HIVE_EmbedTable (ChannelID, MessageID) VALUES (%d, %d)",channelID,messageID));
@@ -762,9 +814,11 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -777,11 +831,12 @@ public class SQLHandler {
      * @param messageID The ID of the message to lookup.
      * @return Returns channelID if messageID was found.  Otherwise returns null.
      */
-    public Long getEmbedChannel(Long messageID){
+    public Long getEmbedChannel(Long messageID) throws SQLException {
         Long output = null;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT ChannelID FROM HIVE_EmbedTable WHERE MessageID = %d",messageID));
@@ -789,9 +844,11 @@ public class SQLHandler {
                 output = rs.getLong("ChannelID");
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -806,19 +863,22 @@ public class SQLHandler {
      * @param identifier The identifier that will determine what row to delete.
      * @return Returns how many rows were deleted.
      */
-    public Integer deleteValue(String tableName, String identifierColumn, Long identifier){
+    public Integer deleteValue(String tableName, String identifierColumn, Long identifier) throws SQLException {
         Integer output = null;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
             output = st.getUpdateCount();
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -831,19 +891,22 @@ public class SQLHandler {
      * @param identifier The identifier, this is used to query what rows to delete
      * @return The amount of rows deleted.
      */
-    public Integer deleteValue(String tableName, String identifierColumn, Integer identifier){
+    public Integer deleteValue(String tableName, String identifierColumn, Integer identifier) throws SQLException {
         Integer output = null;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
             output = st.getUpdateCount();
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -854,11 +917,12 @@ public class SQLHandler {
      * @param activity What to add to the queue of messages that get displayed in the activity field.  Limit 32 characters
      * @return Returns the ID of the inserted row
      */
-    public Integer insertActivity(String activity){
+    public Integer insertActivity(String activity) throws SQLException {
         Integer output = 0;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
 
             PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO HIVE_ActivityList (ActivityString) VALUES (\"%s\")",activity),new String[] {"ID"});
             st.execute();
@@ -870,9 +934,11 @@ public class SQLHandler {
                 }
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -882,11 +948,12 @@ public class SQLHandler {
      * Get a TreeMap of the activities that are in the database pool.
      * @return TreeMap of entries
      */
-    public TreeMap<Integer, String> getActivityMap(){
+    public TreeMap<Integer, String> getActivityMap() throws SQLException {
         TreeMap<Integer, String> activityMap = new TreeMap<>();
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT ID, ActivityString FROM HIVE_ActivityList");
@@ -894,9 +961,11 @@ public class SQLHandler {
                 activityMap.putIfAbsent(rs.getInt("ID"),rs.getString("ActivityString"));
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return activityMap;
@@ -908,11 +977,12 @@ public class SQLHandler {
      * @param currentIndex The current activities ID
      * @return The next activity found in the database.
      */
-    public String nextActivity(Integer currentIndex){
+    public String nextActivity(Integer currentIndex) throws SQLException {
         String output = null;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT ID, ActivityString FROM HIVE_ActivityList WHERE ID > %d LIMIT 1",currentIndex));
@@ -930,9 +1000,11 @@ public class SQLHandler {
                 HiveBot.activityStatusIndex = 1;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -944,11 +1016,12 @@ public class SQLHandler {
      * @param userID The userid of the user to be checked
      * @return True - Authorized | False - Unauthorized
      */
-    public Integer checkAuthOverride(Long userID){
+    public Integer checkAuthOverride(Long userID) throws SQLException {
         Integer output = null;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT AuthLevel FROM HIVE_AuthUser WHERE UserID = %d LIMIT 1",userID));
@@ -956,9 +1029,11 @@ public class SQLHandler {
                 output = rs.getInt("AuthLevel");
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -971,11 +1046,12 @@ public class SQLHandler {
      * @param userTag The user's tag for reference purposes only.
      * @return True - Insert transaction completed | False - Errors Occurred
      */
-    public boolean insertAuthUser(Long userID, int authLevel, String userTag){
+    public boolean insertAuthUser(Long userID, int authLevel, String userTag) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("INSERT INTO HIVE_AuthUser (UserID, AuthLevel, UserTag) VALUES (%d, %d, '%s')",userID,authLevel,userTag));
@@ -983,19 +1059,22 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
-    public boolean removeAuthUser(Long userID){
+    public boolean removeAuthUser(Long userID) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("DELETE FROM HIVE_AuthUser WHERE UserID = %d",userID));
@@ -1003,19 +1082,22 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
-    public boolean updateAuthUser(Long userID, Integer newAuthLevel){
+    public boolean updateAuthUser(Long userID, Integer newAuthLevel) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET AuthLevel = %d WHERE UserID = %d",newAuthLevel, userID));
@@ -1023,19 +1105,22 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
-    public boolean updateAuthUser(Long userID, String userTag){
+    public boolean updateAuthUser(Long userID, String userTag) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET UserTag = '%s' WHERE UserID = %d",userTag, userID));
@@ -1043,13 +1128,16 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
+
 
     /**
      * This method will add a string to the database to be pulled when a user uses the Mini command.
@@ -1057,11 +1145,12 @@ public class SQLHandler {
      * @param message The message to be added
      * @return True - Successful Transaction | False - Error
      */
-    public boolean insertUserMessage(Long userID, String message){
+    public boolean insertUserMessage(Long userID, String message) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("INSERT INTO HIVE_UserMessageTable (UserID, Message) VALUES (%d, '%s')",userID,message));
@@ -1069,9 +1158,11 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -1083,11 +1174,12 @@ public class SQLHandler {
      * @param message The updated message to overwrite the current one.
      * @return True - Successful Transaction | False - Errors
      */
-    public boolean updateUserMessage(Long userID, String message){
+    public boolean updateUserMessage(Long userID, String message) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Message = \"%s\" WHERE UserID = %d",message,userID));
@@ -1095,9 +1187,11 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
@@ -1109,11 +1203,12 @@ public class SQLHandler {
      * @param colorCode The updated color to overwrite the current one.
      * @return True - Successful Transaction | False - Errors
      */
-    public boolean updateUserMessageColor(Long userID, String colorCode){
+    public boolean updateUserMessageColor(Long userID, String colorCode) throws SQLException {
         boolean output = false;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Color = \"%s\" WHERE UserID = %d",colorCode,userID));
@@ -1121,19 +1216,22 @@ public class SQLHandler {
                 output = true;
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return output;
     }
 
-    public String grabRandomGreeting(){
+    public String grabRandomGreeting() throws SQLException {
         String returnString = null;
 
+        Connection connection = pool.getConnection();
         try{
-            Connection connection = pool.getConnection();
+
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT Message FROM HIVE_Greetings ORDER BY RAND() LIMIT 1");
@@ -1141,9 +1239,11 @@ public class SQLHandler {
                 returnString = rs.getString("Message");
             }
 
-            connection.close();
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        } finally {
+            connection.close();
         }
 
         return returnString;

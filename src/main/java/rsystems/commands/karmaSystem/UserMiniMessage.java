@@ -13,6 +13,7 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.awt.*;
+import java.sql.SQLException;
 
 public class UserMiniMessage extends Command {
 
@@ -22,7 +23,7 @@ public class UserMiniMessage extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         String[] args = content.split("\\s+");
 
         if ((args != null) && (args.length >= 1)) {
@@ -189,7 +190,7 @@ public class UserMiniMessage extends Command {
         return returnString;
     }
 
-    private void postMessage(GuildMessageReceivedEvent event, Member member, String userMessage){
+    private void postMessage(GuildMessageReceivedEvent event, Member member, String userMessage) throws SQLException {
         String color = "#5742f5";
         color = HiveBot.sqlHandler.getValue("HIVE_UserMessageTable","Color","UserID",member.getIdLong());
 

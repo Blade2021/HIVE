@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
+
 public class CommandUsage extends Command {
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
@@ -31,7 +33,11 @@ public class CommandUsage extends Command {
     private Integer handleEvent(String content){
         Integer output = null;
         String[] args = content.split("\\s+");
-        output = HiveBot.sqlHandler.checkUsage(args[0]);
+        try {
+            output = HiveBot.sqlHandler.checkUsage(args[0]);
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
 
         return output;
     }

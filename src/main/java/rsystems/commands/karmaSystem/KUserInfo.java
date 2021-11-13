@@ -13,15 +13,16 @@ import rsystems.objects.Command;
 import rsystems.objects.KarmaUserInfo;
 
 import java.awt.*;
+import java.sql.SQLException;
 
 public class KUserInfo extends Command {
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException {
         reply(event,karmaMessage(sender));
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
 
         if(!event.getMessage().getMentionedMembers().isEmpty()){
             reply(event,karmaMessage(event.getMessage().getMentionedMembers().get(0).getUser()));
@@ -34,7 +35,7 @@ public class KUserInfo extends Command {
         return null;
     }
 
-    private Message karmaMessage(User sender){
+    private Message karmaMessage(User sender) throws SQLException {
         MessageBuilder messageBuilder = new MessageBuilder();
 
         KarmaUserInfo karmaUserInfo;

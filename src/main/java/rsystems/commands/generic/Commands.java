@@ -11,6 +11,7 @@ import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,7 +25,7 @@ public class Commands extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
 
         List<String> genericCommands = new ArrayList<>();
         List<String> authorizedCommands = new ArrayList<>();

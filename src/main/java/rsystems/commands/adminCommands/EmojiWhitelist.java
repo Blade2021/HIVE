@@ -12,6 +12,7 @@ import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +29,7 @@ public class EmojiWhitelist extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         String[] args = content.split("\\s+");
         if((args != null) && (args.length >= 1)){
 
@@ -65,7 +66,11 @@ public class EmojiWhitelist extends Command {
                 Long associatedRole = Long.valueOf(args[1]);
 
                 for(String emoji:EmojiParser.extractEmojis(content)){
-                    HiveBot.sqlHandler.removeEmojiFromWhitelist(associatedRole,EmojiParser.parseToAliases(emoji));
+                    try {
+                        HiveBot.sqlHandler.removeEmojiFromWhitelist(associatedRole, EmojiParser.parseToAliases(emoji));
+                    } catch (SQLException throwables) {
+                        throwables.printStackTrace();
+                    }
                 }
                 message.addReaction("✅ ").queue();
             }
@@ -111,7 +116,7 @@ public class EmojiWhitelist extends Command {
         return returnString;
     }
 
-    private boolean subCommand_AddEmoji(String content){
+    private boolean subCommand_AddEmoji(String content) throws SQLException {
         boolean output = false;
 
         String[] args = content.split("\\s+");

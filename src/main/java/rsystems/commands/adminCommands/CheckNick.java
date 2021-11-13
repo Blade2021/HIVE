@@ -10,6 +10,8 @@ import rsystems.HiveBot;
 import rsystems.events.NicknameListener;
 import rsystems.objects.Command;
 
+import java.sql.SQLException;
+
 public class CheckNick extends Command {
     @Override
     public Integer getPermissionIndex() {
@@ -22,7 +24,7 @@ public class CheckNick extends Command {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException {
         String[] args = content.split("\\s+");
 
         if((args == null) || (args[0].isEmpty())){

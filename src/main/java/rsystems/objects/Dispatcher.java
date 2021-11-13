@@ -27,6 +27,7 @@ import rsystems.commands.streamRelated.StreamMode;
 import rsystems.commands.utility.Led;
 import rsystems.commands.utility.LedList;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -96,8 +97,13 @@ public class Dispatcher extends ListenerAdapter {
         final Long authorID = event.getAuthor().getIdLong();
 
         // Check Blacklist for user
-        if (HiveBot.sqlHandler.checkBlacklist(authorID))
+        try {
+            if (HiveBot.sqlHandler.checkBlacklist(authorID))
+                return;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return;
+        }
 
         final String prefix = Config.get("bot_prefix");
         String message = event.getMessage().getContentRaw();
@@ -131,8 +137,13 @@ public class Dispatcher extends ListenerAdapter {
         final Long authorID = event.getAuthor().getIdLong();
 
         // Check Blacklist for user
-        if (HiveBot.sqlHandler.checkBlacklist(authorID))
+        try {
+            if (HiveBot.sqlHandler.checkBlacklist(authorID))
+                return;
+        } catch (SQLException e) {
+            e.printStackTrace();
             return;
+        }
 
         final String prefix = Config.get("bot_prefix");
         String message = event.getMessage().getContentRaw();
@@ -175,7 +186,11 @@ public class Dispatcher extends ListenerAdapter {
             if (c.getPermissionIndex() == null) {
                 authorized = true;
             } else {
-                authorized = checkAuthorized(event.getMember(), c.getPermissionIndex());
+                try {
+                    authorized = checkAuthorized(event.getMember(), c.getPermissionIndex());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
             if (authorized) {
@@ -208,7 +223,11 @@ public class Dispatcher extends ListenerAdapter {
                 authorized = true;
             } else {
                 if (HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()) != null) {
-                    authorized = checkAuthorized(HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()), c.getPermissionIndex());
+                    try {
+                        authorized = checkAuthorized(HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()), c.getPermissionIndex());
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
             if (authorized) {
@@ -260,7 +279,7 @@ public class Dispatcher extends ListenerAdapter {
      * @param commandPermission The permission index of the command.  (Can be null!)
      * @return True = Authorized | False = Not Authorized
      */
-    public boolean checkAuthorized(final Member member, final Integer commandPermission) {
+    public boolean checkAuthorized(final Member member, final Integer commandPermission) throws SQLException {
         boolean authorized = false;
 
         Integer userAuthOverride = HiveBot.sqlHandler.checkAuthOverride(member.getIdLong());
