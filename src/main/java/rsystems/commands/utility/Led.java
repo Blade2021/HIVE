@@ -70,10 +70,10 @@ public class Led extends Command {
                 embedBuilder.addField("Max Wattage (Tested)",String.format("`%.3f` Watts",led.getWattagePerPixel_Tested()*qty),true);
                 embedBuilder.addBlankField(true);
 
-                float averageAmperage = (float) ((amperageTested * qty) / .6);
+                float averageAmperage = (float) ((amperageTested * qty) * .6);
                 embedBuilder.addField("Average Amperage (Tested)",String.format("`%.3f` Amps",averageAmperage),true);
 
-                float averageWattage = (float) ((led.getWattagePerPixel_Tested() * qty) / .6);
+                float averageWattage = (float) ((led.getWattagePerPixel_Tested() * qty) * .6);
                 embedBuilder.addField("Average Wattage (Tested)",String.format("`%.3f` Watts",averageWattage),true);
 
                 embedBuilder.addBlankField(true);
