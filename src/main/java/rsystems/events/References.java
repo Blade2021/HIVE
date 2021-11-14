@@ -128,12 +128,12 @@ public class References extends ListenerAdapter {
         if((args != null) && (args[0].toLowerCase().startsWith(Config.get("Prefix")))) {
 
             //Replace the first occurance of the bot's prefix with null
-            String content = event.getMessage().getContentDisplay().replaceFirst(prefix, "");
+            String content = event.getMessage().getContentRaw().replaceFirst(prefix, "");
 
             //Remove all mentions for checking the message for reference
             if (!event.getMessage().getMentionedMembers().isEmpty()) {
                 for (Member m : event.getMessage().getMentionedMembers()) {
-                    content = content.replaceAll("@" + m.getEffectiveName(), "");
+                    content = content.replaceAll("<!@" + m.getId() + ">", "");
                 }
             }
 
