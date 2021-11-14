@@ -133,7 +133,7 @@ public class References extends ListenerAdapter {
             //Remove all mentions for checking the message for reference
             if (!event.getMessage().getMentionedMembers().isEmpty()) {
                 for (Member m : event.getMessage().getMentionedMembers()) {
-                    content = content.replaceAll("<!@" + m.getId() + ">", "");
+                    content = content.replaceAll("<@!" + m.getId() + ">", "");
                 }
             }
 
