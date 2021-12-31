@@ -1,8 +1,8 @@
 ---
 name: Bug report
 about: Create a report to help us improve
-title: ''
-labels: 'Type: bug, Priority: medium'
+title: "[BR] "
+labels: 'Priority: medium, Status: initial request, Type: bug'
 assignees: Blade2021
 
 ---
