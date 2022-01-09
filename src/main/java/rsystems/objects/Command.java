@@ -3,9 +3,9 @@ package rsystems.objects;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 
 import java.sql.SQLException;
 import java.util.function.Consumer;
@@ -24,9 +24,7 @@ public abstract class Command {
 
     private static final FixedSizeCache<Long, TLongSet> MESSAGE_LINK_MAP = new FixedSizeCache<>(20);
 
-    public abstract void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) throws SQLException;
-
-    public abstract void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) throws SQLException;
+    public abstract void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException;
 
     public abstract String getHelp();
 
@@ -39,30 +37,30 @@ public abstract class Command {
      * @param event
      * @param message
      */
-    protected void reply(GuildMessageReceivedEvent event, String message){
+    protected void reply(MessageReceivedEvent event, String message){
         reply(event,message,null);
     }
 
-    protected void reply(GuildMessageReceivedEvent event, Message message){
+    protected void reply(MessageReceivedEvent event, Message message){
         reply(event,message,null);
     }
 
-    protected void reply(GuildMessageReceivedEvent event, String message, Consumer<Message> successConsumer)
+    protected void reply(MessageReceivedEvent event, String message, Consumer<Message> successConsumer)
     {
         reply(event, new MessageBuilder(message).build(), successConsumer);
     }
 
-    protected void reply(GuildMessageReceivedEvent event, MessageEmbed embed)
+    protected void reply(MessageReceivedEvent event, MessageEmbed embed)
     {
         reply(event, embed, null);
     }
 
-    protected void reply(GuildMessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
+    protected void reply(MessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
     {
         reply(event, new MessageBuilder(embed).build(), successConsumer);
     }
 
-    protected void reply(GuildMessageReceivedEvent event, Message message, Consumer<Message> successConsumer)
+    protected void reply(MessageReceivedEvent event, Message message, Consumer<Message> successConsumer)
     {
         event.getMessage().reply(message).queue(msg ->
         {
@@ -72,68 +70,33 @@ public abstract class Command {
         });
     }
 
-    protected void channelReply(GuildMessageReceivedEvent event, Message message){
+    protected void channelReply(MessageReceivedEvent event, Message message){
         channelReply(event,message,null);
     }
 
-    protected void channelReply(GuildMessageReceivedEvent event, String message){
+    protected void channelReply(MessageReceivedEvent event, String message){
         channelReply(event,message,null);
     }
 
-    protected void channelReply(GuildMessageReceivedEvent event, MessageEmbed embed)
+    protected void channelReply(MessageReceivedEvent event, MessageEmbed embed)
     {
         channelReply(event, embed, null);
     }
 
-    protected void channelReply(GuildMessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
+    protected void channelReply(MessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
     {
         channelReply(event, new MessageBuilder(embed).build(), successConsumer);
     }
 
-    protected void channelReply(GuildMessageReceivedEvent event, String message, Consumer<Message> successConsumer)
+    protected void channelReply(MessageReceivedEvent event, String message, Consumer<Message> successConsumer)
     {
         channelReply(event, new MessageBuilder(message).build(), successConsumer);
     }
 
-    protected void channelReply(GuildMessageReceivedEvent event, Message message, Consumer<Message> successConsumer){
+    protected void channelReply(MessageReceivedEvent event, Message message, Consumer<Message> successConsumer){
         event.getChannel().sendMessage(message).queue(msg -> {
 
             linkMessage(event.getMessageIdLong(),msg.getIdLong());
-            if(successConsumer != null)
-                successConsumer.accept(msg);
-        });
-    }
-
-
-
-    protected void reply(PrivateMessageReceivedEvent event, String message){
-        event.getMessage().reply(message).queue();
-    }
-
-    protected void reply(PrivateMessageReceivedEvent event, Message message){
-        event.getMessage().reply(message).queue();
-    }
-
-    protected void reply(PrivateMessageReceivedEvent event, String message, Consumer<Message> successConsumer)
-    {
-        reply(event, new MessageBuilder(message).build(), successConsumer);
-    }
-
-    protected void reply(PrivateMessageReceivedEvent event, MessageEmbed embed)
-    {
-        reply(event, embed, null);
-    }
-
-    protected void reply(PrivateMessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
-    {
-        reply(event, new MessageBuilder(embed).build(), successConsumer);
-    }
-
-    protected void reply(PrivateMessageReceivedEvent event, Message message, Consumer<Message> successConsumer)
-    {
-        event.getChannel().sendMessage(message).queue(msg ->
-        {
-            linkMessage(event.getMessageIdLong(), msg.getIdLong());
             if(successConsumer != null)
                 successConsumer.accept(msg);
         });
@@ -154,7 +117,7 @@ public abstract class Command {
         set.add(responseId);
     }
 
-    static void removeResponses(TextChannel channel, long messageId)
+    public static void removeResponses(MessageChannel channel, long messageId)
     {
         TLongSet responses = MESSAGE_LINK_MAP.get(messageId);
         if(responses != null)
@@ -165,5 +128,13 @@ public abstract class Command {
 
     public String[] getAliases(){
         return new String[0];
+    }
+
+    public boolean isOwnerOnly(){
+        return false;
+    }
+
+    public Permission getDiscordPermission() {
+        return null;
     }
 }

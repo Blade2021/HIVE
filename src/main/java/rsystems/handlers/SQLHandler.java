@@ -101,6 +101,70 @@ public class SQLHandler {
         return date;
     }
 
+    public ArrayList<String> getList(String tableName,String columnName) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s",columnName,tableName));
+            while (rs.next()) {
+                list.add(rs.getString(columnName));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return list;
+    }
+
+    public ArrayList<String> getList(Long guildID,String tableName,String columnName) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE ChildGuildID = %d",columnName,tableName,guildID));
+            while (rs.next()) {
+                list.add(rs.getString(columnName));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return list;
+    }
+
+    public Map<Long, String> getMap(Long guildID,String tableName,String firstColumn,String secondColumn) throws SQLException {
+        Map<Long, String> map = new HashMap<>();
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT %s, %s FROM %s WHERE ChildGuildID = %d",firstColumn,secondColumn,tableName,guildID));
+            while (rs.next()) {
+
+                map.putIfAbsent(rs.getLong(firstColumn),rs.getString(secondColumn));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return map;
+    }
+
 
     // Get date of last seen using ID
     public LED getLED(String ledName) throws SQLException {
@@ -1136,6 +1200,26 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public Map<Long, Integer> getModRoles() throws SQLException {
+        Map<Long, Integer> resultSet = new HashMap<>();
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT ModRoleID,Permissions FROM ModRoleTable");
+            while (rs.next()) {
+                resultSet.put(rs.getLong("ModRoleID"), rs.getInt("Permissions"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return resultSet;
     }
 
 

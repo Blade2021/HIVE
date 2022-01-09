@@ -13,7 +13,7 @@ import net.dv8tion.jda.internal.JDAImpl;
 import rsystems.events.*;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
-import rsystems.objects.Dispatcher;
+import rsystems.handlers.Dispatcher;
 import rsystems.tasks.AddKarmaPoints;
 import rsystems.tasks.BotActivity;
 import rsystems.tasks.Newcomer;
@@ -29,20 +29,15 @@ import java.util.logging.Logger;
 public class HiveBot{
     public static String prefix = Config.get("prefix");
     public static int activityStatusIndex = 0;
-    public static String karmaPrefixPositive = Config.get("KARMA_PREFIX_POS");
-    public static String karmaPrefixNegative = Config.get("KARMA_PREFIX_NEG");
-    public static String version = "0.19.13";
+
+    public static Long botOwnerID = Long.valueOf(Config.get("owner_ID"));
 
     public static DBPool dbPool = new DBPool(Config.get("DATABASE_HOST"), Config.get("DATABASE_USER"),Config.get("DATABASE_PASS"));
-    public static SQLHandler sqlHandler = new SQLHandler(dbPool.getPool());
+    public static SQLHandler database = new SQLHandler(dbPool.getPool());
     public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(dbPool.getPool());
 
-    public static DataFile dataFile = new DataFile();
     public static Dispatcher dispatcher;
-    public static ActivityListener activityListener;
-    public static LocalPollHandler localPollHandler = new LocalPollHandler();
-
-    public static References references;
+    public static SlashCommandDispatcher slashCommandDispatcher;
 
     public static JDAImpl jda = null;
 
@@ -67,19 +62,9 @@ public class HiveBot{
                 .build();
 
         api.addEventListener(dispatcher = new Dispatcher());
-        api.addEventListener(new GuildMemberJoin());
-        api.addEventListener(new GratitudeListener());
-        //api.addEventListener(new TestEvent());
-        api.addEventListener(new NicknameListener());
-        api.addEventListener(references = new References());
-        api.addEventListener(new LinkCatcher());
-        api.addEventListener(activityListener = new ActivityListener());
-        api.addEventListener(new PrivateMessageListener());
-        api.addEventListener(new OnlineStatusListener());
-        api.addEventListener(new AskCommand());
-        api.addEventListener(new MessageDeletedEvent());
+        api.addEventListener(slashCommandDispatcher = new SlashCommandDispatcher());
 
-        References.loadReferences();
+        api.addEventListener(new GuildStateListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
@@ -91,7 +76,7 @@ public class HiveBot{
 
             //HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
             try {
-                HiveBot.sqlHandler.loadPerkEmojis();
+                HiveBot.database.loadPerkEmojis();
             } catch (SQLException throwables) {
                 throwables.printStackTrace();
             }

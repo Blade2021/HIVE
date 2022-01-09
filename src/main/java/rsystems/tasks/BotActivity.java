@@ -13,7 +13,7 @@ public class BotActivity extends TimerTask {
         final int currentIndex = HiveBot.activityStatusIndex;
         String newActivity = null;
         try {
-            newActivity = HiveBot.sqlHandler.nextActivity(currentIndex);
+            newActivity = HiveBot.database.nextActivity(currentIndex);
         } catch (SQLException e) {
             e.printStackTrace();
         }
