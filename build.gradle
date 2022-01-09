@@ -42,6 +42,7 @@ dependencies {
     //compile 'com.github.philippheuer.events4j:events4j:0.5.0'
 
 
+    implementation("ch.qos.logback:logback-classic:1.2.3")
     implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
     implementation group: "com.fasterxml.jackson.dataformat", name: "jackson-dataformat-yaml", version: '2.12.4'
 

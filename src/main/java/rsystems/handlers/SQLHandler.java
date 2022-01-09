@@ -13,6 +13,7 @@ import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
+import rsystems.objects.UserStreamObject;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
@@ -1393,6 +1394,33 @@ public class SQLHandler {
                 } else {
                     output = 201;
                 }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    public UserStreamObject getStreamPoints(Long userID) throws SQLException {
+        UserStreamObject output = null;
+
+        Connection connection = pool.getConnection();
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM EconomyTable WHERE UserID = " + userID);
+
+            while(rs.next()){
+                output = new UserStreamObject();
+                output.setPoints(rs.getInt("Points"));
+                output.setSpentPoints(rs.getInt("SpentPoints"));
+                break;
             }
 
         } catch (SQLException throwables) {
