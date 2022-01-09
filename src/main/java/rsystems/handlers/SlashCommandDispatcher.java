@@ -3,6 +3,7 @@ package rsystems.handlers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -10,6 +11,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
+import rsystems.slashCommands.moderation.StreamMode;
+import rsystems.slashCommands.user.Commands;
+import rsystems.slashCommands.user.GetKarma;
+import rsystems.slashCommands.user.Here;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -23,7 +28,10 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     private final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(10);
 
     public SlashCommandDispatcher() {
-
+        registerCommand(new Here());
+        registerCommand(new StreamMode());
+        registerCommand(new GetKarma());
+        registerCommand(new Commands());
     }
 
     public Set<SlashCommand> getCommands() {
@@ -185,9 +193,10 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     }
 
 
-    public void submitCommands(final JDA jda){
+    public void submitGuildCommands(final Guild guild){
 
-            jda.retrieveCommands().queue(commandsList -> {
+
+            guild.retrieveCommands().queue(commandsList -> {
 
                 ArrayList<String> updateList = new ArrayList<>();
 
@@ -219,7 +228,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                 for(SlashCommand slashCommand: this.slashCommands){
 
                     if(updateList.contains(slashCommand.getName())){
-                        jda.upsertCommand(slashCommand.getCommandData()).queue(success -> {
+                        guild.upsertCommand(slashCommand.getCommandData()).queue(success -> {
                             System.out.println(String.format("UPDATED COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
                         });
                     } else {
@@ -233,16 +242,77 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                         }
 
                         if (!cmdFound) {
-                            System.out.println(String.format("DIDN'T FIND COMMAND: %s FOR GLOBAL", slashCommand.getName()));
+                            System.out.println(String.format("DIDN'T FIND COMMAND: %s FOR GUILD: %d", slashCommand.getName(),guild.getIdLong()));
 
-                            jda.upsertCommand(slashCommand.getCommandData()).queueAfter(5, TimeUnit.SECONDS, success -> {
-                                System.out.println(String.format("UPSERT COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
+                            guild.upsertCommand(slashCommand.getCommandData()).queueAfter(5, TimeUnit.SECONDS, success -> {
+                                System.out.println(String.format("UPSERT COMMAND: %s FOR GUILD: %d  NEW ID: %d", success.getName(),guild.getIdLong(), success.getIdLong()));
                             });
                         }
                     }
                 }
 
             });
+
+    }
+
+    public void submitGlobalCommands(final JDA jda){
+
+        jda.retrieveCommands().queue(commandsList -> {
+
+            ArrayList<String> updateList = new ArrayList<>();
+
+            try {
+                updateList = HiveBot.database.getList("PushUpdateCommand","CommandName");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+
+            // DELETE ANY LINGERING COMMANDS THAT ARE NOT PART OF THE APPLICATION ANYMORE FROM THE GUILD COMMAND CACHE
+            for(net.dv8tion.jda.api.interactions.commands.Command command:commandsList){
+                Boolean cmdFound = false;
+
+                for(SlashCommand slashCommand: this.slashCommands){
+                    if(slashCommand.getName().equalsIgnoreCase(command.getName())){
+                        cmdFound = true;
+                        break;
+                    }
+                }
+
+                if(!cmdFound){
+                    System.out.println(String.format("REMOVING %s FROM GLOBAL (Command not found in SET)",command.getName()));
+                    command.delete().queue();
+                }
+            }
+
+            // ADD ANY MISSING COMMANDS TO THE GUILD
+            for(SlashCommand slashCommand: this.slashCommands){
+
+                if(updateList.contains(slashCommand.getName())){
+                    jda.upsertCommand(slashCommand.getCommandData()).queue(success -> {
+                        System.out.println(String.format("UPDATED COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
+                    });
+                } else {
+
+                    Boolean cmdFound = false;
+                    for (net.dv8tion.jda.api.interactions.commands.Command command : commandsList) {
+                        if (slashCommand.getName().equalsIgnoreCase(command.getName())) {
+                            cmdFound = true;
+                            break;
+                        }
+                    }
+
+                    if (!cmdFound) {
+                        System.out.println(String.format("DIDN'T FIND COMMAND: %s FOR GLOBAL", slashCommand.getName()));
+
+                        jda.upsertCommand(slashCommand.getCommandData()).queueAfter(5, TimeUnit.SECONDS, success -> {
+                            System.out.println(String.format("UPSERT COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
+                        });
+                    }
+                }
+            }
+
+        });
 
     }
 

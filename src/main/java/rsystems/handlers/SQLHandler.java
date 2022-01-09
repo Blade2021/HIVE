@@ -1,9 +1,16 @@
 package rsystems.handlers;
 
 import java.sql.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.Temporal;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
 
@@ -1331,6 +1338,70 @@ public class SQLHandler {
         }
 
         return returnString;
+    }
+
+    /**
+     *
+     * @param userID
+     * @return <p>200 = User Added or User Updated</p>
+     * <p>201 = Database error </p>
+     * <p>401 = User is not outside Here status window.  (Calling too many times)</p>
+     * @throws SQLException
+     */
+    public Integer acceptHereStatus(Long userID) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT LastHereStatus, Points FROM EconomyTable WHERE UserID = " + userID);
+
+            Integer currentPoints = null;
+            Instant previousTimestamp = null;
+            Integer incrementAmount = Integer.parseInt(Config.get("HERE_INCREMENT_AMOUNT"));
+
+            while(rs.next()){
+                currentPoints = rs.getInt("Points");
+                previousTimestamp = rs.getTimestamp("LastHereStatus").toInstant();
+                break;
+            }
+
+            if(currentPoints != null) {
+
+
+                if(previousTimestamp.plus(12,ChronoUnit.HOURS).isBefore(Instant.now())){
+
+                //if (previousTimestamp.isAfter(Instant.now().minus(12, ChronoUnit.HOURS))) {
+
+                    st.execute(String.format("UPDATE EconomyTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d",Timestamp.from(Instant.now()),currentPoints + incrementAmount,userID));
+                    if(st.getUpdateCount() > 0){
+                        output = 200;
+                    } else {
+                        output = 201;
+                    }
+
+                } else {
+                    output = 401;
+                }
+            } else {
+                st.execute(String.format("INSERT INTO EconomyTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')",userID,incrementAmount,Timestamp.from(Instant.now())));
+                if(st.getUpdateCount() > 0){
+                    output = 200;
+                } else {
+                    output = 201;
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
     }
 
 }

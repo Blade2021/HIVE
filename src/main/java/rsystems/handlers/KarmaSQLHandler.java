@@ -2,14 +2,14 @@ package rsystems.handlers;
 
 import net.dv8tion.jda.api.entities.Member;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
+import rsystems.Config;
 import rsystems.objects.KarmaUserInfo;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class KarmaSQLHandler extends SQLHandler {
@@ -72,7 +72,9 @@ public class KarmaSQLHandler extends SQLHandler {
             }
 
             // SET DATE TO FINISH QUERY
-            st.executeUpdate("UPDATE KARMA SET DATE = \"" + date + "\" WHERE ID = " + id);
+
+            //todo fix this
+            //st.executeUpdate("UPDATE KARMA SET DATE = " + date +  WHERE ID = " + id);
 
             connection.close();
 
@@ -134,6 +136,36 @@ public class KarmaSQLHandler extends SQLHandler {
         }
 
         return tag;
+    }
+
+    public KarmaUserInfo getKarmaUserInfo(Long userID) throws SQLException {
+
+        KarmaUserInfo karmaUserInfo = null;
+
+        Connection connection = pool.getConnection();
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT DATE, AV_POINTS, USER_KARMA, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + userID);
+
+            while(rs.next()){
+                karmaUserInfo = new KarmaUserInfo();
+                karmaUserInfo.setKarma(rs.getInt("USER_KARMA"));
+                karmaUserInfo.setAvailable_points(rs.getInt("AV_POINTS"));
+                karmaUserInfo.setKsent_pos(rs.getInt("KSEND_POS"));
+                karmaUserInfo.setKsent_neg(rs.getInt("KSEND_NEG"));
+                break;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return karmaUserInfo;
     }
 
     public int updateKarma(final Long messageID, final Member sender, final Member receiver, final boolean direction) throws SQLException {
@@ -359,36 +391,6 @@ public class KarmaSQLHandler extends SQLHandler {
         return topRank;
     }
 
-    public KarmaUserInfo userInfo(String id) throws SQLException {
-        KarmaUserInfo userInfoObject = new KarmaUserInfo();
-        Connection connection = pool.getConnection();
-        try {
-            
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT ID, NAME, USER_KARMA, AV_POINTS, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + id);
-            while (rs.next()) {
-                userInfoObject.setId(rs.getLong("ID"));
-                userInfoObject.setName(rs.getString("NAME"));
-                userInfoObject.setKarma(rs.getInt("USER_KARMA"));
-                userInfoObject.setAvailable_points(rs.getInt("AV_POINTS"));
-                userInfoObject.setKsent_pos(rs.getInt("KSEND_POS"));
-                userInfoObject.setKsent_neg(rs.getInt("KSEND_NEG"));
-
-            }
-
-            connection.close();
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        if (userInfoObject.getId() != null) {
-            return userInfoObject;
-        }
-        return null;
-    }
-
     public int getInt(String column, String id) throws SQLException {
 
         int value = 0;
@@ -497,7 +499,7 @@ public class KarmaSQLHandler extends SQLHandler {
         try {
             
             Statement st = connection.createStatement();
-            st.executeUpdate("DELETE FROM karmaTracker WHERE DATE < (SELECT DATETIME('now', '-7 day'))");
+            st.executeUpdate("DELETE FROM karmaTracker WHERE DATE < (SELECT TIMESTAMP('now', '-7 day'))");
 
             connection.close();
         } catch (SQLException throwables) {
@@ -586,7 +588,7 @@ public class KarmaSQLHandler extends SQLHandler {
             ResultSet rs = st.executeQuery("SELECT DISTINCT ID FROM karmaTracker WHERE (DATE > (current_date - '-7 days'))");
             while (rs.next()) {
                 Statement nestedSt = connection.createStatement();
-                ResultSet nestedRs = nestedSt.executeQuery("SELECT ID, COUNT(ID) FROM karmaTracker WHERE (ID = " + rs.getLong("ID") + " AND DATE > (SELECT DATETIME('now', '-7 day')))");
+                ResultSet nestedRs = nestedSt.executeQuery("SELECT ID, COUNT(ID) FROM karmaTracker WHERE (ID = " + rs.getLong("ID") + " AND DATE > (SELECT TIMESTAMP('now', '-7 day')))");
                 while (nestedRs.next()) {
                     activeUsers.put(String.valueOf(rs.getLong("ID")), nestedRs.getInt(2));
                 }

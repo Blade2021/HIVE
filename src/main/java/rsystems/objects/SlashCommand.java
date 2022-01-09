@@ -53,6 +53,10 @@ public abstract class SlashCommand {
         reply(event,new MessageBuilder(embed).build(),false,null);
     }
 
+    protected void reply(SlashCommandEvent event, MessageEmbed embed, boolean ephemeral){
+        reply(event,new MessageBuilder(embed).build(),ephemeral,null);
+    }
+
     protected void reply(SlashCommandEvent event, MessageEmbed embed, Consumer<InteractionHook> successConsumer){
         reply(event,new MessageBuilder(embed).build(),false,successConsumer);
     }
@@ -72,10 +76,13 @@ public abstract class SlashCommand {
     protected void reply(SlashCommandEvent event, Message message, boolean ephemeral, Consumer<InteractionHook> successConsumer){
 
         if(event.isAcknowledged()){
-            event.getHook().sendMessage(message).queue(msg -> {
+            event.getHook().editOriginal(message).queue(msg -> {
+                /*
                 if (successConsumer != null) {
                     successConsumer.accept(event.getHook());
                 }
+
+                 */
             });
         } else {
             event.reply(message).setEphemeral(ephemeral).queue(msg -> {

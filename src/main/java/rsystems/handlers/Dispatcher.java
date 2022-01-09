@@ -10,7 +10,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
+import rsystems.commands.user.GetKarma;
 import rsystems.objects.Command;
 
 import java.sql.SQLException;
@@ -29,6 +31,8 @@ public class Dispatcher extends ListenerAdapter {
 
         registerCommand(new Test());
         registerCommand(new Commands());
+        registerCommand(new StreamMode());
+        registerCommand(new GetKarma());
 
     }
 
