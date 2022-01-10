@@ -71,6 +71,7 @@ public class HiveBot{
         api.addEventListener(slashCommandDispatcher = new SlashCommandDispatcher());
 
         api.addEventListener(new GuildStateListener());
+        api.addEventListener(new ButtonStateListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
@@ -81,6 +82,8 @@ public class HiveBot{
             // Wait for discord jda to completely load
             api.awaitReady();
             jda = (JDAImpl) api;
+
+
 
             api.getGuilds().forEach(guild -> {
                 slashCommandDispatcher.submitGuildCommands(guild);

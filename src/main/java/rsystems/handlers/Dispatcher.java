@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
-import rsystems.commands.moderator.ReferenceTest;
+import rsystems.commands.moderator.ReferenceTester;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
 import rsystems.commands.user.GetKarma;
@@ -34,7 +34,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Commands());
         registerCommand(new StreamMode());
         registerCommand(new GetKarma());
-        registerCommand(new ReferenceTest());
+        registerCommand(new ReferenceTester());
 
     }
 
@@ -44,41 +44,44 @@ public class Dispatcher extends ListenerAdapter {
 
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
-        //Ignore all bots
-        if (event.getAuthor().isBot()) {
-            return;
-        }
 
-        if(event.getMessage().getType().isSystem()){
-            return;
-        }
-
-        final Long authorID = event.getAuthor().getIdLong();
-
-        // Check Blacklist for user
-        try {
-            if (HiveBot.database.checkBlacklist(authorID))
+        if(event.isFromGuild()) {
+            //Ignore all bots
+            if (event.getAuthor().isBot()) {
                 return;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return;
-        }
+            }
 
-        final String prefix = Config.get("bot_prefix");
-        String message = event.getMessage().getContentRaw();
+            if (event.getMessage().getType().isSystem()) {
+                return;
+            }
 
-        final MessageChannel channel = event.getChannel();
+            final Long authorID = event.getAuthor().getIdLong();
 
-        if (message.toLowerCase().startsWith(prefix.toLowerCase())) {
-            for (final Command c : this.getCommands()) {
-                if (message.toLowerCase().startsWith(prefix.toLowerCase() + c.getName().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + c.getName())) {
-                    this.executeCommand(c, c.getName(), prefix, message, event);
+            // Check Blacklist for user
+            try {
+                if (HiveBot.database.checkBlacklist(authorID))
                     return;
-                } else {
-                    for (final String alias : c.getAliases()) {
-                        if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
-                            this.executeCommand(c, alias, prefix, message, event);
-                            return;
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            final String prefix = Config.get("bot_prefix");
+            String message = event.getMessage().getContentRaw();
+
+            final MessageChannel channel = event.getChannel();
+
+            if (message.toLowerCase().startsWith(prefix.toLowerCase())) {
+                for (final Command c : this.getCommands()) {
+                    if (message.toLowerCase().startsWith(prefix.toLowerCase() + c.getName().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + c.getName())) {
+                        this.executeCommand(c, c.getName(), prefix, message, event);
+                        return;
+                    } else {
+                        for (final String alias : c.getAliases()) {
+                            if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
+                                this.executeCommand(c, alias, prefix, message, event);
+                                return;
+                            }
                         }
                     }
                 }
@@ -106,7 +109,7 @@ public class Dispatcher extends ListenerAdapter {
             } else {
                 if (HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()) != null) {
                     try {
-                        authorized = checkAuthorized(HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()), c.getPermissionIndex());
+                        authorized = isAuthorized(c,event.getGuild().getIdLong(),event.getMember(),c.getPermissionIndex());
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

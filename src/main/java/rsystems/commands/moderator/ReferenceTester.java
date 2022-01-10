@@ -1,16 +1,20 @@
 package rsystems.commands.moderator;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.Button;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
+import java.awt.*;
 import java.sql.SQLException;
 
-public class ReferenceTest extends Command {
+public class ReferenceTester extends Command {
 
     private static final String[] ALIASES = new String[] {"refTest", "testRef"};
 
@@ -25,10 +29,15 @@ public class ReferenceTest extends Command {
         builder.setTitle("Test Reference");
         builder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC));
 
-        builder.setDescription(message.getContentRaw().replace("\\n","\n"));
+        builder.setDescription(content.replace("\\n","\n"));
 
+        builder.setFooter("Requested by " + event.getMember().getEffectiveName(),event.getMember().getEffectiveAvatarUrl());
 
-        event.getChannel().sendMessageEmbeds(builder.build()).queue(success -> {
+        MessageBuilder messageBuilder = new MessageBuilder();
+        messageBuilder.setEmbeds(builder.build());
+        messageBuilder.setActionRows(ActionRow.of(Button.primary("source","Source")));
+
+        event.getChannel().sendMessage(messageBuilder.build()).queue(success -> {
             event.getMessage().delete().queue();
         });
 
@@ -37,7 +46,9 @@ public class ReferenceTest extends Command {
 
     @Override
     public String getHelp() {
-        return "Test a reference";
+        return String.format("{prefix}%s (Reference Description ONLY)\n" +
+                "\n" +
+                "Test a reference",this.getName());
     }
 
     @Override

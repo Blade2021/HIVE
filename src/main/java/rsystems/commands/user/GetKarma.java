@@ -47,6 +47,9 @@ public class GetKarma extends Command {
 
     @Override
     public String getHelp() {
-        return "Get your karma & points sent to you in the channel.\n\nIf you want to keep it private, use the /getKarma command instead!";
+        return String.format("{prefix}%s\n" +
+                "\n" +
+                "Get your karma & points sent to you in the channel.\n" +
+                "If you want to keep it private, use the `/getKarma` command instead!",this.getName());
     }
 }

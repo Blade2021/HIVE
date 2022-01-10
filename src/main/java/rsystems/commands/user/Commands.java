@@ -63,6 +63,9 @@ public class Commands extends Command {
 
     @Override
     public String getHelp() {
-        return "Get a list of commands that you have access too.";
+        return String.format("{prefix}%s\n" +
+                "\n" +
+                "Get a list of commands that you have access too.\n" +
+                "Use `/commands` to keep it private (only sent to you)",this.getName());
     }
 }

@@ -42,6 +42,8 @@ public class StreamMode extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+        return String.format("{prefix}%s (True/False)\n" +
+                "\n" +
+                "Set the status of the stream mode manually.",this.getName());
     }
 }

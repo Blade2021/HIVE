@@ -22,6 +22,7 @@ public class StreamPoints extends SlashCommand {
             builder.setTitle("Stream Currency");
             builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
             builder.setDescription("Go collect some nuts!  `Cashews` are used to trigger advertisements, LED effects, and other cool things during a livestream.");
+            builder.setThumbnail(event.getGuild().getSelfMember().getEffectiveAvatarUrl());
 
             if(userStreamObject != null){
 
