@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public class Test extends Command {
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
-        reply(event,"Hello I am here");
+        reply(event,"Yes Blade this is working");
     }
 
     @Override
