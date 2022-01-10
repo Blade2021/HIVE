@@ -50,8 +50,12 @@ public class Help extends SlashCommand {
     private void handleEvent(SlashCommandEvent event, final Command c) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Help | " + c.getName());
-        builder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC));
-        builder.setDescription(c.getHelp().replace("{prefix}", HiveBot.prefix));
+        builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+
+        String description = c.getHelp();
+        description = description.replace("{prefix}",HiveBot.prefix);
+        description = description.replace("{command}",c.getName());
+        builder.setDescription(description);
 
         if((c.getAliases() != null) && (c.getAliases().length > 0)){
             StringBuilder aliasString = new StringBuilder();

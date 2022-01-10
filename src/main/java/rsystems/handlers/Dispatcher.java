@@ -1,5 +1,6 @@
 package rsystems.handlers;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
@@ -10,12 +11,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.generic.Led;
 import rsystems.commands.moderator.ReferenceTester;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
 import rsystems.commands.user.GetKarma;
 import rsystems.objects.Command;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -35,6 +38,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new StreamMode());
         registerCommand(new GetKarma());
         registerCommand(new ReferenceTester());
+        registerCommand(new Led());
 
     }
 
@@ -132,7 +136,23 @@ public class Dispatcher extends ListenerAdapter {
                     //messageOwner(e, c, event);
                 }
             } else {
-                event.getMessage().reply(String.format(event.getAuthor().getAsMention() + " You are not authorized for command: `%s`\nPermission Index: %d", c.getName(), c.getPermissionIndex())).queue();
+
+                EmbedBuilder embedBuilder = new EmbedBuilder();
+                embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
+                embedBuilder.setTitle("Unauthorized Request");
+                embedBuilder.setDescription(String.format(" You are not authorized for command: `%s`", c.getName()));
+
+                if (c.getPermissionIndex() != null) {
+                    embedBuilder.addField("Mod Permission",c.getPermissionIndex().toString(),true);
+                }
+
+                if (c.getDiscordPermission() != null) {
+                    embedBuilder.addField("Discord Permission",c.getDiscordPermission().getName(),true);
+                }
+
+                embedBuilder.setFooter(event.getAuthor().getId());
+
+                event.getMessage().replyEmbeds(embedBuilder.build()).queue();
             }
         });
     }

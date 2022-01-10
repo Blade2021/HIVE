@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.generic.Help;
+import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.moderation.StreamMode;
 import rsystems.slashCommands.user.Commands;
 import rsystems.slashCommands.user.GetKarma;
@@ -35,6 +36,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new Commands());
         registerCommand(new StreamPoints());
         registerCommand(new Help());
+        registerCommand(new Led());
     }
 
     public Set<SlashCommand> getCommands() {
