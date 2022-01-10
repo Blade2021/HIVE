@@ -120,10 +120,11 @@ public class HiveBot{
         colorMap.putIfAbsent(colorType.GENERIC, "#37B9FF");
         colorMap.putIfAbsent(colorType.ERROR, "#FF3737");
         colorMap.putIfAbsent(colorType.NOVA,"#F5661A");
+        colorMap.putIfAbsent(colorType.STREAM,"#8B40F0");
     }
 
     public enum colorType {
-        NOTIFICATION, USER, GENERIC, ERROR, NOVA
+        NOTIFICATION, USER, GENERIC, ERROR, NOVA, STREAM
     }
 }
 

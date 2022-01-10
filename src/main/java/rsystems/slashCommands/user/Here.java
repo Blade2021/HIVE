@@ -20,15 +20,27 @@ public class Here extends SlashCommand {
             try {
                 Integer statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong());
 
+                EmbedBuilder builder = new EmbedBuilder();
+
                 if (statusCode == 200) {
 
-                    MessageEmbed embed = messageEmbed(String.format("%s\nYou have been counted!  Thanks for joining us!", event.getMember().getAsMention()), HiveBot.colorType.USER);
-                    reply(event, embed,isEphemeral());
+                    builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
+                    builder.setThumbnail(sender.getEffectiveAvatarUrl());
+                    builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", event.getMember().getAsMention()));
+
+                    builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
+
+                    reply(event, builder.build(),isEphemeral());
+
+                    builder.clear();
 
                 } else if (statusCode == 401) {
 
-                    MessageEmbed embed = messageEmbed(String.format("%s\nYou have already been counted for this stream.  Try again during the next stream!", event.getMember().getAsMention()), HiveBot.colorType.GENERIC);
-                    reply(event, embed, isEphemeral());
+                    builder.setColor(HiveBot.getColor(HiveBot.colorType.NOVA));
+                    builder.setDescription(String.format("%s\nYou have already been counted for this stream.  Try again during the next stream!", event.getMember().getAsMention()));
+
+                    reply(event, builder.build(), isEphemeral());
+                    builder.clear();
 
                 } else {
                     reply(event, "Something went wrong.  Sorry", this.isEphemeral());
@@ -39,14 +51,6 @@ public class Here extends SlashCommand {
         } else {
             reply(event,"There is no active stream at this time.",isEphemeral());
         }
-    }
-
-    private MessageEmbed messageEmbed(String message, HiveBot.colorType colorType){
-        EmbedBuilder builder = new EmbedBuilder();
-        builder.setDescription(message);
-        builder.setColor(HiveBot.getColor(colorType));
-
-        return builder.build();
     }
 
     @Override

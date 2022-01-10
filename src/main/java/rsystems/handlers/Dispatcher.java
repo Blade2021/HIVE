@@ -11,7 +11,9 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.generic.Help;
 import rsystems.commands.generic.Led;
+import rsystems.commands.generic.LedList;
 import rsystems.commands.moderator.ReferenceTester;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
@@ -39,6 +41,8 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new GetKarma());
         registerCommand(new ReferenceTester());
         registerCommand(new Led());
+        registerCommand(new LedList());
+        registerCommand(new Help());
 
     }
 

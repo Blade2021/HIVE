@@ -18,7 +18,7 @@ public class Led extends SlashCommand {
     @Override
     public CommandData getCommandData() {
         CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
-        commandData.addOption(OptionType.STRING,"ledtype","The type of LED to use",true);
+        commandData.addOption(OptionType.STRING,"type","The type of LED to use",true);
         commandData.addOption(OptionType.NUMBER,"qty","How many LEDs to calculate",false);
 
         return commandData;
@@ -31,7 +31,7 @@ public class Led extends SlashCommand {
 
         LED led = null;
         try{
-            led = HiveBot.database.getLED(event.getOption("ledtype").getAsString());
+            led = HiveBot.database.getLED(event.getOption("type").getAsString());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }

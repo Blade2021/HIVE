@@ -1,33 +1,22 @@
-package rsystems.slashCommands.generic;
+package rsystems.commands.generic;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import rsystems.Config;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
-import rsystems.objects.SlashCommand;
 
-public class Help extends SlashCommand {
+import java.sql.SQLException;
 
+public class Help extends Command {
     @Override
-    public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(), this.getDescription());
-        commandData.addOption(OptionType.STRING, "command", "The name of the command to gather information about",true);
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
 
-        return commandData;
-    }
+        String[] args = content.split("\\s+");
 
-
-    @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
-
-        event.deferReply(isEphemeral()).queue();
-
-        String commandName = event.getOption("command").getAsString();
+        String commandName = args[0];
 
         for (Command c : HiveBot.dispatcher.getCommands()) {
 
@@ -44,10 +33,10 @@ public class Help extends SlashCommand {
             }
         }
 
-        event.getHook().editOriginal("No command was found with that name").queue();
+        reply(event,"No command was found with that name");
     }
 
-    private void handleEvent(SlashCommandEvent event, final Command c) {
+    private void handleEvent(MessageReceivedEvent event, final Command c) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Help | " + c.getName());
         builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
@@ -77,16 +66,14 @@ public class Help extends SlashCommand {
             builder.addField("Discord Permission:",c.getDiscordPermission().getName(),true);
         }
 
-        event.getHook().editOriginalEmbeds(builder.build()).queue();
+        reply(event,builder.build());
+        builder.clear();
     }
 
     @Override
-    public String getDescription() {
-        return "Get Help for a Command";
-    }
-
-    @Override
-    public boolean isEphemeral() {
-        return true;
+    public String getHelp() {
+        return "If you need help calling the help command for help with a command.  Then you really do need help.\n-anon\n\n" +
+                "" +
+                "{prefix}{command} (command)";
     }
 }
