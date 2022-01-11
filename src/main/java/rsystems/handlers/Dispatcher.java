@@ -115,7 +115,8 @@ public class Dispatcher extends ListenerAdapter {
             if (c.getPermissionIndex() == null) {
                 authorized = true;
             } else {
-                if (HiveBot.mainGuild().getMemberById(event.getAuthor().getIdLong()) != null) {
+
+                if (event.getMember() != null) {
                     try {
                         authorized = isAuthorized(c,event.getGuild().getIdLong(),event.getMember(),c.getPermissionIndex());
                     } catch (SQLException e) {
@@ -294,6 +295,8 @@ public class Dispatcher extends ListenerAdapter {
         }
 
         if (member.hasPermission(Permission.ADMINISTRATOR)) {
+            System.out.println("Administrator found");
+            System.out.println("Permission index: " + permissionIndex);
             return true;
         }
 

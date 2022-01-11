@@ -10,8 +10,6 @@ import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.Button;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
-
-import java.awt.*;
 import java.sql.SQLException;
 
 public class ReferenceTester extends Command {
