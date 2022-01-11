@@ -72,6 +72,7 @@ public class HiveBot{
 
         api.addEventListener(new GuildStateListener());
         api.addEventListener(new ButtonStateListener());
+        api.addEventListener(new MessageEventListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
