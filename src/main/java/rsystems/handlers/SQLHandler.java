@@ -13,6 +13,7 @@ import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
+import rsystems.objects.MessageAction;
 import rsystems.objects.UserStreamObject;
 
 public class SQLHandler {
@@ -984,6 +985,27 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer deleteRow(String tableName, String identifierColumn, Long identifier) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
     /**
      * This method will place a string in the rolling queue of the activity pool.
      * @param activity What to add to the queue of messages that get displayed in the activity field.  Limit 32 characters
@@ -1430,6 +1452,51 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public Integer insertMessageAction(final Timestamp timestamp, final Long channelID, final Long messageID, final int actionType) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("INSERT INTO MessageTable (ActionDate, MessageID, ChannelID, ActionType) VALUES ('%s',%d,%d,%d)",timestamp,messageID,channelID,actionType));
+            output = st.getUpdateCount();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    public ArrayList<MessageAction> getExpiredMessageActions(final Timestamp timestamp) throws SQLException {
+
+        ArrayList<MessageAction> list = new ArrayList<>();
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT MessageID, ChannelID, ActionType FROM MessageTable WHERE ActionDate < '%s'", timestamp));
+
+            while(rs.next()){
+                list.add(new MessageAction(rs.getLong("MessageID"),rs.getLong("ChannelID"),rs.getInt("ActionType")));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return list;
+
     }
 
 }
