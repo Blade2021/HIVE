@@ -1454,6 +1454,16 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Insert a message action into the database for processing at a later time.
+     * @param timestamp The timestamp that the action will need to take place.  This should be any time in the future.
+     * @param channelID The channel ID that contains the message
+     * @param messageID The ID of the message that will be used for the action.
+     * @param actionType <p>The type of action.  </p>
+     *                   <p>1 = Unpinning a message</p>
+     * @return If successful, return a 1 (Updated row count)
+     * @throws SQLException
+     */
     public Integer insertMessageAction(final Timestamp timestamp, final Long channelID, final Long messageID, final int actionType) throws SQLException {
         Integer output = null;
 
@@ -1474,6 +1484,12 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * This method is to retrieve the list of messages in the queue to be unpinned
+     * @param timestamp The timestamp to compare against.  (Should be current time)
+     * @return Returns an arrayList of all expired messageActions for processing.
+     * @throws SQLException
+     */
     public ArrayList<MessageAction> getExpiredMessageActions(final Timestamp timestamp) throws SQLException {
 
         ArrayList<MessageAction> list = new ArrayList<>();

@@ -13,6 +13,12 @@ public class CheckDatabase extends TimerTask {
     @Override
     public void run() {
         try {
+
+            /*
+            MESSAGE ACTIONS
+             */
+
+            // UNPINNING A MESSAGE AFTER X AMOUNT OF DAYS
             ArrayList<MessageAction> actions = HiveBot.database.getExpiredMessageActions(Timestamp.from(Instant.now()));
 
             if(actions.size() > 0){
