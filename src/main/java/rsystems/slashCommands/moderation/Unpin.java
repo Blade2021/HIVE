@@ -1,6 +1,5 @@
 package rsystems.slashCommands.moderation;
 
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -19,7 +18,7 @@ import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
-public class DePin extends SlashCommand {
+public class Unpin extends SlashCommand {
 
     @Override
     public CommandData getCommandData() {
@@ -28,7 +27,7 @@ public class DePin extends SlashCommand {
         commandData
                 .addOption(OptionType.CHANNEL,"channel","The channel that has the Message",true)
                 .addOption(OptionType.STRING,"messageid","The messageID of the message to be unpinned",true)
-                .addOption(OptionType.NUMBER,"days","How many days to leave the message pinned",false);
+                .addOption(OptionType.NUMBER,"days","How many days to leave the message pinned",true);
 
         return commandData;
     }
@@ -58,7 +57,16 @@ public class DePin extends SlashCommand {
                     } catch (SQLException e) {
                         //e.printStackTrace();
 
-                        reply(event,"Something went wrong",isEphemeral());
+                        try {
+                            Timestamp timestamp = HiveBot.database.getTimestamp("MessageTable","ActionDate","MessageID",messageID);
+
+                            reply(event,String.format("That message is already set to be unpinned automatically on `%s`",DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.US).withZone(ZoneId.systemDefault()).format(timestamp.toInstant())),isEphemeral());
+                        } catch (SQLException ex) {
+                            ex.printStackTrace();
+
+                            reply(event,"That message is already set to be unpinned automatically",isEphemeral());
+                        }
+
                     }
                 } else {
                     reply(event,"That message isn't pinned",isEphemeral());

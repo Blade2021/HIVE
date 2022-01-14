@@ -174,6 +174,28 @@ public class SQLHandler {
         return map;
     }
 
+    public Timestamp getTimestamp(String tableName, String columnName, String identifierColumn, Long identifier) throws SQLException {
+
+        Timestamp output = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d",columnName,tableName,identifierColumn,identifier));
+            while (rs.next()) {
+                output = rs.getTimestamp(columnName);
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
 
     // Get date of last seen using ID
     public LED getLED(String ledName) throws SQLException {
@@ -1542,7 +1564,8 @@ public class SQLHandler {
             output = st.getUpdateCount();
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            //throwables.printStackTrace();
+            throw new SQLException(throwables);
         } finally {
             connection.close();
         }

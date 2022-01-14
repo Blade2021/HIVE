@@ -65,8 +65,8 @@ public class Led extends SlashCommand {
     public static MessageEmbed createLEDEmbed(LED led, Integer qty){
         EmbedBuilder embedBuilder = new EmbedBuilder();
         embedBuilder.setTitle(String.format("%s - %d Volts",led.getLedName().toUpperCase(),led.getLedVoltage()));
-        embedBuilder.setColor(Color.decode("#FF6145"));
-        embedBuilder.setThumbnail("https://cdn.discordapp.com/icons/473448917040758787/a_476e5f6e550a1ce2bb43e3e094af6ab6.gif");
+        embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.FRUIT));
+        embedBuilder.setThumbnail("https://kno.wled.ge/assets/images/ui/akemi/001_cheerful.png");
 
 
         float amperageTested = led.getWattagePerPixel_Tested()/ led.getLedVoltage();
