@@ -1,6 +1,7 @@
 package rsystems.events;
 
 import net.dv8tion.jda.api.MessageBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.dv8tion.jda.api.interactions.components.Button;
@@ -50,7 +51,7 @@ public class ButtonStateListener extends ListenerAdapter {
         final String messageID = buttonID.substring(buttonID.indexOf(":")+1,buttonID.lastIndexOf(":"));
         final String authorID = buttonID.substring(buttonID.lastIndexOf(":")+1);
 
-        if(event.getUser().getId().equalsIgnoreCase(authorID)){
+        if((event.getUser().getId().equalsIgnoreCase(authorID)) || (event.getMember().hasPermission(Permission.ADMINISTRATOR))){
             event.getChannel().retrieveMessageById(messageID).queue(messageFound -> {
                 if(messageFound.isPinned()){
 

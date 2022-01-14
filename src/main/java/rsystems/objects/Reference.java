@@ -6,7 +6,7 @@ public class Reference {
     protected String referenceCommand;
     protected String description;
     protected ArrayList<String> aliases;
-    protected ArrayList<String> category;
+    protected ArrayList<String> categories;
     protected String title = null;
 
     public Reference(String referenceCommand, String description) {
@@ -20,11 +20,11 @@ public class Reference {
         this.aliases = aliases;
     }
 
-    public Reference(String referenceCommand, String description, ArrayList<String> aliases, ArrayList<String> category) {
+    public Reference(String referenceCommand, String description, ArrayList<String> aliases, ArrayList<String> categories) {
         this.referenceCommand = referenceCommand;
         this.description = description;
         this.aliases = aliases;
-        this.category = category;
+        this.categories = categories;
     }
 
     public String getReferenceCommand() {
@@ -55,16 +55,16 @@ public class Reference {
         this.aliases.add(alias);
     }
 
-    public ArrayList<String> getCategory() {
-        return category;
+    public ArrayList<String> getCategories() {
+        return categories;
     }
 
-    public void setCategory(ArrayList<String> category) {
-        this.category = category;
+    public void setCategories(ArrayList<String> categories) {
+        this.categories = categories;
     }
 
     public void addCategory(String category){
-        this.category.add(category);
+        this.categories.add(category);
     }
 
     public String getTitle() {

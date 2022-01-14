@@ -13,7 +13,7 @@ public class LED {
         this.ledName = ledName;
     }
 
-    public LED(String ledName, int ledVoltage, boolean whiteIncluded, int wattagePerPixel_Theoretical, int wattagePerPixel_Tested) {
+    public LED(String ledName, int ledVoltage, boolean whiteIncluded, float wattagePerPixel_Theoretical, float wattagePerPixel_Tested) {
         this.ledName = ledName;
         this.ledVoltage = ledVoltage;
         this.whiteIncluded = whiteIncluded;

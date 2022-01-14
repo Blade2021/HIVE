@@ -12,6 +12,9 @@ import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
+import rsystems.slashCommands.generic.LedList;
+import rsystems.slashCommands.moderation.DePin;
+import rsystems.slashCommands.moderation.LedControl;
 import rsystems.slashCommands.moderation.StreamMode;
 import rsystems.slashCommands.user.Commands;
 import rsystems.slashCommands.user.GetKarma;
@@ -37,6 +40,10 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new StreamPoints());
         registerCommand(new Help());
         registerCommand(new Led());
+        registerCommand(new LedControl());
+        registerCommand(new LedList());
+        registerCommand(new DePin());
+
     }
 
     public Set<SlashCommand> getCommands() {

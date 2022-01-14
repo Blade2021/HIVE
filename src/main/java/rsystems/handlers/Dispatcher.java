@@ -14,6 +14,7 @@ import rsystems.commands.debug.Test;
 import rsystems.commands.generic.Help;
 import rsystems.commands.generic.Led;
 import rsystems.commands.generic.LedList;
+import rsystems.commands.moderator.Clear;
 import rsystems.commands.moderator.ReferenceTester;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
@@ -43,6 +44,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Led());
         registerCommand(new LedList());
         registerCommand(new Help());
+        registerCommand(new Clear());
 
     }
 

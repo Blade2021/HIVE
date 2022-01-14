@@ -1,5 +1,6 @@
 package rsystems.slashCommands.moderation;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
@@ -29,6 +30,16 @@ public class StreamMode extends SlashCommand {
     @Override
     public String getDescription() {
         return "Set the stream mode";
+    }
+
+    @Override
+    public Permission getDiscordPermission() {
+        return Permission.ADMINISTRATOR;
+    }
+
+    @Override
+    public Integer getPermissionIndex() {
+        return 16;
     }
 
     @Override

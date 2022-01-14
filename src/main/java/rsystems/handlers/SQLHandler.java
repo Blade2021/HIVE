@@ -236,6 +236,46 @@ public class SQLHandler {
         return ledList;
     }
 
+    /**
+     * INSERT AN LED INTO THE SYSTEM  (This will be useful for you PIXELHEADS!)
+     * @param led - The LED with values set to be added.
+     * @return <p>200 - Status OK</p>
+     * @throws SQLException
+     */
+    public Integer insertLED(LED led) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Integer output = null;
+
+        try{
+            Statement st = connection.createStatement();
+
+            // text  (String)
+            // 121  (Integer)
+            // 2312.221  (Float)
+            // True/False  (Boolean)
+
+
+            st.execute(String.format("INSERT INTO LED_Table (ledName, Voltage, WhitePixel, WattageTheory, WattageTested) VALUES ('%s', %d, %s, %f, %f)",
+                    led.getLedName(),
+                    led.getLedVoltage(),
+                    led.isWhiteIncluded(),
+                    led.getWattagePerPixel_Theoretical(),
+                    led.getWattagePerPixel_Tested())
+            );
+
+            if(st.getUpdateCount() > 0){
+                output = 200;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
 
     public Map<String, LED> getLEDMap() throws SQLException {
         Connection connection = pool.getConnection();
@@ -1006,6 +1046,26 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer deleteRow(String tableName, String identifierColumn, String identifier) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = '%s'",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
     /**
      * This method will place a string in the rolling queue of the activity pool.
      * @param activity What to add to the queue of messages that get displayed in the activity field.  Limit 32 characters
@@ -1427,6 +1487,12 @@ public class SQLHandler {
         return output;
     }
 
+    /**
+     * Gets the amount of points a user has to spend on advertisements, LED effects, and other stream luxuries.
+     * @param userID The DISCORD UserID of the user to be verified
+     * @return UserStreamObject
+     * @throws SQLException
+     */
     public UserStreamObject getStreamPoints(Long userID) throws SQLException {
         UserStreamObject output = null;
 
