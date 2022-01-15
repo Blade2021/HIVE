@@ -39,11 +39,10 @@ public class HiveBot{
     public static SQLHandler database = new SQLHandler(dbPool.getPool());
     public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(dbPool.getPool());
 
-    public static StreamHandler streamHandler = new StreamHandler();
-
     public static Dispatcher dispatcher;
     public static SlashCommandDispatcher slashCommandDispatcher;
     public static GratitudeListener gratitudeListener;
+    public static StreamHandler streamHandler;
 
     public static ReferenceHandler referenceHandler = new ReferenceHandler();
 
@@ -76,6 +75,7 @@ public class HiveBot{
 
         // EVENT LISTENERS
         api.addEventListener(gratitudeListener = new GratitudeListener());
+        api.addEventListener(streamHandler = new StreamHandler());
         api.addEventListener(new GuildStateListener());
         api.addEventListener(new ButtonStateListener());
         api.addEventListener(new MessageEventListener());

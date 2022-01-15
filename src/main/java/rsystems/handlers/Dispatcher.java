@@ -137,6 +137,11 @@ public class Dispatcher extends ListenerAdapter {
             }
 
             // No gratitude triggers found
+
+            //Check for Stream Chat channel
+            if(channel.getIdLong() == HiveBot.streamHandler.getStreamChatChannelID()){
+                HiveBot.streamHandler.parseMessage(event);
+            }
         }
     }
 
@@ -316,6 +321,72 @@ public class Dispatcher extends ListenerAdapter {
         }
 
         return authorized;
+    }
+
+    public static Boolean checkAuthorized(final Long guildID, final Member member, final Integer permissionIndex, final Permission discordPermission) throws SQLException {
+        boolean authorized = false;
+
+        if (member.hasPermission(Permission.ADMINISTRATOR)) {
+            return true;
+        }
+
+        if (discordPermission != null) {
+            if (member.getPermissions().contains(discordPermission)) {
+                return true;
+            } else {
+                if(permissionIndex == null){
+                    return false;
+                }
+            }
+        }
+
+        Map<Long, Integer> authmap = HiveBot.database.getModRoles();
+        for (Role role : member.getRoles()) {
+
+            Long roleID = role.getIdLong();
+
+            if (authmap.containsKey(roleID)) {
+                int modRoleValue = authmap.get(roleID);
+
+                /*
+                Form a binary string based on the permission level integer found.
+                Example: 24 = 11000
+                 */
+                String binaryString = Integer.toBinaryString(modRoleValue);
+
+                //Reverse the string for processing
+                //Example 24 = 11000 -> 00011
+                String reverseString = new StringBuilder(binaryString).reverse().toString();
+
+                //Turn the command rank into a binary string
+                //Example 8 = 1000
+                String binaryIndexString = Integer.toBinaryString(permissionIndex);
+
+                //Reverse the string for lookup
+                //Example 8 = 1000 -> 0001
+                String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
+
+                int realIndex = reverseLookupString.indexOf('1');
+
+                char indexChar = '0';
+                try {
+
+                    indexChar = reverseString.charAt(realIndex);
+
+                } catch (IndexOutOfBoundsException e) {
+
+                } finally {
+                    if (indexChar == '1') {
+                        authorized = true;
+                    }
+                }
+
+                if (authorized)
+                    break;
+            }
+        }
+        return authorized;
+
     }
 
 }

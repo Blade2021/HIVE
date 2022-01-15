@@ -13,10 +13,7 @@ import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.generic.LedList;
-import rsystems.slashCommands.moderation.Activity;
-import rsystems.slashCommands.moderation.Unpin;
-import rsystems.slashCommands.moderation.LedControl;
-import rsystems.slashCommands.moderation.StreamMode;
+import rsystems.slashCommands.moderation.*;
 import rsystems.slashCommands.user.Commands;
 import rsystems.slashCommands.user.GetKarma;
 import rsystems.slashCommands.user.StreamPoints;
@@ -45,6 +42,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new LedList());
         registerCommand(new Unpin());
         registerCommand(new Activity());
+        registerCommand(new Who());
 
     }
 
@@ -96,7 +94,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                     //database.logCommandUsage(c.getName());
                 } catch (final NumberFormatException numberFormatException) {
                     numberFormatException.printStackTrace();
-                    //event.getMessage().reply("**ERROR:** Bad format received").queue();
+                    event.getHook().sendMessage("**ERROR:** Bad format received").queue();
                     //messageOwner(event, c, numberFormatException);
                 } catch (final Exception e) {
                     e.printStackTrace();
@@ -107,7 +105,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
             } else {
 
                 EmbedBuilder embedBuilder = new EmbedBuilder();
-                embedBuilder.setColor(Color.decode("#F5661A"));
+                embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.FRUIT));
                 embedBuilder.setTitle("Unauthorized Request");
                 embedBuilder.setDescription(String.format(" You are not authorized for command: `%s`", c.getName()));
 
