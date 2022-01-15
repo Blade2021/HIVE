@@ -13,21 +13,19 @@ import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
 import rsystems.commands.generic.*;
-import rsystems.commands.moderator.Clear;
-import rsystems.commands.moderator.ReferenceTester;
+import rsystems.commands.utility.Cleanse;
+import rsystems.commands.utility.Clear;
+import rsystems.commands.utility.ReferenceTester;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
 import rsystems.commands.user.GetKarma;
+import rsystems.events.GratitudeListener;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.*;
 
 public class Dispatcher extends ListenerAdapter {
 
@@ -47,6 +45,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Clear());
         registerCommand(new Search());
         registerCommand(new ReferenceList());
+        registerCommand(new Cleanse());
 
     }
 
@@ -79,10 +78,12 @@ public class Dispatcher extends ListenerAdapter {
             }
 
             final String prefix = Config.get("bot_prefix");
-            String message = event.getMessage().getContentRaw();
+            final String message = event.getMessage().getContentRaw();
 
             final MessageChannel channel = event.getChannel();
 
+
+            // Check for commands
             if (message.toLowerCase().startsWith(prefix.toLowerCase())) {
                 for (final Command c : this.getCommands()) {
                     if (message.toLowerCase().startsWith(prefix.toLowerCase() + c.getName().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + c.getName())) {
@@ -100,6 +101,8 @@ public class Dispatcher extends ListenerAdapter {
 
                 //Command not found
 
+
+                //CHECK FOR REFERENCES
                 for(Map.Entry<String,Reference> entry : HiveBot.referenceHandler.getRefMap().entrySet()){
 
                     final Reference r = entry.getValue();
@@ -117,10 +120,23 @@ public class Dispatcher extends ListenerAdapter {
                             }
                         }
                     }
-
                 }
+
+                //References not found
+
             }
             // Prefix not found
+
+
+            //Check for Gratitude
+            for (String trigger : HiveBot.gratitudeListener.getTriggers()) {
+                if (event.getMessage().getContentDisplay().toLowerCase().contains(trigger)) {
+                    GratitudeListener.gratitudeMessageReceived(event);
+                    return;
+                }
+            }
+
+            // No gratitude triggers found
         }
     }
 
@@ -139,7 +155,7 @@ public class Dispatcher extends ListenerAdapter {
         this.pool.submit(() ->
         {
             boolean authorized = false;
-            if (c.getPermissionIndex() == null) {
+            if ((c.isOwnerOnly() == false) && (c.getPermissionIndex() == null) && (c.getDiscordPermission() == null)) {
                 authorized = true;
             } else {
 
@@ -172,7 +188,7 @@ public class Dispatcher extends ListenerAdapter {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
                 embedBuilder.setTitle("Unauthorized Request");
-                embedBuilder.setDescription(String.format(" You are not authorized for command: `%s`", c.getName()));
+                embedBuilder.setDescription(String.format("%s\n You are not authorized for command: `%s`",event.getMember().getAsMention(), c.getName()));
 
                 if (c.getPermissionIndex() != null) {
                     embedBuilder.addField("Mod Permission",c.getPermissionIndex().toString(),true);
@@ -209,93 +225,6 @@ public class Dispatcher extends ListenerAdapter {
     public void onMessageDelete(MessageDeleteEvent event) {
         Command.removeResponses(event.getChannel(), event.getMessageIdLong());
     }
-
-    /**
-     * Check to see if a user is authorized for a command.  Any command that doesn't have a permission index set is automatically approved.
-     * @param member The member to be checked.
-     * @param commandPermission The permission index of the command.  (Can be null!)
-     * @return True = Authorized | False = Not Authorized
-     */
-    public boolean checkAuthorized(final Member member, final Integer commandPermission) throws SQLException {
-        boolean authorized = false;
-
-        Integer userAuthOverride = HiveBot.database.checkAuthOverride(member.getIdLong());
-        if(userAuthOverride != null){
-            String binaryString = Integer.toBinaryString(userAuthOverride);
-
-            //Reverse the string for processing
-            //Example 24 = 11000 -> 00011
-            String reverseString = new StringBuilder(binaryString).reverse().toString();
-
-            //Turn the command rank into a binary string
-            //Example 8 = 1000
-            String binaryIndexString = Integer.toBinaryString(commandPermission);
-
-            //Reverse the string for lookup
-            //Example 8 = 1000 -> 0001
-            String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
-
-            int realIndex = reverseLookupString.indexOf('1');
-
-            char indexChar = '0';
-            try {
-
-                indexChar = reverseString.charAt(realIndex);
-
-            } catch (IndexOutOfBoundsException e) {
-
-            } finally {
-                if (indexChar == '1') {
-                    authorized = true;
-                }
-            }
-        } else {
-            Map<Long, Integer> authmap = HiveBot.database.getAuthRoles();
-
-            for (Role r : member.getRoles()) {
-                if (authmap.containsKey(r.getIdLong())) {
-                    int modRoleValue = authmap.get(r.getIdLong());
-
-                /*
-                Form a binary string based on the permission level integer found.
-                Example: 24 = 11000
-                 */
-                    String binaryString = Integer.toBinaryString(modRoleValue);
-
-                    //Reverse the string for processing
-                    //Example 24 = 11000 -> 00011
-                    String reverseString = new StringBuilder(binaryString).reverse().toString();
-
-                    //Turn the command rank into a binary string
-                    //Example 8 = 1000
-                    String binaryIndexString = Integer.toBinaryString(commandPermission);
-
-                    //Reverse the string for lookup
-                    //Example 8 = 1000 -> 0001
-                    String reverseLookupString = new StringBuilder(binaryIndexString).reverse().toString();
-
-                    int realIndex = reverseLookupString.indexOf('1');
-
-                    char indexChar = '0';
-                    try {
-
-                        indexChar = reverseString.charAt(realIndex);
-
-                    } catch (IndexOutOfBoundsException e) {
-
-                    } finally {
-                        if (indexChar == '1') {
-                            authorized = true;
-                        }
-                    }
-
-                    if (authorized)
-                        break;
-                }
-            }
-        }
-        return authorized;
-    }
 	
 	public Map<String,Integer> getCommandMap(){
 		
@@ -322,8 +251,6 @@ public class Dispatcher extends ListenerAdapter {
         }
 
         if (member.hasPermission(Permission.ADMINISTRATOR)) {
-            System.out.println("Administrator found");
-            System.out.println("Permission index: " + permissionIndex);
             return true;
         }
 
