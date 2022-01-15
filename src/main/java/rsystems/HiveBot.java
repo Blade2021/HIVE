@@ -44,6 +44,8 @@ public class HiveBot{
     public static Dispatcher dispatcher;
     public static SlashCommandDispatcher slashCommandDispatcher;
 
+    public static ReferenceHandler referenceHandler = new ReferenceHandler();
+
     public static JDAImpl jda = null;
 
     public static Guild mainGuild(){
@@ -55,7 +57,6 @@ public class HiveBot{
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
 
     private static Map<colorType, String> colorMap = new HashMap<>();
-
 
     //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
@@ -86,6 +87,7 @@ public class HiveBot{
             jda = (JDAImpl) api;
 
 
+            referenceHandler.loadReferences();
 
             api.getGuilds().forEach(guild -> {
                 slashCommandDispatcher.submitGuildCommands(guild);
@@ -129,6 +131,10 @@ public class HiveBot{
 
     public enum colorType {
         NOTIFICATION, USER, GENERIC, ERROR, NOVA, STREAM, FRUIT
+    }
+
+    public static String getPrefix(){
+        return prefix;
     }
 }
 

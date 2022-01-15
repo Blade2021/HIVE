@@ -4,6 +4,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -11,15 +12,14 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
-import rsystems.commands.generic.Help;
-import rsystems.commands.generic.Led;
-import rsystems.commands.generic.LedList;
+import rsystems.commands.generic.*;
 import rsystems.commands.moderator.Clear;
 import rsystems.commands.moderator.ReferenceTester;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
 import rsystems.commands.user.GetKarma;
 import rsystems.objects.Command;
+import rsystems.objects.Reference;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -45,6 +45,8 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new LedList());
         registerCommand(new Help());
         registerCommand(new Clear());
+        registerCommand(new Search());
+        registerCommand(new ReferenceList());
 
     }
 
@@ -95,7 +97,30 @@ public class Dispatcher extends ListenerAdapter {
                         }
                     }
                 }
+
+                //Command not found
+
+                for(Map.Entry<String,Reference> entry : HiveBot.referenceHandler.getRefMap().entrySet()){
+
+                    final Reference r = entry.getValue();
+
+                    if (message.toLowerCase().startsWith(prefix.toLowerCase() + r.getReferenceCommand().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + r.getReferenceCommand().toLowerCase())) {
+                        MessageEmbed embed = HiveBot.referenceHandler.createEmbed(r);
+                        event.getMessage().replyEmbeds(embed).queue();
+                        return;
+                    } else {
+                        for (final String alias : r.getAliases()) {
+                            if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
+                                MessageEmbed embed = HiveBot.referenceHandler.createEmbed(r);
+                                event.getMessage().replyEmbeds(embed).queue();
+                                return;
+                            }
+                        }
+                    }
+
+                }
             }
+            // Prefix not found
         }
     }
 
