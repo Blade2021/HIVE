@@ -1,4 +1,4 @@
-package rsystems.commands.moderator;
+package rsystems.commands.utility;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
