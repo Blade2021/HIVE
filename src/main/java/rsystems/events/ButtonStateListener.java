@@ -1,10 +1,15 @@
 package rsystems.events;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import rsystems.HiveBot;
+import rsystems.objects.Reference;
+
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -13,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Map;
 
 public class ButtonStateListener extends ListenerAdapter {
 
@@ -35,6 +41,36 @@ public class ButtonStateListener extends ListenerAdapter {
         if(event.getButton().getId().startsWith("depin-30:")){
             handleDepinEvent(event,30);
 
+        }
+
+        if(event.getButton().getId().startsWith("reference:")) {
+            String buttonID = event.getButton().getId();
+
+            String refKey = buttonID.substring(10, buttonID.lastIndexOf(':'));
+            String originalPoster = buttonID.substring(buttonID.lastIndexOf(':') + 1);
+
+            if (event.getUser().getId().equalsIgnoreCase(originalPoster)) {
+
+                for (Map.Entry<String, Reference> referenceEntity : HiveBot.referenceHandler.getRefMap().entrySet()) {
+
+                    if (referenceEntity.getKey().equalsIgnoreCase(refKey)) {
+                        Reference reference = HiveBot.referenceHandler.getRefMap().get(refKey);
+                        EmbedBuilder embedBuilder = new EmbedBuilder(HiveBot.referenceHandler.createEmbed(reference));
+
+                        embedBuilder.setFooter("Reference: " + reference.getReferenceCommand());
+                        embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC));
+
+                        MessageBuilder builder = new MessageBuilder();
+
+                        builder.setEmbeds(embedBuilder.build());
+
+                        event.getMessage().editMessage(builder.build()).queue();
+                        break;
+                    }
+                }
+            } else {
+                event.deferEdit().queue();
+            }
         }
 
     }
