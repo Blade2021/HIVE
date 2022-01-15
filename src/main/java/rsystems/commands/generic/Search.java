@@ -28,6 +28,7 @@ public class Search extends Command {
             int totalCompareRate = 0;
 
             totalCompareRate = totalCompareRate + FuzzySearch.ratio(content.toLowerCase(), entry.getValue().getReferenceCommand().toLowerCase()) * 3;
+            totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(),entry.getValue().getTitle());
             totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(), entry.getValue().getAliases().toString().toLowerCase());
             totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(), entry.getValue().getDescription().toLowerCase());
 
@@ -35,10 +36,33 @@ public class Search extends Command {
             comparedMap.put(totalCompareRate, entry.getValue());
         }
 
-        MessageEmbed embed = HiveBot.referenceHandler.createEmbed(comparedMap.firstEntry().getValue());
+        EmbedBuilder builder = new EmbedBuilder();
 
-        EmbedBuilder builder = new EmbedBuilder(embed);
-        builder.setFooter(String.format("Reference: %s",comparedMap.firstEntry().getValue().getReferenceCommand()));
+        if(comparedMap.firstEntry().getKey() <= 350){
+
+            StringBuilder stringBuilder = new StringBuilder();
+
+            int x = 0;
+            for(Map.Entry<Integer, Reference> entry : comparedMap.entrySet()){
+                if(x < 5){
+                    stringBuilder.append(entry.getValue().getReferenceCommand()).append("\n");
+                    x++;
+                } else {
+                    break;
+                }
+            }
+
+            builder.setDescription(stringBuilder.toString());
+
+
+        } else {
+
+            MessageEmbed embed = HiveBot.referenceHandler.createEmbed(comparedMap.firstEntry().getValue());
+            builder = new EmbedBuilder(embed);
+
+            builder.setFooter(String.format("Reference: %s",comparedMap.firstEntry().getValue().getReferenceCommand()));
+
+        }
 
         reply(event, builder.build());
     }

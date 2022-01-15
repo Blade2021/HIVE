@@ -13,6 +13,7 @@ import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.generic.LedList;
+import rsystems.slashCommands.moderation.Activity;
 import rsystems.slashCommands.moderation.Unpin;
 import rsystems.slashCommands.moderation.LedControl;
 import rsystems.slashCommands.moderation.StreamMode;
@@ -43,6 +44,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new LedControl());
         registerCommand(new LedList());
         registerCommand(new Unpin());
+        registerCommand(new Activity());
 
     }
 

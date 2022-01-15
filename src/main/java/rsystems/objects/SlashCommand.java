@@ -65,6 +65,10 @@ public abstract class SlashCommand {
         reply(event,message,ephemeral,null);
     }
 
+    protected void reply(SlashCommandEvent event, String message){
+        reply(event,new MessageBuilder(message).build(),this.isEphemeral(),null);
+    }
+
     protected void reply(SlashCommandEvent event, String message, boolean ephemeral){
         reply(event,new MessageBuilder(message).build(),ephemeral,null);
     }

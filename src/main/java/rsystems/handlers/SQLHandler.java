@@ -174,6 +174,25 @@ public class SQLHandler {
         return map;
     }
 
+    public Integer putValue(String tablename, String columnName, String newValue, String identifierColumn, Integer identifier) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d",tablename,columnName,newValue,identifierColumn,identifier));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
     public Timestamp getTimestamp(String tableName, String columnName, String identifierColumn, Long identifier) throws SQLException {
 
         Timestamp output = null;
@@ -1068,6 +1087,26 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer deleteRow(String tableName, String identifierColumn, Integer identifier) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
     public Integer deleteRow(String tableName, String identifierColumn, String identifier) throws SQLException {
         Integer output = null;
 
@@ -1112,7 +1151,8 @@ public class SQLHandler {
 
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            //throwables.printStackTrace();
+            throw throwables;
         } finally {
             connection.close();
         }
@@ -1139,7 +1179,9 @@ public class SQLHandler {
 
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            //throwables.printStackTrace();
+
+            throw throwables;
         } finally {
             connection.close();
         }

@@ -36,7 +36,7 @@ public class Help extends Command {
         reply(event,"No command was found with that name");
     }
 
-    private void handleEvent(MessageReceivedEvent event, final Command c) {
+    private void handleEvent(final MessageReceivedEvent event, final Command c) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Help | " + c.getName());
         builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
