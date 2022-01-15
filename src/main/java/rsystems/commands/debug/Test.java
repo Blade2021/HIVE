@@ -16,8 +16,15 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class Test extends Command {
+
+    @Override
+    public boolean isOwnerOnly() {
+        return true;
+    }
+
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
+
 
         TreeMap<Integer, Reference> comparedMap = new TreeMap<>(Collections.reverseOrder());
 
@@ -26,7 +33,7 @@ public class Test extends Command {
 
             int totalCompareRate = 0;
 
-            totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(),entry.getValue().getReferenceCommand().toLowerCase()) * 2;
+            totalCompareRate = totalCompareRate + FuzzySearch.ratio(content.toLowerCase(),entry.getValue().getReferenceCommand().toLowerCase()) * 3;
             totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(),entry.getValue().getAliases().toString().toLowerCase());
             totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(),entry.getValue().getDescription().toLowerCase());
 
@@ -52,6 +59,8 @@ public class Test extends Command {
         builder.addField("Ratio",ratioString.toString(),true);
 
         reply(event,builder.build());
+
+
     }
 
     @Override

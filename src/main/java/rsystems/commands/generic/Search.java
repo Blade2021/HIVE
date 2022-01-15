@@ -27,7 +27,7 @@ public class Search extends Command {
 
             int totalCompareRate = 0;
 
-            totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(), entry.getValue().getReferenceCommand().toLowerCase()) * 2;
+            totalCompareRate = totalCompareRate + FuzzySearch.ratio(content.toLowerCase(), entry.getValue().getReferenceCommand().toLowerCase()) * 3;
             totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(), entry.getValue().getAliases().toString().toLowerCase());
             totalCompareRate = totalCompareRate + FuzzySearch.partialRatio(content.toLowerCase(), entry.getValue().getDescription().toLowerCase());
 
