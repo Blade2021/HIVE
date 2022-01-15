@@ -43,6 +43,7 @@ public class HiveBot{
 
     public static Dispatcher dispatcher;
     public static SlashCommandDispatcher slashCommandDispatcher;
+    public static GratitudeListener gratitudeListener;
 
     public static ReferenceHandler referenceHandler = new ReferenceHandler();
 
@@ -69,12 +70,16 @@ public class HiveBot{
                 .setChunkingFilter(ChunkingFilter.ALL)
                 .build();
 
+        // DISPATCHERS
         api.addEventListener(dispatcher = new Dispatcher());
         api.addEventListener(slashCommandDispatcher = new SlashCommandDispatcher());
 
+        // EVENT LISTENERS
+        api.addEventListener(gratitudeListener = new GratitudeListener());
         api.addEventListener(new GuildStateListener());
         api.addEventListener(new ButtonStateListener());
         api.addEventListener(new MessageEventListener());
+        api.addEventListener(new MemberStateListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
