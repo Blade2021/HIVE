@@ -1,11 +1,13 @@
 package rsystems.slashCommands.moderation;
 
 import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.SlashCommand;
@@ -23,8 +25,14 @@ public class StreamMode extends SlashCommand {
         event.deferReply(isEphemeral()).queue();
 
 
-        HiveBot.streamHandler.setStreamActive(event.getOption("active").getAsBoolean());
-        reply(event,"Setting Stream Mode to: `" + event.getOption("active").getAsBoolean() + "`",isEphemeral());
+        Boolean streamMode = event.getOption("active").getAsBoolean();
+
+        HiveBot.streamHandler.setStreamActive(streamMode);
+        reply(event,"Setting Stream Mode to: `" + streamMode + "`",isEphemeral());
+
+        if(streamMode){
+            HiveBot.jda.getPresence().setActivity(Activity.streaming("Stream Mode Active", Config.get("STREAM_TWITCH_LINK")));
+        }
     }
 
     @Override
