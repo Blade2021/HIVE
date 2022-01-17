@@ -10,6 +10,7 @@ import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.tasks.BotActivity;
 
 import java.awt.*;
 import java.sql.SQLException;
@@ -26,6 +27,8 @@ public class StreamHandler extends ListenerAdapter {
     private Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
     private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
 
+    private boolean firstHereClaimed = false;
+
     private static List<Long> keeperList = new ArrayList<>();
 
     public StreamHandler() {
@@ -36,11 +39,31 @@ public class StreamHandler extends ListenerAdapter {
     }
 
     public void setStreamActive(boolean streamActive) {
-        this.streamActive = streamActive;
 
         if(!streamActive){
             clearQuestions(this.streamQuestionChannelID);
+
+            BotActivity.handleTask();
+            firstHereClaimed = false;
+
+        } else {
+            if(!this.streamActive) {
+
+                EmbedBuilder builder = new EmbedBuilder();
+
+                builder.setTitle("DrZzs is going LIVE soon!");
+                builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
+                builder.setDescription("Come one, come all!  Join us on the DrZzs Stream!  Links below!\n**Remember to like and subscribe!**\n\nBe sure to type `/here` during a livestream to receive your bonus stream points!");
+                builder.addField("Twitch", Config.get("STREAM_TWITCH_LINK"), true);
+                builder.addField("YouTube", Config.get("STREAM_YOUTUBE_LINK"), true);
+
+                getChannel(streamChatChannelID).sendMessageEmbeds(builder.build()).queue();
+
+                HiveBot.jda.getPresence().setActivity(Activity.streaming("Stream Mode Active", Config.get("STREAM_TWITCH_LINK")));
+            }
         }
+
+        this.streamActive = streamActive;
     }
 
     public String getStreamTopic() {
@@ -53,6 +76,14 @@ public class StreamHandler extends ListenerAdapter {
 
     public Long getStreamChatChannelID() {
         return streamChatChannelID;
+    }
+
+    public TextChannel getChannel(final Long channelID){
+        if(HiveBot.mainGuild().getTextChannelById(channelID) != null){
+            return HiveBot.mainGuild().getTextChannelById(channelID);
+        } else {
+            return null;
+        }
     }
 
     public void parseMessage(MessageReceivedEvent event){
@@ -345,5 +376,13 @@ public class StreamHandler extends ListenerAdapter {
         catch (Exception e){
             e.printStackTrace();
         }
+    }
+
+    public boolean isFirstHereClaimed() {
+        return firstHereClaimed;
+    }
+
+    public void setFirstHereClaimed(boolean firstHereClaimed) {
+        this.firstHereClaimed = firstHereClaimed;
     }
 }

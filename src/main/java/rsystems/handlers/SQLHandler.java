@@ -1495,7 +1495,7 @@ public class SQLHandler {
      * <p>401 = User is not outside Here status window.  (Calling too many times)</p>
      * @throws SQLException
      */
-    public Integer acceptHereStatus(Long userID) throws SQLException {
+    public Integer acceptHereStatus(Long userID, Integer incrementAmount) throws SQLException {
         Integer output = null;
 
         Connection connection = pool.getConnection();
@@ -1508,7 +1508,10 @@ public class SQLHandler {
 
             Integer currentPoints = null;
             Instant previousTimestamp = null;
-            Integer incrementAmount = Integer.parseInt(Config.get("HERE_INCREMENT_AMOUNT"));
+
+            if(incrementAmount == null) {
+                incrementAmount = Integer.parseInt(Config.get("HERE_INCREMENT_AMOUNT"));
+            }
 
             while(rs.next()){
                 currentPoints = rs.getInt("Points");

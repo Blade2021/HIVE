@@ -10,7 +10,10 @@ public class BotActivity extends TimerTask {
 
     @Override
     public void run() {
+        handleTask();
+    }
 
+    public static void handleTask(){
         if(!HiveBot.streamHandler.isStreamActive()) {
 
             final int currentIndex = HiveBot.activityStatusIndex;

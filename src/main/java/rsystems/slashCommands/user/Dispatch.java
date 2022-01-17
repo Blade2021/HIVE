@@ -35,7 +35,7 @@ public class Dispatch extends SlashCommand {
 
     @Override
     public String getDescription() {
-        return "Spend ";
+        return "Spend your pixels";
     }
 
     @Override
