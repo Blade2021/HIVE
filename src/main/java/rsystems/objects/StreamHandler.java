@@ -38,7 +38,11 @@ public class StreamHandler extends ListenerAdapter {
         return streamActive;
     }
 
-    public void setStreamActive(boolean streamActive) {
+    public void setStreamActive(boolean streamActive){
+        setStreamActive(streamActive,null);
+    }
+
+    public void setStreamActive(boolean streamActive, String streamTopic) {
 
         if(!streamActive){
             clearQuestions(this.streamQuestionChannelID);
@@ -51,9 +55,14 @@ public class StreamHandler extends ListenerAdapter {
 
                 EmbedBuilder builder = new EmbedBuilder();
 
-                builder.setTitle("DrZzs is going LIVE soon!");
+                builder.setTitle(String.format("%s is going LIVE soon!",Config.get("HOST_NICKNAME")));
                 builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
-                builder.setDescription("Come one, come all!  Join us on the DrZzs Stream!  Links below!\n**Remember to like and subscribe!**\n\nBe sure to type `/here` during a livestream to receive your bonus stream points!");
+                builder.setDescription(String.format("Come one, come all!  Join us on the %s Stream!  Links below!\n**Remember to like and subscribe!**\n\nBe sure to type `/here` during a livestream to receive your bonus stream points!",Config.get("HOST_NICKNAME")));
+                if(streamTopic != null) {
+                    builder.addField("Topic", streamTopic, false);
+
+                    this.streamTopic = streamTopic;
+                }
                 builder.addField("Twitch", Config.get("STREAM_TWITCH_LINK"), true);
                 builder.addField("YouTube", Config.get("STREAM_YOUTUBE_LINK"), true);
 

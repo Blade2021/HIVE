@@ -1,20 +1,27 @@
 package rsystems.handlers;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.objects.EncryptionHandler;
 import rsystems.objects.LED;
 import rsystems.objects.MessageAction;
 import rsystems.objects.UserStreamObject;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
@@ -1647,6 +1654,66 @@ public class SQLHandler {
 
         return list;
 
+    }
+
+    public void insertToken(String token, IvParameterSpec secureKey) throws SQLException {
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+            String salt =  new String(secureKey.getIV());
+
+            st.execute(String.format("INSERT INTO TokenTable (Token, TokenKey) VALUES ('%s','%s')",token,salt));
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+    }
+
+    public String getToken(Integer tokenID) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        String result = null;
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT Token, TokenKey FROM TokenTable WHERE ID = %d", tokenID));
+            while(rs.next()){
+                String encryptedToken = rs.getString("Token");
+                String salt = rs.getString("TokenKey");
+
+                byte[] saltArray = salt.getBytes();
+                SecretKey key = EncryptionHandler.getKeyFromPassword(Config.get("ENCRYPTION_KEY"),Config.get("SALT"));
+
+                result = EncryptionHandler.decryptPasswordBased(encryptedToken,key,new IvParameterSpec(saltArray));
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeySpecException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return result;
     }
 
 }

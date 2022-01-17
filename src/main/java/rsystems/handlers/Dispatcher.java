@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.debug.Test2;
 import rsystems.commands.generic.*;
 import rsystems.commands.utility.Cleanse;
 import rsystems.commands.utility.Clear;
@@ -46,6 +47,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Search());
         registerCommand(new ReferenceList());
         registerCommand(new Cleanse());
+        registerCommand(new Test2());
 
     }
 

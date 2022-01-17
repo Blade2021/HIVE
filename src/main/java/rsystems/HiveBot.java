@@ -1,5 +1,12 @@
 package rsystems;
 
+import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
+import com.github.philippheuer.events4j.api.IEventManager;
+import com.github.philippheuer.events4j.core.EventManager;
+import com.github.philippheuer.events4j.simple.SimpleEventHandler;
+import com.github.twitch4j.TwitchClient;
+import com.github.twitch4j.TwitchClientBuilder;
+import com.github.twitch4j.common.config.ProxyConfig;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -15,10 +22,12 @@ import rsystems.handlers.*;
 import rsystems.objects.DBPool;
 import rsystems.handlers.Dispatcher;
 import rsystems.objects.StreamHandler;
+import rsystems.objects.TwitchBot;
 import rsystems.tasks.AddKarmaPoints;
 import rsystems.tasks.BotActivity;
 import rsystems.tasks.CheckDatabase;
 import rsystems.tasks.Newcomer;
+import rsystems.twitch.events.LiveEvent;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -43,6 +52,7 @@ public class HiveBot{
     public static SlashCommandDispatcher slashCommandDispatcher;
     public static GratitudeListener gratitudeListener;
     public static StreamHandler streamHandler;
+    public static TwitchBot twitchBot;
 
     public static ReferenceHandler referenceHandler = new ReferenceHandler();
 
@@ -114,6 +124,21 @@ public class HiveBot{
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+
+        twitchBot = new TwitchBot();
+
+        /*
+        TwitchClient client = TwitchClientBuilder.builder()
+                .withDefaultAuthToken(new OAuth2Credential("twitch", Config.get("TWITCH_TOKEN")))
+                .withEnableHelix(true)
+                .build();
+
+        client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new LiveEvent());
+        client.getClientHelper().enableStreamEventListener(Config.get("TWITCH_CHANNEL_NAME").toLowerCase());
+
+
+         */
     }
 
     public static Color getColor(colorType colorType) {
