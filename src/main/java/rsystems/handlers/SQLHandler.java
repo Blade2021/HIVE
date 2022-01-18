@@ -1672,7 +1672,7 @@ public class SQLHandler {
 
     }
 
-    public Credential getCredential(String broadcaster_ID) throws SQLException {
+    public Credential getCredential(Integer broadcaster_ID) throws SQLException {
         Connection connection = pool.getConnection();
 
         Credential credential = null;
@@ -1681,7 +1681,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, access_Token_Key, refresh_Token, refresh_Token_Key FROM TokenTable WHERE broadcaster_ID = '%s'", broadcaster_ID));
+            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, access_Token_Key, refresh_Token, refresh_Token_Key FROM TokenTable WHERE broadcaster_ID = %d", broadcaster_ID));
             while(rs.next()){
 
                 String encrypted_access_Token = rs.getString("access_Token");

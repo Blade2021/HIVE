@@ -51,7 +51,7 @@ public class TwitchBot {
     }
 
     public void reloadCredential() throws SQLException {
-        credential = HiveBot.database.getCredential(Config.get("TWITCH_BROADCASTER_ID"));
+        credential = HiveBot.database.getCredential(Integer.parseInt(Config.get("TWITCH_BROADCASTER_ID")));
     }
 
     public Credential getCredential(){

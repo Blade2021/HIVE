@@ -19,7 +19,6 @@ import rsystems.slashCommands.user.GetKarma;
 import rsystems.slashCommands.user.StreamPoints;
 import rsystems.slashCommands.user.Here;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
@@ -44,6 +43,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new Activity());
         registerCommand(new Who());
         registerCommand(new StreamMarker());
+        registerCommand(new SubmitToken());
 
     }
 
@@ -136,6 +136,14 @@ public class SlashCommandDispatcher extends ListenerAdapter {
 
     public static Boolean isAuthorized(final SlashCommand c, final Long guildID, final Member member, final Integer permissionIndex) throws SQLException {
         boolean authorized = false;
+
+        if (c.isOwnerOnly()) {
+            if (member.getIdLong() == HiveBot.botOwnerID) {
+                return true;
+            } else {
+                return false;
+            }
+        }
 
         if(member.hasPermission(Permission.ADMINISTRATOR)){
             return true;

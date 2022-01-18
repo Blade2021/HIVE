@@ -29,6 +29,10 @@ public abstract class SlashCommand {
         return null;
     }
 
+    public boolean isOwnerOnly(){
+        return false;
+    }
+
     public CommandData getCommandData() {
         return commandData;
     }
