@@ -1,6 +1,8 @@
 package rsystems.objects;
 
 public class KarmaUserInfo {
+
+    private Long userID;
     private int available_points;
     private int karma;
     private int ksent_pos;
@@ -39,5 +41,13 @@ public class KarmaUserInfo {
 
     public void setKsent_neg(int ksent_neg) {
         this.ksent_neg = ksent_neg;
+    }
+
+    public Long getUserID() {
+        return userID;
+    }
+
+    public void setUserID(Long userID) {
+        this.userID = userID;
     }
 }

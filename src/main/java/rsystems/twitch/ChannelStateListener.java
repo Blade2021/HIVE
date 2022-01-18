@@ -1,15 +1,15 @@
-package rsystems.twitch.events;
+package rsystems.twitch;
 
 import com.github.philippheuer.events4j.simple.domain.EventSubscriber;
 import com.github.twitch4j.events.ChannelGoLiveEvent;
 import com.github.twitch4j.events.ChannelGoOfflineEvent;
-import com.github.twitch4j.helix.domain.Highlight;
+import com.github.twitch4j.pubsub.events.RewardRedeemedEvent;
 import rsystems.HiveBot;
 
-public class LiveEvent {
+public class ChannelStateListener {
 
     @EventSubscriber
-    public void goLiveEvent(ChannelGoLiveEvent event){
+    public void onChannelGoLiveEvent(ChannelGoLiveEvent event){
 
         HiveBot.streamHandler.setStreamActive(true,event.getStream().getTitle());
 
@@ -17,12 +17,18 @@ public class LiveEvent {
 
     }
 
-    public void endStreamEvent(ChannelGoOfflineEvent event){
+    @EventSubscriber
+    public void onChannelGoOfflineEvent(ChannelGoOfflineEvent event){
 
         HiveBot.streamHandler.setStreamActive(false);
         HiveBot.streamHandler.setStreamTopic(null);
 
         System.out.println(String.format("STREAM END EVENT DETECTED! %s",event.getChannel().getName()));
 
+    }
+
+    public void rewardListener(RewardRedeemedEvent event){
+        //event.getRedemption().getReward()
+        System.out.println(event);
     }
 }

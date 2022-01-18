@@ -27,7 +27,7 @@ import rsystems.tasks.AddKarmaPoints;
 import rsystems.tasks.BotActivity;
 import rsystems.tasks.CheckDatabase;
 import rsystems.tasks.Newcomer;
-import rsystems.twitch.events.LiveEvent;
+import rsystems.twitch.ChannelStateListener;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -128,17 +128,8 @@ public class HiveBot{
 
         twitchBot = new TwitchBot();
 
-        /*
-        TwitchClient client = TwitchClientBuilder.builder()
-                .withDefaultAuthToken(new OAuth2Credential("twitch", Config.get("TWITCH_TOKEN")))
-                .withEnableHelix(true)
-                .build();
-
-        client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new LiveEvent());
-        client.getClientHelper().enableStreamEventListener(Config.get("TWITCH_CHANNEL_NAME").toLowerCase());
 
 
-         */
     }
 
     public static Color getColor(colorType colorType) {

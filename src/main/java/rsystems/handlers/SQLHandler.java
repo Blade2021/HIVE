@@ -12,10 +12,7 @@ import java.util.*;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.objects.EncryptionHandler;
-import rsystems.objects.LED;
-import rsystems.objects.MessageAction;
-import rsystems.objects.UserStreamObject;
+import rsystems.objects.*;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -1656,14 +1653,16 @@ public class SQLHandler {
 
     }
 
-    public void insertToken(String token, IvParameterSpec secureKey) throws SQLException {
+    public void insertCredential(Integer broadcasterID, String encryptedAccessToken, IvParameterSpec accessTokenSalt, String encryptedRefreshToken, IvParameterSpec refreshTokenSalt) throws SQLException {
         Connection connection = pool.getConnection();
         try{
 
             Statement st = connection.createStatement();
-            String salt =  new String(secureKey.getIV());
+            String accessSaltString =  new String(accessTokenSalt.getIV());
+            String refreshSaltString = new String(refreshTokenSalt.getIV());
 
-            st.execute(String.format("INSERT INTO TokenTable (Token, TokenKey) VALUES ('%s','%s')",token,salt));
+            st.execute(String.format("INSERT INTO TokenTable (broadcaster_id, access_Token, access_Token_Key, refresh_Token, refresh_Token_key) VALUES (%d, '%s', '%s', '%s', '%s')",
+                    broadcasterID,encryptedAccessToken,accessSaltString,encryptedRefreshToken,refreshSaltString));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -1673,23 +1672,34 @@ public class SQLHandler {
 
     }
 
-    public String getToken(Integer tokenID) throws SQLException {
+    public Credential getCredential(String broadcaster_ID) throws SQLException {
         Connection connection = pool.getConnection();
 
-        String result = null;
+        Credential credential = null;
+
         try{
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT Token, TokenKey FROM TokenTable WHERE ID = %d", tokenID));
+            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, access_Token_Key, refresh_Token, refresh_Token_Key FROM TokenTable WHERE broadcaster_ID = '%s'", broadcaster_ID));
             while(rs.next()){
-                String encryptedToken = rs.getString("Token");
-                String salt = rs.getString("TokenKey");
 
-                byte[] saltArray = salt.getBytes();
+                String encrypted_access_Token = rs.getString("access_Token");
+                String access_Token_salt = rs.getString("access_Token_Key");
+
+                String encrypted_refresh_Token = rs.getString("refresh_Token");
+                String refresh_Token_salt = rs.getString("refresh_Token_Key");
+
+                byte[] accessSalt = access_Token_salt.getBytes();
+                byte[] refreshSalt = refresh_Token_salt.getBytes();
+
+                // Get Decryption password from Environment
                 SecretKey key = EncryptionHandler.getKeyFromPassword(Config.get("ENCRYPTION_KEY"),Config.get("SALT"));
 
-                result = EncryptionHandler.decryptPasswordBased(encryptedToken,key,new IvParameterSpec(saltArray));
+                String decryptedAccessToken = EncryptionHandler.decryptPasswordBased(encrypted_access_Token,key,new IvParameterSpec(accessSalt));
+                String decryptedRefreshToken = EncryptionHandler.decryptPasswordBased(encrypted_refresh_Token,key,new IvParameterSpec(refreshSalt));
+
+                credential = new Credential(decryptedAccessToken,decryptedRefreshToken);
 
             }
 
@@ -1713,7 +1723,7 @@ public class SQLHandler {
             connection.close();
         }
 
-        return result;
+        return credential;
     }
 
 }

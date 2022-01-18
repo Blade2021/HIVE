@@ -43,6 +43,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new Unpin());
         registerCommand(new Activity());
         registerCommand(new Who());
+        registerCommand(new StreamMarker());
 
     }
 
