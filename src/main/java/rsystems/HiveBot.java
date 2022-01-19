@@ -128,7 +128,7 @@ public class HiveBot{
 
         twitchBot = new TwitchBot();
 
-        //some line to test auto build
+        //some line to test auto build and again
 
     }
 
