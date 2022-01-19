@@ -1653,14 +1653,14 @@ public class SQLHandler {
 
     }
 
-    public void insertCredential(Integer broadcasterID, String accessToken, String refreshToken) throws SQLException {
+    public void insertCredential(Integer tokenID, String accessToken, String refreshToken) throws SQLException {
         Connection connection = pool.getConnection();
         try{
 
             Statement st = connection.createStatement();
 
-            st.execute(String.format("INSERT INTO TokenTable (broadcaster_id, access_Token, refresh_Token) VALUES (%d, '%s', '%s')",
-                    broadcasterID,accessToken,refreshToken));
+            st.execute(String.format("INSERT INTO TokenTable (tokenID, access_Token, refresh_Token) VALUES (%d, '%s', '%s')",
+                    tokenID,accessToken,refreshToken));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -1670,7 +1670,7 @@ public class SQLHandler {
 
     }
 
-    public Credential getCredential(Integer broadcaster_ID) throws SQLException {
+    public Credential getCredential(Integer tokenID) throws SQLException {
         Connection connection = pool.getConnection();
 
         Credential credential = null;
@@ -1679,7 +1679,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, refresh_Token FROM TokenTable WHERE broadcaster_ID = %d", broadcaster_ID));
+            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, refresh_Token FROM TokenTable WHERE tokenID = %d", tokenID));
             while(rs.next()){
 
                 String accessToken = rs.getString("access_Token");
