@@ -5,20 +5,9 @@ import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.objects.EncryptionHandler;
 import rsystems.objects.SlashCommand;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.sql.SQLException;
 
 public class SubmitToken extends SlashCommand {
@@ -27,7 +16,7 @@ public class SubmitToken extends SlashCommand {
     public CommandData getCommandData() {
         CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
 
-        commandData.addOption(OptionType.STRING,"broadcasterid","The broadcaster ID to store with the key",true);
+        commandData.addOption(OptionType.STRING,"tokenid","The Token ID to store with the key",true);
         commandData.addOption(OptionType.STRING,"accesstoken","The access token to store",true);
         commandData.addOption(OptionType.STRING,"refreshtoken","The refresh token to store",true);
 
@@ -44,7 +33,7 @@ public class SubmitToken extends SlashCommand {
 
         event.deferReply(isEphemeral()).queue();
 
-        Integer broadcasterID = Integer.parseInt(event.getOption("broadcasterid").getAsString());
+        Integer broadcasterID = Integer.parseInt(event.getOption("tokenid").getAsString());
         String accessToken = event.getOption("accesstoken").getAsString();
         String refreshToken = event.getOption("refreshtoken").getAsString();
 
