@@ -21,17 +21,20 @@ public class TwitchBot {
         try {
             reloadCredential();
 
-            client = TwitchClientBuilder.builder()
-                    .withDefaultAuthToken(new OAuth2Credential("twitch", credential.getAccess_Token()))
-                    .withEnablePubSub(true)
-                    .withClientId(Config.get("TWITCH_CLIENT_ID"))
-                    .withClientSecret(Config.get("TWITCH_CLIENT_SECRET"))
-                    .withEnableHelix(true)
-                    .build();
+            if(credential != null) {
 
-            client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new ChannelStateListener());
-            client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new FollowEvents());
-            client.getClientHelper().enableStreamEventListener(Config.get("TWITCH_CHANNEL_NAME").toLowerCase());
+                client = TwitchClientBuilder.builder()
+                        .withDefaultAuthToken(new OAuth2Credential("twitch", credential.getAccess_Token()))
+                        .withEnablePubSub(true)
+                        .withClientId(Config.get("TWITCH_CLIENT_ID"))
+                        .withClientSecret(Config.get("TWITCH_CLIENT_SECRET"))
+                        .withEnableHelix(true)
+                        .build();
+
+                client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new ChannelStateListener());
+                client.getEventManager().getEventHandler(SimpleEventHandler.class).registerListener(new FollowEvents());
+                client.getClientHelper().enableStreamEventListener(Config.get("TWITCH_CHANNEL_NAME").toLowerCase());
+            }
 
 
 

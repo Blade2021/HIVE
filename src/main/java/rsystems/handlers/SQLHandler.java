@@ -1653,16 +1653,14 @@ public class SQLHandler {
 
     }
 
-    public void insertCredential(Integer broadcasterID, String encryptedAccessToken, IvParameterSpec accessTokenSalt, String encryptedRefreshToken, IvParameterSpec refreshTokenSalt) throws SQLException {
+    public void insertCredential(Integer broadcasterID, String accessToken, String refreshToken) throws SQLException {
         Connection connection = pool.getConnection();
         try{
 
             Statement st = connection.createStatement();
-            String accessSaltString =  new String(accessTokenSalt.getIV());
-            String refreshSaltString = new String(refreshTokenSalt.getIV());
 
-            st.execute(String.format("INSERT INTO TokenTable (broadcaster_id, access_Token, access_Token_Key, refresh_Token, refresh_Token_key) VALUES (%d, '%s', '%s', '%s', '%s')",
-                    broadcasterID,encryptedAccessToken,accessSaltString,encryptedRefreshToken,refreshSaltString));
+            st.execute(String.format("INSERT INTO TokenTable (broadcaster_id, access_Token, refresh_Token) VALUES (%d, '%s', '%s')",
+                    broadcasterID,accessToken,refreshToken));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -1681,44 +1679,18 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, access_Token_Key, refresh_Token, refresh_Token_Key FROM TokenTable WHERE broadcaster_ID = %d", broadcaster_ID));
+            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, refresh_Token FROM TokenTable WHERE broadcaster_ID = %d", broadcaster_ID));
             while(rs.next()){
 
-                String encrypted_access_Token = rs.getString("access_Token");
-                String access_Token_salt = rs.getString("access_Token_Key");
+                String accessToken = rs.getString("access_Token");
+                String refreshToken = rs.getString("refresh_Token");
 
-                String encrypted_refresh_Token = rs.getString("refresh_Token");
-                String refresh_Token_salt = rs.getString("refresh_Token_Key");
-
-                byte[] accessSalt = access_Token_salt.getBytes();
-                byte[] refreshSalt = refresh_Token_salt.getBytes();
-
-                // Get Decryption password from Environment
-                SecretKey key = EncryptionHandler.getKeyFromPassword(Config.get("ENCRYPTION_KEY"),Config.get("SALT"));
-
-                String decryptedAccessToken = EncryptionHandler.decryptPasswordBased(encrypted_access_Token,key,new IvParameterSpec(accessSalt));
-                String decryptedRefreshToken = EncryptionHandler.decryptPasswordBased(encrypted_refresh_Token,key,new IvParameterSpec(refreshSalt));
-
-                credential = new Credential(decryptedAccessToken,decryptedRefreshToken);
+                credential = new Credential(accessToken,refreshToken);
 
             }
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } finally {
             connection.close();
         }

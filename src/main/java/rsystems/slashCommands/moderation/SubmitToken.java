@@ -49,33 +49,12 @@ public class SubmitToken extends SlashCommand {
         String refreshToken = event.getOption("refreshtoken").getAsString();
 
         try {
-            SecretKey key = EncryptionHandler.getKeyFromPassword(Config.get("ENCRYPTION_KEY"),Config.get("SALT"));
-            IvParameterSpec accessTokenKey = EncryptionHandler.generateIv();
 
-            String encryptedAccessToken = EncryptionHandler.encryptPasswordBased(accessToken,key,accessTokenKey);
-
-            IvParameterSpec refreshTokenKey = EncryptionHandler.generateIv();
-            String encryptedRefreshToken = EncryptionHandler.encryptPasswordBased(refreshToken,key,refreshTokenKey);
-
-            HiveBot.database.insertCredential(broadcasterID,encryptedAccessToken,accessTokenKey,encryptedRefreshToken,refreshTokenKey);
+            HiveBot.database.insertCredential(broadcasterID,accessToken,refreshToken);
 
             reply(event,"Success");
             return;
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeySpecException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (SQLException e) {
             e.printStackTrace();
         }
