@@ -5,22 +5,39 @@ import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
 import rsystems.objects.SlashCommand;
 
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.Map;
 
 public class Led extends SlashCommand {
 
     @Override
     public CommandData getCommandData() {
         CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
-        commandData.addOption(OptionType.STRING,"type","The type of LED to use",true);
+
+        try {
+            Map<String, LED> ledMap = HiveBot.database.getLEDMap();
+
+            for(Map.Entry<String, LED> entry:ledMap.entrySet()){
+                commandData.addSubcommands(generateSubCommand(entry.getKey().toLowerCase(),entry.getValue().getDescription()));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        /*commandData.addOption(OptionType.STRING,"type","The type of LED to use",true);
         commandData.addOption(OptionType.NUMBER,"qty","How many LEDs to calculate",false);
+
+         */
 
         return commandData;
     }
@@ -32,7 +49,8 @@ public class Led extends SlashCommand {
 
         LED led = null;
         try{
-            led = HiveBot.database.getLED(event.getOption("type").getAsString());
+
+            led = HiveBot.database.getLED(event.getSubcommandName());
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -102,5 +120,14 @@ public class Led extends SlashCommand {
         }
 
         return embedBuilder.build();
+    }
+
+    public SubcommandData generateSubCommand(String ledType, String ledDescription){
+
+        SubcommandData subcommandData = new SubcommandData(ledType,ledDescription);
+        //subcommandData.addOption(OptionType.STRING,"type","The type of LED to use",true);
+        subcommandData.addOption(OptionType.NUMBER,"qty","How many LEDs to calculate",false);
+
+        return subcommandData;
     }
 }

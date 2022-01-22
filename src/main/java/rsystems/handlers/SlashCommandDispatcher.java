@@ -8,6 +8,11 @@ import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.OptionData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.generic.Help;
@@ -28,6 +33,8 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     private final Set<SlashCommand> slashCommands = ConcurrentHashMap.newKeySet();
     private final ExecutorService pool = Executors.newCachedThreadPool(newThreadFactory("slashCommand-runner", false));
     private final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(10);
+
+    private String[] overrideCommands = {"LED"};
 
     public SlashCommandDispatcher() {
         registerCommand(new Here());
@@ -69,6 +76,16 @@ public class SlashCommandDispatcher extends ListenerAdapter {
             return false;
         this.slashCommands.add(command);
         return true;
+    }
+
+    public SlashCommand getCommandByName(String name){
+        for(SlashCommand s:this.slashCommands){
+            if(s.getName().equalsIgnoreCase(name)){
+                return s;
+            }
+        }
+
+        return null;
     }
 
     private void executeCommand(final SlashCommand c, final String message,
@@ -223,6 +240,13 @@ public class SlashCommandDispatcher extends ListenerAdapter {
 
                 try {
                     updateList = HiveBot.database.getList("PushUpdateCommand","CommandName");
+
+                    for(String s:this.overrideCommands){
+                        if(!updateList.contains(s)){
+                            updateList.add(s);
+                        }
+                    }
+
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }

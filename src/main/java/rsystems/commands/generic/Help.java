@@ -3,6 +3,7 @@ package rsystems.commands.generic;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import rsystems.HiveBot;
@@ -21,13 +22,15 @@ public class Help extends Command {
         for (Command c : HiveBot.dispatcher.getCommands()) {
 
             if (c.getName().equalsIgnoreCase(commandName)) {
-                handleEvent(event, c);
+                MessageEmbed embed = handleEvent(event, c);
+                reply(event,embed);
                 return;
             }
 
             for (final String alias : c.getAliases()) {
                 if (alias.equalsIgnoreCase(commandName)) {
-                    handleEvent(event, c);
+                    MessageEmbed embed = handleEvent(event, c);
+                    reply(event,embed);
                     return;
                 }
             }
@@ -36,7 +39,7 @@ public class Help extends Command {
         reply(event,"No command was found with that name");
     }
 
-    private void handleEvent(final MessageReceivedEvent event, final Command c) {
+    public static MessageEmbed handleEvent(final MessageReceivedEvent event, final Command c) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Help | " + c.getName());
         builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
@@ -66,8 +69,7 @@ public class Help extends Command {
             builder.addField("Discord Permission:",c.getDiscordPermission().getName(),true);
         }
 
-        reply(event,builder.build());
-        builder.clear();
+        return builder.build();
     }
 
     @Override

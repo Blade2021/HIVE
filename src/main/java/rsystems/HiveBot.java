@@ -23,10 +23,7 @@ import rsystems.objects.DBPool;
 import rsystems.handlers.Dispatcher;
 import rsystems.objects.StreamHandler;
 import rsystems.objects.TwitchBot;
-import rsystems.tasks.AddKarmaPoints;
-import rsystems.tasks.BotActivity;
-import rsystems.tasks.CheckDatabase;
-import rsystems.tasks.Newcomer;
+import rsystems.tasks.*;
 import rsystems.twitch.ChannelStateListener;
 
 import javax.security.auth.login.LoginException;
@@ -116,6 +113,8 @@ public class HiveBot{
             }
 
             Timer timer = new Timer();
+            timer.scheduleAtFixedRate(new LedListCheck(), 1000*60*5,1000*60*5);
+
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);
             timer.schedule(new Newcomer(),60000,21600000);
             timer.scheduleAtFixedRate(new BotActivity(),30000,30000);

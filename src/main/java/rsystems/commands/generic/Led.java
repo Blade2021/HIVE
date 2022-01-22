@@ -3,6 +3,7 @@ package rsystems.commands.generic;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import rsystems.Config;
@@ -77,6 +78,9 @@ public class Led extends Command {
 
             reply(event,embedBuilder.build());
             embedBuilder.clear();
+        } else {
+            MessageEmbed helpEmbed = Help.handleEvent(event,this);
+            reply(event,helpEmbed);
         }
     }
 
@@ -89,6 +93,10 @@ public class Led extends Command {
         return returnString;
 
 
+    }
+
+    public void updateCommand(){
+        this.updateCommand();
     }
 
 }

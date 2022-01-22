@@ -197,6 +197,25 @@ public class SQLHandler {
         return  result;
     }
 
+    public Integer putInt(String tablename, String columnName, Integer newValue, String identifierColumn, String identifier) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = '%s'",tablename,columnName,newValue,identifierColumn,identifier));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
     public Timestamp getTimestamp(String tableName, String columnName, String identifierColumn, Long identifier) throws SQLException {
 
         Timestamp output = null;
@@ -232,7 +251,7 @@ public class SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table WHERE ledname = \"%s\"", ledName));
+            ResultSet rs = st.executeQuery(String.format("SELECT Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table WHERE ledname = '%s'", ledName.toLowerCase()));
 
             while (rs.next()) {
                 ledFound = true;
@@ -301,12 +320,13 @@ public class SQLHandler {
             // True/False  (Boolean)
 
 
-            st.execute(String.format("INSERT INTO LED_Table (ledName, Voltage, WhitePixel, WattageTheory, WattageTested) VALUES ('%s', %d, %s, %f, %f)",
+            st.execute(String.format("INSERT INTO LED_Table (ledName, Voltage, WhitePixel, WattageTheory, WattageTested, Description) VALUES ('%s', %d, %s, %f, %f, '%s')",
                     led.getLedName(),
                     led.getLedVoltage(),
                     led.isWhiteIncluded(),
                     led.getWattagePerPixel_Theoretical(),
-                    led.getWattagePerPixel_Tested())
+                    led.getWattagePerPixel_Tested(),
+                    led.getDescription())
             );
 
             if(st.getUpdateCount() > 0){
@@ -329,7 +349,7 @@ public class SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT ledName, Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table");
+            ResultSet rs = st.executeQuery("SELECT ledName, Voltage, WhitePixel, WattageTheory, WattageTested, Description FROM LED_Table");
 
             while (rs.next()) {
 
@@ -338,6 +358,7 @@ public class SQLHandler {
                 led.setWhiteIncluded(rs.getBoolean("WhitePixel"));
                 led.setWattagePerPixel_Tested(rs.getFloat("WattageTested"));
                 led.setWattagePerPixel_Theoretical(rs.getFloat("WattageTheory"));
+                led.setDescription(rs.getString("Description"));
 
                 ledList.putIfAbsent(led.getLedName(),led);
             }
@@ -351,6 +372,34 @@ public class SQLHandler {
         }
 
         return ledList;
+    }
+
+    public boolean checkForLedUpsert() throws SQLException {
+        Connection connection = pool.getConnection();
+
+        boolean output = false;
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ledName FROM LED_Table WHERE Upsert = 1");
+
+            while (rs.next()) {
+
+                output = true;
+                break;
+            }
+
+            st.execute("UPDATE LED_Table SET Upsert = 0 WHERE Upsert = 1");
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
     }
 
     
