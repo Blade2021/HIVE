@@ -148,9 +148,6 @@ public class LedControl extends SlashCommand {
 
                 if(led != null){
 
-                    // Remove the old data from the database
-                    HiveBot.database.deleteRow("LED_Table","ledName",ledName);
-
 
                     if(event.getOption("voltage") != null){
                         led.setLedVoltage(Integer.parseInt(event.getOption("voltage").getAsString()));
@@ -178,6 +175,9 @@ public class LedControl extends SlashCommand {
                             led.setDescription(event.getOption("description").getAsString());
                         }
                     }
+
+                    // Remove the old data from the database
+                    HiveBot.database.deleteRow("LED_Table","ledName",ledName);
 
                     Integer insertStatusCode = HiveBot.database.insertLED(led);
                     if(insertStatusCode == 200){
