@@ -12,10 +12,10 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.funCommands.Order66;
+import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.*;
-import rsystems.commands.utility.Cleanse;
-import rsystems.commands.utility.Clear;
-import rsystems.commands.utility.ReferenceTester;
+import rsystems.commands.utility.*;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
 import rsystems.commands.user.GetKarma;
@@ -46,6 +46,12 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Search());
         registerCommand(new ReferenceList());
         registerCommand(new Cleanse());
+        registerCommand(new Order66());
+        registerCommand(new ThreeLawsSafe());
+        registerCommand(new Ping());
+        registerCommand(new Reload());
+        registerCommand(new Shutdown());
+        registerCommand(new PowerCal());
 
     }
 
