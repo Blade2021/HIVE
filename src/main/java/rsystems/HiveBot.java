@@ -125,7 +125,7 @@ public class HiveBot{
         }
 
 
-        twitchBot = new TwitchBot();
+        //twitchBot = new TwitchBot();
 
         //testing
 
