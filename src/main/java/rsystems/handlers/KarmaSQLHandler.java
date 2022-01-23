@@ -1,6 +1,7 @@
 package rsystems.handlers;
 
 import net.dv8tion.jda.api.entities.Member;
+import net.dv8tion.jda.api.entities.User;
 import org.checkerframework.checker.units.qual.K;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
@@ -169,7 +170,7 @@ public class KarmaSQLHandler extends SQLHandler {
         return karmaUserInfo;
     }
 
-    public int updateKarma(final Long messageID, final Member sender, final Member receiver, final boolean direction) throws SQLException {
+    public int updateKarma(final Long messageID, final User sender, final User receiver, final boolean direction) throws SQLException {
         System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s", sender, receiver));
 
         int output = 0;
@@ -181,7 +182,7 @@ public class KarmaSQLHandler extends SQLHandler {
             int availableKarma = 0;
 
             if (getKarma(receiver.getId()) == null) {
-                insertUser(receiver.getId(), receiver.getUser().getAsTag());
+                insertUser(receiver.getId(), receiver.getAsTag());
             }
 
             ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + sender.getId());

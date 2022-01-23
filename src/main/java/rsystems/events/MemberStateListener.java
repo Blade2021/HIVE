@@ -1,9 +1,15 @@
 package rsystems.events;
 
+import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
+import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
+import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import rsystems.Config;
 import rsystems.HiveBot;
 
@@ -12,6 +18,9 @@ import java.sql.SQLException;
 public class MemberStateListener extends ListenerAdapter {
 
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
+
+        checkNickname(event.getMember());
+
         try {
             if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
                 System.out.println("Adding member: " + event.getMember().getId());
@@ -50,6 +59,24 @@ public class MemberStateListener extends ListenerAdapter {
                 welcomeChannel.sendMessageEmbeds(embedBuilder.build()).queue();
             }
             embedBuilder.clear();
+        }
+    }
+
+    @Override
+    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+        checkNickname(event.getMember());
+    }
+
+    @Override
+    public void onUserUpdateOnlineStatus(@NotNull UserUpdateOnlineStatusEvent event) {
+        checkNickname(event.getMember());
+    }
+
+    private void checkNickname(final Member member){
+        final String nickname = member.getEffectiveName();
+        if(!EmojiParser.extractEmojis(nickname).isEmpty()){
+            String newNickname = EmojiParser.removeAllEmojis(nickname);
+            HiveBot.mainGuild().modifyNickname(member,newNickname).reason("Removing emoji's per server TOS").queue();
         }
     }
 }

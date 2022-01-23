@@ -1,5 +1,6 @@
 package rsystems.slashCommands.moderation;
 
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
@@ -19,6 +20,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 public class Unpin extends SlashCommand {
+
+    @Override
+    public Integer getPermissionIndex() {
+        return 16;
+    }
+
+    @Override
+    public Permission getDiscordPermission() {
+        return Permission.MANAGE_CHANNEL;
+    }
 
     @Override
     public CommandData getCommandData() {

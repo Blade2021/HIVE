@@ -15,6 +15,7 @@ import rsystems.commands.debug.Test;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.*;
+import rsystems.commands.user.Mini;
 import rsystems.commands.utility.*;
 import rsystems.commands.stream.StreamMode;
 import rsystems.commands.user.Commands;
@@ -52,6 +53,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Reload());
         registerCommand(new Shutdown());
         registerCommand(new PowerCal());
+        registerCommand(new Mini());
 
     }
 
