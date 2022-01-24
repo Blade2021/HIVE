@@ -49,6 +49,7 @@ public class MemberStateListener extends ListenerAdapter {
             embedBuilder.setTitle("Welcome")
                     .setThumbnail(event.getMember().getUser().getEffectiveAvatarUrl())
                     .setColor(HiveBot.getColor(HiveBot.colorType.USER))
+                    .setFooter("ID: " + event.getUser().getId())
                     .setDescription(greetingMessage);
 
             if(event.getUser().getAvatarUrl() == null){
