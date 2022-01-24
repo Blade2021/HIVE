@@ -2,6 +2,7 @@ package rsystems.events;
 
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.events.StatusChangeEvent;
@@ -19,7 +20,7 @@ public class MemberStateListener extends ListenerAdapter {
 
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
-        checkNickname(event.getMember());
+        checkNickname(event.getGuild(), event.getMember());
 
         try {
             if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
@@ -64,19 +65,25 @@ public class MemberStateListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
-        checkNickname(event.getMember());
+        checkNickname(event.getGuild(), event.getMember());
     }
 
     @Override
     public void onUserUpdateOnlineStatus(@NotNull UserUpdateOnlineStatusEvent event) {
-        checkNickname(event.getMember());
+        checkNickname(event.getGuild(), event.getMember());
     }
 
-    private void checkNickname(final Member member){
+    private void checkNickname(final Guild guild, final Member member){
         final String nickname = member.getEffectiveName();
         if(!EmojiParser.extractEmojis(nickname).isEmpty()){
             String newNickname = EmojiParser.removeAllEmojis(nickname);
-            HiveBot.mainGuild().modifyNickname(member,newNickname).reason("Removing emoji's per server TOS").queue();
+            try{
+                if(!newNickname.equalsIgnoreCase(nickname)) {
+                    guild.modifyNickname(member, newNickname).reason("Removing emoji's per server TOS").queue();
+                }
+            } catch (Exception e){
+                System.out.println("An error occurred when trying to edit nickname for: " + member.getUser().getAsTag());
+            }
         }
     }
 }

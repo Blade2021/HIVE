@@ -125,9 +125,9 @@ public class HiveBot{
         }
 
 
-        //twitchBot = new TwitchBot();
-
-        //testing
+        if(Config.get("TWITCH_ENABLED").equalsIgnoreCase("TRUE")) {
+            twitchBot = new TwitchBot();
+        }
 
     }
 

@@ -24,7 +24,7 @@ public class BotActivity extends TimerTask {
                 e.printStackTrace();
             }
 
-            newActivity = newActivity.replace("{usercount}", String.valueOf(HiveBot.mainGuild().getMemberCount()));
+            //newActivity = newActivity.replace("{usercount}", String.valueOf(HiveBot.mainGuild().getMemberCount()));
 
 
             String currentActivity = HiveBot.jda.getPresence().getActivity().getName();
