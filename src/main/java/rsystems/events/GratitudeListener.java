@@ -1,10 +1,9 @@
 package rsystems.events;
 
 import net.dv8tion.jda.api.entities.*;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.requests.RestAction;
 import rsystems.Config;
 import rsystems.HiveBot;
 
@@ -19,16 +18,13 @@ public class GratitudeListener extends ListenerAdapter {
     private static Long karmaNegReaction = Long.valueOf(Config.get("KARMA_NEG_REACTION"));
     private static String stageReaction = "\uD83D\uDCE6";
 
-    @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
+    private static String[] triggers = {"thanks", "thank you", "thnx", "thx "};
 
-        //Escape if message came from a bot account
-        if (event.getMessage().getAuthor().isBot()) {
-            return;
-        }
+    public String[] getTriggers(){
+        return triggers;
+    }
 
-        String[] args = event.getMessage().getContentRaw().split("\\s+");
-        String[] triggers = {"thanks", "thank you", "thnx", "thx "};
+    public static void gratitudeMessageReceived(MessageReceivedEvent event) {
 
         for (String trigger : triggers) {
             if (event.getMessage().getContentDisplay().toLowerCase().contains(trigger)) {
@@ -157,15 +153,15 @@ public class GratitudeListener extends ListenerAdapter {
                             message.addReaction("\uD83D\uDCEC").queue();
                         });
 
-                        Member receiver = null;
+                        User receiver = null;
                         if (message.getMentionedMembers().isEmpty()) {
-                            receiver = message.getReferencedMessage().getMember();
+                            receiver = message.getReferencedMessage().getMember().getUser();
                         } else {
-                            receiver = message.getMentionedMembers().get(0);
+                            receiver = message.getMentionedMembers().get(0).getUser();
                         }
 
                         if (receiver != null) {
-                            if (receiver.getUser().isBot()) {
+                            if (receiver.isBot()) {
                                 event.getChannel().sendMessage("Nice try!").queue();
                                 return;
                             }
@@ -175,12 +171,7 @@ public class GratitudeListener extends ListenerAdapter {
                                 //send karma to original user
                                 // add reaction to message to confirm karma was sent.
                                 try {
-                                    HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getMember(), receiver, true);
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    NicknameListener.handleKarmaNickname(receiver.getIdLong());
+                                    HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getUser(), receiver, true);
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }
@@ -209,22 +200,19 @@ public class GratitudeListener extends ListenerAdapter {
                     final Long finalReactionID = reactionID;
                     event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
-                        final Member sendingMember = event.getMember();
-                        final Member receivingMember = message.getMember();
+                        final User sendingUser = event.getUser();
+                        final User receivingUser = message.getAuthor();
 
-                        if ((sendingMember != null) && (receivingMember != null)) {
+                        if ((sendingUser != null) && (receivingUser != null)) {
 
-                            if ((sendingMember != receivingMember) && (!receivingMember.getUser().isBot())) {
+                            if ((sendingUser != receivingUser) && (!receivingUser.isBot())) {
 
                                 boolean direction = finalReactionID.equals(karmaPosReaction);
-                                System.out.println(String.format("Sending %s karma from %s to %s", direction, sendingMember.getEffectiveName(), receivingMember.getEffectiveName()));
+
+
+                                System.out.println(String.format("Sending %s karma from %s to %s", direction, sendingUser.getAsTag(), receivingUser.getAsTag()));
                                 try {
-                                    HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingMember, receivingMember, direction);
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
-                                }
-                                try {
-                                    NicknameListener.handleKarmaNickname(receivingMember.getIdLong());
+                                    HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingUser, receivingUser, direction);
                                 } catch (SQLException e) {
                                     e.printStackTrace();
                                 }

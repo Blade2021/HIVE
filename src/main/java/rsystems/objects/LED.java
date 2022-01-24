@@ -7,18 +7,19 @@ public class LED {
     private boolean whiteIncluded;
     private float wattagePerPixel_Theoretical;
     private float wattagePerPixel_Tested;
-
+    private String description;
 
     public LED(String ledName) {
         this.ledName = ledName;
     }
 
-    public LED(String ledName, int ledVoltage, boolean whiteIncluded, int wattagePerPixel_Theoretical, int wattagePerPixel_Tested) {
+    public LED(String ledName, int ledVoltage, boolean whiteIncluded, float wattagePerPixel_Theoretical, float wattagePerPixel_Tested, String description) {
         this.ledName = ledName;
         this.ledVoltage = ledVoltage;
         this.whiteIncluded = whiteIncluded;
         this.wattagePerPixel_Theoretical = wattagePerPixel_Theoretical;
         this.wattagePerPixel_Tested = wattagePerPixel_Tested;
+        this.description = description;
     }
 
     public String getLedName() {
@@ -55,5 +56,13 @@ public class LED {
 
     public void setWattagePerPixel_Tested(float wattagePerPixel_Tested) {
         this.wattagePerPixel_Tested = wattagePerPixel_Tested;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

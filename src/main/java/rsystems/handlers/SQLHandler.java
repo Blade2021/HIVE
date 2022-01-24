@@ -1,11 +1,24 @@
 package rsystems.handlers;
 
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import org.mariadb.jdbc.MariaDbPoolDataSource;
+import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.objects.LED;
+import rsystems.objects.*;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
@@ -101,6 +114,130 @@ public class SQLHandler {
         return date;
     }
 
+    public ArrayList<String> getList(String tableName,String columnName) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s",columnName,tableName));
+            while (rs.next()) {
+                list.add(rs.getString(columnName));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return list;
+    }
+
+    public ArrayList<String> getList(Long guildID,String tableName,String columnName) throws SQLException {
+        ArrayList<String> list = new ArrayList<>();
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE ChildGuildID = %d",columnName,tableName,guildID));
+            while (rs.next()) {
+                list.add(rs.getString(columnName));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return list;
+    }
+
+    public Map<Long, String> getMap(Long guildID,String tableName,String firstColumn,String secondColumn) throws SQLException {
+        Map<Long, String> map = new HashMap<>();
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT %s, %s FROM %s WHERE ChildGuildID = %d",firstColumn,secondColumn,tableName,guildID));
+            while (rs.next()) {
+
+                map.putIfAbsent(rs.getLong(firstColumn),rs.getString(secondColumn));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return map;
+    }
+
+    public Integer putValue(String tablename, String columnName, String newValue, String identifierColumn, Integer identifier) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d",tablename,columnName,newValue,identifierColumn,identifier));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
+    public Integer putInt(String tablename, String columnName, Integer newValue, String identifierColumn, String identifier) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = '%s'",tablename,columnName,newValue,identifierColumn,identifier));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
+    public Timestamp getTimestamp(String tableName, String columnName, String identifierColumn, Long identifier) throws SQLException {
+
+        Timestamp output = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d",columnName,tableName,identifierColumn,identifier));
+            while (rs.next()) {
+                output = rs.getTimestamp(columnName);
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
 
     // Get date of last seen using ID
     public LED getLED(String ledName) throws SQLException {
@@ -114,7 +251,7 @@ public class SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table WHERE ledname = \"%s\"", ledName));
+            ResultSet rs = st.executeQuery(String.format("SELECT Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table WHERE ledname = '%s'", ledName.toLowerCase()));
 
             while (rs.next()) {
                 ledFound = true;
@@ -163,6 +300,47 @@ public class SQLHandler {
         return ledList;
     }
 
+    /**
+     * INSERT AN LED INTO THE SYSTEM  (This will be useful for you PIXELHEADS!)
+     * @param led - The LED with values set to be added.
+     * @return <p>200 - Status OK</p>
+     * @throws SQLException
+     */
+    public Integer insertLED(LED led) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Integer output = null;
+
+        try{
+            Statement st = connection.createStatement();
+
+            // text  (String)
+            // 121  (Integer)
+            // 2312.221  (Float)
+            // True/False  (Boolean)
+
+
+            st.execute(String.format("INSERT INTO LED_Table (ledName, Voltage, WhitePixel, WattageTheory, WattageTested, Description) VALUES ('%s', %d, %s, %f, %f, '%s')",
+                    led.getLedName(),
+                    led.getLedVoltage(),
+                    led.isWhiteIncluded(),
+                    led.getWattagePerPixel_Theoretical(),
+                    led.getWattagePerPixel_Tested(),
+                    led.getDescription())
+            );
+
+            if(st.getUpdateCount() > 0){
+                output = 200;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
 
     public Map<String, LED> getLEDMap() throws SQLException {
         Connection connection = pool.getConnection();
@@ -171,7 +349,7 @@ public class SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT ledName, Voltage, WhitePixel, WattageTheory, WattageTested FROM LED_Table");
+            ResultSet rs = st.executeQuery("SELECT ledName, Voltage, WhitePixel, WattageTheory, WattageTested, Description FROM LED_Table");
 
             while (rs.next()) {
 
@@ -180,6 +358,7 @@ public class SQLHandler {
                 led.setWhiteIncluded(rs.getBoolean("WhitePixel"));
                 led.setWattagePerPixel_Tested(rs.getFloat("WattageTested"));
                 led.setWattagePerPixel_Theoretical(rs.getFloat("WattageTheory"));
+                led.setDescription(rs.getString("Description"));
 
                 ledList.putIfAbsent(led.getLedName(),led);
             }
@@ -193,6 +372,34 @@ public class SQLHandler {
         }
 
         return ledList;
+    }
+
+    public boolean checkForLedUpsert() throws SQLException {
+        Connection connection = pool.getConnection();
+
+        boolean output = false;
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ledName FROM LED_Table WHERE Upsert = 1");
+
+            while (rs.next()) {
+
+                output = true;
+                break;
+            }
+
+            st.execute("UPDATE LED_Table SET Upsert = 0 WHERE Upsert = 1");
+
+            connection.close();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
     }
 
     
@@ -912,6 +1119,67 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer deleteRow(String tableName, String identifierColumn, Long identifier) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    public Integer deleteRow(String tableName, String identifierColumn, Integer identifier) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    public Integer deleteRow(String tableName, String identifierColumn, String identifier) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = '%s'",tableName,identifierColumn,identifier));
+            output = st.getUpdateCount();
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
     /**
      * This method will place a string in the rolling queue of the activity pool.
      * @param activity What to add to the queue of messages that get displayed in the activity field.  Limit 32 characters
@@ -936,7 +1204,8 @@ public class SQLHandler {
 
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            //throwables.printStackTrace();
+            throw throwables;
         } finally {
             connection.close();
         }
@@ -963,7 +1232,9 @@ public class SQLHandler {
 
 
         } catch (SQLException throwables) {
-            throwables.printStackTrace();
+            //throwables.printStackTrace();
+
+            throw throwables;
         } finally {
             connection.close();
         }
@@ -1138,6 +1409,26 @@ public class SQLHandler {
         return output;
     }
 
+    public Map<Long, Integer> getModRoles() throws SQLException {
+        Map<Long, Integer> resultSet = new HashMap<>();
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT ModRoleID,Permissions FROM ModRoleTable");
+            while (rs.next()) {
+                resultSet.put(rs.getLong("ModRoleID"), rs.getInt("Permissions"));
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return resultSet;
+    }
+
 
     /**
      * This method will add a string to the database to be pulled when a user uses the Mini command.
@@ -1247,6 +1538,213 @@ public class SQLHandler {
         }
 
         return returnString;
+    }
+
+    /**
+     *
+     * @param userID
+     * @return <p>200 = User Added or User Updated</p>
+     * <p>201 = Database error </p>
+     * <p>401 = User is not outside Here status window.  (Calling too many times)</p>
+     * @throws SQLException
+     */
+    public Integer acceptHereStatus(Long userID, Integer incrementAmount) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT LastHereStatus, Points FROM EconomyTable WHERE UserID = " + userID);
+
+            Integer currentPoints = null;
+            Instant previousTimestamp = null;
+
+            if(incrementAmount == null) {
+                incrementAmount = Integer.parseInt(Config.get("HERE_INCREMENT_AMOUNT"));
+            }
+
+            while(rs.next()){
+                currentPoints = rs.getInt("Points");
+                previousTimestamp = rs.getTimestamp("LastHereStatus").toInstant();
+                break;
+            }
+
+            if(currentPoints != null) {
+
+
+                if(previousTimestamp.plus(12,ChronoUnit.HOURS).isBefore(Instant.now())){
+
+                //if (previousTimestamp.isAfter(Instant.now().minus(12, ChronoUnit.HOURS))) {
+
+                    st.execute(String.format("UPDATE EconomyTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d",Timestamp.from(Instant.now()),currentPoints + incrementAmount,userID));
+                    if(st.getUpdateCount() > 0){
+                        output = 200;
+                    } else {
+                        output = 201;
+                    }
+
+                } else {
+                    output = 401;
+                }
+            } else {
+                st.execute(String.format("INSERT INTO EconomyTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')",userID,incrementAmount,Timestamp.from(Instant.now())));
+                if(st.getUpdateCount() > 0){
+                    output = 200;
+                } else {
+                    output = 201;
+                }
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    /**
+     * Gets the amount of points a user has to spend on advertisements, LED effects, and other stream luxuries.
+     * @param userID The DISCORD UserID of the user to be verified
+     * @return UserStreamObject
+     * @throws SQLException
+     */
+    public UserStreamObject getStreamPoints(Long userID) throws SQLException {
+        UserStreamObject output = null;
+
+        Connection connection = pool.getConnection();
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM EconomyTable WHERE UserID = " + userID);
+
+            while(rs.next()){
+                output = new UserStreamObject();
+                output.setPoints(rs.getInt("Points"));
+                output.setSpentPoints(rs.getInt("SpentPoints"));
+                break;
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    /**
+     * Insert a message action into the database for processing at a later time.
+     * @param timestamp The timestamp that the action will need to take place.  This should be any time in the future.
+     * @param channelID The channel ID that contains the message
+     * @param messageID The ID of the message that will be used for the action.
+     * @param actionType <p>The type of action.  </p>
+     *                   <p>1 = Unpinning a message</p>
+     * @return If successful, return a 1 (Updated row count)
+     * @throws SQLException
+     */
+    public Integer insertMessageAction(final Timestamp timestamp, final Long channelID, final Long messageID, final int actionType) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("INSERT INTO MessageTable (ActionDate, MessageID, ChannelID, ActionType) VALUES ('%s',%d,%d,%d)",timestamp,messageID,channelID,actionType));
+            output = st.getUpdateCount();
+
+        } catch (SQLException throwables) {
+            //throwables.printStackTrace();
+            throw new SQLException(throwables);
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
+    /**
+     * This method is to retrieve the list of messages in the queue to be unpinned
+     * @param timestamp The timestamp to compare against.  (Should be current time)
+     * @return Returns an arrayList of all expired messageActions for processing.
+     * @throws SQLException
+     */
+    public ArrayList<MessageAction> getExpiredMessageActions(final Timestamp timestamp) throws SQLException {
+
+        ArrayList<MessageAction> list = new ArrayList<>();
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT MessageID, ChannelID, ActionType FROM MessageTable WHERE ActionDate < '%s'", timestamp));
+
+            while(rs.next()){
+                list.add(new MessageAction(rs.getLong("MessageID"),rs.getLong("ChannelID"),rs.getInt("ActionType")));
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return list;
+
+    }
+
+    public void insertCredential(Integer tokenID, String accessToken, String refreshToken) throws SQLException {
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("INSERT INTO TokenTable (tokenID, access_Token, refresh_Token) VALUES (%d, '%s', '%s')",
+                    tokenID,accessToken,refreshToken));
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+    }
+
+    public Credential getCredential(Integer tokenID) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Credential credential = null;
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT access_Token, refresh_Token FROM TokenTable WHERE tokenID = %d", tokenID));
+            while(rs.next()){
+
+                String accessToken = rs.getString("access_Token");
+                String refreshToken = rs.getString("refresh_Token");
+
+                credential = new Credential(accessToken,refreshToken);
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return credential;
     }
 
 }

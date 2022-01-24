@@ -1,45 +1,53 @@
-package rsystems.commands.generic;
+package rsystems.slashCommands.generic;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.interactions.commands.OptionType;
+import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
+import rsystems.objects.SlashCommand;
 
-import java.sql.SQLException;
+public class Help extends SlashCommand {
 
-public class Help extends Command {
     @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
+    public CommandData getCommandData() {
+        CommandData commandData = new CommandData(this.getName().toLowerCase(), this.getDescription());
+        commandData.addOption(OptionType.STRING, "command", "The name of the command to gather information about",true);
 
-        String[] args = content.split("\\s+");
+        return commandData;
+    }
 
-        String commandName = args[0];
+
+    @Override
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+
+        event.deferReply(isEphemeral()).queue();
+
+        String commandName = event.getOption("command").getAsString();
 
         for (Command c : HiveBot.dispatcher.getCommands()) {
 
             if (c.getName().equalsIgnoreCase(commandName)) {
-                MessageEmbed embed = handleEvent(event, c);
-                reply(event,embed);
+                handleEvent(event, c);
                 return;
             }
 
             for (final String alias : c.getAliases()) {
                 if (alias.equalsIgnoreCase(commandName)) {
-                    MessageEmbed embed = handleEvent(event, c);
-                    reply(event,embed);
+                    handleEvent(event, c);
                     return;
                 }
             }
         }
 
-        reply(event,"No command was found with that name");
+        event.getHook().editOriginal("No command was found with that name").queue();
     }
 
-    public static MessageEmbed handleEvent(final MessageReceivedEvent event, final Command c) {
+    private void handleEvent(SlashCommandEvent event, final Command c) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Help | " + c.getName());
         builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
@@ -69,13 +77,16 @@ public class Help extends Command {
             builder.addField("Discord Permission:",c.getDiscordPermission().getName(),true);
         }
 
-        return builder.build();
+        event.getHook().editOriginalEmbeds(builder.build()).queue();
     }
 
     @Override
-    public String getHelp() {
-        return "If you need help calling the help command for help with a command.  Then you really do need help.\n-anon\n\n" +
-                "" +
-                "{prefix}{command} (command)";
+    public String getDescription() {
+        return "Get Help for a Command";
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return true;
     }
 }

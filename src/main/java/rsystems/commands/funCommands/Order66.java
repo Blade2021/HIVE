@@ -3,23 +3,15 @@ package rsystems.commands.funCommands;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.api.events.message.priv.PrivateMessageReceivedEvent;
+import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import rsystems.objects.Command;
 
 import java.util.Random;
 
 public class Order66 extends Command {
 
-    @Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, PrivateMessageReceivedEvent event) {
-
-        return;
-
-    }
-
 	@Override
-    public void dispatch(User sender, MessageChannel channel, Message message, String content, GuildMessageReceivedEvent event) {
+    public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) {
 
 		String[] rand = {" Yes my lord.", " Yes My lord, The troops have been notified.",
                     " Yes my lord, Alright troops, move out!", " Right away my lord"};
@@ -36,7 +28,6 @@ public class Order66 extends Command {
 
     @Override
     public String getHelp() {
-        return "Just a test";
+        return "Prints out a random message to the troops";
     }
-
 }
