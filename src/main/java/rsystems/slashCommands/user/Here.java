@@ -56,15 +56,31 @@ public class Here extends SlashCommand {
             builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
             builder.setThumbnail(event.getMember().getUser().getEffectiveAvatarUrl());
 
-            if(firstHere){
-                builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", event.getMember().getAsMention()));
+            String mention = event.getMember().getAsMention();
+            if((mention == null) || (mention.isEmpty())){
+                event.getGuild().retrieveMemberById(event.getMember().getId()).queue(member -> {
+                    if(firstHere){
+                        builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", member));
+                    } else {
+                        builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", member));
+                    }
+
+                    builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
+
+                    reply(event, builder.build(), isEphemeral());
+
+                });
             } else {
-                builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", event.getMember().getAsMention()));
+                if(firstHere){
+                    builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", mention));
+                } else {
+                    builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", mention));
+                }
+
+                builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
+
+                reply(event, builder.build(), isEphemeral());
             }
-
-            builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
-
-            reply(event, builder.build(), isEphemeral());
 
             builder.clear();
 
@@ -81,4 +97,6 @@ public class Here extends SlashCommand {
         }
 
     }
+
+
 }
