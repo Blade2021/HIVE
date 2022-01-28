@@ -6,9 +6,9 @@
         </encoder>
     </appender>
 
-    <root level="debug">
+    <root level="info">
         <appender-ref ref="STDOUT" />
     </root>
 
-    <logger name="com.github.twitch4j" level="INFO"/>
+    <logger name="com.github.twitch4j" level="WARN"/>
 </configuration>

@@ -8,6 +8,8 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.tasks.BotActivity;
@@ -118,7 +120,7 @@ public class StreamHandler extends ListenerAdapter {
 
                 if(question.length() <= 5){
                     //Link was not long enough to verify
-                    System.out.println("Question was to short");
+                    getLogger().info("Question is too short to post");
                     return;
                 }
 
@@ -134,8 +136,15 @@ public class StreamHandler extends ListenerAdapter {
 
                         for(Message m:messages){
                             if(m.getContentRaw().contains(question)){
-                                System.out.println(String.format("Question: %s\nFound Message: %s",question,m.getContentRaw()));
+                                //System.out.println(String.format("Question: %s\nFound Message: %s",question,m.getContentRaw()));
                                 event.getMessage().addReaction("⚠").queue();
+
+                                String logQuestion = question;
+                                if(logQuestion.length() > 20){
+                                    logQuestion = question.substring(0,20);
+                                }
+
+                                getLogger().info("Question was already asked");
                                 return;
                             }
                         }
@@ -161,7 +170,7 @@ public class StreamHandler extends ListenerAdapter {
                         embedBuilder.setColor(randomColor);
 
 
-                        TextChannel questionPushChannel = event.getGuild().getTextChannelById(this.streamQuestionChannelID);
+                        TextChannel questionPushChannel = event.getGuild().getTextChannelById(streamQuestionChannelID);
 
                         if(questionPushChannel != null) {
                             questionPushChannel.sendMessageEmbeds(embedBuilder.build()).queue(success -> {
@@ -172,6 +181,8 @@ public class StreamHandler extends ListenerAdapter {
                             embedBuilder.clear();
                             event.getMessage().addReaction("\uD83D\uDCE8").queue();
                             return;
+                        } else {
+                            getLogger().error("Question channel is NULL");
                         }
 
                     });
@@ -202,18 +213,20 @@ public class StreamHandler extends ListenerAdapter {
                 String author = getAuthor(event, messageraw);
                 if (pushChannel != null) {
 
-                    List<Message> messages = pushChannel.getHistory().retrievePast(20).complete();
+                    pushChannel.getHistory().retrievePast(20).queue(messages -> {
 
-                    for (Message m : messages) {
-                        if (m.getContentRaw().contains(link)) {
-                            event.getMessage().addReaction("⚠").queue();
-                            return;
+                        for (Message m : messages) {
+                            if (m.getContentRaw().contains(link)) {
+                                event.getMessage().addReaction("⚠").queue();
+                                getLogger().info("Link was already found above.");
+                                return;
+                            }
                         }
-                    }
-                    //If current link was not found in messages
-                    pushChannel.sendMessage(author + link).queue();
-                    event.getMessage().addReaction("\uD83D\uDCE8").queue();
-                    return;
+                        //If current link was not found in messages
+                        pushChannel.sendMessage(author + link).queue();
+                        event.getMessage().addReaction("\uD83D\uDCE8").queue();
+                        return;
+                    });
                 }
             }
         }
@@ -244,6 +257,10 @@ public class StreamHandler extends ListenerAdapter {
             }
         }
         return link;
+    }
+
+    private Logger getLogger(){
+        return LoggerFactory.getLogger(StreamHandler.class);
     }
 
     private String getAuthor(MessageReceivedEvent event, String message){

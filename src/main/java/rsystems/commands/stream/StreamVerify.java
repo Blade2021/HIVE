@@ -41,7 +41,7 @@ public class StreamVerify extends Command {
         if(streamLinksChannel != null){
             streamLinksMention = streamLinksChannel.getAsMention();
         }
-        embedBuilder.addField("Question Channel:",streamLinksMention,false);
+        embedBuilder.addField("Stream Links Channel:",streamLinksMention,false);
 
         reply(event,embedBuilder.build());
         embedBuilder.clear();
