@@ -14,6 +14,7 @@ import rsystems.tasks.BotActivity;
 
 import java.awt.*;
 import java.sql.SQLException;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -87,6 +88,14 @@ public class StreamHandler extends ListenerAdapter {
         return streamChatChannelID;
     }
 
+    public Long getStreamQuestionChannelID() {
+        return streamQuestionChannelID;
+    }
+
+    public Long getStreamLinksPostChannelID() {
+        return streamLinksPostChannelID;
+    }
+
     public TextChannel getChannel(final Long channelID){
         if(HiveBot.mainGuild().getTextChannelById(channelID) != null){
             return HiveBot.mainGuild().getTextChannelById(channelID);
@@ -99,7 +108,7 @@ public class StreamHandler extends ListenerAdapter {
 
         if(this.streamActive) {
             // Ask Command
-            if(event.getMessage().getContentRaw().toLowerCase().contains(HiveBot.prefix+"ask ")){
+            if(event.getMessage().getContentDisplay().toLowerCase().contains(HiveBot.prefix+"ask ")){
 
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();
@@ -133,13 +142,15 @@ public class StreamHandler extends ListenerAdapter {
 
                         String platform = getPlatform(event.getMessage());
                         if(platform == null){
-                            platform = "Discord";
+                            platform = "WHUT?";
                         }
 
                         //If current question was not found in messages
-                        EmbedBuilder questionBuilder = new EmbedBuilder();
-                        questionBuilder.setTitle(String.format("Requester: %s  | Platform: %s",author,platform));
-                        questionBuilder.addField("**Question**",question,false);
+                        EmbedBuilder embedBuilder = new EmbedBuilder();
+                        embedBuilder.setTitle(String.format("Platform: %s",platform));
+                        embedBuilder.addField("**Requester**",author,false);
+                        embedBuilder.addField("**Question**",String.format("```%s```",question.trim()),false);
+                        embedBuilder.setTimestamp(Instant.now());
 
                         Random rand = new Random();
                         float r = rand.nextFloat();
@@ -147,18 +158,18 @@ public class StreamHandler extends ListenerAdapter {
                         float b = rand.nextFloat();
 
                         Color randomColor = new Color(r,g,b);
-                        questionBuilder.setColor(randomColor);
+                        embedBuilder.setColor(randomColor);
 
 
                         TextChannel questionPushChannel = event.getGuild().getTextChannelById(this.streamQuestionChannelID);
 
                         if(questionPushChannel != null) {
-                            questionPushChannel.sendMessageEmbeds(questionBuilder.build()).queue(success -> {
+                            questionPushChannel.sendMessageEmbeds(embedBuilder.build()).queue(success -> {
                                 keeperList.add(success.getIdLong());
                                 success.addReaction("✅").queue();
                                 success.addReaction("\u274C").queue();
                             });
-                            questionBuilder.clear();
+                            embedBuilder.clear();
                             event.getMessage().addReaction("\uD83D\uDCE8").queue();
                             return;
                         }
@@ -244,9 +255,11 @@ public class StreamHandler extends ListenerAdapter {
                 // Get locations of brackets
                 int openBracketLocation = message.indexOf("[");
                 int closeBracketLocation = message.indexOf("]");
+
+                int colonLocation = message.indexOf(":");
                 // Grab author, and strip youtube and twitch from author
-                author = message.substring(openBracketLocation+1,closeBracketLocation).replaceFirst("YouTube:","").replaceFirst("Twitch:","");
-                author = author + " : ";
+                author = message.substring(colonLocation+1,closeBracketLocation);
+                //author = author + " : ";
             }
             catch (StringIndexOutOfBoundsException e){
                 System.out.println("Could not find author");
@@ -266,7 +279,7 @@ public class StreamHandler extends ListenerAdapter {
      */
     private String getPlatform(Message message){
         String platform = null;
-        if(message.getAuthor().isBot()){
+        //if(message.getAuthor().isBot()){
             final String messageText = message.getContentDisplay();
 
             if((messageText.contains("[")) && (messageText.contains("]"))) {
@@ -276,7 +289,7 @@ public class StreamHandler extends ListenerAdapter {
 
                 platform = messageText.substring(openBracketLocation+1,colonLocation);
             }
-        }
+        //}
         return platform;
     }
 
