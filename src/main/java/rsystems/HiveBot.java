@@ -17,6 +17,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
+import org.slf4j.LoggerFactory;
 import rsystems.events.*;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;

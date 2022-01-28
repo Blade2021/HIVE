@@ -9,6 +9,8 @@ import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
@@ -187,6 +189,9 @@ public class Dispatcher extends ListenerAdapter {
                 try {
                     final String content = this.removePrefix(alias, prefix, message);
                     c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
+
+                    Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+                    logger.info("{} called by {} [{}]",c.getName(),event.getAuthor().getAsTag(),event.getAuthor().getIdLong());
 
                     HiveBot.database.logCommandUsage(c.getName());
                 } catch (final NumberFormatException numberFormatException) {

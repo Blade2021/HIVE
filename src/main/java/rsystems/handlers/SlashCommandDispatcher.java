@@ -13,6 +13,8 @@ import net.dv8tion.jda.api.interactions.commands.build.CommandData;
 import net.dv8tion.jda.api.interactions.commands.build.OptionData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.generic.Help;
@@ -27,6 +29,8 @@ import rsystems.slashCommands.user.Here;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
+
+import static rsystems.HiveBot.database;
 
 public class SlashCommandDispatcher extends ListenerAdapter {
 
@@ -109,7 +113,10 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                     final String content = message;
                     c.dispatch(event.getUser(), event.getChannel(), content, event);
 
-                    //database.logCommandUsage(c.getName());
+                    Logger logger = LoggerFactory.getLogger(Dispatcher.class);
+                    logger.info("{} called by {} [{}]",c.getName(),event.getUser().getAsTag(),event.getUser().getIdLong());
+
+                    database.logCommandUsage(c.getName());
                 } catch (final NumberFormatException numberFormatException) {
                     numberFormatException.printStackTrace();
                     event.getHook().sendMessage("**ERROR:** Bad format received").queue();
@@ -239,7 +246,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                 ArrayList<String> updateList = new ArrayList<>();
 
                 try {
-                    updateList = HiveBot.database.getList("PushUpdateCommand","CommandName");
+                    updateList = database.getList("PushUpdateCommand","CommandName");
 
                     for(String s:this.overrideCommands){
                         if(!updateList.contains(s)){
@@ -307,7 +314,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
             ArrayList<String> updateList = new ArrayList<>();
 
             try {
-                updateList = HiveBot.database.getList("PushUpdateCommand","CommandName");
+                updateList = database.getList("PushUpdateCommand","CommandName");
             } catch (SQLException e) {
                 e.printStackTrace();
             }
