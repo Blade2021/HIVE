@@ -1,6 +1,7 @@
 package rsystems.commands.stream;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -50,5 +51,15 @@ public class StreamVerify extends Command {
     @Override
     public String getHelp() {
         return "Get a printout of the stream channel settings";
+    }
+
+    @Override
+    public Integer getPermissionIndex() {
+        return 8;
+    }
+
+    @Override
+    public Permission getDiscordPermission() {
+        return Permission.MESSAGE_MANAGE;
     }
 }
