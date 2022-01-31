@@ -5,6 +5,8 @@ import net.dv8tion.jda.api.entities.Member;
 import rsystems.HiveBot;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -26,25 +28,18 @@ public class AddKarmaPoints extends TimerTask {
 
             if (member.getOnlineStatus().equals(OnlineStatus.ONLINE)) {
 
-                //Initiate the formatter for formatting the date into a set format
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-                //Get the current date
-                LocalDate currentDate = LocalDate.now();
-                //Format the current date into a set format
-                String formattedCurrentDate = formatter.format(currentDate);
-
                 //Get the last date of karma increment
-                String lastSeenKarma = null;
+                Timestamp lastSeenKarma = null;
                 try {
-                    lastSeenKarma = karmaSQLHandler.getDate(member.getId());
+                    lastSeenKarma = karmaSQLHandler.getTimestamp(member.getId());
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
 
                 //Insert new user if not found in DB
-                if (lastSeenKarma.isEmpty()) {
+                if (lastSeenKarma == null) {
                     try {
-                        if (karmaSQLHandler.insertUser(member.getId(), member.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
+                        if (karmaSQLHandler.insertUser(member.getId(), member.getUser().getAsTag(), null, "KARMA")) {
                             LOGGER.severe("Failed to add " + member.getUser().getAsTag() + " to honeyCombDB");
                         } else {
                             LOGGER.info("Added " + member.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
@@ -54,10 +49,11 @@ public class AddKarmaPoints extends TimerTask {
                         e.printStackTrace();
                     }
                 } else {
-                    long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
+
+                    long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toLocalDateTime(), Instant.now());
                     if (daysPassed >= 1) {
                         try {
-                            karmaSQLHandler.addKarmaPoints(member.getId(), formattedCurrentDate, false);
+                            karmaSQLHandler.addKarmaPoints(member.getIdLong(), Timestamp.from(Instant.now()), false);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }

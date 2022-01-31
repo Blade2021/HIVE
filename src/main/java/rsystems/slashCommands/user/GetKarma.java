@@ -10,6 +10,10 @@ import rsystems.objects.KarmaUserInfo;
 import rsystems.objects.SlashCommand;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class GetKarma extends SlashCommand {
     @Override
@@ -26,7 +30,13 @@ public class GetKarma extends SlashCommand {
 
             if(karmaUserInfo != null){
 
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MMMM d, u");
+                LocalDateTime dateTime = LocalDateTime.ofInstant(karmaUserInfo.getLastKarmaPoint(), ZoneId.systemDefault());
+
+
                 builder.setDescription("Points are used to give others karma to help show their helpfulness.  **ONE point is earned per day** that you are active here on discord.");
+
+                builder.appendDescription(String.format("\n\nYou can earn another point on: `%s`",formatter.format(dateTime.plus(1,ChronoUnit.DAYS))));
 
                 builder.addField("Your Karma:", String.valueOf(karmaUserInfo.getKarma()),true);
                 //builder.addBlankField(true);

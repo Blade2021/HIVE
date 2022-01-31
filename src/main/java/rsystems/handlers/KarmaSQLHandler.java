@@ -1,17 +1,13 @@
 package rsystems.handlers;
 
-import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.User;
-import org.checkerframework.checker.units.qual.K;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
-import rsystems.Config;
 import rsystems.objects.KarmaUserInfo;
 
 import java.sql.*;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class KarmaSQLHandler extends SQLHandler {
@@ -21,18 +17,17 @@ public class KarmaSQLHandler extends SQLHandler {
     }
 
     // Get date of last seen using ID
-    @Override
-    public String getDate(String id) throws SQLException {
-        String date = "";
+    public Timestamp getTimestamp(String id) throws SQLException {
+        Timestamp timestamp = null;
 
         Connection connection = pool.getConnection();
 
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT DATE FROM KARMA WHERE ID = " + id);
+            ResultSet rs = st.executeQuery("SELECT LastPointIncrement FROM KARMA WHERE ID = " + id);
             while (rs.next()) {
-                date = rs.getString("DATE");
+                timestamp = rs.getTimestamp("LastPointIncrement");
             }
 
             connection.close();
@@ -43,10 +38,10 @@ public class KarmaSQLHandler extends SQLHandler {
             connection.close();
         }
 
-        return date;
+        return timestamp;
     }
 
-    public void addKarmaPoints(String id, String date, boolean staff) throws SQLException {
+    public void addKarmaPoints(Long id, Timestamp datetime, boolean staff) throws SQLException {
 
         Connection connection = pool.getConnection();
         try {
@@ -76,7 +71,7 @@ public class KarmaSQLHandler extends SQLHandler {
             // SET DATE TO FINISH QUERY
 
             //todo fix this
-            st.executeUpdate("UPDATE KARMA SET DATE = " + date + " WHERE ID = " + id);
+            st.executeUpdate(String.format("UPDATE KARMA SET LastPointIncrement = '%s' WHERE ID = %d",datetime,id));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -148,7 +143,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT DATE, AV_POINTS, USER_KARMA, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + userID);
+            ResultSet rs = st.executeQuery("SELECT LastPointIncrement, AV_POINTS, USER_KARMA, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + userID);
 
             while (rs.next()) {
                 karmaUserInfo = new KarmaUserInfo();
@@ -156,6 +151,7 @@ public class KarmaSQLHandler extends SQLHandler {
                 karmaUserInfo.setAvailable_points(rs.getInt("AV_POINTS"));
                 karmaUserInfo.setKsent_pos(rs.getInt("KSEND_POS"));
                 karmaUserInfo.setKsent_neg(rs.getInt("KSEND_NEG"));
+                karmaUserInfo.setLastKarmaPoint(rs.getTimestamp("LastPointIncrement").toInstant());
                 break;
             }
 

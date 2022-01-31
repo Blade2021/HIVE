@@ -6,16 +6,20 @@ import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
-import net.dv8tion.jda.api.events.StatusChangeEvent;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.Marker;
 import rsystems.Config;
 import rsystems.HiveBot;
 
 import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
@@ -108,15 +112,15 @@ public class MemberStateListener extends ListenerAdapter {
             String formattedCurrentDate = formatter.format(currentDate);
 
             //Get the last date of karma increment
-            String lastSeenKarma = null;
+            Timestamp lastSeenKarma = null;
             try {
-                lastSeenKarma = HiveBot.karmaSQLHandler.getDate(event.getMember().getId());
+                lastSeenKarma = HiveBot.karmaSQLHandler.getTimestamp(event.getMember().getId());
             } catch (SQLException e) {
                 e.printStackTrace();
             }
 
             //Insert new user if not found in DB
-            if (lastSeenKarma.isEmpty()) {
+            if (lastSeenKarma == null) {
                 /*if (karmaSQLHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
                     System.out.println("Failed to add member to database");
                 } else {
@@ -124,10 +128,12 @@ public class MemberStateListener extends ListenerAdapter {
                 }
                  */
             } else {
-                long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
+                long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
                 if (daysPassed >= 1) {
                     try {
-                        HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
+                        Logger logger = LoggerFactory.getLogger(this.getClass());
+                        logger.info("Incrementing karma point for User: {}  ID:{}",event.getMember().getUser().getAsTag(),event.getMember().getUser().getId());
+                        HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getIdLong(), Timestamp.from(Instant.now()), false);
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }

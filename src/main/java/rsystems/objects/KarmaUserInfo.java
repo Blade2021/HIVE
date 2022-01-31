@@ -1,5 +1,7 @@
 package rsystems.objects;
 
+import java.time.Instant;
+
 public class KarmaUserInfo {
 
     private Long userID;
@@ -7,6 +9,7 @@ public class KarmaUserInfo {
     private int karma;
     private int ksent_pos;
     private int ksent_neg;
+    private Instant lastKarmaPoint;
 
     public KarmaUserInfo() {
     }
@@ -49,5 +52,13 @@ public class KarmaUserInfo {
 
     public void setUserID(Long userID) {
         this.userID = userID;
+    }
+
+    public Instant getLastKarmaPoint() {
+        return lastKarmaPoint;
+    }
+
+    public void setLastKarmaPoint(Instant lastKarmaPoint) {
+        this.lastKarmaPoint = lastKarmaPoint;
     }
 }
