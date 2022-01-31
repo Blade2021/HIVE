@@ -109,7 +109,9 @@ public class HiveBot {
 
                 guild.retrieveActiveThreads().queue(threads -> {
                     for (ThreadChannel thread : threads) {
-                        thread.join().queue();
+                        if(!thread.isJoined()) {
+                            thread.join().queue();
+                        }
                     }
                 });
 
