@@ -198,7 +198,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
                 if (direction) {
                     st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender.getId());
-                    st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1 WHERE ID = " + receiver.getId());
+                    st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1, WeeklyKarma = WeeklyKarma + 1 WHERE ID = " + receiver.getId());
                     st.execute(String.format("INSERT INTO KARMA_TrackerTable (MessageID, ReceivingUser, SendingUser, Timestamp) VALUES (%d, %d, %d, current_timestamp)", messageID, receiver.getIdLong(), sender.getIdLong()));
 
                 } else {
@@ -683,21 +683,18 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            //todo replace SQL Query with new Table
-            ResultSet rs = st.executeQuery("SELECT ID, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC");
+            ResultSet rs = st.executeQuery("SELECT ID, WeeklyKarma FROM KARMA ORDER BY WeeklyKarma DESC LIMIT 3");
 
             int index = 0;
             while (rs.next()) {
-                if(index < 3){
 
-                    karmaMap.put(rs.getInt("USER_KARMA"),rs.getLong("ID"));
+                    karmaMap.put(rs.getInt("WeeklyKarma"),rs.getLong("ID"));
 
                     index++;
 
-                } else {
-                    break;
-                }
             }
+
+            st.execute("UPDATE KARMA SET WeeklyKarma = 0");
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();

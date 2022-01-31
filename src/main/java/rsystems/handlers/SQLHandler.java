@@ -1,9 +1,5 @@
 package rsystems.handlers;
 
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -13,12 +9,6 @@ import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.*;
-
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.spec.IvParameterSpec;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
@@ -1436,7 +1426,7 @@ public class SQLHandler {
      * @param message The message to be added
      * @return True - Successful Transaction | False - Error
      */
-    public boolean insertUserMessage(Long userID, String message) throws SQLException {
+    public boolean insertUserMini(Long userID, String message) throws SQLException {
         boolean output = false;
 
         Connection connection = pool.getConnection();
@@ -1444,6 +1434,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
+            st.execute("DELETE FROM HIVE_UserMessageTable WHERE UserID = " + userID);
             st.executeQuery(String.format("INSERT INTO HIVE_UserMessageTable (UserID, Message) VALUES (%d, '%s')",userID,message));
             if(st.getUpdateCount() >= 1){
                 output = true;
@@ -1465,7 +1456,7 @@ public class SQLHandler {
      * @param message The updated message to overwrite the current one.
      * @return True - Successful Transaction | False - Errors
      */
-    public boolean updateUserMessage(Long userID, String message) throws SQLException {
+    public boolean updateUserMini(Long userID, String message) throws SQLException {
         boolean output = false;
 
         Connection connection = pool.getConnection();

@@ -21,10 +21,7 @@ import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.generic.LedList;
 import rsystems.slashCommands.moderation.*;
-import rsystems.slashCommands.user.Commands;
-import rsystems.slashCommands.user.GetKarma;
-import rsystems.slashCommands.user.StreamPoints;
-import rsystems.slashCommands.user.Here;
+import rsystems.slashCommands.user.*;
 
 import java.sql.SQLException;
 import java.util.*;
@@ -55,6 +52,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new Who());
         registerCommand(new StreamMarker());
         registerCommand(new SubmitToken());
+        registerCommand(new Mini());
 
     }
 

@@ -2,6 +2,7 @@ package rsystems.events;
 
 import com.vdurmont.emoji.EmojiParser;
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.TextChannel;
@@ -15,6 +16,9 @@ import rsystems.Config;
 import rsystems.HiveBot;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 public class MemberStateListener extends ListenerAdapter {
 
@@ -69,11 +73,6 @@ public class MemberStateListener extends ListenerAdapter {
         checkNickname(event.getGuild(), event.getMember());
     }
 
-    @Override
-    public void onUserUpdateOnlineStatus(@NotNull UserUpdateOnlineStatusEvent event) {
-        checkNickname(event.getGuild(), event.getMember());
-    }
-
     private void checkNickname(final Guild guild, final Member member){
         final String nickname = member.getEffectiveName();
         if(!EmojiParser.extractEmojis(nickname).isEmpty()){
@@ -84,6 +83,55 @@ public class MemberStateListener extends ListenerAdapter {
                 }
             } catch (Exception e){
                 System.out.println("An error occurred when trying to edit nickname for: " + member.getUser().getAsTag());
+            }
+        }
+    }
+
+    @Override
+    public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event) {
+        if (event.getUser().isBot()) {
+            return;
+        }
+
+        checkNickname(event.getGuild(), event.getMember());
+
+        if (event.getNewOnlineStatus().equals(OnlineStatus.ONLINE)) {
+            /*
+            KARMA SYSTEM
+             */
+
+            //Initiate the formatter for formatting the date into a set format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
+            //Get the current date
+            LocalDate currentDate = LocalDate.now();
+            //Format the current date into a set format
+            String formattedCurrentDate = formatter.format(currentDate);
+
+            //Get the last date of karma increment
+            String lastSeenKarma = null;
+            try {
+                lastSeenKarma = HiveBot.karmaSQLHandler.getDate(event.getMember().getId());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+            //Insert new user if not found in DB
+            if (lastSeenKarma.isEmpty()) {
+                /*if (karmaSQLHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
+                    System.out.println("Failed to add member to database");
+                } else {
+                    karmaSQLHandler.overrideKarmaPoints(event.getMember().getId(), 5);
+                }
+                 */
+            } else {
+                long daysPassed = ChronoUnit.DAYS.between(LocalDate.parse(lastSeenKarma, formatter), currentDate);
+                if (daysPassed >= 1) {
+                    try {
+                        HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getId(), formattedCurrentDate, false);
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }

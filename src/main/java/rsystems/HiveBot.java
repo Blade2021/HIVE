@@ -12,6 +12,7 @@ import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
+import net.dv8tion.jda.api.entities.ThreadChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
@@ -36,13 +37,13 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.logging.Logger;
 
-public class HiveBot{
+public class HiveBot {
     public static String prefix = Config.get("prefix");
     public static int activityStatusIndex = 0;
 
     public static Long botOwnerID = Long.valueOf(Config.get("owner_ID"));
 
-    public static DBPool dbPool = new DBPool(Config.get("DATABASE_HOST"), Config.get("DATABASE_USER"),Config.get("DATABASE_PASS"));
+    public static DBPool dbPool = new DBPool(Config.get("DATABASE_HOST"), Config.get("DATABASE_USER"), Config.get("DATABASE_PASS"));
     public static SQLHandler database = new SQLHandler(dbPool.getPool());
     public static KarmaSQLHandler karmaSQLHandler = new KarmaSQLHandler(dbPool.getPool());
 
@@ -56,7 +57,7 @@ public class HiveBot{
 
     public static JDAImpl jda = null;
 
-    public static Guild mainGuild(){
+    public static Guild mainGuild() {
         return jda.getGuildById(Config.get("GUILD_ID"));
     }
 
@@ -71,7 +72,7 @@ public class HiveBot{
 
     public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS,GatewayIntent.GUILD_PRESENCES)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableCache(CacheFlag.ACTIVITY)
                 .setChunkingFilter(ChunkingFilter.ALL)
@@ -104,6 +105,14 @@ public class HiveBot{
 
             api.getGuilds().forEach(guild -> {
                 slashCommandDispatcher.submitGuildCommands(guild);
+
+
+                guild.retrieveActiveThreads().queue(threads -> {
+                    for (ThreadChannel thread : threads) {
+                        thread.join().queue();
+                    }
+                });
+
             });
 
             //HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
@@ -114,19 +123,20 @@ public class HiveBot{
             }
 
             Timer timer = new Timer();
-            timer.scheduleAtFixedRate(new LedListCheck(), 1000*60*5,1000*60*5);
+            timer.scheduleAtFixedRate(new LedListCheck(), 1000 * 60 * 5, 1000 * 60 * 5);
 
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);
-            timer.schedule(new Newcomer(),60000,21600000);
-            timer.scheduleAtFixedRate(new BotActivity(),30000,30000);
-            timer.scheduleAtFixedRate(new CheckDatabase(),60000,300000);
+            timer.schedule(new Newcomer(), 60000, 21600000);
+            timer.scheduleAtFixedRate(new BotActivity(), 30000, 30000);
+            timer.scheduleAtFixedRate(new CheckDatabase(), 60000, 300000);
+            timer.scheduleAtFixedRate(new GrabKarmaTopThree(), 3000, 360000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
 
 
-        if(Config.get("TWITCH_ENABLED").equalsIgnoreCase("TRUE")) {
+        if (Config.get("TWITCH_ENABLED").equalsIgnoreCase("TRUE")) {
             twitchBot = new TwitchBot();
         }
 
@@ -145,8 +155,8 @@ public class HiveBot{
         colorMap.putIfAbsent(colorType.USER, "#40F040");
         colorMap.putIfAbsent(colorType.GENERIC, "#37B9FF");
         colorMap.putIfAbsent(colorType.ERROR, "#FF3737");
-        colorMap.putIfAbsent(colorType.NOVA,"#F5661A");
-        colorMap.putIfAbsent(colorType.STREAM,"#8B40F0");
+        colorMap.putIfAbsent(colorType.NOVA, "#F5661A");
+        colorMap.putIfAbsent(colorType.STREAM, "#8B40F0");
         colorMap.putIfAbsent(colorType.FRUIT, "#FF6145");
     }
 
@@ -154,7 +164,7 @@ public class HiveBot{
         NOTIFICATION, USER, GENERIC, ERROR, NOVA, STREAM, FRUIT
     }
 
-    public static String getPrefix(){
+    public static String getPrefix() {
         return prefix;
     }
 }
