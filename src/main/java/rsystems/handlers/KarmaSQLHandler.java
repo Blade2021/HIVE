@@ -76,9 +76,7 @@ public class KarmaSQLHandler extends SQLHandler {
             // SET DATE TO FINISH QUERY
 
             //todo fix this
-            //st.executeUpdate("UPDATE KARMA SET DATE = " + date +  WHERE ID = " + id);
-
-            connection.close();
+            st.executeUpdate("UPDATE KARMA SET DATE = " + date + " WHERE ID = " + id);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
