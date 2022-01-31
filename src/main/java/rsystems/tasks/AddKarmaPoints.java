@@ -2,6 +2,8 @@ package rsystems.tasks;
 
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Member;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 
 import java.sql.SQLException;
@@ -50,15 +52,17 @@ public class AddKarmaPoints extends TimerTask {
                     }
                 } else {
 
-                    long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toLocalDateTime(), Instant.now());
+                    long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
                     if (daysPassed >= 1) {
                         try {
-                            karmaSQLHandler.addKarmaPoints(member.getIdLong(), Timestamp.from(Instant.now()), false);
+                            Logger logger = LoggerFactory.getLogger(this.getClass());
+                            logger.info("Incrementing karma point for User: {}  ID:{}",member.getUser().getAsTag(),member.getUser().getId());
+                            HiveBot.karmaSQLHandler.addKarmaPoints(member.getIdLong(), Timestamp.from(Instant.now()), false);
                         } catch (SQLException e) {
                             e.printStackTrace();
                         }
                     }
-                    System.out.println("Adding point to user: " + member.getUser().getAsTag());
+
                 }
             }
 
