@@ -126,7 +126,7 @@ public class Led extends SlashCommand {
 
         SubcommandData subcommandData = new SubcommandData(ledType,ledDescription);
         //subcommandData.addOption(OptionType.STRING,"type","The type of LED to use",true);
-        subcommandData.addOption(OptionType.NUMBER,"qty","How many LEDs to calculate",false);
+        subcommandData.addOption(OptionType.STRING,"qty","How many LEDs to calculate",false);
 
         return subcommandData;
     }
