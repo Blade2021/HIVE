@@ -24,8 +24,8 @@ public class Activity extends SlashCommand {
 
         ArrayList<SubcommandData> subCommands = new ArrayList<>();
         subCommands.add(new SubcommandData("add","Add an activity to the list").addOption(OptionType.STRING,"activity","The string to be displayed",true));
-        subCommands.add(new SubcommandData("remove","Remove an activity from the list").addOption(OptionType.NUMBER,"id","The ID of the activity string to remove",true));
-        subCommands.add(new SubcommandData("modify","Modify an activity on the list").addOption(OptionType.NUMBER,"id","The ID of the activity to modify",true).addOption(OptionType.STRING,"activity","The new string for the activity"));
+        subCommands.add(new SubcommandData("remove","Remove an activity from the list").addOption(OptionType.STRING,"id","The ID of the activity string to remove",true));
+        subCommands.add(new SubcommandData("modify","Modify an activity on the list").addOption(OptionType.STRING,"id","The ID of the activity to modify",true).addOption(OptionType.STRING,"activity","The new string for the activity"));
         subCommands.add(new SubcommandData("list","List all activities that will be cycled through"));
 
         return commandData.addSubcommands(subCommands);

@@ -62,7 +62,7 @@ public class Here extends SlashCommand {
                     if(firstHere){
                         builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", member));
                     } else {
-                        builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", member));
+                        builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", member.getAsMention()));
                     }
 
                     builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
