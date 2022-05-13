@@ -69,8 +69,18 @@ public class Dispatcher extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event) {
 
         if(event.isFromGuild()) {
+            final MessageChannel channel = event.getChannel();
+
             //Ignore all bots
             if (event.getAuthor().isBot()) {
+
+                //Check for Stream Chat channel
+                if(channel.getIdLong() == HiveBot.streamHandler.getStreamChatChannelID()){
+
+                    if(HiveBot.streamHandler.isStreamActive()) {
+                        HiveBot.streamHandler.parseMessage(event);
+                    }
+                }
                 return;
             }
 
@@ -91,8 +101,6 @@ public class Dispatcher extends ListenerAdapter {
 
             final String prefix = Config.get("bot_prefix");
             final String message = event.getMessage().getContentRaw();
-
-            final MessageChannel channel = event.getChannel();
 
 
             // Check for commands
@@ -149,11 +157,6 @@ public class Dispatcher extends ListenerAdapter {
             }
 
             // No gratitude triggers found
-
-            //Check for Stream Chat channel
-            if(channel.getIdLong() == HiveBot.streamHandler.getStreamChatChannelID()){
-                HiveBot.streamHandler.parseMessage(event);
-            }
         }
     }
 
