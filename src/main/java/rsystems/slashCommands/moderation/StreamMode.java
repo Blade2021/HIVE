@@ -13,8 +13,7 @@ public class StreamMode extends SlashCommand {
 
     @Override
     public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription()).addOption(OptionType.BOOLEAN,"active","Stream Mode. TRUE = Active, FALSE = Inactive",true);
-        return commandData;
+        return new CommandData(this.getName().toLowerCase(), this.getDescription()).addOption(OptionType.BOOLEAN,"active","Stream Mode. TRUE = Active, FALSE = Inactive",true);
     }
 
     @Override
