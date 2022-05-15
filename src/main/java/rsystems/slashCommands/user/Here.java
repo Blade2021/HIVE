@@ -4,6 +4,9 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.requests.RestAction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
@@ -25,12 +28,12 @@ public class Here extends SlashCommand {
 
                     HiveBot.streamHandler.setFirstHereClaimed(true);
                     statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong(), Integer.parseInt(Config.get("BONUS_HERE_INCREMENT_AMOUNT")));
-                    handleResponse(event,statusCode,true);
+                    handleResponse(event, statusCode, true);
 
                 } else {
 
                     statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong(), null);
-                    handleResponse(event,statusCode,false);
+                    handleResponse(event, statusCode, false);
 
                 }
 
@@ -48,7 +51,7 @@ public class Here extends SlashCommand {
         return "Tell HIVE that you attended the live stream";
     }
 
-    private void handleResponse(final SlashCommandEvent event, Integer statusCode, Boolean firstHere){
+    private void handleResponse(final SlashCommandEvent event, Integer statusCode, Boolean firstHere) {
 
         EmbedBuilder builder = new EmbedBuilder();
 
@@ -57,30 +60,22 @@ public class Here extends SlashCommand {
             builder.setThumbnail(event.getMember().getUser().getEffectiveAvatarUrl());
 
             String mention = event.getMember().getAsMention();
-            if((mention == null) || (mention.isEmpty())){
-                event.getGuild().retrieveMemberById(event.getMember().getId()).queue(member -> {
-                    if(firstHere){
-                        builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", member));
-                    } else {
-                        builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", member.getAsMention()));
-                    }
+            event.getGuild().retrieveMemberById(event.getMember().getId()).queue(
+                    success -> {
+                        if (firstHere) {
+                            builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", success));
+                        } else {
+                            builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", success.getAsMention()));
+                        }
 
-                    builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
+                        builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
 
-                    reply(event, builder.build(), isEphemeral());
+                        reply(event, builder.build(), isEphemeral());
 
-                });
-            } else {
-                if(firstHere){
-                    builder.setDescription(String.format("%s\n**CONGRATS! YOU MADE IT FIRST!**\n\nI've sent your rewards + bonus points for being here first!\n**Thanks for joining us!**", mention));
-                } else {
-                    builder.setDescription(String.format("%s\nI've sent your rewards!  **Thanks for joining us!**", mention));
-                }
-
-                builder.appendDescription("\n\nUse `/streamPoints` to see how many nuts you have");
-
-                reply(event, builder.build(), isEphemeral());
-            }
+                    }, failure -> {
+                        Logger logger = LoggerFactory.getLogger(this.getClass());
+                        logger.info("Error grabbing member from here command. ID: {}",event.getMember().getId());
+                    });
 
             builder.clear();
 

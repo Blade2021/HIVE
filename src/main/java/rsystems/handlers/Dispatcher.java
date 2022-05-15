@@ -292,7 +292,7 @@ public class Dispatcher extends ListenerAdapter {
         }
 
 
-        Map<Long, Integer> authmap = HiveBot.database.getModRoles();
+        final Map<Long, Integer> authmap = HiveBot.database.getModRoles();
         for (Role role : member.getRoles()) {
 
             Long roleID = role.getIdLong();

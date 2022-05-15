@@ -223,7 +223,7 @@ public class StreamHandler extends ListenerAdapter {
                             }
                         }
                         //If current link was not found in messages
-                        pushChannel.sendMessage(author + link).queue();
+                        pushChannel.sendMessage(String.format("%s\n,%s",author,link)).queue();
                         event.getMessage().addReaction("\uD83D\uDCE8").queue();
                         return;
                     });
