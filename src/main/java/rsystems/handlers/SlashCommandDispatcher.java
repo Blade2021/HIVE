@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
+import rsystems.slashCommands.configuration.RegisterObsAdvert;
 import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.generic.LedList;
@@ -49,6 +50,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new SubmitToken());
         registerCommand(new Mini());
         registerCommand(new ChannelStats());
+        registerCommand(new RegisterObsAdvert());
 
     }
 
@@ -56,7 +58,8 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         return Collections.unmodifiableSet(new HashSet<>(this.slashCommands));
     }
 
-    public void onSlashCommand(final SlashCommandInteractionEvent event) {
+
+    public void onSlashCommandInteraction(final SlashCommandInteractionEvent event) {
 
         for (final SlashCommand c : this.getCommands()) {
             if (event.getName().equalsIgnoreCase(c.getName())) {
