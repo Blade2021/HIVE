@@ -2,7 +2,7 @@ package rsystems.slashCommands.user;
 
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import rsystems.HiveBot;
 import rsystems.handlers.Dispatcher;
 import rsystems.handlers.SlashCommandDispatcher;
@@ -15,7 +15,7 @@ import java.util.Comparator;
 
 public class Commands extends SlashCommand {
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         ArrayList<String> commandList = new ArrayList<>();
         for(Command c: HiveBot.dispatcher.getCommands()){
             try {

@@ -18,8 +18,8 @@ public class Mini extends Command {
 
         Long lookupID = sender.getIdLong();
 
-        if(event.getMessage().getMentionedMembers().size() > 0){
-            lookupID = event.getMessage().getMentionedMembers().get(0).getUser().getIdLong();
+        if(event.getMessage().getMentions().getMembers().size() > 0){
+            lookupID = event.getMessage().getMentions().getMembers().get(0).getUser().getIdLong();
         }
 
         final String userMiniMessage = HiveBot.database.getValue("HIVE_UserMessageTable","Message","UserID",lookupID);

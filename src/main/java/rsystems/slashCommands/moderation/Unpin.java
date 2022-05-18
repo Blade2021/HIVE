@@ -4,9 +4,10 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 
@@ -32,19 +33,15 @@ public class Unpin extends SlashCommand {
     }
 
     @Override
-    public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
-
-        commandData
+    public SlashCommandData getCommandData() {
+        return Commands.slash(this.getName().toLowerCase(), this.getDescription())
                 .addOption(OptionType.CHANNEL,"channel","The channel that has the Message",true)
                 .addOption(OptionType.STRING,"messageid","The messageID of the message to be unpinned",true)
                 .addOption(OptionType.NUMBER,"days","How many days to leave the message pinned",true);
-
-        return commandData;
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
         MessageChannel messageChannel = event.getOption("channel").getAsMessageChannel();

@@ -6,12 +6,12 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.AnalyzeChannelObject;
-import rsystems.objects.Command;
 import rsystems.objects.SlashCommand;
 
 import java.time.Instant;
@@ -22,8 +22,9 @@ import java.util.List;
 public class ChannelStats extends SlashCommand {
 
     @Override
-    public CommandData getCommandData() {
-        return new CommandData(this.getName().toLowerCase(), this.getDescription()).addOption(OptionType.NUMBER,"query","How many days to subtract for activity",false);
+    public SlashCommandData getCommandData() {
+
+        return Commands.slash(this.getName().toLowerCase(),this.getDescription().toLowerCase()).addOption(OptionType.NUMBER,"query","How many days to subtract for activity",false);
     }
 
     @Override
@@ -32,7 +33,7 @@ public class ChannelStats extends SlashCommand {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
 
         event.deferReply().queue();
 
@@ -41,7 +42,6 @@ public class ChannelStats extends SlashCommand {
         List<TextChannel> guildChannels = event.getGuild().getTextChannels();
         for(TextChannel queryChannel:guildChannels){
 
-            if(queryChannel.hasLatestMessage()){
                 System.out.println("Latest message was found for " + queryChannel.getName());
                 queryChannel.getIterableHistory().takeAsync(1).thenAcceptAsync(messages -> {
                     Message m = messages.get(0);
@@ -51,10 +51,8 @@ public class ChannelStats extends SlashCommand {
 
                     channelObjects.add(new AnalyzeChannelObject(queryChannel.getIdLong(),lastMessageTime,queryChannel.getName()));
                 });
-            } else {
-                channelObjects.add(new AnalyzeChannelObject(queryChannel.getIdLong(),null, queryChannel.getName()));
             }
-        }
+
 
         try {
 

@@ -3,8 +3,7 @@ package rsystems.slashCommands.user;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.requests.RestAction;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
@@ -15,7 +14,7 @@ import java.sql.SQLException;
 
 public class Here extends SlashCommand {
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(this.isEphemeral()).queue();
 
         if (HiveBot.streamHandler.isStreamActive()) {
@@ -51,7 +50,7 @@ public class Here extends SlashCommand {
         return "Tell HIVE that you attended the live stream";
     }
 
-    private void handleResponse(final SlashCommandEvent event, Integer statusCode, Boolean firstHere) {
+    private void handleResponse(final SlashCommandInteractionEvent event, Integer statusCode, Boolean firstHere) {
 
         EmbedBuilder builder = new EmbedBuilder();
 

@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.debug.Test2;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.*;
@@ -58,7 +59,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new PowerCal());
         registerCommand(new Mini());
         registerCommand(new StreamVerify());
-
+        registerCommand(new Test2());
     }
 
     public Set<Command> getCommands() {

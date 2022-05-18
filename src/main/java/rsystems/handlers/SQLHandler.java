@@ -1738,4 +1738,27 @@ public class SQLHandler {
         return credential;
     }
 
+    public int registerOBSAdvert(String sceneName, String sourceName) throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamAdverts (Scene, Source) VALUES ('%s','%s')",sceneName,sourceName),Statement.RETURN_GENERATED_KEYS);
+            st.execute();
+
+            ResultSet resultSet = st.getGeneratedKeys();
+            if(resultSet.next()){
+                output = resultSet.getInt("ID");
+            }
+
+        } catch (SQLException throwables) {
+            throw new SQLException(throwables);
+        } finally {
+            connection.close();
+        }
+
+        return output;
+    }
+
 }

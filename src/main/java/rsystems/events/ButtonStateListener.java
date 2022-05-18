@@ -3,10 +3,8 @@ package rsystems.events;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageEmbed;
-import net.dv8tion.jda.api.events.interaction.ButtonClickEvent;
+import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.jetbrains.annotations.NotNull;
 import rsystems.HiveBot;
 import rsystems.objects.Reference;
 
@@ -23,7 +21,7 @@ import java.util.Map;
 public class ButtonStateListener extends ListenerAdapter {
 
     @Override
-    public void onButtonClick(@NotNull ButtonClickEvent event) {
+    public void onButtonInteraction(ButtonInteractionEvent event) {
 
         //Post source of a reference test
         if(event.getButton().getId().equalsIgnoreCase("source")){
@@ -75,7 +73,7 @@ public class ButtonStateListener extends ListenerAdapter {
 
     }
 
-    private void handleDepinEvent(final ButtonClickEvent event, final int timeLength){
+    private void handleDepinEvent(final ButtonInteractionEvent event, final int timeLength){
         event.deferEdit().queue();
 
         final String buttonID = event.getButton().getId();

@@ -6,17 +6,13 @@ import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Role;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import net.dv8tion.jda.api.interactions.commands.build.OptionData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
-import net.dv8tion.jda.api.interactions.commands.build.SubcommandGroupData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
+import rsystems.slashCommands.configuration.RegisterObsAdvert;
 import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.generic.LedList;
@@ -54,6 +50,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new SubmitToken());
         registerCommand(new Mini());
         registerCommand(new ChannelStats());
+        registerCommand(new RegisterObsAdvert());
 
     }
 
@@ -61,7 +58,8 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         return Collections.unmodifiableSet(new HashSet<>(this.slashCommands));
     }
 
-    public void onSlashCommand(final SlashCommandEvent event) {
+
+    public void onSlashCommandInteraction(final SlashCommandInteractionEvent event) {
 
         for (final SlashCommand c : this.getCommands()) {
             if (event.getName().equalsIgnoreCase(c.getName())) {
@@ -92,7 +90,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     }
 
     private void executeCommand(final SlashCommand c, final String message,
-                                final SlashCommandEvent event) {
+                                final SlashCommandInteractionEvent event) {
         this.pool.submit(() ->
         {
 
