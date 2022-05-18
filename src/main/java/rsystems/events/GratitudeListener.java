@@ -28,14 +28,14 @@ public class GratitudeListener extends ListenerAdapter {
 
         for (String trigger : triggers) {
             if (event.getMessage().getContentDisplay().toLowerCase().contains(trigger)) {
-                if ((!event.getMessage().getMentionedMembers().isEmpty()) || (event.getMessage().getReferencedMessage() != null)) {
+                if ((!event.getMessage().getMentions().getMembers().isEmpty()) || (event.getMessage().getReferencedMessage() != null)) {
 
                     try {
                         if (HiveBot.karmaSQLHandler.getAvailableKarmaPoints(event.getAuthor().getId()) >= 1) {
                             Member receivingMember = null;
-                            if (!event.getMessage().getMentionedMembers().isEmpty()) {
+                            if (!event.getMessage().getMentions().getMembers().isEmpty()) {
                                 // Assign the receiver to the first mentioned member
-                                receivingMember = event.getMessage().getMentionedMembers().get(0);
+                                receivingMember = event.getMessage().getMentions().getMembers().get(0);
                             } else {
                                 if (event.getMessage().getReferencedMessage().getMember() != null) {
                                     // Assign the receiver to the replied message's author
@@ -154,10 +154,10 @@ public class GratitudeListener extends ListenerAdapter {
                         });
 
                         User receiver = null;
-                        if (message.getMentionedMembers().isEmpty()) {
+                        if (message.getMentions().getMembers().isEmpty()) {
                             receiver = message.getReferencedMessage().getMember().getUser();
                         } else {
-                            receiver = message.getMentionedMembers().get(0).getUser();
+                            receiver = message.getMentions().getMembers().get(0).getUser();
                         }
 
                         if (receiver != null) {

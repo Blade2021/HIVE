@@ -4,24 +4,23 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
-import net.dv8tion.jda.api.interactions.commands.Command;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
 import rsystems.objects.SlashCommand;
 
-import java.awt.*;
 import java.sql.SQLException;
 import java.util.Map;
 
 public class Led extends SlashCommand {
 
     @Override
-    public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
+    public SlashCommandData getCommandData() {
+        SlashCommandData commandData = Commands.slash(this.getName().toLowerCase(),this.getDescription().toLowerCase());
 
         try {
             Map<String, LED> ledMap = HiveBot.database.getLEDMap();
@@ -43,7 +42,7 @@ public class Led extends SlashCommand {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
 
         event.deferReply(isEphemeral()).queue();
 

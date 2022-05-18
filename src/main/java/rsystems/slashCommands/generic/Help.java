@@ -3,10 +3,10 @@ package rsystems.slashCommands.generic;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
-import rsystems.Config;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.SlashCommand;
@@ -14,16 +14,14 @@ import rsystems.objects.SlashCommand;
 public class Help extends SlashCommand {
 
     @Override
-    public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(), this.getDescription());
-        commandData.addOption(OptionType.STRING, "command", "The name of the command to gather information about",true);
-
-        return commandData;
+    public SlashCommandData getCommandData() {
+        return Commands.slash(this.getName().toLowerCase(),this.getDescription().toLowerCase())
+                .addOption(OptionType.STRING, "command", "The name of the command to gather information about",true);
     }
 
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
 
         event.deferReply(isEphemeral()).queue();
 
@@ -47,7 +45,7 @@ public class Help extends SlashCommand {
         event.getHook().editOriginal("No command was found with that name").queue();
     }
 
-    private void handleEvent(SlashCommandEvent event, final Command c) {
+    private void handleEvent(SlashCommandInteractionEvent event, final Command c) {
         EmbedBuilder builder = new EmbedBuilder();
         builder.setTitle("Help | " + c.getName());
         builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));

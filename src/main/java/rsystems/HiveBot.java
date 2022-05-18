@@ -18,6 +18,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
+import net.twasi.obsremotejava.OBSRemoteController;
 import org.slf4j.LoggerFactory;
 import rsystems.events.*;
 import rsystems.handlers.*;
@@ -56,6 +57,8 @@ public class HiveBot {
     public static ReferenceHandler referenceHandler = new ReferenceHandler();
 
     public static JDAImpl jda = null;
+
+    public static OBSRemoteController obsRemoteController;
 
     public static Guild mainGuild() {
         return jda.getGuildById(Config.get("GUILD_ID"));
@@ -100,6 +103,7 @@ public class HiveBot {
             api.awaitReady();
             jda = (JDAImpl) api;
 
+            obsRemoteController = new OBSRemoteController("ws://localhost:4444", false, Config.get("obs-key"));
 
             referenceHandler.loadReferences();
 

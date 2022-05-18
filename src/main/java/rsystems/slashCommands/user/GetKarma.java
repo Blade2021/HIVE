@@ -2,9 +2,8 @@ package rsystems.slashCommands.user;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import rsystems.HiveBot;
 import rsystems.objects.KarmaUserInfo;
 import rsystems.objects.SlashCommand;
@@ -17,7 +16,7 @@ import java.time.temporal.ChronoUnit;
 
 public class GetKarma extends SlashCommand {
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
         try {

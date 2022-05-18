@@ -4,10 +4,11 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.internal.interactions.CommandDataImpl;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 
@@ -19,8 +20,8 @@ import java.util.TreeMap;
 public class Activity extends SlashCommand {
 
     @Override
-    public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
+    public SlashCommandData getCommandData() {
+        SlashCommandData commandData = new CommandDataImpl(this.getName().toLowerCase(),this.getDescription());
 
         ArrayList<SubcommandData> subCommands = new ArrayList<>();
         subCommands.add(new SubcommandData("add","Add an activity to the list").addOption(OptionType.STRING,"activity","The string to be displayed",true));
@@ -32,7 +33,7 @@ public class Activity extends SlashCommand {
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
         if(event.getSubcommandName().equalsIgnoreCase("add")){

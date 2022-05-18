@@ -4,9 +4,10 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
-import net.dv8tion.jda.api.events.interaction.SlashCommandEvent;
+import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
-import net.dv8tion.jda.api.interactions.commands.build.CommandData;
+import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.KarmaUserInfo;
 import rsystems.objects.SlashCommand;
@@ -17,17 +18,14 @@ import java.time.format.DateTimeFormatter;
 public class Who extends SlashCommand {
 
     @Override
-    public CommandData getCommandData() {
-        CommandData commandData = new CommandData(this.getName().toLowerCase(),this.getDescription());
-
-        commandData.addOption(OptionType.USER,"member","The user to lookup");
-        commandData.addOption(OptionType.STRING,"userid","The user id to lookup");
-
-        return commandData;
+    public SlashCommandData getCommandData() {
+        return Commands.slash(this.getName().toLowerCase(),this.getDescription())
+                .addOption(OptionType.USER,"member","The user to lookup")
+                .addOption(OptionType.STRING,"userid","The user id to lookup");
     }
 
     @Override
-    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandEvent event) {
+    public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
         if (event.getOption("member") != null) {
@@ -53,7 +51,7 @@ public class Who extends SlashCommand {
         return "Get information about a member";
     }
 
-    private void handleEvent(final SlashCommandEvent event, final Member member) {
+    private void handleEvent(final SlashCommandInteractionEvent event, final Member member) {
 
         KarmaUserInfo karmaUserInfo = null;
 
