@@ -5,6 +5,7 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
+import org.checkerframework.checker.units.qual.A;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
@@ -1759,6 +1760,37 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public Map<Integer, StreamAdvert> getAdverts() throws SQLException {
+        Map<Integer, StreamAdvert> advertMap = new TreeMap<>();
+
+        Connection connection = pool.getConnection();
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT ID, Scene, Source, Cost, Cooldown FROM StreamAdverts");
+
+            while(rs.next()){
+
+                int id = rs.getInt("ID");
+                String scene = rs.getString("Scene");
+                String source = rs.getString("Source");
+                int cost = rs.getInt("Cost");
+                int cooldown = rs.getInt("Cooldown");
+
+                advertMap.putIfAbsent(id,new StreamAdvert(id,scene,source,cost,cooldown));
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return advertMap;
     }
 
 }

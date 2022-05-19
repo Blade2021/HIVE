@@ -31,6 +31,7 @@ public class StreamHandler extends ListenerAdapter {
     private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
 
     private boolean firstHereClaimed = false;
+    private boolean allowAdverts = true;
 
     private static List<Long> keeperList = new ArrayList<>();
 
@@ -82,6 +83,14 @@ public class StreamHandler extends ListenerAdapter {
         return streamTopic;
     }
 
+    public boolean allowAdverts(){
+        return allowAdverts;
+    }
+
+    public void setAllowAdverts(Boolean allowAdverts){
+        this.allowAdverts = allowAdverts;
+    }
+
     public void setStreamTopic(String streamTopic) {
         this.streamTopic = streamTopic;
     }
@@ -104,6 +113,10 @@ public class StreamHandler extends ListenerAdapter {
         } else {
             return null;
         }
+    }
+
+    public TextChannel getLiveStreamChatChannel(){
+        return HiveBot.mainGuild().getTextChannelById(this.streamChatChannelID);
     }
 
     public void parseMessage(MessageReceivedEvent event){

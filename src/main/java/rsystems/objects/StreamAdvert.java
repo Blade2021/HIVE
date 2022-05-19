@@ -8,6 +8,8 @@ public class StreamAdvert {
     private int cost;
     private int cooldown;
 
+    private boolean enabled;
+
     public StreamAdvert(int id, String sceneName, String sourceName) {
         this.id = id;
         this.sceneName = sceneName;
@@ -20,6 +22,7 @@ public class StreamAdvert {
         this.sourceName = sourceName;
         this.cost = cost;
         this.cooldown = cooldown;
+        this.enabled = true;
     }
 
     public int getId() {
@@ -48,5 +51,13 @@ public class StreamAdvert {
 
     public void setCooldown(int cooldown) {
         this.cooldown = cooldown;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 }

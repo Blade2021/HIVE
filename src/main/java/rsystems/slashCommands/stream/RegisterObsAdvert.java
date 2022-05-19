@@ -1,4 +1,4 @@
-package rsystems.slashCommands.configuration;
+package rsystems.slashCommands.stream;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.MessageChannel;

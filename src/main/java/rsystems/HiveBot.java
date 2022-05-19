@@ -106,7 +106,7 @@ public class HiveBot {
 
             obsRemoteController = new OBSRemoteController("ws://localhost:4444", false, Config.get("obs-key"));
 
-            referenceHandler.loadReferences();
+            //referenceHandler.loadReferences();
 
             api.getGuilds().forEach(guild -> {
                 slashCommandDispatcher.submitGuildCommands(guild);
