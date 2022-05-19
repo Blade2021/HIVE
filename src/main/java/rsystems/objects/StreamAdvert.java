@@ -25,6 +25,16 @@ public class StreamAdvert {
         this.enabled = true;
     }
 
+    public StreamAdvert(int id, String sceneName, String sourceName, int cost, int cooldown, boolean enabled) {
+        this.id = id;
+        this.sceneName = sceneName;
+        this.sourceName = sourceName;
+        this.cost = cost;
+        this.cooldown = cooldown;
+        this.enabled = enabled;
+    }
+
+
     public int getId() {
         return id;
     }

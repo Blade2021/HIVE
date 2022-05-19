@@ -18,9 +18,9 @@ import java.awt.*;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.ArrayList;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class StreamHandler extends ListenerAdapter {
 
@@ -30,55 +30,124 @@ public class StreamHandler extends ListenerAdapter {
     private Long streamQuestionChannelID = Long.parseLong(Config.get("Stream_Question_Post_ChannelID"));
     private Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
     private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
-
     private boolean firstHereClaimed = false;
     private boolean allowAdverts = true;
     private int currentStreamID = 0;
-
     private int spentCashews = 0;
-
     private int advertsCalled = 0;
+    private boolean handlingRequest = false;
+
+    private Instant advertCooldown = null;
+
+    private LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
+
+    public boolean submitRequest(DispatchRequest dispatchRequest) {
+        if (this.requestsQueue.size() < 5) {
+            this.requestsQueue.add(dispatchRequest);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void acceptNextRequest() {
+        if (!this.requestsQueue.isEmpty()) {
+
+            //Set the handling request to true so webhook call is not overlapped with another call.
+            this.handlingRequest = true;
+
+            // Get the first request from the list then remove it from the list
+            final DispatchRequest request = this.requestsQueue.getFirst();
+            this.requestsQueue.removeFirst();
+
+            final StreamAdvert advert = request.getSelectedAdvert();
+            // Subtract allotted points from user
+
+            try {
+                HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+
+                // Call webhook
+                HiveBot.obsRemoteController.setSourceVisibility(advert.getSceneName(), advert.getSourceName(), true, callback -> {
+                    if (callback.getStatus().equalsIgnoreCase("OK")) {
+                        // Notify user
+
+                        this.advertCooldown = Instant.now().plus(advert.getCooldown(), ChronoUnit.MINUTES);
+
+                        //Set the handling request too false to allow another request
+                        this.handlingRequest = false;
+                    } else {
+                        // Return points to user
+                        try {
+                            HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+                        } catch (SQLException e) {
+                            throw new RuntimeException(e);
+                        }
+                    }
+                });
+
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
 
     private static List<Long> keeperList = new ArrayList<>();
 
+    public Instant getAdvertCooldown() {
+        return advertCooldown;
+    }
+
     public StreamHandler() {
+
     }
 
     public boolean isStreamActive() {
         return streamActive;
     }
 
-    public void setStreamActive(boolean streamActive){
-        setStreamActive(streamActive,null);
+    public void setStreamActive(boolean streamActive) {
+        setStreamActive(streamActive, null);
     }
 
-    public void goLive(){
-        setStreamActive(true,null);
+    public boolean isHandlingRequest() {
+        return handlingRequest;
+    }
+
+    public void goLive() {
+        setStreamActive(true, null);
     }
 
     public void setStreamActive(boolean streamActive, String streamTopic) {
 
-        if(!streamActive){
+        if (!streamActive) {
             clearQuestions(this.streamQuestionChannelID);
 
             BotActivity.handleTask();
             firstHereClaimed = false;
 
             try {
-                HiveBot.database.putTimestamp("StreamArchive","End", Timestamp.from(Instant.now()),"ID",currentStreamID);
+                // Add timestamp to stream archive
+                HiveBot.database.putTimestamp("StreamArchive", "End", Timestamp.from(Instant.now()), "ID", currentStreamID);
+
+                // REFUND POINTS FOR UNCALLED ADVERTS
+                for(DispatchRequest request:this.requestsQueue){
+                    HiveBot.database.refundPoints(request.getRequestingUserID(),request.getSelectedAdvert().getCost());
+                }
+
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
 
         } else {
-            if(!this.streamActive) {
+            if (!this.streamActive) {
 
                 EmbedBuilder builder = new EmbedBuilder();
 
-                builder.setTitle(String.format("%s is going LIVE soon!",Config.get("HOST_NICKNAME")));
+                builder.setTitle(String.format("%s is going LIVE soon!", Config.get("HOST_NICKNAME")));
                 builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
-                builder.setDescription(String.format("Come one, come all!  Join us on the %s Stream!  Links below!\n**Remember to like and subscribe!**\n\nBe sure to type `/here` during a livestream to receive your bonus stream points!",Config.get("HOST_NICKNAME")));
-                if(streamTopic != null) {
+                builder.setDescription(String.format("Come one, come all!  Join us on the %s Stream!  Links below!\n**Remember to like and subscribe!**\n\nBe sure to type `/here` during a livestream to receive your bonus stream points!", Config.get("HOST_NICKNAME")));
+                if (streamTopic != null) {
                     builder.addField("Topic", streamTopic, false);
 
                     this.streamTopic = streamTopic;
@@ -106,11 +175,11 @@ public class StreamHandler extends ListenerAdapter {
         return streamTopic;
     }
 
-    public boolean allowAdverts(){
+    public boolean allowAdverts() {
         return allowAdverts;
     }
 
-    public void setAllowAdverts(Boolean allowAdverts){
+    public void setAllowAdverts(Boolean allowAdverts) {
         this.allowAdverts = allowAdverts;
     }
 
@@ -130,23 +199,23 @@ public class StreamHandler extends ListenerAdapter {
         return streamLinksPostChannelID;
     }
 
-    public TextChannel getChannel(final Long channelID){
-        if(HiveBot.mainGuild().getTextChannelById(channelID) != null){
+    public TextChannel getChannel(final Long channelID) {
+        if (HiveBot.mainGuild().getTextChannelById(channelID) != null) {
             return HiveBot.mainGuild().getTextChannelById(channelID);
         } else {
             return null;
         }
     }
 
-    public TextChannel getLiveStreamChatChannel(){
+    public TextChannel getLiveStreamChatChannel() {
         return HiveBot.mainGuild().getTextChannelById(this.streamChatChannelID);
     }
 
-    public void parseMessage(MessageReceivedEvent event){
+    public void parseMessage(MessageReceivedEvent event) {
 
-        if(this.streamActive) {
+        if (this.streamActive) {
             // Ask Command
-            if(event.getMessage().getContentDisplay().toLowerCase().contains(HiveBot.prefix+"ask ")){
+            if (event.getMessage().getContentDisplay().toLowerCase().contains(HiveBot.prefix + "ask ")) {
 
                 // Assign message to local variable
                 String messageraw = event.getMessage().getContentRaw();
@@ -154,30 +223,30 @@ public class StreamHandler extends ListenerAdapter {
                 // Call method to get link
                 final String question = getQuestion(messageraw);
 
-                if(question.length() <= 5){
+                if (question.length() <= 5) {
                     //Link was not long enough to verify
                     getLogger().info("Question is too short to post");
                     return;
                 }
 
                 // Call method to get author
-                final String author = getAuthor(event,messageraw);
+                final String author = getAuthor(event, messageraw);
 
 
-                try{
+                try {
                     //Get history of the past 20 messages
-                    event.getChannel().getHistoryBefore(event.getMessageId(),100).limit(100).queue(messageHistory -> {
+                    event.getChannel().getHistoryBefore(event.getMessageId(), 100).limit(100).queue(messageHistory -> {
 
                         List<Message> messages = messageHistory.getRetrievedHistory();
 
-                        for(Message m:messages){
-                            if(m.getContentRaw().contains(question)){
+                        for (Message m : messages) {
+                            if (m.getContentRaw().contains(question)) {
                                 //System.out.println(String.format("Question: %s\nFound Message: %s",question,m.getContentRaw()));
                                 event.getMessage().addReaction("⚠").queue();
 
                                 String logQuestion = question;
-                                if(logQuestion.length() > 20){
-                                    logQuestion = question.substring(0,20);
+                                if (logQuestion.length() > 20) {
+                                    logQuestion = question.substring(0, 20);
                                 }
 
                                 getLogger().info("Question was already asked");
@@ -186,15 +255,15 @@ public class StreamHandler extends ListenerAdapter {
                         }
 
                         String platform = getPlatform(event.getMessage());
-                        if(platform == null){
+                        if (platform == null) {
                             platform = "WHUT?";
                         }
 
                         //If current question was not found in messages
                         EmbedBuilder embedBuilder = new EmbedBuilder();
-                        embedBuilder.setTitle(String.format("Platform: %s",platform));
-                        embedBuilder.addField("**Requester**",author,false);
-                        embedBuilder.addField("**Question**",String.format("```%s```",question.trim()),false);
+                        embedBuilder.setTitle(String.format("Platform: %s", platform));
+                        embedBuilder.addField("**Requester**", author, false);
+                        embedBuilder.addField("**Question**", String.format("```%s```", question.trim()), false);
                         embedBuilder.setTimestamp(Instant.now());
 
                         Random rand = new Random();
@@ -202,13 +271,13 @@ public class StreamHandler extends ListenerAdapter {
                         float g = rand.nextFloat();
                         float b = rand.nextFloat();
 
-                        Color randomColor = new Color(r,g,b);
+                        Color randomColor = new Color(r, g, b);
                         embedBuilder.setColor(randomColor);
 
 
                         TextChannel questionPushChannel = event.getGuild().getTextChannelById(streamQuestionChannelID);
 
-                        if(questionPushChannel != null) {
+                        if (questionPushChannel != null) {
                             questionPushChannel.sendMessageEmbeds(embedBuilder.build()).queue(success -> {
                                 keeperList.add(success.getIdLong());
                                 success.addReaction("✅").queue();
@@ -222,11 +291,9 @@ public class StreamHandler extends ListenerAdapter {
                         }
 
                     });
-                }
-                catch(InsufficientPermissionException e){
+                } catch (InsufficientPermissionException e) {
                     System.out.println("Error: Missing permission: " + e.getPermission().getName());
-                }
-                catch(NullPointerException e){
+                } catch (NullPointerException e) {
                     System.out.println("THE CHANNEL DISAPPEARED!");
                 }
             }
@@ -259,7 +326,7 @@ public class StreamHandler extends ListenerAdapter {
                             }
                         }
                         //If current link was not found in messages
-                        pushChannel.sendMessage(String.format("%s\n,%s",author,link)).queue();
+                        pushChannel.sendMessage(String.format("%s\n,%s", author, link)).queue();
                         event.getMessage().addReaction("\uD83D\uDCE8").queue();
                         return;
                     });
@@ -268,16 +335,15 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
-    private String getLink(String message){
+    private String getLink(String message) {
         String link = "";
 
-        if(message.contains("http")){
+        if (message.contains("http")) {
             int linkStart = message.indexOf("http");
-            try{
+            try {
                 // Space was found after link
-                link = message.substring(linkStart,message.indexOf(" ",linkStart+1));
-            }
-            catch(StringIndexOutOfBoundsException e){
+                link = message.substring(linkStart, message.indexOf(" ", linkStart + 1));
+            } catch (StringIndexOutOfBoundsException e) {
                 // No space was found
                 link = message.substring(linkStart);
             }
@@ -286,8 +352,7 @@ public class StreamHandler extends ListenerAdapter {
             try {
                 // Space was found after link
                 link = message.substring(linkStart, message.indexOf(" ", linkStart + 1));
-            }
-            catch(StringIndexOutOfBoundsException e){
+            } catch (StringIndexOutOfBoundsException e) {
                 // No space was found
                 link = message.substring(linkStart);
             }
@@ -295,26 +360,25 @@ public class StreamHandler extends ListenerAdapter {
         return link;
     }
 
-    private Logger getLogger(){
+    private Logger getLogger() {
         return LoggerFactory.getLogger(StreamHandler.class);
     }
 
-    private String getAuthor(MessageReceivedEvent event, String message){
+    private String getAuthor(MessageReceivedEvent event, String message) {
         // Initialize author
         String author = "";
         // Does message contain brackets?
-        if((message.contains("[")) && (message.contains("]"))){
-            try{
+        if ((message.contains("[")) && (message.contains("]"))) {
+            try {
                 // Get locations of brackets
                 int openBracketLocation = message.indexOf("[");
                 int closeBracketLocation = message.indexOf("]");
 
                 int colonLocation = message.indexOf(":");
                 // Grab author, and strip youtube and twitch from author
-                author = message.substring(colonLocation+1,closeBracketLocation);
+                author = message.substring(colonLocation + 1, closeBracketLocation);
                 //author = author + " : ";
-            }
-            catch (StringIndexOutOfBoundsException e){
+            } catch (StringIndexOutOfBoundsException e) {
                 System.out.println("Could not find author");
             }
         } else {
@@ -327,37 +391,38 @@ public class StreamHandler extends ListenerAdapter {
 
     /**
      * This will return the platform that the question came from by processing the string.
+     *
      * @param message
      * @return Which platform the question originated from.  aka. Discord, YouTube, Twitch
      */
-    private String getPlatform(Message message){
+    private String getPlatform(Message message) {
         String platform = null;
         //if(message.getAuthor().isBot()){
-            final String messageText = message.getContentDisplay();
+        final String messageText = message.getContentDisplay();
 
-            if((messageText.contains("[")) && (messageText.contains("]"))) {
+        if ((messageText.contains("[")) && (messageText.contains("]"))) {
 
-                final int openBracketLocation = messageText.indexOf("[");
-                final int colonLocation = messageText.indexOf(":");
+            final int openBracketLocation = messageText.indexOf("[");
+            final int colonLocation = messageText.indexOf(":");
 
-                platform = messageText.substring(openBracketLocation+1,colonLocation);
-            }
+            platform = messageText.substring(openBracketLocation + 1, colonLocation);
+        }
         //}
         return platform;
     }
 
     /**
      * Parse out the question from the text provided.
+     *
      * @param message
      * @return The question the user provided.
      */
-    private String getQuestion(String message){
+    private String getQuestion(String message) {
         String question = "";
-        try{
+        try {
             int questionStart = message.indexOf(HiveBot.prefix + "ask");
-            question = message.substring(questionStart+4);
-        }
-        catch(IndexOutOfBoundsException | NullPointerException e){
+            question = message.substring(questionStart + 4);
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
             System.out.println("did not find question");
         }
         return question;
@@ -365,16 +430,16 @@ public class StreamHandler extends ListenerAdapter {
 
     @Override
     public void onMessageReactionAdd(MessageReactionAddEvent event) {
-        if(event.getUser().isBot()){
+        if (event.getUser().isBot()) {
             return;
         }
 
         final Long messageID = event.getMessageIdLong();
-        if(keeperList.contains(messageID)){
+        if (keeperList.contains(messageID)) {
 
             try {
 
-                if(HiveBot.dispatcher.checkAuthorized(event.getGuild().getIdLong(),event.getMember(),8,null)) {
+                if (HiveBot.dispatcher.checkAuthorized(event.getGuild().getIdLong(), event.getMember(), 8, null)) {
 
                     if (event.getReaction().getReactionEmote().isEmoji()) {
 
@@ -428,27 +493,27 @@ public class StreamHandler extends ListenerAdapter {
 
     /**
      * Remove the messageID from the arrayList if the message was deleted.
+     *
      * @param event
      */
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        if(keeperList.contains(event.getMessageIdLong())){
+        if (keeperList.contains(event.getMessageIdLong())) {
             keeperList.remove(event.getMessageIdLong());
         }
     }
 
-    private void clearQuestions(Long channelID){
+    private void clearQuestions(Long channelID) {
         try {
             List<Message> messages = new ArrayList<>();
             TextChannel channel = HiveBot.mainGuild().getTextChannelById(channelID);
-            if(channel != null) {
+            if (channel != null) {
                 channel.getIterableHistory()
                         .cache(false)
                         .forEachAsync(messages::add)
                         .thenRun(() -> channel.purgeMessages(messages));
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -41,7 +41,7 @@ public class ListAdverts extends SlashCommand {
             for(Map.Entry<Integer,StreamAdvert> entry:advertTreeMap.entrySet()){
 
 
-                String additionalLine = String.format("%6d | %-25s | %-25s | %-4d | %-2d second(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
+                String additionalLine = String.format("%6d | %-25s | %-25s | %-4d | %-2d minute(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
 
                 if((sb.length() + additionalLine.length() + 3) > 2000){
                     sb.append("```");

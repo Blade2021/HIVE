@@ -1812,6 +1812,31 @@ public class SQLHandler {
         return advertMap;
     }
 
+    public StreamAdvert getAdvert(Integer ID) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        StreamAdvert advert = null;
+
+        try{
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, Cost, Cooldown, Enabled FROM TokenTable WHERE ID = %d", ID));
+            while(rs.next()){
+
+                advert = new StreamAdvert(ID,rs.getString("Scene"),rs.getString("Source"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
+
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return advert;
+    }
+
     public Integer registerStream() throws SQLException {
         Integer output = null;
 
@@ -1833,6 +1858,44 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public Integer consumePoints(Long userid, Integer amount) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d) WHERE %s = %d",amount,userid));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return result;
+    }
+
+    public Integer refundPoints(Long userid, Integer amount) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d) WHERE %s = %d",amount,userid));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return result;
     }
 
 }
