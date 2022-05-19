@@ -229,6 +229,25 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer putTimestamp(String tablename, String columnName, Timestamp value, String identifierColumn, Integer identifier) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = '%s'",tablename,columnName,value,identifierColumn,identifier));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
 
     // Get date of last seen using ID
     public LED getLED(String ledName) throws SQLException {
@@ -1791,6 +1810,29 @@ public class SQLHandler {
         }
 
         return advertMap;
+    }
+
+    public Integer registerStream() throws SQLException {
+        Integer output = null;
+
+        Connection connection = pool.getConnection();
+        try{
+
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamArchive (Start) VALUES ('%s')",Timestamp.from(Instant.now())),Statement.RETURN_GENERATED_KEYS);
+            st.execute();
+
+            ResultSet resultSet = st.getGeneratedKeys();
+            if(resultSet.next()){
+                output = resultSet.getInt("ID");
+            }
+
+        } catch (SQLException throwables) {
+            throw new SQLException(throwables);
+        } finally {
+            connection.close();
+        }
+
+        return output;
     }
 
 }

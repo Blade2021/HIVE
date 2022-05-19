@@ -16,6 +16,7 @@ import rsystems.tasks.BotActivity;
 
 import java.awt.*;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,11 @@ public class StreamHandler extends ListenerAdapter {
 
     private boolean firstHereClaimed = false;
     private boolean allowAdverts = true;
+    private int currentStreamID = 0;
+
+    private int spentCashews = 0;
+
+    private int advertsCalled = 0;
 
     private static List<Long> keeperList = new ArrayList<>();
 
@@ -46,6 +52,10 @@ public class StreamHandler extends ListenerAdapter {
         setStreamActive(streamActive,null);
     }
 
+    public void goLive(){
+        setStreamActive(true,null);
+    }
+
     public void setStreamActive(boolean streamActive, String streamTopic) {
 
         if(!streamActive){
@@ -53,6 +63,12 @@ public class StreamHandler extends ListenerAdapter {
 
             BotActivity.handleTask();
             firstHereClaimed = false;
+
+            try {
+                HiveBot.database.putTimestamp("StreamArchive","End", Timestamp.from(Instant.now()),"ID",currentStreamID);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
 
         } else {
             if(!this.streamActive) {
@@ -73,6 +89,13 @@ public class StreamHandler extends ListenerAdapter {
                 getChannel(streamChatChannelID).sendMessageEmbeds(builder.build()).queue();
 
                 HiveBot.jda.getPresence().setActivity(Activity.streaming("Stream Mode Active", Config.get("STREAM_TWITCH_LINK")));
+
+                try {
+                    currentStreamID = HiveBot.database.registerStream();
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
             }
         }
 
