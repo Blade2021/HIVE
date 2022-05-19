@@ -122,7 +122,7 @@ public class HiveBot {
 
             });
 
-            HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
+            //HiveBot.authMap.putIfAbsent(Long.valueOf("620805075190677514"),65535);
             try {
                 HiveBot.database.loadPerkEmojis();
             } catch (SQLException throwables) {
