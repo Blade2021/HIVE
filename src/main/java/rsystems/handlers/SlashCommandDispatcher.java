@@ -19,6 +19,7 @@ import rsystems.slashCommands.generic.Help;
 import rsystems.slashCommands.generic.Led;
 import rsystems.slashCommands.generic.LedList;
 import rsystems.slashCommands.moderation.*;
+import rsystems.slashCommands.stream.StreamHandlerSlashCmd;
 import rsystems.slashCommands.user.*;
 
 import java.sql.SQLException;
@@ -55,6 +56,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new RegisterObsAdvert());
         registerCommand(new ListAdverts());
         registerCommand(new Adverts());
+        registerCommand(new StreamHandlerSlashCmd());
 
     }
 

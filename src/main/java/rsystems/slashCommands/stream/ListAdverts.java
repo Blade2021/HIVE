@@ -12,33 +12,59 @@ import java.sql.SQLException;
 import java.util.Map;
 
 public class ListAdverts extends SlashCommand {
+
+    @Override
+    public boolean isEphemeral() {
+        return false;
+    }
+
     @Override
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
+
+        event.deferReply(this.isEphemeral()).queue();
+
         try {
             Map<Integer, StreamAdvert> advertTreeMap = HiveBot.database.getAdverts();
 
             EmbedBuilder builder = new EmbedBuilder();
             builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
             builder.setTitle("List of Adverts");
-            builder.setDescription("Here is a list of registered Adverts");
+            //builder.setDescription("Here is a list of registered Adverts\n");
+
+            //builder.appendDescription("**ID:**   |  Scene Name  |    Source Name    |  Cost  |  Cooldown  \n");
+
+            StringBuilder sb = new StringBuilder();
+            boolean replied = false;
+
+            sb.append("```   ID: |         Scene Name        |        Source Name        | Cost |  Cooldown  \n");
 
             for(Map.Entry<Integer,StreamAdvert> entry:advertTreeMap.entrySet()){
-                builder.addField("**ID**",entry.getKey().toString(),true);
 
-                String info = String.format("**Enabled?:** %s\n" +
-                                "**Scene:** %s\n" +
-                        "**Cost:** %d cashews\n" +
-                        "**Cooldown:** %d minutes\n\n",
-                        String.valueOf(entry.getValue().isEnabled()).toUpperCase(),
-                        entry.getValue().getSceneName(),
-                        entry.getValue().getCost(),
-                        entry.getValue().getCooldown());
 
-                builder.addField(entry.getValue().getSourceName(),info,true);
-                builder.addBlankField(true);
+                String additionalLine = String.format("%6d | %-25s | %-25s | %-4d | %-3d seconds\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
+
+                if((sb.length() + additionalLine.length() + 3) > 2000){
+                    sb.append("```");
+                    if(replied) {
+                        channelReply(event, sb.toString());
+                    } else {
+                        reply(event,sb.toString());
+                        replied = true;
+                    }
+                    sb.setLength(0);
+                    sb.append("```   ID: |         Scene Name        |        Source Name        | Cost |  Cooldown  \n");
+                } else {
+                    sb.append(additionalLine);
+                }
             }
 
-            reply(event,builder.build());
+            sb.append("```");
+
+            if(replied) {
+                channelReply(event, sb.toString());
+            } else {
+                reply(event,sb.toString());
+            }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
