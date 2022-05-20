@@ -50,6 +50,18 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
+    public boolean checkListForUser(Long userid){
+        for(DispatchRequest request:requestsQueue){
+            if(request.getRequestingUserID().equals(userid)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Triggers the stream handler to check requests queue for processing
+     */
     public void acceptNextRequest() {
         if (!this.requestsQueue.isEmpty()) {
 
@@ -68,8 +80,8 @@ public class StreamHandler extends ListenerAdapter {
 
                 // Call webhook
                 HiveBot.obsRemoteController.setSourceVisibility(advert.getSceneName(), advert.getSourceName(), true, callback -> {
-                    if (callback.getStatus().equalsIgnoreCase("OK")) {
-                        // Notify user
+
+                    if (callback.getStatus().equalsIgnoreCase("ok")) {
 
                         this.advertCooldown = Instant.now().plus(advert.getCooldown(), ChronoUnit.MINUTES);
 

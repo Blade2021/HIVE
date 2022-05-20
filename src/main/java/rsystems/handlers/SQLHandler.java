@@ -56,6 +56,24 @@ public class SQLHandler {
 
     }
 
+    public Integer getInteger(String tableName, String valueColumn, String identifierColumn, Long identifier) throws SQLException {
+        Integer output = null;
+        Connection connection = pool.getConnection();
+
+        try {
+            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn,tableName,identifierColumn,identifier));
+            while (rs.next()) {
+                output = rs.getInt(valueColumn);
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return output;
+
+    }
+
     /**
      * Check the blacklist table for a userID, if found Ignore the user.
      *
@@ -1821,7 +1839,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, Cost, Cooldown, Enabled FROM TokenTable WHERE ID = %d", ID));
+            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, Cost, Cooldown, Enabled FROM StreamAdverts WHERE ID = %d", ID));
             while(rs.next()){
 
                 advert = new StreamAdvert(ID,rs.getString("Scene"),rs.getString("Source"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
@@ -1886,7 +1904,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d) WHERE %s = %d",amount,userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d) WHERE UserID = %d",amount,userid));
             result = st.getUpdateCount();
 
         }  catch (SQLException e) {
