@@ -1,7 +1,6 @@
 package rsystems.objects;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
@@ -12,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.handlers.Dispatcher;
 import rsystems.tasks.BotActivity;
 
 import java.awt.*;
@@ -35,28 +35,31 @@ public class StreamHandler extends ListenerAdapter {
     private int currentStreamID = 0;
     private int spentCashews = 0;
     private int advertsCalled = 0;
+    private int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
     private boolean handlingRequest = false;
 
-    private Instant advertCooldown = null;
+
+    private Instant advertCooldown = Instant.now().plus(1,ChronoUnit.MINUTES);
 
     private LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
 
-    public boolean submitRequest(DispatchRequest dispatchRequest) {
-        if (this.requestsQueue.size() < 5) {
+    public Integer submitRequest(DispatchRequest dispatchRequest) {
+        if (this.requestsQueue.size() < maxQueueSize) {
             this.requestsQueue.add(dispatchRequest);
-            return true;
+
+            return requestsQueue.indexOf(dispatchRequest);
         } else {
-            return false;
+            return null;
         }
     }
 
-    public boolean checkListForUser(Long userid){
+    public Integer checkListForUser(Long userid){
         for(DispatchRequest request:requestsQueue){
             if(request.getRequestingUserID().equals(userid)){
-                return true;
+                return requestsQueue.indexOf(request);
             }
         }
-        return false;
+        return null;
     }
 
     /**
@@ -68,6 +71,10 @@ public class StreamHandler extends ListenerAdapter {
             //Set the handling request to true so webhook call is not overlapped with another call.
             this.handlingRequest = true;
 
+            Logger logger = LoggerFactory.getLogger(StreamHandler.class);
+            //logger.info("{} called by {} [{}]",c.getName(),event.getAuthor().getAsTag(),event.getAuthor().getIdLong());
+            logger.debug("Handling request set to true");
+
             // Get the first request from the list then remove it from the list
             final DispatchRequest request = this.requestsQueue.getFirst();
             this.requestsQueue.removeFirst();
@@ -76,26 +83,29 @@ public class StreamHandler extends ListenerAdapter {
             // Subtract allotted points from user
 
             try {
-                HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+                if(HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost()) >= 1) {
 
-                // Call webhook
-                HiveBot.obsRemoteController.setSourceVisibility(advert.getSceneName(), advert.getSourceName(), true, callback -> {
+                    logger.info("Advert request {} ID: {}\nNew Queue Size: {}", request.getRequestingUserID(), request.getSelectedAdvert().getId(),requestsQueue.size());
 
-                    if (callback.getStatus().equalsIgnoreCase("ok")) {
+                    // Call webhook
+                    HiveBot.obsRemoteController.setSourceVisibility(advert.getSceneName(), advert.getSourceName(), true, callback -> {
 
-                        this.advertCooldown = Instant.now().plus(advert.getCooldown(), ChronoUnit.MINUTES);
+                        if (callback.getStatus().equalsIgnoreCase("ok")) {
 
-                        //Set the handling request too false to allow another request
-                        this.handlingRequest = false;
-                    } else {
-                        // Return points to user
-                        try {
-                            HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
+                            this.advertCooldown = Instant.now().plus(advert.getCooldown(), ChronoUnit.MINUTES);
+
+                            //Set the handling request too false to allow another request
+                            this.handlingRequest = false;
+                        } else {
+                            // Return points to user
+                            try {
+                                HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
-                    }
-                });
+                    });
+                }
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -104,7 +114,7 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
-    private static List<Long> keeperList = new ArrayList<>();
+    private static List<Long> questionsList = new ArrayList<>();
 
     public Instant getAdvertCooldown() {
         return advertCooldown;
@@ -291,7 +301,7 @@ public class StreamHandler extends ListenerAdapter {
 
                         if (questionPushChannel != null) {
                             questionPushChannel.sendMessageEmbeds(embedBuilder.build()).queue(success -> {
-                                keeperList.add(success.getIdLong());
+                                questionsList.add(success.getIdLong());
                                 success.addReaction("✅").queue();
                                 success.addReaction("\u274C").queue();
                             });
@@ -447,7 +457,7 @@ public class StreamHandler extends ListenerAdapter {
         }
 
         final Long messageID = event.getMessageIdLong();
-        if (keeperList.contains(messageID)) {
+        if (questionsList.contains(messageID)) {
 
             try {
 
@@ -510,8 +520,8 @@ public class StreamHandler extends ListenerAdapter {
      */
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (keeperList.contains(event.getMessageIdLong())) {
-            keeperList.remove(event.getMessageIdLong());
+        if (questionsList.contains(event.getMessageIdLong())) {
+            questionsList.remove(event.getMessageIdLong());
         }
     }
 

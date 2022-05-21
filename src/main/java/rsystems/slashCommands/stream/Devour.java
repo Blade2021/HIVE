@@ -1,5 +1,6 @@
 package rsystems.slashCommands.stream;
 
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -30,10 +31,21 @@ public class Devour extends SlashCommand {
         event.deferReply(isEphemeral()).queue();
 
         if(HiveBot.streamHandler.isStreamActive()){
-            if(HiveBot.streamHandler.checkListForUser(sender.getIdLong())){
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Animation Request");
+            builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+            builder.setThumbnail(event.getGuild().getSelfMember().getEffectiveAvatarUrl());
+
+
+            final Integer queuePosition = HiveBot.streamHandler.checkListForUser(sender.getIdLong());
+            if(queuePosition != null){
                 // User already found
 
-                reply(event,"You are already in the queue.  Please wait a while and try again");
+                builder.setDescription("You are already in the queue.  Please wait a while and try again.");
+                builder.addField("Queue Position:",queuePosition.toString(),true);
+                builder.addBlankField(true);
+                reply(event,builder.build());
 
             } else {
                 // User not found
@@ -41,27 +53,49 @@ public class Devour extends SlashCommand {
 
                 try {
                     final StreamAdvert advert = HiveBot.database.getAdvert(event.getOption("advert-id").getAsInt());
-                    final Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
+                    Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
 
                     if(advert.isEnabled()){
                         if(advert.getCost() <= points){
-                            if(HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),advert.getId()))){
-                                reply(event,"Your request has been submitted");
+
+                            final Integer requestResult = HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),advert.getId()));
+
+                            if((requestResult != null) && (requestResult >= 0)){
+                                // REQUEST ACCEPTED
+
+                                points = points - advert.getCost();
+
+                                builder.setDescription(String.format("Your request has been submitted!\nYou are currently `%d` in the queue.",requestResult));
+                                builder.addField("Available Cashews:",points.toString(),true);
+                                builder.addBlankField(true);
+                                reply(event,builder.build());
+
                             } else {
-                                reply(event, "Looks like the queue is full right now.  Try again later.");
+                                // FULL QUEUE
+
+                                builder.setDescription(String.format("Sorry, looks like the queue is full right now.  Try again later.",requestResult));
+                                reply(event, builder.build());
                             }
                         } else {
-                            reply(event, "Sorry, it looks like you do not have enough points to call that one");
+                            // NOT ENOUGH POINTS
+                            builder.setDescription("Sorry, it looks like you do not have enough points to call that one.");
+                            builder.addField("Available Cashews:",points.toString(),true);
+                            builder.addField("Required Cashews:",String.valueOf(advert.getCost()),true);
+
+                            reply(event, builder.build());
                         }
                     } else {
                         // Advert is not enabled
-                        reply(event,"Sorry that advert is disabled right now.");
+                        builder.setDescription("Sorry, looks like that animation is currently disabled.  Please try another.");
+                        reply(event, builder.build());
                     }
 
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
             }
+
+            builder.clear();
         } else {
             // Stream is not active
 
