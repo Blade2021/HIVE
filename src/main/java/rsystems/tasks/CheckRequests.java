@@ -12,6 +12,9 @@ public class CheckRequests extends TimerTask {
     @Override
     public void run() {
         Logger logger = LoggerFactory.getLogger(CheckRequests.class);
+
+        logger.debug("Checking for stream requests");
+
         if(HiveBot.streamHandler.isStreamActive()){
             if(!HiveBot.streamHandler.isHandlingRequest()){
                 if(HiveBot.streamHandler.getAdvertCooldown().isBefore(Instant.now())) {

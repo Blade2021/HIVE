@@ -26,22 +26,18 @@ public class ListAdverts extends SlashCommand {
         try {
             Map<Integer, StreamAdvert> advertTreeMap = HiveBot.database.getAdverts();
 
-            EmbedBuilder builder = new EmbedBuilder();
-            builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
-            builder.setTitle("List of Adverts");
-            //builder.setDescription("Here is a list of registered Adverts\n");
-
-            //builder.appendDescription("**ID:**   |  Scene Name  |    Source Name    |  Cost  |  Cooldown  \n");
-
             StringBuilder sb = new StringBuilder();
             boolean replied = false;
 
-            sb.append("```   ID: |         Scene Name        |        Source Name        | Cost |  Cooldown  \n");
+            String starterLine = ("```   ID: |   Scene Name    |        Source Name        | Cost |  Cooldown  \n" +
+                                "    ----------------------------------------------------------------------\n");
+
+            sb.append(starterLine);
 
             for(Map.Entry<Integer,StreamAdvert> entry:advertTreeMap.entrySet()){
 
 
-                String additionalLine = String.format("%6d | %-25s | %-25s | %-4d | %-2d minute(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
+                String additionalLine = String.format("%6d | %-15s | %-25s | %-4d | %-2d minute(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
 
                 if((sb.length() + additionalLine.length() + 3) > 2000){
                     sb.append("```");
@@ -52,7 +48,7 @@ public class ListAdverts extends SlashCommand {
                         replied = true;
                     }
                     sb.setLength(0);
-                    sb.append("```   ID: |         Scene Name        |        Source Name        | Cost |  Cooldown  \n");
+                    sb.append(starterLine);
                 } else {
                     sb.append(additionalLine);
                 }

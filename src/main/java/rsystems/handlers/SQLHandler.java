@@ -1916,4 +1916,19 @@ public class SQLHandler {
         return result;
     }
 
+    public void recordAnimationLog(int streamID, DispatchRequest request) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("INSERT INTO StreamAnimationLog (StreamID, RequestingUserID, RequestedAnimationID) VALUES (%d, %d, %d)",streamID,request.getRequestingUserID(),request.getSelectedAdvert().getId()));
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+    }
+
 }

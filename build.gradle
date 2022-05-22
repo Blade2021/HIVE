@@ -30,7 +30,9 @@ dependencies {
     compile 'org.yaml:snakeyaml:1.29' //YAML Parsing
     //implementation("net.dv8tion:JDA:5.0.0-alpha.4")
 
-    implementation 'net.twasi:obs-websocket-java:1.2.0'
+    implementation ('net.twasi:obs-websocket-java:1.2.0') {
+        exclude group: 'org.slf4j', module: 'slf4j-simple'
+    }
 
     implementation("net.dv8tion:JDA:5.0.0-alpha.12")
 
