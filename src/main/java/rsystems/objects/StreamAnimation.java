@@ -2,7 +2,7 @@ package rsystems.objects;
 
 public class StreamAnimation {
 
-    private int id;
+    private Integer id;
     private String sceneName;
     private String sourceName;
     private int cost;
@@ -35,7 +35,7 @@ public class StreamAnimation {
     }
 
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 

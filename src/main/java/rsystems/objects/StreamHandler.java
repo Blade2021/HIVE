@@ -27,7 +27,6 @@ public class StreamHandler extends ListenerAdapter {
 
     private boolean streamActive = false;
     private String streamTopic = null;
-
     private Long streamQuestionChannelID = Long.parseLong(Config.get("Stream_Question_Post_ChannelID"));
     private Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
     private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
@@ -38,9 +37,7 @@ public class StreamHandler extends ListenerAdapter {
     private int AnimationsCalled = 0;
     private int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
     private boolean handlingRequest = false;
-
-
-    private Instant AnimationCooldown = Instant.now().plus(1, ChronoUnit.MINUTES);
+    private Instant animationCooldown = Instant.now().plus(1, ChronoUnit.MINUTES);
 
     private LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
 
@@ -89,13 +86,16 @@ public class StreamHandler extends ListenerAdapter {
                     logger.info("Animation request {} ID: {}", request.getRequestingUserID(), request.getSelectedAnimation().getId());
                     logger.info("New Queue Size: {}",requestsQueue.size());
 
+                    animationCooldown = Instant.now().plus(request.getSelectedAnimation().getCooldown(),ChronoUnit.MINUTES);
+                    notifyAcceptedAnimationRequest(request);
+
                     try {
                         // Call webhook
                         obsRemoteController.setSourceVisibility(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
 
                             if (callback.getStatus().equalsIgnoreCase("ok")) {
 
-                                this.AnimationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
+                                this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
 
                                 try {
                                     HiveBot.database.recordAnimationLog(this.currentStreamID,request);
@@ -134,12 +134,32 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
+    public void notifyAcceptedAnimationRequest(DispatchRequest request){
+        final String notifyChannelID = Config.get("STREAM_REQUESTS_POST_CHANNELID");
+        final TextChannel channel = HiveBot.mainGuild().getTextChannelById(notifyChannelID);
 
+        if(channel != null){
+            if(channel.canTalk()){
+                //Create message embed from request
+                EmbedBuilder builder = new EmbedBuilder();
+                builder.setTitle("Animation Request");
+                builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+                builder.setDescription(String.format("**Animation ID:** %d\n" +
+                        "**Animation Name:** %s",request.getSelectedAnimation().getId(),request.getSelectedAnimation().getSourceName()));
+                builder.addField("Requesting User",request.getRequestingUserID().toString(),true);
+                builder.addField("Cooldown Expire:", String.format("<t:%d:R>",animationCooldown.getEpochSecond()),true);
+                builder.addField("Queue Size: ",String.format("%d of %d",requestsQueue.size(),maxQueueSize),false);
+
+                channel.sendMessageEmbeds(builder.build()).queue();
+                builder.clear();
+            }
+        }
+    }
 
     private static List<Long> questionsList = new ArrayList<>();
 
     public Instant getAnimationCooldown() {
-        return AnimationCooldown;
+        return animationCooldown;
     }
 
     public StreamHandler() {
