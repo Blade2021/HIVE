@@ -7,20 +7,20 @@ import java.sql.SQLException;
 public class DispatchRequest {
 
     private Long requestingUserID;
-    private StreamAdvert selectedAdvert;
+    private StreamAnimation selectedAnimation;
     private String requestMessage;
 
-    public DispatchRequest(Long requestingUserID, Integer selectedAdvertID) throws SQLException {
+    public DispatchRequest(Long requestingUserID, Integer selectedAnimationID) throws SQLException {
         this.requestingUserID = requestingUserID;
-        this.selectedAdvert = HiveBot.database.getAdvert(selectedAdvertID);
+        this.selectedAnimation = HiveBot.database.getAnimation(selectedAnimationID);
     }
 
     public Long getRequestingUserID() {
         return requestingUserID;
     }
 
-    public StreamAdvert getSelectedAdvert() {
-        return selectedAdvert;
+    public StreamAnimation getSelectedAnimation() {
+        return selectedAnimation;
     }
 
     public String getRequestMessage() {

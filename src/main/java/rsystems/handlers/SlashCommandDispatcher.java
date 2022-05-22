@@ -50,9 +50,9 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new SubmitToken());
         registerCommand(new Mini());
         registerCommand(new ChannelStats());
-        registerCommand(new RegisterObsAdvert());
-        registerCommand(new ListAdverts());
-        registerCommand(new Adverts());
+        registerCommand(new RegisterAnimation());
+        registerCommand(new ListAnimations());
+        registerCommand(new Animations());
         registerCommand(new StreamHandlerSlashCmd());
         registerCommand(new Devour());
 

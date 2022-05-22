@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.DispatchRequest;
 import rsystems.objects.SlashCommand;
-import rsystems.objects.StreamAdvert;
+import rsystems.objects.StreamAnimation;
 
 import java.sql.SQLException;
 
@@ -52,7 +52,7 @@ public class Devour extends SlashCommand {
 
 
                 try {
-                    final StreamAdvert advert = HiveBot.database.getAdvert(event.getOption("advert-id").getAsInt());
+                    final StreamAnimation advert = HiveBot.database.getAdvert(event.getOption("advert-id").getAsInt());
                     Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
 
                     if(advert.isEnabled()){

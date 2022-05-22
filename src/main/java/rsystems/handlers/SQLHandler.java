@@ -5,7 +5,6 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import org.checkerframework.checker.units.qual.A;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
@@ -1637,7 +1636,7 @@ public class SQLHandler {
     }
 
     /**
-     * Gets the amount of points a user has to spend on advertisements, LED effects, and other stream luxuries.
+     * Gets the amount of points a user has to spend on Animationisements, LED effects, and other stream luxuries.
      * @param userID The DISCORD UserID of the user to be verified
      * @return UserStreamObject
      * @throws SQLException
@@ -1776,13 +1775,13 @@ public class SQLHandler {
         return credential;
     }
 
-    public int registerOBSAdvert(String sceneName, String sourceName) throws SQLException {
+    public int registerOBSAnimation(String sceneName, String sourceName) throws SQLException {
         Integer output = null;
 
         Connection connection = pool.getConnection();
         try{
 
-            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamAdverts (Scene, Source) VALUES ('%s','%s')",sceneName,sourceName),Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamAnimations (Scene, Source) VALUES ('%s','%s')",sceneName,sourceName),Statement.RETURN_GENERATED_KEYS);
             st.execute();
 
             ResultSet resultSet = st.getGeneratedKeys();
@@ -1799,15 +1798,15 @@ public class SQLHandler {
         return output;
     }
 
-    public Map<Integer, StreamAdvert> getAdverts() throws SQLException {
-        Map<Integer, StreamAdvert> advertMap = new TreeMap<>();
+    public Map<Integer, StreamAnimation> getAnimations() throws SQLException {
+        Map<Integer, StreamAnimation> AnimationMap = new TreeMap<>();
 
         Connection connection = pool.getConnection();
         try{
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT ID, Scene, Source, Cost, Cooldown FROM StreamAdverts");
+            ResultSet rs = st.executeQuery("SELECT ID, Scene, Source, Cost, Cooldown FROM StreamAnimations");
 
             while(rs.next()){
 
@@ -1817,7 +1816,7 @@ public class SQLHandler {
                 int cost = rs.getInt("Cost");
                 int cooldown = rs.getInt("Cooldown");
 
-                advertMap.putIfAbsent(id,new StreamAdvert(id,scene,source,cost,cooldown));
+                AnimationMap.putIfAbsent(id,new StreamAnimation(id,scene,source,cost,cooldown));
 
             }
 
@@ -1827,22 +1826,22 @@ public class SQLHandler {
             connection.close();
         }
 
-        return advertMap;
+        return AnimationMap;
     }
 
-    public StreamAdvert getAdvert(Integer ID) throws SQLException {
+    public StreamAnimation getAnimation(Integer ID) throws SQLException {
         Connection connection = pool.getConnection();
 
-        StreamAdvert advert = null;
+        StreamAnimation Animation = null;
 
         try{
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, Cost, Cooldown, Enabled FROM StreamAdverts WHERE ID = %d", ID));
+            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, Cost, Cooldown, Enabled FROM StreamAnimations WHERE ID = %d", ID));
             while(rs.next()){
 
-                advert = new StreamAdvert(ID,rs.getString("Scene"),rs.getString("Source"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
+                Animation = new StreamAnimation(ID,rs.getString("Scene"),rs.getString("Source"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
 
             }
 
@@ -1852,7 +1851,7 @@ public class SQLHandler {
             connection.close();
         }
 
-        return advert;
+        return Animation;
     }
 
     public Integer registerStream() throws SQLException {
@@ -1922,7 +1921,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("INSERT INTO StreamAnimationLog (StreamID, RequestingUserID, RequestedAnimationID) VALUES (%d, %d, %d)",streamID,request.getRequestingUserID(),request.getSelectedAdvert().getId()));
+            st.execute(String.format("INSERT INTO StreamAnimationLog (StreamID, RequestingUserID, RequestedAnimationID) VALUES (%d, %d, %d)",streamID,request.getRequestingUserID(),request.getSelectedAnimation().getId()));
 
         }  catch (SQLException e) {
             e.printStackTrace();

@@ -11,7 +11,7 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 
-public class Adverts extends SlashCommand {
+public class Animations extends SlashCommand {
 
     @Override
     public Permission getDiscordPermission() {
@@ -30,7 +30,7 @@ public class Adverts extends SlashCommand {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getName().toLowerCase(),this.getDescription()).addOption(OptionType.BOOLEAN,"advert-allowance","True = Enable / False = Disable",false);
+        return Commands.slash(this.getName().toLowerCase(),this.getDescription()).addOption(OptionType.BOOLEAN,"allowance","True = Enable / False = Disable",false);
     }
 
     @Override

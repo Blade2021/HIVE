@@ -7,12 +7,10 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.twasi.obsremotejava.OBSRemoteController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.handlers.Dispatcher;
 import rsystems.tasks.BotActivity;
 
 import java.awt.*;
@@ -34,15 +32,15 @@ public class StreamHandler extends ListenerAdapter {
     private Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
     private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
     private boolean firstHereClaimed = false;
-    private boolean allowAdverts = true;
+    private boolean allowAnimations = true;
     private int currentStreamID = 0;
     private int spentCashews = 0;
-    private int advertsCalled = 0;
+    private int AnimationsCalled = 0;
     private int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
     private boolean handlingRequest = false;
 
 
-    private Instant advertCooldown = Instant.now().plus(1, ChronoUnit.MINUTES);
+    private Instant AnimationCooldown = Instant.now().plus(1, ChronoUnit.MINUTES);
 
     private LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
 
@@ -82,22 +80,22 @@ public class StreamHandler extends ListenerAdapter {
             final DispatchRequest request = this.requestsQueue.getFirst();
             this.requestsQueue.removeFirst();
 
-            final StreamAdvert advert = request.getSelectedAdvert();
+            final StreamAnimation Animation = request.getSelectedAnimation();
             // Subtract allotted points from user
 
             try {
-                if (HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost()) >= 1) {
+                if (HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1) {
 
-                    logger.info("Advert request {} ID: {}", request.getRequestingUserID(), request.getSelectedAdvert().getId());
+                    logger.info("Animation request {} ID: {}", request.getRequestingUserID(), request.getSelectedAnimation().getId());
                     logger.info("New Queue Size: {}",requestsQueue.size());
 
                     try {
                         // Call webhook
-                        obsRemoteController.setSourceVisibility(advert.getSceneName(), advert.getSourceName(), true, callback -> {
+                        obsRemoteController.setSourceVisibility(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
 
                             if (callback.getStatus().equalsIgnoreCase("ok")) {
 
-                                this.advertCooldown = Instant.now().plus(advert.getCooldown(), ChronoUnit.MINUTES);
+                                this.AnimationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
 
                                 try {
                                     HiveBot.database.recordAnimationLog(this.currentStreamID,request);
@@ -110,7 +108,7 @@ public class StreamHandler extends ListenerAdapter {
                             } else {
                                 // Return points to user
                                 try {
-                                    HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+                                    HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
                                 } catch (SQLException e) {
                                     throw new RuntimeException(e);
                                 }
@@ -120,7 +118,7 @@ public class StreamHandler extends ListenerAdapter {
 
                         // Return points to user
                         try {
-                            HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+                            HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
                         } catch (SQLException ex) {
                             throw new RuntimeException(e);
                         }
@@ -140,8 +138,8 @@ public class StreamHandler extends ListenerAdapter {
 
     private static List<Long> questionsList = new ArrayList<>();
 
-    public Instant getAdvertCooldown() {
-        return advertCooldown;
+    public Instant getAnimationCooldown() {
+        return AnimationCooldown;
     }
 
     public StreamHandler() {
@@ -176,9 +174,9 @@ public class StreamHandler extends ListenerAdapter {
                 // Add timestamp to stream archive
                 HiveBot.database.putTimestamp("StreamArchive", "End", Timestamp.from(Instant.now()), "ID", currentStreamID);
 
-                // REFUND POINTS FOR UNCALLED ADVERTS
+                // REFUND POINTS FOR UNCALLED AnimationS
                 for (DispatchRequest request : this.requestsQueue) {
-                    HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAdvert().getCost());
+                    HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
                 }
 
             } catch (SQLException e) {
@@ -221,12 +219,12 @@ public class StreamHandler extends ListenerAdapter {
         return streamTopic;
     }
 
-    public boolean allowAdverts() {
-        return allowAdverts;
+    public boolean allowAnimations() {
+        return allowAnimations;
     }
 
-    public void setAllowAdverts(Boolean allowAdverts) {
-        this.allowAdverts = allowAdverts;
+    public void setAllowAnimations(Boolean allowAnimations) {
+        this.allowAnimations = allowAnimations;
     }
 
     public void setStreamTopic(String streamTopic) {

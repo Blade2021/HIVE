@@ -1,17 +1,16 @@
 package rsystems.slashCommands.stream;
 
-import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
-import rsystems.objects.StreamAdvert;
+import rsystems.objects.StreamAnimation;
 
 import java.sql.SQLException;
 import java.util.Map;
 
-public class ListAdverts extends SlashCommand {
+public class ListAnimations extends SlashCommand {
 
     @Override
     public boolean isEphemeral() {
@@ -24,7 +23,7 @@ public class ListAdverts extends SlashCommand {
         event.deferReply(this.isEphemeral()).queue();
 
         try {
-            Map<Integer, StreamAdvert> advertTreeMap = HiveBot.database.getAdverts();
+            Map<Integer, StreamAnimation> advertTreeMap = HiveBot.database.getAdverts();
 
             StringBuilder sb = new StringBuilder();
             boolean replied = false;
@@ -34,7 +33,7 @@ public class ListAdverts extends SlashCommand {
 
             sb.append(starterLine);
 
-            for(Map.Entry<Integer,StreamAdvert> entry:advertTreeMap.entrySet()){
+            for(Map.Entry<Integer, StreamAnimation> entry:advertTreeMap.entrySet()){
 
 
                 String additionalLine = String.format("%6d | %-15s | %-25s | %-4d | %-2d minute(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());

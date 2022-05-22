@@ -10,7 +10,7 @@ import net.dv8tion.jda.api.interactions.components.text.TextInput;
 import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
 import rsystems.objects.SlashCommand;
 
-public class RegisterObsAdvert extends SlashCommand {
+public class RegisterAnimation extends SlashCommand {
 
     @Override
     public Permission getDiscordPermission() {

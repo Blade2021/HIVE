@@ -1,6 +1,6 @@
 package rsystems.objects;
 
-public class StreamAdvert {
+public class StreamAnimation {
 
     private int id;
     private String sceneName;
@@ -10,13 +10,13 @@ public class StreamAdvert {
 
     private boolean enabled;
 
-    public StreamAdvert(int id, String sceneName, String sourceName) {
+    public StreamAnimation(int id, String sceneName, String sourceName) {
         this.id = id;
         this.sceneName = sceneName;
         this.sourceName = sourceName;
     }
 
-    public StreamAdvert(int id, String sceneName, String sourceName, int cost, int cooldown) {
+    public StreamAnimation(int id, String sceneName, String sourceName, int cost, int cooldown) {
         this.id = id;
         this.sceneName = sceneName;
         this.sourceName = sourceName;
@@ -25,7 +25,7 @@ public class StreamAdvert {
         this.enabled = true;
     }
 
-    public StreamAdvert(int id, String sceneName, String sourceName, int cost, int cooldown, boolean enabled) {
+    public StreamAnimation(int id, String sceneName, String sourceName, int cost, int cooldown, boolean enabled) {
         this.id = id;
         this.sceneName = sceneName;
         this.sourceName = sourceName;
