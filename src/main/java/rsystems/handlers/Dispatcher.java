@@ -59,7 +59,6 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new PowerCal());
         registerCommand(new Mini());
         registerCommand(new StreamVerify());
-        registerCommand(new Test2());
     }
 
     public Set<Command> getCommands() {
