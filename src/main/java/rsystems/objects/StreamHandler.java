@@ -134,7 +134,7 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
-    public void notifyAcceptedAnimationRequest(DispatchRequest request){
+    private void notifyAcceptedAnimationRequest(DispatchRequest request){
         final String notifyChannelID = Config.get("STREAM_REQUESTS_POST_CHANNELID");
         final TextChannel channel = HiveBot.mainGuild().getTextChannelById(notifyChannelID);
 

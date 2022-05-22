@@ -1884,7 +1884,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d) WHERE UserID = %d",amount,userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d",amount,amount,userid));
             result = st.getUpdateCount();
 
         }  catch (SQLException e) {
@@ -1903,7 +1903,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d) WHERE UserID = %d",amount,userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d",amount,amount,userid));
             result = st.getUpdateCount();
 
         }  catch (SQLException e) {

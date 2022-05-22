@@ -104,7 +104,7 @@ public class HiveBot {
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            obsRemoteController = new OBSRemoteController(Config.get("OBS-ADDRESS"), false, Config.get("obs-key"));
+            obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
 
             referenceHandler.loadReferences();
 
