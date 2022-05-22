@@ -25,7 +25,7 @@ public class StreamHandlerSlashCmd extends SlashCommand {
         SlashCommandData slashCommandData = Commands.slash(this.getName().toLowerCase(),this.getDescription());
 
         ArrayList<SubcommandData> subCommands = new ArrayList<>();
-        subCommands.add(new SubcommandData("advert-killswitch","Enable/Disable the dispatch of adverts").addOption(OptionType.BOOLEAN,"allowance","True = Adverts allowed / False = Adverts Disabled",true));
+        subCommands.add(new SubcommandData("animation-killswitch","Enable/Disable the dispatch of animations").addOption(OptionType.BOOLEAN,"allowance","True = Animations allowed / False = Animations Disabled",true));
         subCommands.add(new SubcommandData("status","Get the status of the Stream Handler"));
 
         slashCommandData.addSubcommands(subCommands);
@@ -35,10 +35,10 @@ public class StreamHandlerSlashCmd extends SlashCommand {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
-        if(event.getSubcommandName().equalsIgnoreCase("advert-killswitch")){
+        if(event.getSubcommandName().equalsIgnoreCase("animation-killswitch")){
             final boolean result = event.getOption("allowance").getAsBoolean();
 
-            HiveBot.streamHandler.setAllowAdverts(result);
+            HiveBot.streamHandler.setAllowAnimations(result);
 
             if(result){
                 reply(event,"Adverts are now allowed");
@@ -57,7 +57,7 @@ public class StreamHandlerSlashCmd extends SlashCommand {
 
             // ADVERTS KILL SWITCH SETTING
             String advertKS = "Allowed";
-            if(!HiveBot.streamHandler.allowAdverts()){
+            if(!HiveBot.streamHandler.allowAnimations()){
                 advertKS = "Disabled";
             }
             builder.addField("Advert\nKillSwitch",advertKS,true);

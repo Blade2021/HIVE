@@ -17,7 +17,7 @@ public class CheckRequests extends TimerTask {
 
         if(HiveBot.streamHandler.isStreamActive()){
             if(!HiveBot.streamHandler.isHandlingRequest()){
-                if(HiveBot.streamHandler.getAdvertCooldown().isBefore(Instant.now())) {
+                if(HiveBot.streamHandler.getAnimationCooldown().isBefore(Instant.now())) {
                     logger.debug("Stream Mode: active | Handling Requests: false | Cooldown is satisfied  - Calling next request");
                     HiveBot.streamHandler.acceptNextRequest();
                 }

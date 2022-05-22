@@ -16,7 +16,7 @@ public class ModalEventListener extends ListenerAdapter {
             String sourceName = event.getValue("source").getAsString();
 
             try {
-                Integer result = HiveBot.database.registerOBSAdvert(sceneName,sourceName);
+                Integer result = HiveBot.database.registerOBSAnimation(sceneName,sourceName);
 
                 if(result != null){
                    event.reply(String.format("Your submission has been registered with the ID: %d",result)).setEphemeral(true).queue();

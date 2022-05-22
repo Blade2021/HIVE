@@ -38,37 +38,37 @@ public class Animations extends SlashCommand {
         event.deferReply(this.isEphemeral()).queue();
 
         EmbedBuilder builder = new EmbedBuilder();
-        builder.setTitle("Stream Adverts Notification");
+        builder.setTitle("Stream Animations Notification");
         builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
 
-        if(event.getOption("advert-allowance") == null){
+        if(event.getOption("allowance") == null){
 
-            builder.setDescription(String.format("Adverts are currently set to: `%s`",String.valueOf(HiveBot.streamHandler.allowAdverts()).toUpperCase()));
+            builder.setDescription(String.format("Animations are currently set to: `%s`",String.valueOf(HiveBot.streamHandler.allowAnimations()).toUpperCase()));
 
             reply(event,builder.build());
             builder.clear();
             return;
         }
 
-        boolean result = event.getOption("advert-allowance").getAsBoolean();
+        boolean result = event.getOption("Animation-allowance").getAsBoolean();
 
-        if(HiveBot.streamHandler.allowAdverts() == result){
+        if(HiveBot.streamHandler.allowAnimations() == result){
             reply(event,"That setting is already set to " + result);
             return;
         }
 
-        HiveBot.streamHandler.setAllowAdverts(result);
+        HiveBot.streamHandler.setAllowAnimations(result);
 
         if(result){
 
-            reply(event,"Enabling adverts for users\n\nStand by for notification to stream channel");
+            reply(event,"Enabling Animations for users\n\nStand by for notification to stream channel");
 
-            builder.setDescription("Adverts are now enabled!\n\nPlease be kind and use in moderation");
+            builder.setDescription("Animations are now enabled!\n\nPlease be kind and use in moderation");
 
         } else {
-            reply(event,"Disabling adverts for users\n\nStand by for notification to stream channel");
+            reply(event,"Disabling Animations for users\n\nStand by for notification to stream channel");
 
-            builder.setDescription("Adverts are temporarily disabled!\n\nPlease still enjoy the show!");
+            builder.setDescription("Animations are temporarily disabled!\n\nPlease still enjoy the show!");
         }
 
         HiveBot.streamHandler.getLiveStreamChatChannel().sendMessageEmbeds(builder.build()).queue();
@@ -77,6 +77,6 @@ public class Animations extends SlashCommand {
 
     @Override
     public String getDescription() {
-        return "Enable / Disable the dispatching of adverts via users";
+        return "Enable / Disable the dispatching of Animations via users";
     }
 }

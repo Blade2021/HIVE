@@ -23,7 +23,7 @@ public class ListAnimations extends SlashCommand {
         event.deferReply(this.isEphemeral()).queue();
 
         try {
-            Map<Integer, StreamAnimation> advertTreeMap = HiveBot.database.getAdverts();
+            Map<Integer, StreamAnimation> advertTreeMap = HiveBot.database.getAnimations();
 
             StringBuilder sb = new StringBuilder();
             boolean replied = false;

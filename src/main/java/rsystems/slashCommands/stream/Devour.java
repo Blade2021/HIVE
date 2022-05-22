@@ -18,7 +18,7 @@ public class Devour extends SlashCommand {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getName().toLowerCase(),this.getDescription()).addOption(OptionType.INTEGER,"advert-id","Enter the advert you would like to call",true);
+        return Commands.slash(this.getName().toLowerCase(),this.getDescription()).addOption(OptionType.INTEGER,"animation-id","Enter the animation you would like to call",true);
     }
 
     @Override
@@ -52,18 +52,18 @@ public class Devour extends SlashCommand {
 
 
                 try {
-                    final StreamAnimation advert = HiveBot.database.getAdvert(event.getOption("advert-id").getAsInt());
+                    final StreamAnimation animation = HiveBot.database.getAnimation(event.getOption("animation-id").getAsInt());
                     Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
 
-                    if(advert.isEnabled()){
-                        if(advert.getCost() <= points){
+                    if(animation.isEnabled()){
+                        if(animation.getCost() <= points){
 
-                            final Integer requestResult = HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),advert.getId()));
+                            final Integer requestResult = HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),animation.getId()));
 
                             if((requestResult != null) && (requestResult >= 0)){
                                 // REQUEST ACCEPTED
 
-                                points = points - advert.getCost();
+                                points = points - animation.getCost();
 
                                 builder.setDescription(String.format("Your request has been submitted!\nYou are currently `%d` in the queue.",requestResult));
                                 builder.addField("Available Cashews:",points.toString(),true);
@@ -80,12 +80,12 @@ public class Devour extends SlashCommand {
                             // NOT ENOUGH POINTS
                             builder.setDescription("Sorry, it looks like you do not have enough points to call that one.");
                             builder.addField("Available Cashews:",points.toString(),true);
-                            builder.addField("Required Cashews:",String.valueOf(advert.getCost()),true);
+                            builder.addField("Required Cashews:",String.valueOf(animation.getCost()),true);
 
                             reply(event, builder.build());
                         }
                     } else {
-                        // Advert is not enabled
+                        // Animation is not enabled
                         builder.setDescription("Sorry, looks like that animation is currently disabled.  Please try another.");
                         reply(event, builder.build());
                     }

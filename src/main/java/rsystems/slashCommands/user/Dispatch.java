@@ -20,7 +20,7 @@ public class Dispatch extends SlashCommand {
         ArrayList<SubcommandData> subList = new ArrayList<>();
 
         subList.add(new SubcommandData("blink","Blink Dr Zzs's Lights"));
-        subList.add(new SubcommandData("advert","Display a message on the stream").addOption(OptionType.STRING,"message","The message to be displayed.",true));
+        subList.add(new SubcommandData("animation","Display a message on the stream").addOption(OptionType.STRING,"message","The message to be displayed.",true));
 
         return commandData;
     }
