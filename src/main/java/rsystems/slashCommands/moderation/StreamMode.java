@@ -41,7 +41,7 @@ public class StreamMode extends SlashCommand {
 
     @Override
     public Integer getPermissionIndex() {
-        return 16;
+        return 8;
     }
 
     @Override

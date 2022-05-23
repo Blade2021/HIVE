@@ -189,7 +189,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         }
 
 
-        Map<Long, Integer> authmap = new HashMap<>();//HiveBot.database.getModRoles(guildID);
+        Map<Long, Integer> authmap = HiveBot.database.getModRoles();
         for (Role role : member.getRoles()) {
 
             Long roleID = role.getIdLong();
@@ -223,7 +223,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                     indexChar = reverseString.charAt(realIndex);
 
                 } catch (IndexOutOfBoundsException e) {
-
+                    System.out.println("Index out of bounds");
                 } finally {
                     if (indexChar == '1') {
                         authorized = true;
