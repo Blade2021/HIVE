@@ -23,7 +23,7 @@ public class ListAnimations extends SlashCommand {
         event.deferReply(this.isEphemeral()).queue();
 
         try {
-            Map<Integer, StreamAnimation> advertTreeMap = HiveBot.database.getAnimations();
+            Map<Integer, StreamAnimation> animationMap = HiveBot.database.getAnimations();
 
             StringBuilder sb = new StringBuilder();
             boolean replied = false;
@@ -33,12 +33,12 @@ public class ListAnimations extends SlashCommand {
 
             sb.append(starterLine);
 
-            for(Map.Entry<Integer, StreamAnimation> entry:advertTreeMap.entrySet()){
-
-
+            int x = 0;
+            for(Map.Entry<Integer, StreamAnimation> entry:animationMap.entrySet()){
+                x++;
                 String additionalLine = String.format("%6d | %-15s | %-25s | %-4d | %-2d minute(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
 
-                if((sb.length() + additionalLine.length() + 3) > 2000){
+                if(((sb.length() + additionalLine.length() + 3) > 2000) && (x < animationMap.size())){
                     sb.append("```");
                     if(replied) {
                         channelReply(event, sb.toString());
@@ -68,6 +68,6 @@ public class ListAnimations extends SlashCommand {
 
     @Override
     public String getDescription() {
-        return "List the registered adverts with their respective information";
+        return "List the registered animations with their respective information";
     }
 }

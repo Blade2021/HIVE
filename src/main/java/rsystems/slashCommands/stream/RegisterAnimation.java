@@ -35,7 +35,7 @@ public class RegisterAnimation extends SlashCommand {
                 .setMaxLength(30)
                 .build();
 
-        Modal modal = Modal.create("obsadvertreg", "OBS Advert Registration")
+        Modal modal = Modal.create("obsanimationreg", "OBS Animation Registration")
                 .addActionRows(ActionRow.of(scene), ActionRow.of(source))
                 .build();
 
@@ -44,6 +44,6 @@ public class RegisterAnimation extends SlashCommand {
 
     @Override
     public String getDescription() {
-        return "this is just a test";
+        return "Register an OBS animation to the database";
     }
 }

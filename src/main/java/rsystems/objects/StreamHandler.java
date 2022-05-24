@@ -14,6 +14,7 @@ import rsystems.HiveBot;
 import rsystems.tasks.BotActivity;
 
 import java.awt.*;
+import java.net.Inet4Address;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
@@ -195,9 +196,7 @@ public class StreamHandler extends ListenerAdapter {
                 HiveBot.database.putTimestamp("StreamArchive", "End", Timestamp.from(Instant.now()), "ID", currentStreamID);
 
                 // REFUND POINTS FOR UNCALLED AnimationS
-                for (DispatchRequest request : this.requestsQueue) {
-                    HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
-                }
+                clearRequestQueue();
 
             } catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -233,6 +232,29 @@ public class StreamHandler extends ListenerAdapter {
         }
 
         this.streamActive = streamActive;
+    }
+
+    public Integer clearRequestQueue(){
+
+        Integer removedRequests = 0;
+
+        // REFUND POINTS FOR UNCALLED AnimationS
+        for (DispatchRequest request : this.requestsQueue) {
+            try {
+                if(HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1){
+                    this.requestsQueue.remove(request);
+                    removedRequests++;
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return removedRequests;
+    }
+
+    public Integer getQueueSize(){
+        return this.requestsQueue.size();
     }
 
     public String getStreamTopic() {

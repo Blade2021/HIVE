@@ -1798,6 +1798,26 @@ public class SQLHandler {
         return output;
     }
 
+    public Integer modifyAnimation(Integer animationID, StreamAnimation animation) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE StreamAnimations SET Scene = '%s', Source = '%s', Cost = %d, Cooldown = %d WHERE ID = %d",
+                    animation.getSceneName(),animation.getSourceName(),animation.getCost(),animation.getCooldown(),animation.getId()));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return result;
+    }
+
     public Map<Integer, StreamAnimation> getAnimations() throws SQLException {
         Map<Integer, StreamAnimation> AnimationMap = new TreeMap<>();
 

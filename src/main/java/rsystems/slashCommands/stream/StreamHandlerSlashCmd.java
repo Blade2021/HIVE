@@ -27,6 +27,7 @@ public class StreamHandlerSlashCmd extends SlashCommand {
         ArrayList<SubcommandData> subCommands = new ArrayList<>();
         subCommands.add(new SubcommandData("animation-killswitch","Enable/Disable the dispatch of animations").addOption(OptionType.BOOLEAN,"allowance","True = Animations allowed / False = Animations Disabled",true));
         subCommands.add(new SubcommandData("status","Get the status of the Stream Handler"));
+        subCommands.add(new SubcommandData("clear-queue","Clear the current request queue"));
 
         slashCommandData.addSubcommands(subCommands);
 
@@ -36,18 +37,22 @@ public class StreamHandlerSlashCmd extends SlashCommand {
     @Override
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         if(event.getSubcommandName().equalsIgnoreCase("animation-killswitch")){
+
+            // ANIMATION KILLSWITCH SUB-COMMAND
+
             final boolean result = event.getOption("allowance").getAsBoolean();
 
             HiveBot.streamHandler.setAllowAnimations(result);
 
             if(result){
-                reply(event,"Adverts are now allowed");
+                reply(event,"Animations are now allowed");
             } else {
-                reply(event,"Adverts are now disabled from requesting");
+                reply(event,"Animation Requests are disabled");
             }
-        }
+        } else if(event.getSubcommandName().equalsIgnoreCase("status")){
 
-        if(event.getSubcommandName().equalsIgnoreCase("status")){
+            // STATUS SUB-COMMAND
+
             EmbedBuilder builder = new EmbedBuilder();
             builder.setTitle("Stream Handler");
             builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
@@ -55,14 +60,25 @@ public class StreamHandlerSlashCmd extends SlashCommand {
 
             builder.addField("LIVE:",String.valueOf(HiveBot.streamHandler.isStreamActive()).toUpperCase(),false);
 
-            // ADVERTS KILL SWITCH SETTING
-            String advertKS = "Allowed";
+            // ANIMATIONS KILL SWITCH SETTING
+            String animationKS = "Allowed";
             if(!HiveBot.streamHandler.allowAnimations()){
-                advertKS = "Disabled";
+                animationKS = "Disabled";
             }
-            builder.addField("Advert\nKillSwitch",advertKS,true);
+            builder.addField("Animations",animationKS,true);
+
+            builder.addField("Request Queue",HiveBot.streamHandler.getQueueSize().toString(),true);
 
             reply(event,builder.build());
+        } else if(event.getSubcommandName().equalsIgnoreCase("clear-queue")){
+
+            //CLEAR QUEUE SUB-COMMAND
+
+            //This method will refund all points to request initiators
+            Integer amount = HiveBot.streamHandler.clearRequestQueue();
+
+            reply(event,String.format("`%d` requests have been refunded/removed.",amount));
+
         }
     }
 
