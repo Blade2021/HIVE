@@ -38,7 +38,7 @@ public class ListAnimations extends SlashCommand {
                 x++;
                 String additionalLine = String.format("%6d | %-15s | %-25s | %-4d | %-2d minute(s)\n",entry.getValue().getId(),entry.getValue().getSceneName(),entry.getValue().getSourceName(),entry.getValue().getCost(),entry.getValue().getCooldown());
 
-                if(((sb.length() + additionalLine.length() + 3) > 2000) && (x < animationMap.size())){
+                if((sb.length() + additionalLine.length() + 3) > 1995){
                     sb.append("```");
                     if(replied) {
                         channelReply(event, sb.toString());
@@ -46,6 +46,7 @@ public class ListAnimations extends SlashCommand {
                         reply(event,sb.toString());
                         replied = true;
                     }
+
                     sb.setLength(0);
                     sb.append(starterLine);
                 } else {
