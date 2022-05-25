@@ -28,6 +28,7 @@ public class StreamHandlerSlashCmd extends SlashCommand {
         subCommands.add(new SubcommandData("animation-killswitch","Enable/Disable the dispatch of animations").addOption(OptionType.BOOLEAN,"allowance","True = Animations allowed / False = Animations Disabled",true));
         subCommands.add(new SubcommandData("status","Get the status of the Stream Handler"));
         subCommands.add(new SubcommandData("clear-queue","Clear the current request queue"));
+        subCommands.add(new SubcommandData("reconnect","Reconnect to the Stream Controller"));
 
         slashCommandData.addSubcommands(subCommands);
 
@@ -67,7 +68,13 @@ public class StreamHandlerSlashCmd extends SlashCommand {
             }
             builder.addField("Animations",animationKS,true);
 
-            builder.addField("Request Queue",HiveBot.streamHandler.getQueueSize().toString(),true);
+            builder.addField("Request Queue",String.format("%d of %d",HiveBot.streamHandler.getQueueSize(),HiveBot.streamHandler.getMaxQueueSize()),true);
+
+            builder.addField("First Here Claimed:", String.valueOf(HiveBot.streamHandler.isFirstHereClaimed()).toUpperCase(),true);
+
+            builder.addField("Animations Called",String.valueOf(HiveBot.streamHandler.getAnimationsCalled()),true);
+
+            builder.addField("Cashews Spent",String.valueOf(HiveBot.streamHandler.getSpentCashews()),true);
 
             reply(event,builder.build());
         } else if(event.getSubcommandName().equalsIgnoreCase("clear-queue")){
@@ -78,6 +85,11 @@ public class StreamHandlerSlashCmd extends SlashCommand {
             Integer amount = HiveBot.streamHandler.clearRequestQueue();
 
             reply(event,String.format("`%d` requests have been refunded/removed.",amount));
+
+        } else if(event.getSubcommandName().equalsIgnoreCase("reconnect")){
+
+            HiveBot.obsRemoteController.connect();
+            reply(event,"Attempting to reconnect to Stream Controller");
 
         }
     }

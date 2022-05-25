@@ -60,7 +60,7 @@ public class HiveBot {
 
     public static JDAImpl jda = null;
 
-    public static OBSRemoteController obsRemoteController;
+    public static OBSRemoteController obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
 
     public static Guild mainGuild() {
         return jda.getGuildById(Config.get("GUILD_ID"));
@@ -107,7 +107,7 @@ public class HiveBot {
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
+            //obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
 
             referenceHandler.loadReferences();
 

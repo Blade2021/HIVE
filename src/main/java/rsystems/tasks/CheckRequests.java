@@ -18,8 +18,13 @@ public class CheckRequests extends TimerTask {
         if(HiveBot.streamHandler.isStreamActive()){
             if(!HiveBot.streamHandler.isHandlingRequest()){
                 if(HiveBot.streamHandler.getAnimationCooldown().isBefore(Instant.now())) {
-                    logger.debug("Stream Mode: active | Handling Requests: false | Cooldown is satisfied  - Calling next request");
-                    HiveBot.streamHandler.acceptNextRequest();
+
+                    try {
+                        logger.debug("Stream Mode: active | Handling Requests: false | Cooldown is satisfied  - Calling next request");
+                        HiveBot.streamHandler.acceptNextRequest();
+                    } catch (Exception e){
+                        logger.info("Stream Handler ran into an error.  Trying again in 60 seconds");
+                    }
                 }
             }
         }

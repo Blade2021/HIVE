@@ -14,15 +14,12 @@ import rsystems.HiveBot;
 import rsystems.tasks.BotActivity;
 
 import java.awt.*;
-import java.net.Inet4Address;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.List;
-
-import static rsystems.HiveBot.obsRemoteController;
 
 public class StreamHandler extends ListenerAdapter {
 
@@ -85,71 +82,73 @@ public class StreamHandler extends ListenerAdapter {
                 if (HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1) {
 
                     logger.info("Animation request {} ID: {}", request.getRequestingUserID(), request.getSelectedAnimation().getId());
-                    logger.info("New Queue Size: {}",requestsQueue.size());
-
-                    animationCooldown = Instant.now().plus(request.getSelectedAnimation().getCooldown(),ChronoUnit.MINUTES);
-                    notifyAcceptedAnimationRequest(request);
+                    logger.info("New Queue Size: {}", requestsQueue.size());
 
                     try {
                         // Call webhook
-                        obsRemoteController.setSourceVisibility(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
+                        HiveBot.obsRemoteController.setSourceVisibility(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
 
                             if (callback.getStatus().equalsIgnoreCase("ok")) {
 
                                 this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
+                                notifyAcceptedAnimationRequest(request);
 
                                 try {
-                                    HiveBot.database.recordAnimationLog(this.currentStreamID,request);
+                                    HiveBot.database.recordAnimationLog(this.currentStreamID, request);
                                 } catch (SQLException e) {
-                                    throw new RuntimeException(e);
+
                                 }
 
                                 //Set the handling request too false to allow another request
                                 this.handlingRequest = false;
                             } else {
+
                                 // Return points to user
                                 try {
                                     HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
                                 } catch (SQLException e) {
-                                    throw new RuntimeException(e);
+                                    logger.error("SQL Exception encountered - Refunding Points to User: {}",request.getRequestingUserID());
                                 }
                             }
                         });
                     } catch (Exception e) {
 
-                        // Return points to user
-                        try {
-                            HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(e);
-                        }
+                        logger.error("OBS Controller request failed, Attempting to refund points to user");
 
+                        try {
+
+                            if (HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1) {
+                                logger.info("Refunded points to {} successfully", request.getRequestingUserID());
+                            }
+
+                        } catch (SQLException ex) {
+
+                            logger.error("Failed to refund points to User: {} Points: {}", request.getRequestingUserID(), request.getSelectedAnimation().getCost());
+                        }
+                        //HiveBot.obsRemoteController.connect();
                     }
                 }
-
             } catch (SQLException e) {
-                throw new RuntimeException(e);
+                logger.error("SQL Exception encountered - Consuming Points from User: {}",request.getRequestingUserID());
             }
-
-
         }
     }
 
-    private void notifyAcceptedAnimationRequest(DispatchRequest request){
+    private void notifyAcceptedAnimationRequest(DispatchRequest request) {
         final String notifyChannelID = Config.get("STREAM_REQUESTS_POST_CHANNELID");
         final TextChannel channel = HiveBot.mainGuild().getTextChannelById(notifyChannelID);
 
-        if(channel != null){
-            if(channel.canTalk()){
+        if (channel != null) {
+            if (channel.canTalk()) {
                 //Create message embed from request
                 EmbedBuilder builder = new EmbedBuilder();
                 builder.setTitle("Animation Request");
                 builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
                 builder.setDescription(String.format("**Animation ID:** %d\n" +
-                        "**Animation Name:** %s",request.getSelectedAnimation().getId(),request.getSelectedAnimation().getSourceName()));
-                builder.addField("Requesting User",request.getRequestingUserID().toString(),true);
-                builder.addField("Cooldown Expire:", String.format("<t:%d:R>",animationCooldown.getEpochSecond()),true);
-                builder.addField("Queue Size: ",String.format("%d of %d",requestsQueue.size(),maxQueueSize),false);
+                        "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
+                builder.addField("Requesting User", request.getRequestingUserID().toString(), true);
+                builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
+                builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
 
                 channel.sendMessageEmbeds(builder.build()).queue();
                 builder.clear();
@@ -234,14 +233,14 @@ public class StreamHandler extends ListenerAdapter {
         this.streamActive = streamActive;
     }
 
-    public Integer clearRequestQueue(){
+    public Integer clearRequestQueue() {
 
         Integer removedRequests = 0;
 
         // REFUND POINTS FOR UNCALLED AnimationS
         for (DispatchRequest request : this.requestsQueue) {
             try {
-                if(HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1){
+                if (HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1) {
                     this.requestsQueue.remove(request);
                     removedRequests++;
                 }
@@ -253,8 +252,12 @@ public class StreamHandler extends ListenerAdapter {
         return removedRequests;
     }
 
-    public Integer getQueueSize(){
+    public Integer getQueueSize() {
         return this.requestsQueue.size();
+    }
+
+    public Integer getMaxQueueSize() {
+        return this.maxQueueSize;
     }
 
     public String getStreamTopic() {
@@ -610,5 +613,21 @@ public class StreamHandler extends ListenerAdapter {
 
     public void setFirstHereClaimed(boolean firstHereClaimed) {
         this.firstHereClaimed = firstHereClaimed;
+    }
+
+    public int getSpentCashews() {
+        return spentCashews;
+    }
+
+    public void setSpentCashews(int spentCashews) {
+        this.spentCashews = spentCashews;
+    }
+
+    public int getAnimationsCalled() {
+        return AnimationsCalled;
+    }
+
+    public void setAnimationsCalled(int animationsCalled) {
+        AnimationsCalled = animationsCalled;
     }
 }

@@ -18,11 +18,7 @@ public class Test extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
-        HiveBot.obsRemoteController.setSourceVisibility("Test","Dog",true, callback -> {
-            System.out.println("Test2");
-            System.out.println(callback.toString());
-        });
-
+        HiveBot.obsRemoteController.connect();
     }
 
     @Override
