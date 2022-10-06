@@ -2,14 +2,13 @@ package rsystems.commands.generic;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
@@ -40,7 +39,7 @@ public class Search extends Command {
             comparedMap.put(totalCompareRate, entry.getValue());
         }
 
-        MessageBuilder messageBuilder = new MessageBuilder();
+        MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
         EmbedBuilder builder = new EmbedBuilder();
 
         ArrayList<Button> buttonArrayList = new ArrayList<>();
@@ -69,7 +68,7 @@ public class Search extends Command {
             builder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC));
 
             messageBuilder.setEmbeds(builder.build());
-            messageBuilder.setActionRows(ActionRow.of(buttonArrayList));
+            messageBuilder.addActionRow(buttonArrayList);
 
             reply(event,messageBuilder.build());
             return;

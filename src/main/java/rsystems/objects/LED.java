@@ -2,7 +2,7 @@ package rsystems.objects;
 
 public class LED {
 
-    private String ledName;
+    private final String ledName;
     private int ledVoltage;
     private boolean whiteIncluded;
     private float wattagePerPixel_Theoretical;

@@ -165,7 +165,7 @@ public class KarmaSQLHandler extends SQLHandler {
     }
 
     public int updateKarma(final Long messageID, final User sender, final User receiver, final boolean direction) throws SQLException {
-        System.out.println(String.format("DEBUG:\nSender:%s\nReceiver:%s", sender, receiver));
+        System.out.printf("DEBUG:\nSender:%s\nReceiver:%s%n", sender, receiver);
 
         int output = 0;
         Connection connection = pool.getConnection();

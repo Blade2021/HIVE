@@ -2,11 +2,10 @@ package rsystems.commands.generic;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.LED;
@@ -30,11 +29,7 @@ public class Led extends Command {
 
         if(led != null){
 
-            boolean includeLedQty = false;
-
-            if((args.length > 1) && (Integer.valueOf(args[1]) > 0)){
-                includeLedQty = true;
-            }
+            boolean includeLedQty = (args.length > 1) && (Integer.valueOf(args[1]) > 0);
 
             EmbedBuilder embedBuilder = new EmbedBuilder();
             embedBuilder.setTitle(String.format("%s - %d Volts",led.getLedName().toUpperCase(),led.getLedVoltage()));

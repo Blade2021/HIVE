@@ -1,6 +1,6 @@
 package rsystems.events;
 
-import net.dv8tion.jda.api.entities.ThreadChannel;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.events.channel.ChannelCreateEvent;
 import net.dv8tion.jda.api.events.channel.update.GenericChannelUpdateEvent;
 import net.dv8tion.jda.api.events.thread.GenericThreadEvent;

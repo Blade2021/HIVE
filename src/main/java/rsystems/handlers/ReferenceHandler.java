@@ -14,7 +14,7 @@ import java.util.Map;
 
 public class ReferenceHandler {
 
-    private static Map<String, Reference> refMap = new HashMap<>();
+    private static final Map<String, Reference> refMap = new HashMap<>();
 
     public Map<String,Reference> getRefMap(){
         return refMap;
@@ -40,7 +40,7 @@ public class ReferenceHandler {
                 tempReferenceDescriptionString = parsedValue.get("description").toString();
                 tempReferenceDescriptionString = tempReferenceDescriptionString.replaceAll("\\{prefix\\}", HiveBot.getPrefix());
             } catch (NullPointerException nullPointerException){
-                System.out.println(String.format("Skipping %s Reference.  No description found.",keyStr.toString()));
+                System.out.printf("Skipping %s Reference.  No description found.%n",keyStr.toString());
                 return;
             }
 

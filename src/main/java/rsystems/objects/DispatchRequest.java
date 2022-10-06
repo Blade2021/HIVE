@@ -6,8 +6,8 @@ import java.sql.SQLException;
 
 public class DispatchRequest {
 
-    private Long requestingUserID;
-    private StreamAnimation selectedAnimation;
+    private final Long requestingUserID;
+    private final StreamAnimation selectedAnimation;
     private String requestMessage;
 
     public DispatchRequest(Long requestingUserID, Integer selectedAnimationID) throws SQLException {

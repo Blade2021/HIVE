@@ -1,9 +1,9 @@
 package rsystems.slashCommands.moderation;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -44,7 +44,7 @@ public class Unpin extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
-        MessageChannel messageChannel = event.getOption("channel").getAsMessageChannel();
+        MessageChannel messageChannel = event.getOption("channel").getAsChannel().asStandardGuildMessageChannel();
         Long messageID = Long.parseLong(event.getOption("messageid").getAsString());
         Integer days = Integer.parseInt(event.getOption("days").getAsString());
 

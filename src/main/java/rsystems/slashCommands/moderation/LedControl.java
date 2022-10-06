@@ -1,16 +1,16 @@
 package rsystems.slashCommands.moderation;
 
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.Command;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
 import rsystems.objects.SlashCommand;
@@ -112,7 +112,7 @@ public class LedControl extends SlashCommand {
 
                         HiveBot.database.putInt("LED_Table","Upsert",1,"ledName",newLED.getLedName());
 
-                        MessageBuilder messageBuilder = new MessageBuilder();
+                        MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
                         messageBuilder.setContent("The new LED has been created and put into the database.\n\nThe LED list is updated every 5 minutes");
                         messageBuilder.setEmbeds(Led.createLEDEmbed(newLED,100));
 
@@ -183,7 +183,7 @@ public class LedControl extends SlashCommand {
 
                         HiveBot.database.putInt("LED_Table","Upsert",1,"ledName",led.getLedName());
 
-                        MessageBuilder messageBuilder = new MessageBuilder();
+                        MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
                         messageBuilder.setContent("The new LED has been created and put into the database");
                         messageBuilder.setEmbeds(Led.createLEDEmbed(led,100));
 

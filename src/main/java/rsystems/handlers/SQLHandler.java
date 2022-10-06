@@ -19,10 +19,15 @@ public class SQLHandler {
             pool = new MariaDbPoolDataSource(URL);
             pool.setUser(user);
             pool.setPassword(pass);
+            /*
             pool.setMaxPoolSize(10);
             pool.setMinPoolSize(2);
 
+
+
             pool.initialize();
+
+             */
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         }
@@ -1012,7 +1017,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_AssignRole"));
+            ResultSet rs = st.executeQuery("SELECT RoleID FROM HIVE_AssignRole");
             while(rs.next()){
                 output.add(rs.getLong("RoleID"));
             }
@@ -1290,7 +1295,7 @@ public class SQLHandler {
             }
 
             if(output == null){
-                rs = st.executeQuery(String.format("SELECT ActivityString FROM HIVE_ActivityList WHERE ID = 1"));
+                rs = st.executeQuery("SELECT ActivityString FROM HIVE_ActivityList WHERE ID = 1");
                 while(rs.next()){
                     output = rs.getString("ActivityString");
                 }

@@ -1,6 +1,7 @@
 package rsystems.events;
 
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -13,12 +14,15 @@ import java.util.concurrent.TimeUnit;
 
 public class GratitudeListener extends ListenerAdapter {
 
-    private static ArrayList<String> coolDownChannels = new ArrayList<>();
-    private static Long karmaPosReaction = Long.valueOf(Config.get("KARMA_POS_REACTION"));
-    private static Long karmaNegReaction = Long.valueOf(Config.get("KARMA_NEG_REACTION"));
-    private static String stageReaction = "\uD83D\uDCE6";
+    private static final ArrayList<String> coolDownChannels = new ArrayList<>();
+    private static final Long karmaPosReaction = Long.valueOf(Config.get("KARMA_POS_REACTION"));
+    private static final Long karmaNegReaction = Long.valueOf(Config.get("KARMA_NEG_REACTION"));
+    private static final String acceptEmoji = "\uD83D\uDCE6"; // THIS IS THE BOX EMOJI
+    private static final String declineEmoji = "\u274C";  // THIS IS THE RED X EMOJI
 
-    private static String[] triggers = {"thanks", "thank you", "thnx", "thx "};
+    private static final String potatoEmoji = "\uD83E\uDD54"; //THIS IS THE POTATO EMOJI
+
+    private static final String[] triggers = {"thanks", "thank you", "thnx", "thx "};
 
     public String[] getTriggers(){
         return triggers;
@@ -47,21 +51,21 @@ public class GratitudeListener extends ListenerAdapter {
 
                             if ((receivingMember != null) && (!receivingMember.getUser().isBot()) && (receivingMember != sendingMember)) {
 
-                                event.getMessage().addReaction(stageReaction).queue();
-                                event.getMessage().addReaction("\u274C").queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode(acceptEmoji)).queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode(declineEmoji)).queue();
 
-                                event.getMessage().removeReaction(stageReaction,event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
-                                event.getMessage().removeReaction("\u274C",event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
+                                event.getMessage().removeReaction(Emoji.fromUnicode(acceptEmoji),event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
+                                event.getMessage().removeReaction(Emoji.fromUnicode(declineEmoji),event.getJDA().getSelfUser()).queueAfter(60,TimeUnit.SECONDS);
 
                                 if (!HiveBot.karmaSQLHandler.insertStaging(event.getChannel().getIdLong(), event.getMessageIdLong(), sendingMember.getIdLong())) {
-                                    event.getMessage().addReaction("⚠").queue();
+                                    event.getMessage().addReaction(Emoji.fromUnicode("⚠")).queue();
                                 }
 
                                 return;
                             } else {
 
                                 //ADD A POTATO
-                                event.getMessage().addReaction("\uD83E\uDD54").queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode(potatoEmoji)).queue();
                                 return;
                             }
 
@@ -113,15 +117,8 @@ public class GratitudeListener extends ListenerAdapter {
             return;
 
         final Long messageID = event.getMessageIdLong();
-        final boolean reactionEmote = event.getReactionEmote().isEmote();
-
-        Long reactionID = null;
-        if (reactionEmote)
-            reactionID = event.getReaction().getReactionEmote().getIdLong();
-
-        String emojiID = null;
-        if (!reactionEmote)
-            emojiID = event.getReactionEmote().getEmoji();
+        final String reactionEmote = event.getReaction().getEmoji().toString();
+        final Long id = event.getReaction().getEmoji().asCustom().getIdLong();
 
 
 
@@ -131,7 +128,7 @@ public class GratitudeListener extends ListenerAdapter {
 
 
         //If reaction was an emoji & emoji was a thumbs up or X
-        if ((!reactionEmote) && ((emojiID.equalsIgnoreCase(stageReaction)) || (emojiID.equalsIgnoreCase("\u274C")))) {
+        if ((reactionEmote.equalsIgnoreCase(acceptEmoji)) || (reactionEmote.equalsIgnoreCase("\u274C"))) {
 
 
             //Check karma staging table to see if messageID was found
@@ -139,7 +136,7 @@ public class GratitudeListener extends ListenerAdapter {
                 if (HiveBot.karmaSQLHandler.checkStaging(messageID, event.getMember().getIdLong())) {
 
                     //Message was found in the staging table.
-                    final String finalEmojiID = emojiID;
+                    //final String finalEmojiID = emojiID;
                     event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
                         try {
@@ -150,7 +147,7 @@ public class GratitudeListener extends ListenerAdapter {
 
                         // Clear all reactions
                         message.clearReactions().queue(success -> {
-                            message.addReaction("\uD83D\uDCEC").queue();
+                            message.addReaction(Emoji.fromUnicode("\uD83D\uDCEC")).queue();
                         });
 
                         User receiver = null;
@@ -167,7 +164,7 @@ public class GratitudeListener extends ListenerAdapter {
                             }
 
                             //Send positive karma
-                            if (finalEmojiID.equalsIgnoreCase(stageReaction)) {
+                            if (reactionEmote.equalsIgnoreCase(acceptEmoji)) {
                                 //send karma to original user
                                 // add reaction to message to confirm karma was sent.
                                 try {
@@ -192,12 +189,12 @@ public class GratitudeListener extends ListenerAdapter {
 			KARMA REACTIONS
 		*/
 
-        if ((reactionEmote) && ((reactionID.equals(karmaPosReaction)) || (reactionID.equals(karmaNegReaction)))) {
+        if ((id.equals(karmaPosReaction)) || (id.equals(karmaNegReaction))) {
 
             try {
                 if (HiveBot.karmaSQLHandler.getAvailableKarmaPoints(event.getUserId()) >= 1) {
 
-                    final Long finalReactionID = reactionID;
+                    //final Long finalReactionID = reactionID;
                     event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
                         final User sendingUser = event.getUser();
@@ -207,10 +204,10 @@ public class GratitudeListener extends ListenerAdapter {
 
                             if ((sendingUser != receivingUser) && (!receivingUser.isBot())) {
 
-                                boolean direction = finalReactionID.equals(karmaPosReaction);
+                                boolean direction = reactionEmote.equals(karmaPosReaction);
 
 
-                                System.out.println(String.format("Sending %s karma from %s to %s", direction, sendingUser.getAsTag(), receivingUser.getAsTag()));
+                                System.out.printf("Sending %s karma from %s to %s%n", direction, sendingUser.getAsTag(), receivingUser.getAsTag());
                                 try {
                                     HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingUser, receivingUser, direction);
                                 } catch (SQLException e) {

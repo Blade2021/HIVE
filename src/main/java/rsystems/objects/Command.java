@@ -2,10 +2,13 @@ package rsystems.objects;
 
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.sql.SQLException;
 import java.util.function.Consumer;
@@ -30,7 +33,7 @@ public abstract class Command {
 
     public String getName(){
         return this.getClass().getSimpleName();
-    };
+    }
 
     /**
      * Reply to the message.
@@ -41,13 +44,13 @@ public abstract class Command {
         reply(event,message,null);
     }
 
-    protected void reply(MessageReceivedEvent event, Message message){
+    protected void reply(MessageReceivedEvent event, MessageCreateData message){
         reply(event,message,null);
     }
 
     protected void reply(MessageReceivedEvent event, String message, Consumer<Message> successConsumer)
     {
-        reply(event, new MessageBuilder(message).build(), successConsumer);
+        reply(event, MessageCreateData.fromContent(message), successConsumer);
     }
 
     protected void reply(MessageReceivedEvent event, MessageEmbed embed)
@@ -57,11 +60,12 @@ public abstract class Command {
 
     protected void reply(MessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
     {
-        reply(event, new MessageBuilder(embed).build(), successConsumer);
+        reply(event, MessageCreateData.fromEmbeds(embed), successConsumer);
     }
 
-    protected void reply(MessageReceivedEvent event, Message message, Consumer<Message> successConsumer)
+    protected void reply(MessageReceivedEvent event, MessageCreateData message, Consumer<Message> successConsumer)
     {
+
         event.getMessage().reply(message).queue(msg ->
         {
             linkMessage(event.getMessageIdLong(), msg.getIdLong());
@@ -70,7 +74,7 @@ public abstract class Command {
         });
     }
 
-    protected void channelReply(MessageReceivedEvent event, Message message){
+    protected void channelReply(MessageReceivedEvent event, MessageCreateData message){
         channelReply(event,message,null);
     }
 
@@ -85,15 +89,15 @@ public abstract class Command {
 
     protected void channelReply(MessageReceivedEvent event, MessageEmbed embed, Consumer<Message> successConsumer)
     {
-        channelReply(event, new MessageBuilder(embed).build(), successConsumer);
+        channelReply(event, MessageCreateData.fromEmbeds(embed), successConsumer);
     }
 
     protected void channelReply(MessageReceivedEvent event, String message, Consumer<Message> successConsumer)
     {
-        channelReply(event, new MessageBuilder(message).build(), successConsumer);
+        channelReply(event, MessageCreateData.fromContent(message), successConsumer);
     }
 
-    protected void channelReply(MessageReceivedEvent event, Message message, Consumer<Message> successConsumer){
+    protected void channelReply(MessageReceivedEvent event, MessageCreateData message, Consumer<Message> successConsumer){
         event.getChannel().sendMessage(message).queue(msg ->
         {
             linkMessage(event.getMessageIdLong(), msg.getIdLong());

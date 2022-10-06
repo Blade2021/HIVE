@@ -7,7 +7,7 @@ public class AnalyzeChannelObject {
     public Long channelID;
     private Instant lastMessageSent;
 
-    private String channelName;
+    private final String channelName;
 
     public AnalyzeChannelObject(Long channelID, Instant lastMessageSent, String channelName) {
         this.channelID = channelID;

@@ -3,7 +3,7 @@ package rsystems.handlers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.debug.Test;
+import rsystems.commands.debug.Test2;
 import rsystems.commands.funCommands.Order66;
 import rsystems.commands.funCommands.ThreeLawsSafe;
 import rsystems.commands.generic.*;
@@ -58,6 +59,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new PowerCal());
         registerCommand(new Mini());
         registerCommand(new StreamVerify());
+        registerCommand(new Test2());
     }
 
     public Set<Command> getCommands() {
@@ -174,7 +176,7 @@ public class Dispatcher extends ListenerAdapter {
         this.pool.submit(() ->
         {
             boolean authorized = false;
-            if ((c.isOwnerOnly() == false) && (c.getPermissionIndex() == null) && (c.getDiscordPermission() == null)) {
+            if ((!c.isOwnerOnly()) && (c.getPermissionIndex() == null) && (c.getDiscordPermission() == null)) {
                 authorized = true;
             } else {
 
@@ -265,11 +267,7 @@ public class Dispatcher extends ListenerAdapter {
         boolean authorized = false;
 
         if (c.isOwnerOnly()) {
-            if (member.getIdLong() == HiveBot.botOwnerID) {
-                return true;
-            } else {
-                return false;
-            }
+            return member.getIdLong() == HiveBot.botOwnerID;
         }
 
         if (member.hasPermission(Permission.ADMINISTRATOR)) {

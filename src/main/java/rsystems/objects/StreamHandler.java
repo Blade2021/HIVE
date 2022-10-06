@@ -1,7 +1,11 @@
 package rsystems.objects;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
@@ -11,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.handlers.Dispatcher;
 import rsystems.tasks.BotActivity;
 
 import java.awt.*;
@@ -18,26 +23,28 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class StreamHandler extends ListenerAdapter {
 
     private boolean streamActive = false;
     private String streamTopic = null;
-    private Long streamQuestionChannelID = Long.parseLong(Config.get("Stream_Question_Post_ChannelID"));
-    private Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
-    private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
+    private final Long streamQuestionChannelID = Long.parseLong(Config.get("Stream_Question_Post_ChannelID"));
+    private final Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
+    private final Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
     private boolean firstHereClaimed = false;
     private boolean allowAnimations = true;
     private int currentStreamID = 0;
     private int spentCashews = 0;
     private int AnimationsCalled = 0;
-    private int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
+    private final int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
     private boolean handlingRequest = false;
     private Instant animationCooldown = Instant.now().plus(1, ChronoUnit.MINUTES);
 
-    private LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
+    private final LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
 
     public Integer submitRequest(DispatchRequest dispatchRequest) {
         if (this.requestsQueue.size() < maxQueueSize) {
@@ -103,13 +110,17 @@ public class StreamHandler extends ListenerAdapter {
                                 this.handlingRequest = false;
                             } else {
 
+                                logger.error(callback.getError());
+
                                 // Return points to user
                                 try {
+                                    //if(callback.getError().equalsIgnoreCase())
                                     HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
                                 } catch (SQLException e) {
                                     logger.error("SQL Exception encountered - Refunding Points to User: {}",request.getRequestingUserID());
                                 }
                             }
+
                         });
                     } catch (Exception e) {
 
@@ -156,7 +167,7 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
-    private static List<Long> questionsList = new ArrayList<>();
+    private static final List<Long> questionsList = new ArrayList<>();
 
     public Instant getAnimationCooldown() {
         return animationCooldown;
@@ -331,7 +342,7 @@ public class StreamHandler extends ListenerAdapter {
                         for (Message m : messages) {
                             if (m.getContentRaw().contains(question)) {
                                 //System.out.println(String.format("Question: %s\nFound Message: %s",question,m.getContentRaw()));
-                                event.getMessage().addReaction("⚠").queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode("⚠")).queue();
 
                                 String logQuestion = question;
                                 if (logQuestion.length() > 20) {
@@ -369,12 +380,11 @@ public class StreamHandler extends ListenerAdapter {
                         if (questionPushChannel != null) {
                             questionPushChannel.sendMessageEmbeds(embedBuilder.build()).queue(success -> {
                                 questionsList.add(success.getIdLong());
-                                success.addReaction("✅").queue();
-                                success.addReaction("\u274C").queue();
+                                success.addReaction(Emoji.fromUnicode("✅")).queue();
+                                success.addReaction(Emoji.fromUnicode("\u274C")).queue();
                             });
                             embedBuilder.clear();
-                            event.getMessage().addReaction("\uD83D\uDCE8").queue();
-                            return;
+                            event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDCE8")).queue();
                         } else {
                             getLogger().error("Question channel is NULL");
                         }
@@ -409,14 +419,14 @@ public class StreamHandler extends ListenerAdapter {
 
                         for (Message m : messages) {
                             if (m.getContentRaw().contains(link)) {
-                                event.getMessage().addReaction("⚠").queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode("⚠")).queue();
                                 getLogger().info("Link was already found above.");
                                 return;
                             }
                         }
                         //If current link was not found in messages
                         pushChannel.sendMessage(String.format("%s\n,%s", author, link)).queue();
-                        event.getMessage().addReaction("\uD83D\uDCE8").queue();
+                        event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDCE8")).queue();
                         return;
                     });
                 }
@@ -528,11 +538,11 @@ public class StreamHandler extends ListenerAdapter {
 
             try {
 
-                if (HiveBot.dispatcher.checkAuthorized(event.getGuild().getIdLong(), event.getMember(), 8, null)) {
+                if (Dispatcher.checkAuthorized(event.getGuild().getIdLong(), event.getMember(), 8, null)) {
 
-                    if (event.getReaction().getReactionEmote().isEmoji()) {
+                    //if (event.getReaction().getReactionEmote().isEmoji()) {
 
-                        final String reaction = event.getReaction().getReactionEmote().getEmoji();
+                        final String reaction = event.getReaction().getEmoji().toString();
                         final TextChannel pushChannel = HiveBot.mainGuild().getTextChannelById(this.streamQuestionChannelID);
 
                         if (reaction.equals("✅")) {
@@ -543,7 +553,7 @@ public class StreamHandler extends ListenerAdapter {
                                     embedBuilder.setColor(Color.GREEN);
                                     embedBuilder.setFooter("ANSWERED | " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
 
-                                    success.editMessageEmbeds(embedBuilder.build()).override(true).queue();
+                                    success.editMessageEmbeds(embedBuilder.build()).queue();
 
                                     //success.delete().queueAfter(60, TimeUnit.SECONDS);
                                     //keeperList.remove(messageID);
@@ -562,7 +572,7 @@ public class StreamHandler extends ListenerAdapter {
                                     embedBuilder.setDescription("**Question Removed by Moderator/Admin**\n\nPlease review our regulations for proper question etiquette.");
                                     embedBuilder.setFooter("Removed by: " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
 
-                                    success.editMessageEmbeds(embedBuilder.build()).override(true).queue();
+                                    success.editMessageEmbeds(embedBuilder.build()).queue();
 
                                     //success.delete().queueAfter(60, TimeUnit.SECONDS);
                                     //keeperList.remove(messageID);
@@ -571,9 +581,6 @@ public class StreamHandler extends ListenerAdapter {
 
                         }
                     }
-                } else {
-                    event.getReaction().removeReaction(event.getUser()).queue();
-                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -587,9 +594,7 @@ public class StreamHandler extends ListenerAdapter {
      */
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (questionsList.contains(event.getMessageIdLong())) {
-            questionsList.remove(event.getMessageIdLong());
-        }
+        questionsList.remove(event.getMessageIdLong());
     }
 
     private void clearQuestions(Long channelID) {

@@ -9,20 +9,20 @@ import rsystems.objects.Command;
 
 import java.sql.SQLException;
 
-public class Test extends Command {
-
-    @Override
-    public boolean isOwnerOnly() {
-        return true;
-    }
-
+public class Test2 extends Command {
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
-        HiveBot.obsRemoteController.connect();
+        HiveBot.obsRemoteController.setSourceVisibility("Test","Dog",true, callback -> {
+            if(callback.getStatus().equalsIgnoreCase("OK")){
+                System.out.println("true");
+            } else {
+                System.out.println("false");
+            }
+        });
     }
 
     @Override
     public String getHelp() {
-        return "Testing command";
+        return "something";
     }
 }

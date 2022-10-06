@@ -2,9 +2,9 @@ package rsystems.objects;
 
 public class StreamAnimation {
 
-    private Integer id;
-    private String sceneName;
-    private String sourceName;
+    private final Integer id;
+    private final String sceneName;
+    private final String sourceName;
     private int cost;
     private int cooldown;
 

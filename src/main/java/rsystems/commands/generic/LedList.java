@@ -1,8 +1,8 @@
 package rsystems.commands.generic;
 
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
@@ -25,11 +25,10 @@ public class LedList extends Command {
 
             int randQty = random.nextInt(1000);
 
-            StringBuilder outputString = new StringBuilder();
-            outputString.append(ledListString).append("\n\n");
-            outputString.append("**Example Usage:** ").append(HiveBot.prefix).append("led ").append(ledList.get(randInt)).append(" ").append(randQty);
+            String outputString = ledListString + "\n\n" +
+                    "**Example Usage:** " + HiveBot.prefix + "led " + ledList.get(randInt) + " " + randQty;
 
-            reply(event,outputString.toString());
+            reply(event, outputString);
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
