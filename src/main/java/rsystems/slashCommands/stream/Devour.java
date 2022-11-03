@@ -30,6 +30,7 @@ public class Devour extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
+        // Check if a stream is active
         if(HiveBot.streamHandler.isStreamActive()){
 
             EmbedBuilder builder = new EmbedBuilder();
@@ -37,7 +38,7 @@ public class Devour extends SlashCommand {
             builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
             builder.setThumbnail(event.getGuild().getSelfMember().getEffectiveAvatarUrl());
 
-
+            // Check to see if user is already in the queue
             final Integer queuePosition = HiveBot.streamHandler.checkListForUser(sender.getIdLong());
             if(queuePosition != null){
                 // User already found
@@ -48,32 +49,58 @@ public class Devour extends SlashCommand {
                 reply(event,builder.build());
 
             } else {
-                // User not found
-
+                // User not found in the queue
 
                 try {
+                    // Grab the animation
                     final StreamAnimation animation = HiveBot.database.getAnimation(event.getOption("animation-id").getAsInt());
+
+                    // Grab the points the user has
                     Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
 
-                    if(animation.isEnabled()){
+                    // Check if animation exists, animations is enabled, and points do not exist
+                    if(animation != null && animation.isEnabled() && points != null){
+
+                        // Does the user have enough points
                         if(animation.getCost() <= points){
 
+                            // Get the place in the queue
                             final Integer requestResult = HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),animation.getId()));
 
                             if((requestResult != null) && (requestResult >= 0)){
                                 // REQUEST ACCEPTED
 
+                                //Get the amount of points left AFTER the deduction for the animation request
                                 points = points - animation.getCost();
 
-                                builder.setDescription(String.format("Your request has been submitted!\nYou are currently `%d` in the queue.",requestResult));
+                                //Set the reply message
+                                switch(requestResult){
+                                    case 0:
+                                        builder.setDescription("Your request has been submitted!\nYou are **first** in the queue.");
+                                        break;
+                                    case 1:
+                                        builder.setDescription("Your request has been submitted!\nYou are **second** in the queue.");
+                                        break;
+                                    case 2:
+                                        builder.setDescription("Your request has been submitted!\nYou are **third** in the queue.");
+                                        break;
+                                    case 3:
+                                        builder.setDescription("Your request has been submitted!\nYou are **forth** in the queue.");
+                                        break;
+                                    case 4:
+                                        builder.setDescription("Your request has been submitted!\nYou are **fifth** in the queue.");
+                                        break;
+                                    default:
+                                        builder.setDescription(String.format("Your request has been submitted!\nYou are %d in the queue.",requestResult));
+                                        break;
+                                }
                                 builder.addField("Available Cashews:",points.toString(),true);
                                 builder.addBlankField(true);
                                 reply(event,builder.build());
 
                             } else {
                                 // FULL QUEUE
-
-                                builder.setDescription(String.format("Sorry, looks like the queue is full right now.  Try again later.",requestResult));
+                                builder.setDescription("Sorry, looks like the queue is full right now.  Try again later.");
                                 reply(event, builder.build());
                             }
                         } else {
@@ -98,7 +125,6 @@ public class Devour extends SlashCommand {
             builder.clear();
         } else {
             // Stream is not active
-
             reply(event,"There is no active stream at this time.");
         }
     }

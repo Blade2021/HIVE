@@ -13,17 +13,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.commands.debug.Test;
-import rsystems.commands.debug.Test2;
-import rsystems.commands.funCommands.Order66;
-import rsystems.commands.funCommands.ThreeLawsSafe;
-import rsystems.commands.generic.*;
+import rsystems.commands.development.Test;
+import rsystems.commands.development.Test2;
+import rsystems.commands.utility.Christmas;
+import rsystems.commands.utility.Halloween;
+import rsystems.commands.moderation.Cleanse;
+import rsystems.commands.moderation.Clear;
+import rsystems.commands.moderation.ReferenceTester;
+import rsystems.commands.moderation.Reload;
+import rsystems.commands.moderation.Shutdown;
+import rsystems.commands.user.*;
+import rsystems.commands.user.ThreeLawsSafe;
 import rsystems.commands.stream.StreamVerify;
-import rsystems.commands.user.Mini;
 import rsystems.commands.utility.*;
 import rsystems.commands.stream.StreamMode;
-import rsystems.commands.user.Commands;
-import rsystems.commands.user.GetKarma;
 import rsystems.events.GratitudeListener;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
@@ -39,26 +42,39 @@ public class Dispatcher extends ListenerAdapter {
 
     public Dispatcher() {
 
-        registerCommand(new Test());
+        // User Commands
         registerCommand(new Commands());
-        registerCommand(new StreamMode());
-        registerCommand(new GetKarma());
-        registerCommand(new ReferenceTester());
         registerCommand(new Led());
-        registerCommand(new LedList());
-        registerCommand(new Help());
-        registerCommand(new Clear());
-        registerCommand(new Search());
-        registerCommand(new ReferenceList());
-        registerCommand(new Cleanse());
+        registerCommand(new GetKarma());
         registerCommand(new Order66());
+        registerCommand(new Search());
+        registerCommand(new Help());
         registerCommand(new ThreeLawsSafe());
-        registerCommand(new Ping());
-        registerCommand(new Reload());
-        registerCommand(new Shutdown());
-        registerCommand(new PowerCal());
         registerCommand(new Mini());
+
+        // Utility Commands
+        registerCommand(new Ping());
+        registerCommand(new PowerCal());
+        registerCommand(new LedList());
+        registerCommand(new ReferenceList());
+        registerCommand(new Halloween());
+        registerCommand(new Christmas());
+
+        // Moderation Commands
+        registerCommand(new Clear());
+        registerCommand(new Reload());
+        registerCommand(new Cleanse());
+        registerCommand(new ReferenceTester());
+        registerCommand(new Shutdown());
+
+
+        // Stream Commands
+        registerCommand(new StreamMode());
         registerCommand(new StreamVerify());
+
+
+        // Dev Only
+        registerCommand(new Test());
         registerCommand(new Test2());
     }
 

@@ -1,4 +1,4 @@
-package rsystems.commands.generic;
+package rsystems.commands.user;
 
 import me.xdrop.fuzzywuzzy.FuzzySearch;
 import net.dv8tion.jda.api.EmbedBuilder;

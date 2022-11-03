@@ -1,4 +1,4 @@
-package rsystems.commands.debug;
+package rsystems.commands.development;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
@@ -18,7 +18,9 @@ public class Test extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
-        HiveBot.obsRemoteController.connect();
+        HiveBot.obsRemoteController.setSceneItemEnabled("Test",2,true,callback -> {
+            System.out.println("Success");
+        });
     }
 
     @Override

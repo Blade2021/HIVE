@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'rsystems.HiveBot'
 
-version '3.4.0'
+version '3.5.0'
 
 sourceCompatibility = 11
 targetCompatibility = 11
@@ -30,12 +30,14 @@ dependencies {
     compile 'org.yaml:snakeyaml:1.33' //YAML Parsing
 
 
-    implementation ('net.twasi:obs-websocket-java:1.2.0') {
+    /*implementation ('net.twasi:obs-websocket-java:1.2.0') {
         exclude group: 'org.slf4j', module: 'slf4j-simple'
     }
 
-    //implementation("net.dv8tion:JDA:5.0.0-
-    implementation("net.dv8tion:JDA:5.0.0-alpha.20")
+     */
+
+    implementation 'io.obs-websocket.community:client:2.0.0'
+    implementation("net.dv8tion:JDA:5.0.0-alpha.22")
 
     compile 'io.github.cdimascio:java-dotenv:5.2.2'  // Config loader
     compile 'com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.13.4'  // JSON

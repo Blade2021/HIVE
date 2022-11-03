@@ -47,7 +47,7 @@ public class ChannelStats extends SlashCommand {
                     Message m = messages.get(0);
                     Instant lastMessageTime = m.getTimeCreated().toInstant();
 
-                    System.out.println("Instant: " + lastMessageTime);
+                    //System.out.println("Instant: " + lastMessageTime);
 
                     channelObjects.add(new AnalyzeChannelObject(queryChannel.getIdLong(),lastMessageTime,queryChannel.getName()));
                 });

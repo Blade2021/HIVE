@@ -14,7 +14,7 @@ import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import rsystems.HiveBot;
 import rsystems.objects.LED;
 import rsystems.objects.SlashCommand;
-import rsystems.slashCommands.generic.Led;
+import rsystems.slashCommands.utility.Led;
 
 import java.sql.SQLException;
 import java.util.ArrayList;

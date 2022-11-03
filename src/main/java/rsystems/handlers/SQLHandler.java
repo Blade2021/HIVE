@@ -75,6 +75,26 @@ public class SQLHandler {
             connection.close();
         }
         return output;
+    }
+
+    public boolean checkStreamBlacklist(Long userID) throws SQLException {
+        boolean output = false;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT UserID FROM Stream_Blacklist WHERE UserID = %d", userID));
+            while (rs.next()) {
+                if (rs.getLong("UserID") == userID) {
+                    output = true;
+                }
+            }
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+        return output;
 
     }
 
@@ -1801,6 +1821,26 @@ public class SQLHandler {
         }
 
         return output;
+    }
+
+    public Integer updateAnimationID(final String scene, final String sourceName, final Integer sourceID) throws SQLException {
+
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE StreamAnimations SET sourceID=%d WHERE Source = '%s'",sourceID,sourceName));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return result;
     }
 
     public Integer modifyAnimation(Integer animationID, StreamAnimation animation) throws SQLException {

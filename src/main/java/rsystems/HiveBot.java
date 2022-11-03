@@ -1,5 +1,6 @@
 package rsystems;
 
+import io.obswebsocket.community.client.OBSRemoteController;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.twasi.obsremotejava.OBSRemoteController;
+//import net.twasi.obsremotejava.OBSRemoteController;
 import rsystems.events.*;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
@@ -95,7 +96,14 @@ public class HiveBot {
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
+            obsRemoteController = OBSRemoteController.builder()
+                    .host(Config.get("OBS-ADDRESS"))
+                    .port(Integer.parseInt(Config.get("OBS-PORT")))
+                    .password(Config.get("OBS-KEY"))
+                    .connectionTimeout(30)
+                    .build();
+
+            obsRemoteController.connect();
 
             referenceHandler.loadReferences();
 

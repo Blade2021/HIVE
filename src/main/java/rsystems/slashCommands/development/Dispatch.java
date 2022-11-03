@@ -1,4 +1,4 @@
-package rsystems.slashCommands.user;
+package rsystems.slashCommands.development;
 
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;

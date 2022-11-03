@@ -1,4 +1,4 @@
-package rsystems.commands.funCommands;
+package rsystems.commands.user;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;

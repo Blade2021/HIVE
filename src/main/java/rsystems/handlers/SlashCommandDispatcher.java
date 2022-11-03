@@ -13,9 +13,9 @@ import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.stream.*;
-import rsystems.slashCommands.generic.Help;
-import rsystems.slashCommands.generic.Led;
-import rsystems.slashCommands.generic.LedList;
+import rsystems.slashCommands.utility.Help;
+import rsystems.slashCommands.utility.Led;
+import rsystems.slashCommands.utility.LedList;
 import rsystems.slashCommands.moderation.*;
 import rsystems.slashCommands.user.*;
 
@@ -34,27 +34,41 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     private final String[] overrideCommands = {"LED"};
 
     public SlashCommandDispatcher() {
-        registerCommand(new Here());
-        registerCommand(new StreamMode());
+
+        // User Commands
         registerCommand(new GetKarma());
         registerCommand(new Commands());
         registerCommand(new StreamPoints());
+        registerCommand(new Mini());
+        registerCommand(new Here());
+
+        // Utility Commands
         registerCommand(new Help());
         registerCommand(new Led());
-        registerCommand(new LedControl());
         registerCommand(new LedList());
+
+        // Moderation Commands
+        registerCommand(new LedControl());
         registerCommand(new Unpin());
         registerCommand(new Activity());
         registerCommand(new Who());
         registerCommand(new StreamMarker());
         registerCommand(new SubmitToken());
-        registerCommand(new Mini());
         registerCommand(new ChannelStats());
+
+        // Stream Commands
+        registerCommand(new StreamMode());
         registerCommand(new RegisterAnimation());
         registerCommand(new ListAnimations());
         registerCommand(new Animations());
         registerCommand(new StreamHandlerSlashCmd());
         registerCommand(new Devour());
+
+        // Dev Commands
+
+        //registerCommand(new Block());
+        //registerCommand(new PullSourceData());
+
 
     }
 

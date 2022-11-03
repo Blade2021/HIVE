@@ -46,6 +46,11 @@ public class StreamHandler extends ListenerAdapter {
 
     private final LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
 
+    /**
+     *
+     * @param dispatchRequest The request being attempted in being put in the queue
+     * @return Place in the queue
+     */
     public Integer submitRequest(DispatchRequest dispatchRequest) {
         if (this.requestsQueue.size() < maxQueueSize) {
             this.requestsQueue.add(dispatchRequest);
@@ -93,9 +98,9 @@ public class StreamHandler extends ListenerAdapter {
 
                     try {
                         // Call webhook
-                        HiveBot.obsRemoteController.setSourceVisibility(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
+                        HiveBot.obsRemoteController.setSourceFilterEnabled(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
 
-                            if (callback.getStatus().equalsIgnoreCase("ok")) {
+                            if (callback.isSuccessful()) {
 
                                 this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
                                 notifyAcceptedAnimationRequest(request);
@@ -110,7 +115,7 @@ public class StreamHandler extends ListenerAdapter {
                                 this.handlingRequest = false;
                             } else {
 
-                                logger.error(callback.getError());
+                                logger.error(callback.toString());
 
                                 // Return points to user
                                 try {
