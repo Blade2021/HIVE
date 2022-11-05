@@ -86,6 +86,8 @@ public class StreamHandler extends ListenerAdapter {
                 RequesterStringBuilder.append(request.getRequestingUserID()).append("\n");
             }
 
+            this.requestsQueue.clear();
+
             EmbedBuilder builder = new EmbedBuilder();
             builder.addField("Animation ID",IDStringBuilder.toString(),true);
             builder.addField("Requester",RequesterStringBuilder.toString(),true);

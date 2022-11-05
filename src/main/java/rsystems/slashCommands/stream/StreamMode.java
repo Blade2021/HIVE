@@ -27,6 +27,12 @@ public class StreamMode extends SlashCommand {
         HiveBot.streamHandler.setStreamActive(streamMode);
         reply(event,"Setting Stream Mode to: `" + streamMode + "`",isEphemeral());
 
+        if(streamMode) {
+            HiveBot.obsRemoteController.connect();
+        } else {
+            HiveBot.obsRemoteController.disconnect();
+        }
+
     }
 
     @Override

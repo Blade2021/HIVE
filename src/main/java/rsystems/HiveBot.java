@@ -1,6 +1,7 @@
 package rsystems;
 
 import io.obswebsocket.community.client.OBSRemoteController;
+import io.obswebsocket.community.client.message.event.Event;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -102,8 +103,7 @@ public class HiveBot {
                     .password(Config.get("OBS-KEY"))
                     .connectionTimeout(30)
                     .build();
-
-            obsRemoteController.connect();
+            //obsRemoteController.connect();
 
             referenceHandler.loadReferences();
 
