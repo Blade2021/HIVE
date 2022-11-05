@@ -46,14 +46,15 @@ public class Animations extends SlashCommand {
         subCommands.add(new SubcommandData("animation-killswitch","Disable animation requests").addOption(OptionType.BOOLEAN,"allowance","True = Enable / False = Disable",false));
         subCommands.add(new SubcommandData("register","Register a new animation"));
         subCommands.add(new SubcommandData("modify","Modify an existing animation").addOption(OptionType.INTEGER,"animation-id","The ID of the animation to be modified",true));
-
+        subCommands.add(new SubcommandData("enable","Enable an animation").addOption(OptionType.INTEGER,"animation-id","The animation to enable",true));
+        subCommands.add(new SubcommandData("disable","Disable an animation").addOption(OptionType.INTEGER,"animation-id","The animation to disable",true));
         return slashCommandData.addSubcommands(subCommands);
     }
 
     @Override
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         //Satisfy the initial call
-        //event.deferReply(this.isEphemeral()).queue();
+        event.deferReply(this.isEphemeral()).queue();
 
         if (event.getSubcommandName().equalsIgnoreCase("animation-killswitch")) {
             EmbedBuilder builder = new EmbedBuilder();
@@ -92,7 +93,8 @@ public class Animations extends SlashCommand {
 
             HiveBot.streamHandler.getLiveStreamChatChannel().sendMessageEmbeds(builder.build()).queue();
             builder.clear();
-        } else if(event.getSubcommandName().equalsIgnoreCase("register")){
+        } else
+            /*if(event.getSubcommandName().equalsIgnoreCase("register")){
             TextInput scene = TextInput.create("scene","Scene", TextInputStyle.SHORT)
                     .setPlaceholder("Please enter the Scene that the source is on.  Case Sensitive!")
                     .setMaxLength(30)
@@ -108,7 +110,10 @@ public class Animations extends SlashCommand {
                     .build();
 
             event.replyModal(modal).queue();
-        } else if(event.getSubcommandName().equalsIgnoreCase("modify")){
+        } else
+
+             */
+            if(event.getSubcommandName().equalsIgnoreCase("modify")){
             if(event.getOption("animation-id") != null){
                 Integer id = event.getOption("animation-id").getAsInt();
 
@@ -160,7 +165,33 @@ public class Animations extends SlashCommand {
                     throw new RuntimeException(e);
                 }
             }
-        }
+        } else
+            if(event.getSubcommandName().equalsIgnoreCase("enable")){
+                Integer result;
+                Integer id = event.getOption("animation-id").getAsInt();
+                try{
+                    result = HiveBot.database.putInt("StreamAnimations","Enabled",1,"ID",id);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if(result != null && result > 0){
+                    reply(event,String.format("Animation ID: %d has been enabled",id));
+                }
+            } else
+            if(event.getSubcommandName().equalsIgnoreCase("disable")){
+                Integer result;
+                Integer id = event.getOption("animation-id").getAsInt();
+                try{
+                    result = HiveBot.database.putInt("StreamAnimations","Enabled",0,"ID",id);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+
+                if(result != null && result > 0){
+                    reply(event,String.format("Animation ID: %d has been disabled",id));
+                }
+            }
     }
 
     @Override

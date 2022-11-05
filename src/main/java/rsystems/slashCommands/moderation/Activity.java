@@ -93,7 +93,7 @@ public class Activity extends SlashCommand {
 
                     if(activity != null && !activity.isEmpty()){
 
-                        if(HiveBot.database.putValue("HIVE_ActivityList","ActivityString",activity,"ID",id) >= 1){
+                        if(HiveBot.database.putString("HIVE_ActivityList","ActivityString",activity,"ID",id) >= 1){
                             reply(event,String.format("Activity ID: %d has been updated",id));
                         }
                     } else {

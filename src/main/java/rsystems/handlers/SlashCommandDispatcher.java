@@ -67,7 +67,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         // Dev Commands
 
         //registerCommand(new Block());
-        //registerCommand(new PullSourceData());
+        registerCommand(new PullSourceData());
 
 
     }

@@ -5,35 +5,25 @@ public class StreamAnimation {
     private final Integer id;
     private final String sceneName;
     private final String sourceName;
+
+    private final Integer callerID;
+
+    private final Integer runtime;
     private int cost;
     private int cooldown;
 
     private boolean enabled;
 
-    public StreamAnimation(int id, String sceneName, String sourceName) {
+    public StreamAnimation(Integer id, String sceneName, String sourceName, Integer callerID, Integer runtime, int cost, int cooldown, boolean enabled) {
         this.id = id;
         this.sceneName = sceneName;
         this.sourceName = sourceName;
-    }
-
-    public StreamAnimation(int id, String sceneName, String sourceName, int cost, int cooldown) {
-        this.id = id;
-        this.sceneName = sceneName;
-        this.sourceName = sourceName;
-        this.cost = cost;
-        this.cooldown = cooldown;
-        this.enabled = true;
-    }
-
-    public StreamAnimation(int id, String sceneName, String sourceName, int cost, int cooldown, boolean enabled) {
-        this.id = id;
-        this.sceneName = sceneName;
-        this.sourceName = sourceName;
+        this.callerID = callerID;
+        this.runtime = runtime;
         this.cost = cost;
         this.cooldown = cooldown;
         this.enabled = enabled;
     }
-
 
     public Integer getId() {
         return id;
@@ -69,5 +59,13 @@ public class StreamAnimation {
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public Integer getCallerID() {
+        return callerID;
+    }
+
+    public Integer getRuntime() {
+        return runtime;
     }
 }

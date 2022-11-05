@@ -12,7 +12,7 @@ public class ModalEventListener extends ListenerAdapter {
 
     @Override
     public void onModalInteraction(ModalInteractionEvent event) {
-        if (event.getModalId().equals("obsanimationreg")) {
+        /*if (event.getModalId().equals("obsanimationreg")) {
 
             String sceneName = event.getValue("scene").getAsString();
             String sourceName = event.getValue("source").getAsString();
@@ -21,12 +21,16 @@ public class ModalEventListener extends ListenerAdapter {
                 Integer result = HiveBot.database.registerOBSAnimation(sceneName,sourceName);
 
                 if(result != null){
-                   event.reply(String.format("Your submission has been registered with the ID: %d",result)).setEphemeral(true).queue();
+                    event.reply(String.format("Your submission has been registered with the ID: %d",result)).setEphemeral(true).queue();
                 }
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
-        } else if(event.getModalId().equalsIgnoreCase("animation-mod")){
+        } else
+
+
+         */
+            if(event.getModalId().equalsIgnoreCase("animation-mod")){
             try {
                 Integer animationID = Integer.parseInt(event.getValue("animationID").getAsString());
                 String sceneName = event.getValue("scene").getAsString();
@@ -34,7 +38,7 @@ public class ModalEventListener extends ListenerAdapter {
                 Integer cost = Integer.parseInt(event.getValue("cost").getAsString());
                 Integer cooldown = Integer.parseInt(event.getValue("cooldown").getAsString());
 
-                StreamAnimation animation = new StreamAnimation(animationID,sceneName,sourceName,cost,cooldown);
+                StreamAnimation animation = new StreamAnimation(animationID,sceneName,sourceName,null,null,cost,cooldown,true);
 
                 Integer result = HiveBot.database.modifyAnimation(animationID,animation);
                 if(result >= 1){

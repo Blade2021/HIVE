@@ -23,10 +23,8 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 
 public class StreamHandler extends ListenerAdapter {
 
@@ -86,10 +84,10 @@ public class StreamHandler extends ListenerAdapter {
             // Get the first request from the list then remove it from the list
             final DispatchRequest request = this.requestsQueue.getFirst();
             this.requestsQueue.removeFirst();
-
             final StreamAnimation Animation = request.getSelectedAnimation();
-            // Subtract allotted points from user
 
+
+            // Subtract allotted points from user
             try {
                 if (HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1) {
 
@@ -98,12 +96,25 @@ public class StreamHandler extends ListenerAdapter {
 
                     try {
                         // Call webhook
-                        HiveBot.obsRemoteController.setSourceFilterEnabled(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
+                        HiveBot.obsRemoteController.setSceneItemEnabled(Animation.getSceneName(), Animation.getCallerID(), true, callback -> {
 
                             if (callback.isSuccessful()) {
 
-                                this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
+                                this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES).plus(Animation.getRuntime(),ChronoUnit.SECONDS);
                                 notifyAcceptedAnimationRequest(request);
+
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(Animation.getRuntime() * 1000);
+                                            HiveBot.obsRemoteController.setSceneItemEnabled(Animation.getSceneName(),Animation.getCallerID(),false, downCallback -> {
+                                                //do nothing
+                                            });
+
+                                        } catch (InterruptedException ie) {
+                                        }
+                                    }
+                                }).start();
 
                                 try {
                                     HiveBot.database.recordAnimationLog(this.currentStreamID, request);
@@ -156,18 +167,22 @@ public class StreamHandler extends ListenerAdapter {
 
         if (channel != null) {
             if (channel.canTalk()) {
-                //Create message embed from request
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Animation Request");
-                builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
-                builder.setDescription(String.format("**Animation ID:** %d\n" +
-                        "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
-                builder.addField("Requesting User", request.getRequestingUserID().toString(), true);
-                builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
-                builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
 
-                channel.sendMessageEmbeds(builder.build()).queue();
-                builder.clear();
+                HiveBot.mainGuild().retrieveMemberById(request.getRequestingUserID()).queue(foundMember -> {
+                    //Create message embed from request
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Animation Request");
+                    builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+                    builder.setDescription(String.format("**Animation ID:** %d\n" +
+                            "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
+                    builder.setThumbnail(foundMember.getEffectiveAvatarUrl());
+                    builder.addField("Requesting User", foundMember.getEffectiveName() + "\n" + foundMember.getId(), true);
+                    builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
+                    builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
+
+                    channel.sendMessageEmbeds(builder.build()).queue();
+                    builder.clear();
+                });
             }
         }
     }

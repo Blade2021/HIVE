@@ -12,6 +12,9 @@ import rsystems.objects.SlashCommand;
 
 import java.sql.SQLException;
 
+/**
+ *  This command will pull any animations from the target OBS installation.  Then pass the data to the database handler for processing.
+ */
 public class PullSourceData extends SlashCommand {
     @Override
     public SlashCommandData getCommandData() {
@@ -29,7 +32,7 @@ public class PullSourceData extends SlashCommand {
                 if(getSceneItemListResponse != null && getSceneItemListResponse.isSuccessful()){
                     for(SceneItem item:getSceneItemListResponse.getSceneItems()){
                         try {
-                            HiveBot.database.updateAnimationID(sceneName,item.getSourceName(),item.getSceneItemId());
+                            HiveBot.database.updateAnimation(sceneName,item.getSourceName(),item.getSceneItemId());
                         } catch (SQLException e) {
                             throw new RuntimeException(e);
                         }
@@ -37,10 +40,16 @@ public class PullSourceData extends SlashCommand {
                 }
             });
         }
+        reply(event,"Success");
     }
 
     @Override
     public String getDescription() {
-        return null;
+        return "please replace me with a description";
+    }
+
+    @Override
+    public boolean isEphemeral() {
+        return true;
     }
 }

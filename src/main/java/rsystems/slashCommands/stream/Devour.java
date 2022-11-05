@@ -43,9 +43,8 @@ public class Devour extends SlashCommand {
             if(queuePosition != null){
                 // User already found
 
-                builder.setDescription("You are already in the queue.  Please wait a while and try again.");
-                builder.addField("Queue Position:",queuePosition.toString(),true);
-                builder.addBlankField(true);
+                builder.setDescription("You are already in the queue.  Please wait a while and try again.\n");
+                builder.appendDescription(getQueuePositionString(queuePosition));
                 reply(event,builder.build());
 
             } else {
@@ -73,34 +72,15 @@ public class Devour extends SlashCommand {
                                 //Get the amount of points left AFTER the deduction for the animation request
                                 points = points - animation.getCost();
 
-                                //Set the reply message
-                                switch(requestResult){
-                                    case 0:
-                                        builder.setDescription("Your request has been submitted!\nYou are **first** in the queue.");
-                                        break;
-                                    case 1:
-                                        builder.setDescription("Your request has been submitted!\nYou are **second** in the queue.");
-                                        break;
-                                    case 2:
-                                        builder.setDescription("Your request has been submitted!\nYou are **third** in the queue.");
-                                        break;
-                                    case 3:
-                                        builder.setDescription("Your request has been submitted!\nYou are **forth** in the queue.");
-                                        break;
-                                    case 4:
-                                        builder.setDescription("Your request has been submitted!\nYou are **fifth** in the queue.");
-                                        break;
-                                    default:
-                                        builder.setDescription(String.format("Your request has been submitted!\nYou are %d in the queue.",requestResult));
-                                        break;
-                                }
+                                builder.setDescription("Your request has been submitted!\n");
+                                builder.appendDescription(getQueuePositionString(requestResult));
                                 builder.addField("Available Cashews:",points.toString(),true);
                                 builder.addBlankField(true);
                                 reply(event,builder.build());
 
                             } else {
                                 // FULL QUEUE
-                                builder.setDescription("Sorry, looks like the queue is full right now.  Try again later.");
+                                builder.setDescription("Sorry, looks like the queue is full right now.  Please try again later.");
                                 reply(event, builder.build());
                             }
                         } else {
@@ -132,5 +112,31 @@ public class Devour extends SlashCommand {
     @Override
     public String getDescription() {
         return "Devour your cashews!";
+    }
+
+    private String getQueuePositionString(int position){
+        String response = null;
+        switch(position){
+            case 0:
+                response = ("You are **first** in the queue.");
+                break;
+            case 1:
+                response = ("You are **second** in the queue.");
+                break;
+            case 2:
+                response = ("You are **third** in the queue.");
+                break;
+            case 3:
+                response = ("You are **forth** in the queue.");
+                break;
+            case 4:
+                response = ("You are **fifth** in the queue.");
+                break;
+            default:
+                response = (String.format("You are %d in the queue.",position));
+                break;
+        }
+
+        return response;
     }
 }

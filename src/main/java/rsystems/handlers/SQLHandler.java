@@ -211,7 +211,7 @@ public class SQLHandler {
         return map;
     }
 
-    public Integer putValue(String tablename, String columnName, String newValue, String identifierColumn, Integer identifier) throws SQLException {
+    public Integer putString(String tablename, String columnName, String newValue, String identifierColumn, Integer identifier) throws SQLException {
         Integer result = null;
 
         Connection connection = pool.getConnection();
@@ -238,6 +238,35 @@ public class SQLHandler {
         try {
             Statement st = connection.createStatement();
             st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = '%s'",tablename,columnName,newValue,identifierColumn,identifier));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
+    /**
+     *
+     * @param tablename
+     * @param columnName
+     * @param newValue
+     * @param identifierColumn
+     * @param identifier
+     * @return Returns the amount of rows changed
+     * @throws SQLException
+     */
+    public Integer putInt(String tablename, String columnName, Integer newValue, String identifierColumn, Integer identifier) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = %d",tablename,columnName,newValue,identifierColumn,identifier));
             result = st.getUpdateCount();
 
         }  catch (SQLException e) {
@@ -1823,7 +1852,15 @@ public class SQLHandler {
         return output;
     }
 
-    public Integer updateAnimationID(final String scene, final String sourceName, final Integer sourceID) throws SQLException {
+    /**
+     * Updates an animation with new information if it already exists.  This relies on the source name!
+     * @param scene
+     * @param sourceName
+     * @param sourceID
+     * @return The amount of rows changed
+     * @throws SQLException
+     */
+    public Integer updateAnimation(final String scene, final String sourceName, final Integer sourceID) throws SQLException {
 
         Integer result = null;
 
@@ -1831,8 +1868,18 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE StreamAnimations SET sourceID=%d WHERE Source = '%s'",sourceID,sourceName));
-            result = st.getUpdateCount();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT Source FROM StreamAnimations WHERE SourceID = %d AND Scene = '%s'",sourceID,scene));
+
+            // Does a row already exist?
+            if(rs.first()){
+                st.execute(String.format("UPDATE StreamAnimations SET sourceID=%d WHERE Source = '%s'",sourceID,sourceName));
+                result = st.getUpdateCount();
+            } else {
+                // NO IT DOESN'T!  CREATE ONE!
+                st.execute(String.format("INSERT INTO StreamAnimations (Scene, Source, SourceID) VALUES ('%s','%s',%d)",scene,sourceName,sourceID));
+                result = st.getUpdateCount();
+            }
 
         }  catch (SQLException e) {
             e.printStackTrace();
@@ -1871,17 +1918,19 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT ID, Scene, Source, Cost, Cooldown FROM StreamAnimations");
+            ResultSet rs = st.executeQuery("SELECT ID, Scene, Source, SourceID, Runtime, Cost, Cooldown FROM StreamAnimations WHERE Enabled = 1");
 
             while(rs.next()){
 
                 int id = rs.getInt("ID");
                 String scene = rs.getString("Scene");
                 String source = rs.getString("Source");
+                int sourceID = rs.getInt("SourceID");
+                int runtime = rs.getInt("Runtime");
                 int cost = rs.getInt("Cost");
                 int cooldown = rs.getInt("Cooldown");
 
-                AnimationMap.putIfAbsent(id,new StreamAnimation(id,scene,source,cost,cooldown));
+                AnimationMap.putIfAbsent(id,new StreamAnimation(id,scene,source,sourceID,runtime,cost,cooldown,true));
 
             }
 
@@ -1903,10 +1952,10 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, Cost, Cooldown, Enabled FROM StreamAnimations WHERE ID = %d", ID));
+            ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, SourceID, Cost, Cooldown, Runtime, Enabled FROM StreamAnimations WHERE ID = %d", ID));
             while(rs.next()){
 
-                Animation = new StreamAnimation(ID,rs.getString("Scene"),rs.getString("Source"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
+                Animation = new StreamAnimation(ID,rs.getString("Scene"),rs.getString("Source"), rs.getInt("SourceID"), rs.getInt("Runtime"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
 
             }
 

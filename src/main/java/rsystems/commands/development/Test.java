@@ -18,7 +18,7 @@ public class Test extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
-        HiveBot.obsRemoteController.setSceneItemEnabled("Test",2,true,callback -> {
+        HiveBot.obsRemoteController.setSceneItemEnabled("Live Basic",26,true,callback -> {
             System.out.println("Success");
         });
     }
