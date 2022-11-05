@@ -82,10 +82,12 @@ public class StreamHandlerSlashCmd extends SlashCommand {
             //CLEAR QUEUE SUB-COMMAND
 
             //This method will refund all points to request initiators
-            Integer amount = HiveBot.streamHandler.clearRequestQueue();
+            //Integer amount = HiveBot.streamHandler.clearRequestQueue();
 
-            reply(event,String.format("`%d` requests have been refunded/removed.",amount));
+            //reply(event,String.format("`%d` requests have been refunded/removed.",amount));
 
+            HiveBot.streamHandler.clearRequestQueue();
+            reply(event,"Request queue cleared");
         } else if(event.getSubcommandName().equalsIgnoreCase("reconnect")){
 
             HiveBot.obsRemoteController.connect();

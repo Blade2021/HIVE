@@ -17,6 +17,7 @@ import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.objects.StreamAnimation;
 
+import java.awt.event.HierarchyBoundsAdapter;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
@@ -48,6 +49,8 @@ public class Animations extends SlashCommand {
         subCommands.add(new SubcommandData("modify","Modify an existing animation").addOption(OptionType.INTEGER,"animation-id","The ID of the animation to be modified",true));
         subCommands.add(new SubcommandData("enable","Enable an animation").addOption(OptionType.INTEGER,"animation-id","The animation to enable",true));
         subCommands.add(new SubcommandData("disable","Disable an animation").addOption(OptionType.INTEGER,"animation-id","The animation to disable",true));
+        subCommands.add(new SubcommandData("clear-queue","Clear the animation queue"));
+        subCommands.add(new SubcommandData("pause","Pause animations from being accepted.  True = Pause active  False = Resume requests").addOption(OptionType.BOOLEAN,"pause","Requested pause status",true));
         return slashCommandData.addSubcommands(subCommands);
     }
 
@@ -92,6 +95,8 @@ public class Animations extends SlashCommand {
             }
 
             HiveBot.streamHandler.getLiveStreamChatChannel().sendMessageEmbeds(builder.build()).queue();
+            HiveBot.streamHandler.getStreamLogChannel().sendMessageEmbeds(builder.build()).queue();
+
             builder.clear();
         } else
             /*if(event.getSubcommandName().equalsIgnoreCase("register")){
@@ -191,7 +196,20 @@ public class Animations extends SlashCommand {
                 if(result != null && result > 0){
                     reply(event,String.format("Animation ID: %d has been disabled",id));
                 }
-            }
+            } else
+                if(event.getSubcommandName().equalsIgnoreCase("clear-queue")){
+                    HiveBot.streamHandler.clearRequestQueue();
+                    reply(event,"Request queue cleared");
+                } else
+                    if(event.getSubcommandName().equalsIgnoreCase("pause")){
+                        if(event.getOption("pause").getAsBoolean() == true){
+                            HiveBot.streamHandler.setAnimationPause(true);
+                            reply(event,"Pausing all animation requests");
+                        } else {
+                            HiveBot.streamHandler.setAnimationPause(false);
+                            reply(event,"Resuming all animation requests");
+                        }
+                    }
     }
 
     @Override
