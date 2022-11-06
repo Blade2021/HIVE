@@ -26,6 +26,7 @@ public class StreamHandlerSlashCmd extends SlashCommand {
         SlashCommandData slashCommandData = Commands.slash(this.getName().toLowerCase(),this.getDescription());
 
         ArrayList<SubcommandData> subCommands = new ArrayList<>();
+        subCommands.add(new SubcommandData("settings","View/Change the settings for the stream handler"));
         subCommands.add(new SubcommandData("animation-killswitch","Enable/Disable the dispatch of animations").addOption(OptionType.BOOLEAN,"allowance","True = Animations allowed / False = Animations Disabled",true));
         subCommands.add(new SubcommandData("status","Get the status of the Stream Handler"));
         subCommands.add(new SubcommandData("clear-queue","Clear the current request queue"));

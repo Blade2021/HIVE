@@ -1,8 +1,8 @@
 package rsystems.slashCommands.stream;
 
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -10,11 +10,13 @@ import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 
+import java.sql.SQLException;
+
 public class StreamMode extends SlashCommand {
 
     @Override
     public SlashCommandData getCommandData() {
-        return Commands.slash(this.getName().toLowerCase(), this.getDescription()).addOption(OptionType.BOOLEAN,"active","Stream Mode. TRUE = Active, FALSE = Inactive",true);
+        return Commands.slash(this.getName().toLowerCase(), this.getDescription()).addOption(OptionType.BOOLEAN, "active", "Stream Mode. TRUE = Active, FALSE = Inactive", true);
     }
 
     @Override
@@ -25,12 +27,22 @@ public class StreamMode extends SlashCommand {
         Boolean streamMode = event.getOption("active").getAsBoolean();
 
         HiveBot.streamHandler.setStreamActive(streamMode);
-        reply(event,"Setting Stream Mode to: `" + streamMode + "`",isEphemeral());
+        reply(event, "Setting Stream Mode to: `" + streamMode + "`", isEphemeral());
 
-        if(streamMode) {
-            HiveBot.obsRemoteController.connect();
-        } else {
-            HiveBot.obsRemoteController.disconnect();
+
+        try {
+            String enable = HiveBot.database.getKeyValue("EnableOBSConnect");
+            System.out.println(enable);
+            if(HiveBot.database.getKeyValue("EnableOBSConnect").equalsIgnoreCase("1")) {
+
+                if (streamMode) {
+                    HiveBot.obsRemoteController.connect();
+                } else {
+                    HiveBot.obsRemoteController.disconnect();
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
 
     }

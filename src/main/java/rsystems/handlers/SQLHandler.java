@@ -230,6 +230,46 @@ public class SQLHandler {
         return  result;
     }
 
+    public Integer putKeyValue(String key, String value) throws SQLException {
+        Integer result = null;
+
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE Bot_Settings SET %s = '%s'",key,value));
+            result = st.getUpdateCount();
+
+        }  catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return  result;
+    }
+
+    public String getKeyValue(String key) throws SQLException {
+        String value = "";
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT Value FROM Bot_Settings WHERE `Key` = '%s'",key));
+            while (rs.next()) {
+                value = rs.getString("Value");
+            }
+
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return value;
+    }
+
     public Integer putInt(String tablename, String columnName, Integer newValue, String identifierColumn, String identifier) throws SQLException {
         Integer result = null;
 

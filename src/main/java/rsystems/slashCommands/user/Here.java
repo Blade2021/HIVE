@@ -78,7 +78,7 @@ public class Here extends SlashCommand {
 
                     }, failure -> {
                         Logger logger = LoggerFactory.getLogger(this.getClass());
-                        logger.info("Error grabbing member from here command. ID: {}",event.getMember().getId());
+                        logger.error("Error grabbing member from here command. ID: {}",event.getMember().getId());
                     });
 
             builder.clear();
