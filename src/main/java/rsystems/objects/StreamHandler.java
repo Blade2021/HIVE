@@ -513,7 +513,7 @@ public class StreamHandler extends ListenerAdapter {
                             }
                         }
                         //If current link was not found in messages
-                        pushChannel.sendMessage(String.format("%s\n,%s", author, link)).queue();
+                        pushChannel.sendMessage(String.format("%s: %s", author, link)).queue();
                         event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDCE8")).queue();
                         return;
                     });

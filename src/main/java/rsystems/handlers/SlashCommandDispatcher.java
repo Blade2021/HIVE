@@ -55,6 +55,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new StreamMarker());
         registerCommand(new SubmitToken());
         registerCommand(new ChannelStats());
+        registerCommand(new Embed());
 
         // Stream Commands
         registerCommand(new StreamMode());

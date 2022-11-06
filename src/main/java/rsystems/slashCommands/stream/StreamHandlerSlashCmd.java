@@ -1,6 +1,7 @@
 package rsystems.slashCommands.stream;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -93,9 +94,20 @@ public class StreamHandlerSlashCmd extends SlashCommand {
             reply(event,"Request queue cleared");
         } else
             if(event.getSubcommandName().equalsIgnoreCase("reconnect")){
+                reply(event,"Attempting to reconnect to Stream Controller");
 
-            HiveBot.obsRemoteController.connect();
-            reply(event,"Attempting to reconnect to Stream Controller");
+                new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            HiveBot.obsRemoteController.disconnect();
+                            Thread.sleep(3000);
+                            HiveBot.obsRemoteController.connect();
+                            event.getHook().sendMessage("Reconnected").queue();
+
+                        } catch (InterruptedException ie) {
+                        }
+                    }
+                }).start();
 
         } else
             if(event.getSubcommandName().equalsIgnoreCase("pause")){
@@ -112,5 +124,10 @@ public class StreamHandlerSlashCmd extends SlashCommand {
     @Override
     public String getDescription() {
         return "This command is used to help set HIVE stream settings";
+    }
+
+    @Override
+    public Permission getDiscordPermission() {
+        return Permission.KICK_MEMBERS;
     }
 }

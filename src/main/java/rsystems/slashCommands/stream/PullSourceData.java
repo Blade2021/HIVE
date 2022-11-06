@@ -1,6 +1,7 @@
 package rsystems.slashCommands.stream;
 
 import io.obswebsocket.community.client.model.SceneItem;
+import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -51,5 +52,10 @@ public class PullSourceData extends SlashCommand {
     @Override
     public boolean isEphemeral() {
         return true;
+    }
+
+    @Override
+    public Permission getDiscordPermission() {
+        return Permission.ADMINISTRATOR;
     }
 }

@@ -91,6 +91,6 @@ public class Who extends SlashCommand {
 
     @Override
     public boolean isEphemeral() {
-        return false;
+        return true;
     }
 }
