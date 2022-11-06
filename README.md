@@ -7,7 +7,7 @@
 [![Discord Chat](https://img.shields.io/discord/469330414121517056.svg)](https://discord.me/drzzs)  
 
 
-HIVE is a discord bot that is programmed in JAVA.  While it is still very early in development, I am excited to see what the future holds!  If you encounter any bugs while working with HIVE, please do post an issue here on github and I'll try to get it resolved in a timely manner.  
+HIVE is a discord bot that is programmed in JAVA for the good ole community server ran by DrZzs!
 
 Enjoy!
 
@@ -21,9 +21,3 @@ https://github.com/Blade2021/Sherlock
 # HIVE Data Reference Library
 We are developing a data library of references and information for HIVE.  Wanna help contribute?  
 Head over to https://github.com/Blade2021/HIVE-RefData for futher instructions.
-
-# HIVE Features
-- Hall Monitor 
-  - Watches for vulgar language
-- Code Validation (JSON & YAML)
-  - When code is posted, HIVE will validate it and send feedback to discord.
