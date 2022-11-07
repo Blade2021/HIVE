@@ -54,7 +54,7 @@ public class Embed extends SlashCommand {
         } else {
             // MODIFY AN EXISTING EMBEDDED MESSAGE
 
-            if (channelType == 1) {
+            if (channelType == 1 || channelType == 2) {
 
                 TextChannel targetChannel = HiveBot.mainGuild().getTextChannelById(channelID);
                 if (targetChannel != null) {

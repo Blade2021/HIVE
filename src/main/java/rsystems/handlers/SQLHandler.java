@@ -237,7 +237,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE Bot_Settings SET %s = '%s'",key,value));
+            st.execute(String.format("UPDATE Bot_Settings SET Value = '%s' WHERE `Key` = '%s'",value,key));
             result = st.getUpdateCount();
 
         }  catch (SQLException e) {

@@ -96,6 +96,25 @@ public class ModalEventListener extends ListenerAdapter {
                         });
                     });
                 }
+            } else
+            if(event.getModalId().equalsIgnoreCase("streamhandler")){
+
+                try {
+                    String animationEnableInput = event.getValue("animationenable").getAsString();
+                    if(animationEnableInput.equalsIgnoreCase("0") || animationEnableInput.equalsIgnoreCase("1")) {
+                        HiveBot.database.putKeyValue("AnimationsEnabled", event.getValue("animationenable").getAsString());
+                    }
+
+                    String obsConnectInput = event.getValue("obsconnect").getAsString();
+                    if(obsConnectInput.equalsIgnoreCase("0") || obsConnectInput.equalsIgnoreCase("1")) {
+                        HiveBot.database.putKeyValue("EnableOBSConnect", event.getValue("obsconnect").getAsString());
+                    }
+
+                    event.reply("Values Updated").queue();
+                } catch (SQLException e) {
+                    event.reply("Something went wrong").queue();
+                    throw new RuntimeException(e);
+                }
             }
     }
 }

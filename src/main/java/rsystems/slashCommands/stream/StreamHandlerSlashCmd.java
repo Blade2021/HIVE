@@ -9,9 +9,14 @@ import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
 import net.dv8tion.jda.api.interactions.commands.build.SlashCommandData;
 import net.dv8tion.jda.api.interactions.commands.build.SubcommandData;
+import net.dv8tion.jda.api.interactions.components.ActionRow;
+import net.dv8tion.jda.api.interactions.components.text.TextInput;
+import net.dv8tion.jda.api.interactions.components.text.TextInputStyle;
+import net.dv8tion.jda.api.interactions.modals.Modal;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 public class StreamHandlerSlashCmd extends SlashCommand {
@@ -118,6 +123,37 @@ public class StreamHandlerSlashCmd extends SlashCommand {
                 } else {
                     HiveBot.streamHandler.setAnimationPause(false);
                     reply(event,"Resuming all animation requests");
+                }
+            } else
+            if(event.getSubcommandName().equalsIgnoreCase("settings")){
+                try {
+                    String animationsEnabled = HiveBot.database.getKeyValue("AnimationsEnabled");
+                    String enableOBSConnect = HiveBot.database.getKeyValue("EnableOBSConnect");
+
+                    TextInput animationsEnableInput = TextInput.create("animationenable", "Animations Enable Input", TextInputStyle.SHORT)
+                            .setPlaceholder("0 = Disabled / 1 = Enabled")
+                            .setMinLength(1)
+                            .setMaxLength(1)
+                            .setValue(animationsEnabled)
+                            .setRequired(false)
+                            .build();
+
+                    TextInput obsConnectInput = TextInput.create("obsconnect", "OBS Connect Input", TextInputStyle.SHORT)
+                            .setPlaceholder("Wether to connect to OBS with the bot.")
+                            .setMinLength(1)
+                            .setMaxLength(1)
+                            .setValue(enableOBSConnect)
+                            .setRequired(false)
+                            .build();
+
+                    Modal modal = Modal.create("streamhandler", "Stream Settings")
+                            .addActionRows(ActionRow.of(animationsEnableInput),ActionRow.of(obsConnectInput))
+                            .build();
+
+                    event.replyModal(modal).queue();
+
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
                 }
             }
     }
