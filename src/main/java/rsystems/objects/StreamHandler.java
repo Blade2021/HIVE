@@ -11,8 +11,11 @@ import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Text;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.handlers.Dispatcher;
@@ -393,6 +396,22 @@ public class StreamHandler extends ListenerAdapter {
 
     public TextChannel getLiveStreamChatChannel() {
         return HiveBot.mainGuild().getTextChannelById(this.streamChatChannelID);
+    }
+
+    public void postToStreamLog(String message){
+        MessageCreateBuilder msgBuilder = new MessageCreateBuilder();
+        msgBuilder.setContent(message);
+        postToStreamLog(msgBuilder.build());
+    }
+
+    public void postToStreamLog(MessageEmbed embed){
+        MessageCreateBuilder msgBuilder = new MessageCreateBuilder();
+        msgBuilder.setEmbeds(embed);
+        postToStreamLog(msgBuilder.build());
+    }
+
+    public void postToStreamLog(MessageCreateData messageData){
+        this.getStreamLogChannel().sendMessage(messageData).queue();
     }
 
     public TextChannel getStreamLogChannel(){
