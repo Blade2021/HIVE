@@ -64,8 +64,10 @@ public class Devour extends SlashCommand {
                         // Does the user have enough points
                         if(animation.getCost() <= points){
 
+                            DispatchRequest request = new DispatchRequest(sender.getIdLong(),animation.getId());
+
                             // Get the place in the queue
-                            final Integer requestResult = HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),animation.getId()));
+                            final Integer requestResult = HiveBot.streamHandler.submitRequest(request);
 
                             if((requestResult != null) && (requestResult >= 0)){
                                 // REQUEST ACCEPTED
@@ -76,6 +78,7 @@ public class Devour extends SlashCommand {
                                 builder.setDescription("Your request has been submitted!\n");
                                 builder.appendDescription(getQueuePositionString(requestResult));
                                 builder.addField("Available Cashews:",points.toString(),true);
+                                builder.setFooter(request.getID_String());
                                 builder.addBlankField(true);
                                 reply(event,builder.build());
 

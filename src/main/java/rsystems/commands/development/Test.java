@@ -8,6 +8,7 @@ import rsystems.HiveBot;
 import rsystems.objects.Command;
 
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class Test extends Command {
 
@@ -18,9 +19,8 @@ public class Test extends Command {
 
     @Override
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) throws SQLException {
-        HiveBot.obsRemoteController.setSceneItemEnabled("Live Basic",26,true,callback -> {
-            System.out.println("Success");
-        });
+        String uniqueID = UUID.randomUUID().toString().toUpperCase();
+        reply(event,uniqueID);
     }
 
     @Override

@@ -29,19 +29,25 @@ public class PullSourceData extends SlashCommand {
 
         final String sceneName = event.getOption("scene").getAsString();
         if(sceneName != null){
-            HiveBot.obsRemoteController.getSceneItemList(sceneName,getSceneItemListResponse -> {
-                if(getSceneItemListResponse != null && getSceneItemListResponse.isSuccessful()){
-                    for(SceneItem item:getSceneItemListResponse.getSceneItems()){
-                        try {
-                            HiveBot.database.updateAnimation(sceneName,item.getSourceName(),item.getSceneItemId());
-                        } catch (SQLException e) {
-                            throw new RuntimeException(e);
+            try {
+                HiveBot.obsRemoteController.getSceneItemList(sceneName, getSceneItemListResponse -> {
+                    if (getSceneItemListResponse != null && getSceneItemListResponse.isSuccessful()) {
+                        for (SceneItem item : getSceneItemListResponse.getSceneItems()) {
+                            try {
+                                HiveBot.database.updateAnimation(sceneName, item.getSourceName(), item.getSceneItemId());
+                            } catch (SQLException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
+                        reply(event, "Success");
+                    } else if (!getSceneItemListResponse.isSuccessful()) {
+                        reply(event, "No session is established");
                     }
-                }
-            });
+                });
+            }catch(Exception e){
+                reply(event,"Test");
+            }
         }
-        reply(event,"Success");
     }
 
     @Override
