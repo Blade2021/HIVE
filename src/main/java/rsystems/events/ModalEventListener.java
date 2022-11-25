@@ -1,7 +1,7 @@
 package rsystems.events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -33,7 +33,7 @@ public class ModalEventListener extends ListenerAdapter {
 
 
          */
-            if(event.getModalId().equalsIgnoreCase("animation-mod")){
+        if (event.getModalId().equalsIgnoreCase("animation-mod")) {
             try {
                 Integer animationID = Integer.parseInt(event.getValue("animationID").getAsString());
                 String sceneName = event.getValue("scene").getAsString();
@@ -41,10 +41,10 @@ public class ModalEventListener extends ListenerAdapter {
                 Integer cost = Integer.parseInt(event.getValue("cost").getAsString());
                 Integer cooldown = Integer.parseInt(event.getValue("cooldown").getAsString());
 
-                StreamAnimation animation = new StreamAnimation(animationID,sceneName,sourceName,null,null,cost,cooldown,true);
+                StreamAnimation animation = new StreamAnimation(animationID, sceneName, sourceName, null, null, cost, cooldown, true);
 
-                Integer result = HiveBot.database.modifyAnimation(animationID,animation);
-                if(result >= 1){
+                Integer result = HiveBot.database.modifyAnimation(animationID, animation);
+                if (result >= 1) {
                     EmbedBuilder builder = new EmbedBuilder();
                     builder.setTitle("Animation Modification Request");
                     builder.setColor(HiveBot.getColor(HiveBot.colorType.FRUIT));
@@ -52,7 +52,7 @@ public class ModalEventListener extends ListenerAdapter {
                     builder.setDescription(String.format("Animation ID: `%d` has been successfully modified.\n\nScene: `%s`\n" +
                             "Source: `%s`\n" +
                             "Cost: `%d` cashews\n" +
-                            "Cooldown: `%d` minutes",animationID,sceneName,sourceName,cost,cooldown));
+                            "Cooldown: `%d` minutes", animationID, sceneName, sourceName, cost, cooldown));
 
                     event.replyEmbeds(builder.build()).queue();
                     builder.clear();
@@ -60,61 +60,77 @@ public class ModalEventListener extends ListenerAdapter {
                     event.reply("Something went wrong.").queue();
                 }
 
-            } catch(NumberFormatException | SQLException e){
+            } catch (NumberFormatException | SQLException e) {
                 // fail
             }
-        } else
-            if(event.getModalId().startsWith("mid-")){
+        } else if (event.getModalId().startsWith("mid-")) {
 
-                event.deferReply().queue();
+            event.deferReply().queue();
 
-                String channelID = event.getModalId().substring(event.getModalId().indexOf("-")+1,event.getModalId().lastIndexOf("-"));
-                String messageID = event.getModalId().substring(event.getModalId().lastIndexOf("-")+1);
+            String channelID = event.getModalId().substring(event.getModalId().indexOf("-") + 1, event.getModalId().lastIndexOf("-"));
+            String messageID = event.getModalId().substring(event.getModalId().lastIndexOf("-") + 1);
 
-                //.reply(String.format("ChannelID: %s\nMessageID: %s",channelID,messageID)).queue();
+            //.reply(String.format("ChannelID: %s\nMessageID: %s",channelID,messageID)).queue();
 
-                EmbedBuilder builder = new EmbedBuilder();
+            EmbedBuilder builder = new EmbedBuilder();
 
-                if((event.getValue("color").getAsString() != null) && !(event.getValue("color").getAsString().isEmpty())) {
-                    builder.setColor(Color.decode(event.getValue("color").getAsString()));
-                }
+            if ((event.getValue("color").getAsString() != null) && !(event.getValue("color").getAsString().isEmpty())) {
+                builder.setColor(Color.decode(event.getValue("color").getAsString()));
+            }
 
-                if((event.getValue("title").getAsString() != null) && !(event.getValue("title").getAsString().isEmpty())){
-                    builder.setTitle(event.getValue("title").getAsString());
-                }
-                builder.setDescription(event.getValue("message").getAsString());
+            if ((event.getValue("title").getAsString() != null) && !(event.getValue("title").getAsString().isEmpty())) {
+                builder.setTitle(event.getValue("title").getAsString());
+            }
+            builder.setDescription(event.getValue("message").getAsString());
 
-                TextChannel channel = HiveBot.mainGuild().getTextChannelById(channelID);
-                if(messageID.equalsIgnoreCase("new")){
+            TextChannel channel = HiveBot.mainGuild().getTextChannelById(channelID);
+            if (channel != null) {
+                if (messageID.equalsIgnoreCase("new")) {
                     channel.sendMessageEmbeds(builder.build()).queue(success -> {
-                        event.getHook().editOriginal(String.format("Your message has been created. ID: %s\nLink: %s",success.getId(),success.getJumpUrl())).queue();
+                        event.getHook().editOriginal(String.format("Your message has been created. ID: %s\nLink: %s", success.getId(), success.getJumpUrl())).queue();
                     });
                 } else {
                     channel.retrieveMessageById(messageID).queue(retrievedMessage -> {
                         retrievedMessage.editMessageEmbeds(builder.build()).queue(success -> {
-                            event.getHook().editOriginal("The embed has been modified.\n"+success.getJumpUrl()).queue();
+                            event.getHook().editOriginal("The embed has been modified.\n" + success.getJumpUrl()).queue();
                         });
                     });
                 }
-            } else
-            if(event.getModalId().equalsIgnoreCase("streamhandler")){
+            } else {
+                NewsChannel newsChannel = HiveBot.mainGuild().getNewsChannelById(channelID);
 
-                try {
-                    String animationEnableInput = event.getValue("animationenable").getAsString();
-                    if(animationEnableInput.equalsIgnoreCase("0") || animationEnableInput.equalsIgnoreCase("1")) {
-                        HiveBot.database.putKeyValue("AnimationsEnabled", event.getValue("animationenable").getAsString());
+                if (newsChannel != null) {
+                    if (messageID.equalsIgnoreCase("new")) {
+                        newsChannel.sendMessageEmbeds(builder.build()).queue(success -> {
+                            event.getHook().editOriginal(String.format("Your message has been created. ID: %s\nLink: %s", success.getId(), success.getJumpUrl())).queue();
+                        });
+                    } else {
+                        newsChannel.retrieveMessageById(messageID).queue(retrievedMessage -> {
+                            retrievedMessage.editMessageEmbeds(builder.build()).queue(success -> {
+                                event.getHook().editOriginal("The embed has been modified.\n" + success.getJumpUrl()).queue();
+                            });
+                        });
                     }
-
-                    String obsConnectInput = event.getValue("obsconnect").getAsString();
-                    if(obsConnectInput.equalsIgnoreCase("0") || obsConnectInput.equalsIgnoreCase("1")) {
-                        HiveBot.database.putKeyValue("EnableOBSConnect", event.getValue("obsconnect").getAsString());
-                    }
-
-                    event.reply("Values Updated").queue();
-                } catch (SQLException e) {
-                    event.reply("Something went wrong").queue();
-                    throw new RuntimeException(e);
                 }
             }
+        } else if (event.getModalId().equalsIgnoreCase("streamhandler")) {
+
+            try {
+                String animationEnableInput = event.getValue("animationenable").getAsString();
+                if (animationEnableInput.equalsIgnoreCase("0") || animationEnableInput.equalsIgnoreCase("1")) {
+                    HiveBot.database.putKeyValue("AnimationsEnabled", event.getValue("animationenable").getAsString());
+                }
+
+                String obsConnectInput = event.getValue("obsconnect").getAsString();
+                if (obsConnectInput.equalsIgnoreCase("0") || obsConnectInput.equalsIgnoreCase("1")) {
+                    HiveBot.database.putKeyValue("EnableOBSConnect", event.getValue("obsconnect").getAsString());
+                }
+
+                event.reply("Values Updated").queue();
+            } catch (SQLException e) {
+                event.reply("Something went wrong").queue();
+                throw new RuntimeException(e);
+            }
+        }
     }
 }

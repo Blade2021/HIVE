@@ -2,6 +2,7 @@ package rsystems.slashCommands.moderation;
 
 import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.NewsChannel;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
@@ -54,7 +55,7 @@ public class Embed extends SlashCommand {
         } else {
             // MODIFY AN EXISTING EMBEDDED MESSAGE
 
-            if (channelType == 1 || channelType == 2) {
+            if (channelType == 1) {
 
                 TextChannel targetChannel = HiveBot.mainGuild().getTextChannelById(channelID);
                 if (targetChannel != null) {
@@ -79,7 +80,33 @@ public class Embed extends SlashCommand {
                         event.replyModal(createModal(colorString,messageString,titleString, targetChannel.getId(), retrievedMessage.getId())).queue();
                     }
                 }
-            } else {
+            } else if(channelType == 2){
+
+                NewsChannel targetChannel = HiveBot.mainGuild().getNewsChannelById(channelID);
+                if (targetChannel != null) {
+                    Message retrievedMessage = getMessage(targetChannel, event.getOption("message").getAsString());
+                    if (retrievedMessage != null) {
+                        // Found message
+
+                        // Pull the title
+                        String titleString = retrievedMessage.getEmbeds().get(0).getTitle();
+
+                        // Pull the description
+                        String messageString = retrievedMessage.getEmbeds().get(0).getDescription();
+
+                        // Pull the color
+                        Color color = retrievedMessage.getEmbeds().get(0).getColor();
+
+                        String colorString = null;
+                        if(color != null) {
+                            colorString = String.format("#%02X%02X%02X", color.getRed(), color.getGreen(), color.getBlue());
+                        }
+
+                        event.replyModal(createModal(colorString,messageString,titleString, targetChannel.getId(), retrievedMessage.getId())).queue();
+                    }
+                }
+
+            }else {
                 reply(event, "Sorry, I cannot process that");
             }
         }
@@ -106,6 +133,15 @@ public class Embed extends SlashCommand {
     }
 
     private Message getMessage(TextChannel channel, String messageID) {
+
+        if (channel.retrieveMessageById(messageID) != null) {
+            return channel.retrieveMessageById(messageID).complete();
+        } else {
+            return null;
+        }
+    }
+
+    private Message getMessage(NewsChannel channel, String messageID) {
 
         if (channel.retrieveMessageById(messageID) != null) {
             return channel.retrieveMessageById(messageID).complete();

@@ -117,8 +117,7 @@ public class GratitudeListener extends ListenerAdapter {
             return;
 
         final Long messageID = event.getMessageIdLong();
-        final String reactionEmote = event.getReaction().getEmoji().toString();
-        final Long id = event.getReaction().getEmoji().asCustom().getIdLong();
+        final String reactionEmote = event.getReaction().getEmoji().getAsReactionCode();
 
 
 
@@ -127,106 +126,113 @@ public class GratitudeListener extends ListenerAdapter {
 		*/
 
 
-        //If reaction was an emoji & emoji was a thumbs up or X
-        if ((reactionEmote.equalsIgnoreCase(acceptEmoji)) || (reactionEmote.equalsIgnoreCase("\u274C"))) {
+            //If reaction was an emoji & emoji was a thumbs up or X
+            if ((reactionEmote.equalsIgnoreCase(acceptEmoji)) || (reactionEmote.equalsIgnoreCase("\u274C"))) {
 
+                //Check karma staging table to see if messageID was found
+                try {
+                    if (HiveBot.karmaSQLHandler.checkStaging(messageID, event.getMember().getIdLong())) {
 
-            //Check karma staging table to see if messageID was found
-            try {
-                if (HiveBot.karmaSQLHandler.checkStaging(messageID, event.getMember().getIdLong())) {
+                        //Message was found in the staging table.
+                        //final String finalEmojiID = emojiID;
+                        event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
-                    //Message was found in the staging table.
-                    //final String finalEmojiID = emojiID;
-                    event.getChannel().retrieveMessageById(messageID).queue(message -> {
-
-                        try {
-                            HiveBot.karmaSQLHandler.deleteFromStaging(messageID);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-
-                        // Clear all reactions
-                        message.clearReactions().queue(success -> {
-                            message.addReaction(Emoji.fromUnicode("\uD83D\uDCEC")).queue();
-                        });
-
-                        User receiver = null;
-                        if (message.getMentions().getMembers().isEmpty()) {
-                            receiver = message.getReferencedMessage().getMember().getUser();
-                        } else {
-                            receiver = message.getMentions().getMembers().get(0).getUser();
-                        }
-
-                        if (receiver != null) {
-                            if (receiver.isBot()) {
-                                event.getChannel().sendMessage("Nice try!").queue();
-                                return;
+                            try {
+                                HiveBot.karmaSQLHandler.deleteFromStaging(messageID);
+                            } catch (SQLException e) {
+                                e.printStackTrace();
                             }
 
-                            //Send positive karma
-                            if (reactionEmote.equalsIgnoreCase(acceptEmoji)) {
-                                //send karma to original user
-                                // add reaction to message to confirm karma was sent.
-                                try {
-                                    HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getUser(), receiver, true);
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
+                            // Clear all reactions
+                            message.clearReactions().queue(success -> {
+                                message.addReaction(Emoji.fromUnicode("\uD83D\uDCEC")).queue();
+                            });
+
+                            User receiver = null;
+                            if (message.getMentions().getMembers().isEmpty()) {
+                                receiver = message.getReferencedMessage().getMember().getUser();
+                            } else {
+                                receiver = message.getMentions().getMembers().get(0).getUser();
+                            }
+
+                            if (receiver != null) {
+                                if (receiver.isBot()) {
+                                    event.getChannel().sendMessage("Nice try!").queue();
+                                    return;
+                                }
+
+                                //Send positive karma
+                                if (reactionEmote.equalsIgnoreCase(acceptEmoji)) {
+                                    //send karma to original user
+                                    // add reaction to message to confirm karma was sent.
+                                    try {
+                                        HiveBot.karmaSQLHandler.updateKarma(message.getIdLong(), event.getUser(), receiver, true);
+                                    } catch (SQLException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
                             }
-                        }
 
-                    });
+                        });
 
+                    }
+                } catch (SQLException e) {
+                    e.printStackTrace();
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
 
-        }
+            }
 
 
 		/*
 			KARMA REACTIONS
 		*/
 
-        if ((id.equals(karmaPosReaction)) || (id.equals(karmaNegReaction))) {
+        try {
+            if (event.getReaction().getEmoji().asCustom() != null) {
+                final Long id = event.getReaction().getEmoji().asCustom().getIdLong();
 
-            try {
-                if (HiveBot.karmaSQLHandler.getAvailableKarmaPoints(event.getUserId()) >= 1) {
+                if ((id.equals(karmaPosReaction)) || (id.equals(karmaNegReaction))) {
 
-                    //final Long finalReactionID = reactionID;
-                    event.getChannel().retrieveMessageById(messageID).queue(message -> {
+                    try {
+                        if (HiveBot.karmaSQLHandler.getAvailableKarmaPoints(event.getUserId()) >= 1) {
 
-                        final User sendingUser = event.getUser();
-                        final User receivingUser = message.getAuthor();
+                            //final Long finalReactionID = reactionID;
+                            event.getChannel().retrieveMessageById(messageID).queue(message -> {
 
-                        if ((sendingUser != null) && (receivingUser != null)) {
+                                final User sendingUser = event.getUser();
+                                final User receivingUser = message.getAuthor();
 
-                            if ((sendingUser != receivingUser) && (!receivingUser.isBot())) {
+                                if ((sendingUser != null) && (receivingUser != null)) {
 
-                                boolean direction = reactionEmote.equals(karmaPosReaction);
+                                    if ((sendingUser != receivingUser) && (!receivingUser.isBot())) {
+
+                                        boolean direction = reactionEmote.equals(karmaPosReaction);
 
 
-                                System.out.printf("Sending %s karma from %s to %s%n", direction, sendingUser.getAsTag(), receivingUser.getAsTag());
-                                try {
-                                    HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingUser, receivingUser, direction);
-                                } catch (SQLException e) {
-                                    e.printStackTrace();
+                                        System.out.printf("Sending %s karma from %s to %s%n", direction, sendingUser.getAsTag(), receivingUser.getAsTag());
+                                        try {
+                                            HiveBot.karmaSQLHandler.updateKarma(event.getMessageIdLong(), sendingUser, receivingUser, direction);
+                                        } catch (SQLException e) {
+                                            e.printStackTrace();
+                                        }
+                                    } else {
+
+                                        //Remove reaction
+                                        event.getReaction().removeReaction(event.getUser()).queue();
+                                    }
                                 }
-                            } else {
+                            });
 
-                                //Remove reaction
-                                event.getReaction().removeReaction(event.getUser()).queue();
-                            }
+                        } else {
+                            event.getReaction().removeReaction(event.getUser()).queue();
                         }
-                    });
-
-                } else {
-                    event.getReaction().removeReaction(event.getUser()).queue();
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
             }
+        } catch (IllegalStateException e){
+            //do nothing
         }
     }
 
