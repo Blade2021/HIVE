@@ -59,17 +59,17 @@ public class Devour extends SlashCommand {
                     Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
 
                     // Check if animation exists, animations is enabled, and points do not exist
-                    if(animation != null && animation.isEnabled() && points != null){
+                    if(animation != null && animation.isEnabled() && points != null) {
 
                         // Does the user have enough points
-                        if(animation.getCost() <= points){
+                        if (animation.getCost() <= points) {
 
-                            DispatchRequest request = new DispatchRequest(sender.getIdLong(),animation.getId());
+                            DispatchRequest request = new DispatchRequest(sender.getIdLong(), animation.getId());
 
                             // Get the place in the queue
                             final Integer requestResult = HiveBot.streamHandler.submitRequest(request);
 
-                            if((requestResult != null) && (requestResult >= 0)){
+                            if ((requestResult != null) && (requestResult >= 0)) {
                                 // REQUEST ACCEPTED
 
                                 //Get the amount of points left AFTER the deduction for the animation request
@@ -77,27 +77,43 @@ public class Devour extends SlashCommand {
 
                                 builder.setDescription("Your request has been submitted!\n");
                                 builder.appendDescription(getQueuePositionString(requestResult));
-                                builder.addField("Available Cashews:",points.toString(),true);
+                                builder.addField("Available Cashews:", points.toString(), true);
                                 builder.setFooter(request.getID_String());
                                 builder.addBlankField(true);
-                                reply(event,builder.build());
+                                reply(event, builder.build());
 
                             } else {
                                 // FULL QUEUE
                                 builder.setDescription("Sorry, looks like the queue is full right now.  Please try again later.");
+                                builder.setTitle("Stream Queue is Full");
+                                builder.setFooter("Error: 403");
+                                builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
                                 reply(event, builder.build());
                             }
                         } else {
                             // NOT ENOUGH POINTS
                             builder.setDescription("Sorry, it looks like you do not have enough points to call that one.");
-                            builder.addField("Available Cashews:",points.toString(),true);
-                            builder.addField("Required Cashews:",String.valueOf(animation.getCost()),true);
+                            builder.addField("Available Cashews:", points.toString(), true);
+                            builder.addField("Required Cashews:", String.valueOf(animation.getCost()), true);
+                            builder.setTitle("Not Enough Points");
+                            builder.setFooter("Error: 402");
+                            builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
 
                             reply(event, builder.build());
                         }
+                    } else if(animation != null && animation.isEnabled() && points == null){
+                        // Animation is not enabled
+                        builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
+                        builder.setTitle("No User Found");
+                        builder.setFooter("Error: 404");
+                        builder.setDescription("Looks like your not in our system yet.  \nHave you done `/Here` during a livestream?\n\nIf you believe this is an error. Please contact BLADE here on discord");
+                        reply(event, builder.build());
                     } else {
                         // Animation is not enabled
                         builder.setDescription("Sorry, looks like that animation is currently disabled.  Please try another.");
+                        builder.setTitle("Animation Disabled");
+                        builder.setFooter("Error: 401");
+                        builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
                         reply(event, builder.build());
                     }
 
