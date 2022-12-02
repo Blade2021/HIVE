@@ -3,37 +3,36 @@ package rsystems.handlers;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
+import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.commands.development.Test;
 import rsystems.commands.development.Test2;
-import rsystems.commands.utility.Christmas;
-import rsystems.commands.utility.Halloween;
-import rsystems.commands.moderation.Cleanse;
-import rsystems.commands.moderation.Clear;
-import rsystems.commands.moderation.ReferenceTester;
-import rsystems.commands.moderation.Reload;
 import rsystems.commands.moderation.Shutdown;
-import rsystems.commands.user.*;
-import rsystems.commands.user.ThreeLawsSafe;
-import rsystems.commands.stream.StreamVerify;
-import rsystems.commands.utility.*;
+import rsystems.commands.moderation.*;
 import rsystems.commands.stream.StreamMode;
+import rsystems.commands.stream.StreamVerify;
+import rsystems.commands.user.*;
+import rsystems.commands.utility.*;
 import rsystems.events.GratitudeListener;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 public class Dispatcher extends ListenerAdapter {
 
@@ -85,16 +84,16 @@ public class Dispatcher extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event) {
 
-        if(event.isFromGuild()) {
+        if (event.isFromGuild()) {
             final MessageChannel channel = event.getChannel();
 
             //Ignore all bots
             if (event.getAuthor().isBot()) {
 
                 //Check for Stream Chat channel
-                if(channel.getIdLong() == HiveBot.streamHandler.getStreamChatChannelID()){
+                if (channel.getIdLong() == HiveBot.streamHandler.getStreamChatChannelID()) {
 
-                    if(HiveBot.streamHandler.isStreamActive()) {
+                    if (HiveBot.streamHandler.isStreamActive()) {
                         HiveBot.streamHandler.parseMessage(event);
                     }
                 }
@@ -140,19 +139,32 @@ public class Dispatcher extends ListenerAdapter {
 
 
                 //CHECK FOR REFERENCES
-                for(Map.Entry<String,Reference> entry : HiveBot.referenceHandler.getRefMap().entrySet()){
+                for (Map.Entry<String, Reference> entry : HiveBot.referenceHandler.getRefMap().entrySet()) {
 
                     final Reference r = entry.getValue();
 
                     if (message.toLowerCase().startsWith(prefix.toLowerCase() + r.getReferenceCommand().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + r.getReferenceCommand().toLowerCase())) {
-                        MessageEmbed embed = HiveBot.referenceHandler.createEmbed(r);
-                        event.getMessage().replyEmbeds(embed).queue();
+                        if(event.getMessage().getMessageReference() != null) {
+
+                            Message originalMessage = event.getMessage().getReferencedMessage();
+                            originalMessage.replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
+
+                        } else {
+                            event.getMessage().replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
+                        }
                         return;
                     } else {
                         for (final String alias : r.getAliases()) {
                             if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
-                                MessageEmbed embed = HiveBot.referenceHandler.createEmbed(r);
-                                event.getMessage().replyEmbeds(embed).queue();
+
+                                if(event.getMessage().getMessageReference() != null) {
+
+                                    Message originalMessage = event.getMessage().getReferencedMessage();
+                                    originalMessage.replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
+
+                                } else {
+                                    event.getMessage().replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
+                                }
                                 return;
                             }
                         }
@@ -198,7 +210,7 @@ public class Dispatcher extends ListenerAdapter {
 
                 if (event.getMember() != null) {
                     try {
-                        authorized = isAuthorized(c,event.getGuild().getIdLong(),event.getMember(),c.getPermissionIndex());
+                        authorized = isAuthorized(c, event.getGuild().getIdLong(), event.getMember(), c.getPermissionIndex());
                     } catch (SQLException e) {
                         e.printStackTrace();
                     }
@@ -211,7 +223,7 @@ public class Dispatcher extends ListenerAdapter {
                     c.dispatch(event.getAuthor(), event.getChannel(), event.getMessage(), content, event);
 
                     Logger logger = LoggerFactory.getLogger(Dispatcher.class);
-                    logger.info("{} called by {} [{}]",c.getName(),event.getAuthor().getAsTag(),event.getAuthor().getIdLong());
+                    logger.info("{} called by {} [{}]", c.getName(), event.getAuthor().getAsTag(), event.getAuthor().getIdLong());
 
                     HiveBot.database.logCommandUsage(c.getName());
                 } catch (final NumberFormatException numberFormatException) {
@@ -228,14 +240,14 @@ public class Dispatcher extends ListenerAdapter {
                 EmbedBuilder embedBuilder = new EmbedBuilder();
                 embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
                 embedBuilder.setTitle("Unauthorized Request");
-                embedBuilder.setDescription(String.format("%s\n You are not authorized for command: `%s`",event.getMember().getAsMention(), c.getName()));
+                embedBuilder.setDescription(String.format("%s\n You are not authorized for command: `%s`", event.getMember().getAsMention(), c.getName()));
 
                 if (c.getPermissionIndex() != null) {
-                    embedBuilder.addField("Mod Permission",c.getPermissionIndex().toString(),true);
+                    embedBuilder.addField("Mod Permission", c.getPermissionIndex().toString(), true);
                 }
 
                 if (c.getDiscordPermission() != null) {
-                    embedBuilder.addField("Discord Permission",c.getDiscordPermission().getName(),true);
+                    embedBuilder.addField("Discord Permission", c.getDiscordPermission().getName(), true);
                 }
 
                 embedBuilder.setFooter(event.getAuthor().getId());
@@ -265,19 +277,19 @@ public class Dispatcher extends ListenerAdapter {
     public void onMessageDelete(MessageDeleteEvent event) {
         Command.removeResponses(event.getChannel(), event.getMessageIdLong());
     }
-	
-	public Map<String,Integer> getCommandMap(){
-		
-		Map<String,Integer> commandMap = new HashMap<>();
-		
-		for (final Command c : this.getCommands()) {
-			
-			commandMap.putIfAbsent(c.getName(),c.getPermissionIndex());
-			
-		}
-		
-		return commandMap;
-	}
+
+    public Map<String, Integer> getCommandMap() {
+
+        Map<String, Integer> commandMap = new HashMap<>();
+
+        for (final Command c : this.getCommands()) {
+
+            commandMap.putIfAbsent(c.getName(), c.getPermissionIndex());
+
+        }
+
+        return commandMap;
+    }
 
     public static Boolean isAuthorized(final Command c, final Long guildID, final Member member, final Integer permissionIndex) throws SQLException {
         boolean authorized = false;
@@ -294,7 +306,7 @@ public class Dispatcher extends ListenerAdapter {
             if (member.getPermissions().contains(c.getDiscordPermission())) {
                 return true;
             } else {
-                if(c.getPermissionIndex() == null){
+                if (c.getPermissionIndex() == null) {
                     return false;
                 }
             }
@@ -365,7 +377,7 @@ public class Dispatcher extends ListenerAdapter {
             if (member.getPermissions().contains(discordPermission)) {
                 return true;
             } else {
-                if(permissionIndex == null){
+                if (permissionIndex == null) {
                     return false;
                 }
             }

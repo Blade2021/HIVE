@@ -9,6 +9,7 @@ import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
 import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
@@ -88,6 +89,12 @@ public class Search extends Command {
 
     @Override
     public String getHelp() {
-        return null;
+
+        String returnString ="`{prefix}{command} (text)`\n" +
+                "Searches the reference library for a keyword";
+
+        returnString = returnString.replaceAll("\\{prefix}", Config.get("prefix"));
+        returnString = returnString.replaceAll("\\{command}",this.getName());
+        return returnString;
     }
 }
