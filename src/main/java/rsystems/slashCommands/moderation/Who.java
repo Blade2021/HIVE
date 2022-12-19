@@ -2,7 +2,7 @@ package rsystems.slashCommands.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.Member;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -91,6 +91,6 @@ public class Who extends SlashCommand {
 
     @Override
     public boolean isEphemeral() {
-        return false;
+        return true;
     }
 }

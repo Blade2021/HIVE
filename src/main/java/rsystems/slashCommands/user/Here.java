@@ -1,7 +1,7 @@
 package rsystems.slashCommands.user;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import org.slf4j.Logger;
@@ -21,19 +21,25 @@ public class Here extends SlashCommand {
 
             try {
 
-                Integer statusCode;
-
-                if (!HiveBot.streamHandler.isFirstHereClaimed()) {
-
-                    HiveBot.streamHandler.setFirstHereClaimed(true);
-                    statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong(), Integer.parseInt(Config.get("BONUS_HERE_INCREMENT_AMOUNT")));
-                    handleResponse(event, statusCode, true);
-
+                if(HiveBot.database.checkStreamBlacklist(sender.getIdLong())){
+                    reply(event,"You are blocked from stream utilities");
+                    HiveBot.LOGGER.info(String.format("%d attempted to use /here but is on the blacklist",sender.getIdLong()));
                 } else {
 
-                    statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong(), null);
-                    handleResponse(event, statusCode, false);
+                    Integer statusCode;
 
+                    if (!HiveBot.streamHandler.isFirstHereClaimed()) {
+
+                        HiveBot.streamHandler.setFirstHereClaimed(true);
+                        statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong(), Integer.parseInt(Config.get("BONUS_HERE_INCREMENT_AMOUNT")));
+                        handleResponse(event, statusCode, true);
+
+                    } else {
+
+                        statusCode = HiveBot.database.acceptHereStatus(sender.getIdLong(), null);
+                        handleResponse(event, statusCode, false);
+
+                    }
                 }
 
             } catch (SQLException e) {
@@ -50,7 +56,7 @@ public class Here extends SlashCommand {
         return "Tell HIVE that you attended the live stream";
     }
 
-    private void handleResponse(final SlashCommandInteractionEvent event, Integer statusCode, Boolean firstHere) {
+    private void handleResponse(final SlashCommandInteractionEvent event, final Integer statusCode, final Boolean firstHere) {
 
         EmbedBuilder builder = new EmbedBuilder();
 
@@ -58,7 +64,6 @@ public class Here extends SlashCommand {
             builder.setColor(HiveBot.getColor(HiveBot.colorType.STREAM));
             builder.setThumbnail(event.getMember().getUser().getEffectiveAvatarUrl());
 
-            String mention = event.getMember().getAsMention();
             event.getGuild().retrieveMemberById(event.getMember().getId()).queue(
                     success -> {
                         if (firstHere) {
@@ -73,7 +78,7 @@ public class Here extends SlashCommand {
 
                     }, failure -> {
                         Logger logger = LoggerFactory.getLogger(this.getClass());
-                        logger.info("Error grabbing member from here command. ID: {}",event.getMember().getId());
+                        logger.error("Error grabbing member from here command. ID: {}",event.getMember().getId());
                     });
 
             builder.clear();

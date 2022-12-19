@@ -2,9 +2,9 @@ package rsystems.objects;
 
 public class MessageAction {
 
-    private Long messageID;
-    private Long channelID;
-    private Integer actionType;
+    private final Long messageID;
+    private final Long channelID;
+    private final Integer actionType;
 
     public MessageAction(Long messageID, Long channelID, Integer actionType) {
         this.messageID = messageID;

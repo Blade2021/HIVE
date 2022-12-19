@@ -3,9 +3,9 @@ package rsystems.slashCommands.moderation;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
-import net.dv8tion.jda.api.entities.TextChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
 import net.dv8tion.jda.api.interactions.commands.build.Commands;
@@ -47,7 +47,7 @@ public class ChannelStats extends SlashCommand {
                     Message m = messages.get(0);
                     Instant lastMessageTime = m.getTimeCreated().toInstant();
 
-                    System.out.println("Instant: " + lastMessageTime);
+                    //System.out.println("Instant: " + lastMessageTime);
 
                     channelObjects.add(new AnalyzeChannelObject(queryChannel.getIdLong(),lastMessageTime,queryChannel.getName()));
                 });

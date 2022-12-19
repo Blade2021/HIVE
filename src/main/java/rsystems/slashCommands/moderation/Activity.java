@@ -2,7 +2,7 @@ package rsystems.slashCommands.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -93,7 +93,7 @@ public class Activity extends SlashCommand {
 
                     if(activity != null && !activity.isEmpty()){
 
-                        if(HiveBot.database.putValue("HIVE_ActivityList","ActivityString",activity,"ID",id) >= 1){
+                        if(HiveBot.database.putString("HIVE_ActivityList","ActivityString",activity,"ID",id) >= 1){
                             reply(event,String.format("Activity ID: %d has been updated",id));
                         }
                     } else {

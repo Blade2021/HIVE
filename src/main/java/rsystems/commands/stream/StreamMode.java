@@ -2,7 +2,7 @@ package rsystems.commands.stream;
 
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import rsystems.HiveBot;
@@ -27,11 +27,7 @@ public class StreamMode extends Command {
         String[] args = content.split("\\s+");
 
         if((args != null) && (!args[0].isEmpty())){
-            if(args[0].equalsIgnoreCase("true")){
-                HiveBot.streamHandler.setStreamActive(true);
-            } else {
-                HiveBot.streamHandler.setStreamActive(false);
-            }
+            HiveBot.streamHandler.setStreamActive(args[0].equalsIgnoreCase("true"));
 
             reply(event,"Setting stream mode to: " + String.valueOf(HiveBot.streamHandler.isStreamActive()).toUpperCase());
 

@@ -1,16 +1,24 @@
 package rsystems.objects;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.entities.Activity;
+import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
+import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.events.message.react.MessageReactionAddEvent;
 import net.dv8tion.jda.api.exceptions.InsufficientPermissionException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
+import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Text;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.handlers.Dispatcher;
 import rsystems.tasks.BotActivity;
 
 import java.awt.*;
@@ -25,23 +33,33 @@ public class StreamHandler extends ListenerAdapter {
 
     private boolean streamActive = false;
     private String streamTopic = null;
-    private Long streamQuestionChannelID = Long.parseLong(Config.get("Stream_Question_Post_ChannelID"));
-    private Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
-    private Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
+    private final Long streamQuestionChannelID = Long.parseLong(Config.get("Stream_Question_Post_ChannelID"));
+    private final Long streamChatChannelID = Long.parseLong(Config.get("Stream_Chat_ChannelID"));
+    private final Long streamLinksPostChannelID = Long.parseLong(Config.get("Stream_Links_Post_ChannelID"));
+
+    private final Long streamLogChannelID = Long.parseLong(Config.get("STREAM_REQUESTS_POST_CHANNELID"));
     private boolean firstHereClaimed = false;
     private boolean allowAnimations = true;
     private int currentStreamID = 0;
     private int spentCashews = 0;
     private int AnimationsCalled = 0;
-    private int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
+    private final int maxQueueSize = Integer.parseInt(Config.get("STREAM_MAX_QUEUE_SIZE"));
     private boolean handlingRequest = false;
     private Instant animationCooldown = Instant.now().plus(1, ChronoUnit.MINUTES);
+    private TreeMap<UUID,Long> MessageTreeMap = new TreeMap<>();
 
-    private LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
+    private final LinkedList<DispatchRequest> requestsQueue = new LinkedList<>();
 
+    /**
+     *
+     * @param dispatchRequest The request being attempted in being put in the queue
+     * @return Place in the queue
+     */
     public Integer submitRequest(DispatchRequest dispatchRequest) {
         if (this.requestsQueue.size() < maxQueueSize) {
             this.requestsQueue.add(dispatchRequest);
+
+            createStreamLogMessage(dispatchRequest);
 
             return requestsQueue.indexOf(dispatchRequest);
         } else {
@@ -56,6 +74,39 @@ public class StreamHandler extends ListenerAdapter {
             }
         }
         return null;
+    }
+
+    public void clearRequestQueue(){
+        if(!this.requestsQueue.isEmpty()){
+            this.handlingRequest = true;
+
+            Logger logger = LoggerFactory.getLogger(StreamHandler.class);
+            //logger.info("{} called by {} [{}]",c.getName(),event.getAuthor().getAsTag(),event.getAuthor().getIdLong());
+            logger.debug("Handling request set to true");
+
+            StringBuilder IDStringBuilder = new StringBuilder();
+            StringBuilder RequesterStringBuilder = new StringBuilder();
+
+            for(DispatchRequest request:this.requestsQueue){
+                IDStringBuilder.append(request.getSelectedAnimation().getId()).append("\n");
+                RequesterStringBuilder.append(request.getRequestingUserID()).append("\n");
+            }
+
+            this.requestsQueue.clear();
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.addField("Animation ID",IDStringBuilder.toString(),true);
+            builder.addField("Requester",RequesterStringBuilder.toString(),true);
+
+            this.getStreamLogChannel().sendMessageEmbeds(builder.build()).queue();
+            builder.clear();
+
+            this.handlingRequest = false;
+        }
+    }
+
+    public void setAnimationPause(boolean pause){
+        this.handlingRequest = pause;
     }
 
     /**
@@ -76,8 +127,9 @@ public class StreamHandler extends ListenerAdapter {
             this.requestsQueue.removeFirst();
 
             final StreamAnimation Animation = request.getSelectedAnimation();
-            // Subtract allotted points from user
 
+
+            // Subtract allotted points from user
             try {
                 if (HiveBot.database.consumePoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost()) >= 1) {
 
@@ -86,12 +138,25 @@ public class StreamHandler extends ListenerAdapter {
 
                     try {
                         // Call webhook
-                        HiveBot.obsRemoteController.setSourceVisibility(Animation.getSceneName(), Animation.getSourceName(), true, callback -> {
+                        HiveBot.obsRemoteController.setSceneItemEnabled(Animation.getSceneName(), Animation.getCallerID(), true, callback -> {
 
-                            if (callback.getStatus().equalsIgnoreCase("ok")) {
+                            if (callback.isSuccessful()) {
 
-                                this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES);
+                                this.animationCooldown = Instant.now().plus(Animation.getCooldown(), ChronoUnit.MINUTES).plus(Animation.getRuntime(),ChronoUnit.SECONDS);
                                 notifyAcceptedAnimationRequest(request);
+
+                                new Thread(new Runnable() {
+                                    public void run() {
+                                        try {
+                                            Thread.sleep(Animation.getRuntime() * 1000);
+                                            HiveBot.obsRemoteController.setSceneItemEnabled(Animation.getSceneName(),Animation.getCallerID(),false, downCallback -> {
+                                                //do nothing
+                                            });
+
+                                        } catch (InterruptedException ie) {
+                                        }
+                                    }
+                                }).start();
 
                                 try {
                                     HiveBot.database.recordAnimationLog(this.currentStreamID, request);
@@ -103,13 +168,17 @@ public class StreamHandler extends ListenerAdapter {
                                 this.handlingRequest = false;
                             } else {
 
+                                logger.error(callback.toString());
+
                                 // Return points to user
                                 try {
+                                    //if(callback.getError().equalsIgnoreCase())
                                     HiveBot.database.refundPoints(request.getRequestingUserID(), request.getSelectedAnimation().getCost());
                                 } catch (SQLException e) {
                                     logger.error("SQL Exception encountered - Refunding Points to User: {}",request.getRequestingUserID());
                                 }
                             }
+
                         });
                     } catch (Exception e) {
 
@@ -134,29 +203,109 @@ public class StreamHandler extends ListenerAdapter {
         }
     }
 
+    private void createStreamLogMessage(DispatchRequest request){
+        final String notifyChannelID = Config.get("STREAM_REQUESTS_POST_CHANNELID");
+        final TextChannel channel = HiveBot.mainGuild().getTextChannelById(notifyChannelID);
+
+        Long response = null;
+
+        if (channel != null) {
+
+            if (channel.canTalk()) {
+                HiveBot.mainGuild().retrieveMemberById(request.getRequestingUserID()).queue(foundMember -> {
+
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Animation Request");
+                    builder.setColor(HiveBot.getColor(HiveBot.colorType.FRUIT));
+                    builder.setDescription(String.format("**Animation ID:** %d\n" +
+                            "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
+                    builder.setFooter(request.getID_String());
+
+
+                    builder.setThumbnail(foundMember.getEffectiveAvatarUrl());
+                    builder.addField("Requesting User", foundMember.getEffectiveName() + "\n" + foundMember.getId(), true);
+
+                    channel.sendMessageEmbeds(builder.build()).queue(Success -> {
+
+                        MessageTreeMap.put(request.getRequestID(),Success.getIdLong());
+
+                    });
+                });
+            }
+        }
+    }
+
     private void notifyAcceptedAnimationRequest(DispatchRequest request) {
         final String notifyChannelID = Config.get("STREAM_REQUESTS_POST_CHANNELID");
         final TextChannel channel = HiveBot.mainGuild().getTextChannelById(notifyChannelID);
 
         if (channel != null) {
             if (channel.canTalk()) {
-                //Create message embed from request
-                EmbedBuilder builder = new EmbedBuilder();
-                builder.setTitle("Animation Request");
-                builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
-                builder.setDescription(String.format("**Animation ID:** %d\n" +
-                        "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
-                builder.addField("Requesting User", request.getRequestingUserID().toString(), true);
-                builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
-                builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
 
-                channel.sendMessageEmbeds(builder.build()).queue();
-                builder.clear();
+                final Long messageID = this.MessageTreeMap.get(request.getRequestID());
+
+                //Remove the request from the Treemap
+                this.MessageTreeMap.remove(request.getRequestID());
+
+                if(messageID != null) {
+                    channel.retrieveMessageById(messageID).queue(foundMessage -> {
+                        EmbedBuilder builder = new EmbedBuilder(foundMessage.getEmbeds().get(0));
+                        builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
+                        builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
+                        builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+
+                        foundMessage.editMessageEmbeds(builder.build()).queue();
+                    });
+                }
+
+                /*HiveBot.mainGuild().retrieveMemberById(request.getRequestingUserID()).queue(foundMember -> {
+                    //Create message embed from request
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Animation Request");
+                    builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+                    builder.setDescription(String.format("**Animation ID:** %d\n" +
+                            "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
+                    builder.setThumbnail(foundMember.getEffectiveAvatarUrl());
+                    builder.addField("Requesting User", foundMember.getEffectiveName() + "\n" + foundMember.getId(), true);
+                    builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
+                    builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
+
+                    channel.sendMessageEmbeds(builder.build()).queue();
+                    builder.clear();
+                });
+
+                 */
             }
         }
     }
 
-    private static List<Long> questionsList = new ArrayList<>();
+    private void notifyDeclinedAnimationRequest(DispatchRequest request) {
+        final String notifyChannelID = Config.get("STREAM_REQUESTS_POST_CHANNELID");
+        final TextChannel channel = HiveBot.mainGuild().getTextChannelById(notifyChannelID);
+
+        if (channel != null) {
+            if (channel.canTalk()) {
+
+                HiveBot.mainGuild().retrieveMemberById(request.getRequestingUserID()).queue(foundMember -> {
+                    //Create message embed from request
+                    EmbedBuilder builder = new EmbedBuilder();
+                    builder.setTitle("Animation Request");
+                    builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
+                    builder.setDescription(String.format("**Animation ID:** %d\n" +
+                            "**Animation Name:** %s", request.getSelectedAnimation().getId(), request.getSelectedAnimation().getSourceName()));
+                    builder.setThumbnail(foundMember.getEffectiveAvatarUrl());
+                    builder.addField("Requesting User", foundMember.getEffectiveName() + "\n" + foundMember.getId(), true);
+                    builder.addField("Cooldown Expire:", String.format("<t:%d:R>", animationCooldown.getEpochSecond()), true);
+                    builder.addField("Remaining Queue: ", String.format("%d of %d", requestsQueue.size(), maxQueueSize), false);
+
+                    channel.sendMessageEmbeds(builder.build()).queue();
+                    builder.clear();
+                });
+            }
+        }
+    }
+
+    private static final List<Long> questionsList = new ArrayList<>();
 
     public Instant getAnimationCooldown() {
         return animationCooldown;
@@ -233,6 +382,7 @@ public class StreamHandler extends ListenerAdapter {
         this.streamActive = streamActive;
     }
 
+    /*
     public Integer clearRequestQueue() {
 
         Integer removedRequests = 0;
@@ -251,6 +401,8 @@ public class StreamHandler extends ListenerAdapter {
 
         return removedRequests;
     }
+
+     */
 
     public Integer getQueueSize() {
         return this.requestsQueue.size();
@@ -300,6 +452,26 @@ public class StreamHandler extends ListenerAdapter {
         return HiveBot.mainGuild().getTextChannelById(this.streamChatChannelID);
     }
 
+    public void postToStreamLog(String message){
+        MessageCreateBuilder msgBuilder = new MessageCreateBuilder();
+        msgBuilder.setContent(message);
+        postToStreamLog(msgBuilder.build());
+    }
+
+    public void postToStreamLog(MessageEmbed embed){
+        MessageCreateBuilder msgBuilder = new MessageCreateBuilder();
+        msgBuilder.setEmbeds(embed);
+        postToStreamLog(msgBuilder.build());
+    }
+
+    public void postToStreamLog(MessageCreateData messageData){
+        this.getStreamLogChannel().sendMessage(messageData).queue();
+    }
+
+    public TextChannel getStreamLogChannel(){
+        return HiveBot.mainGuild().getTextChannelById(this.streamLogChannelID);
+    }
+
     public void parseMessage(MessageReceivedEvent event) {
 
         if (this.streamActive) {
@@ -331,7 +503,7 @@ public class StreamHandler extends ListenerAdapter {
                         for (Message m : messages) {
                             if (m.getContentRaw().contains(question)) {
                                 //System.out.println(String.format("Question: %s\nFound Message: %s",question,m.getContentRaw()));
-                                event.getMessage().addReaction("⚠").queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode("⚠")).queue();
 
                                 String logQuestion = question;
                                 if (logQuestion.length() > 20) {
@@ -369,12 +541,11 @@ public class StreamHandler extends ListenerAdapter {
                         if (questionPushChannel != null) {
                             questionPushChannel.sendMessageEmbeds(embedBuilder.build()).queue(success -> {
                                 questionsList.add(success.getIdLong());
-                                success.addReaction("✅").queue();
-                                success.addReaction("\u274C").queue();
+                                success.addReaction(Emoji.fromUnicode("✅")).queue();
+                                success.addReaction(Emoji.fromUnicode("\u274C")).queue();
                             });
                             embedBuilder.clear();
-                            event.getMessage().addReaction("\uD83D\uDCE8").queue();
-                            return;
+                            event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDCE8")).queue();
                         } else {
                             getLogger().error("Question channel is NULL");
                         }
@@ -409,14 +580,14 @@ public class StreamHandler extends ListenerAdapter {
 
                         for (Message m : messages) {
                             if (m.getContentRaw().contains(link)) {
-                                event.getMessage().addReaction("⚠").queue();
+                                event.getMessage().addReaction(Emoji.fromUnicode("⚠")).queue();
                                 getLogger().info("Link was already found above.");
                                 return;
                             }
                         }
                         //If current link was not found in messages
-                        pushChannel.sendMessage(String.format("%s\n,%s", author, link)).queue();
-                        event.getMessage().addReaction("\uD83D\uDCE8").queue();
+                        pushChannel.sendMessage(String.format("%s: %s", author, link)).queue();
+                        event.getMessage().addReaction(Emoji.fromUnicode("\uD83D\uDCE8")).queue();
                         return;
                     });
                 }
@@ -528,11 +699,11 @@ public class StreamHandler extends ListenerAdapter {
 
             try {
 
-                if (HiveBot.dispatcher.checkAuthorized(event.getGuild().getIdLong(), event.getMember(), 8, null)) {
+                if (Dispatcher.checkAuthorized(event.getGuild().getIdLong(), event.getMember(), 8, null)) {
 
-                    if (event.getReaction().getReactionEmote().isEmoji()) {
+                    //if (event.getReaction().getReactionEmote().isEmoji()) {
 
-                        final String reaction = event.getReaction().getReactionEmote().getEmoji();
+                        final String reaction = event.getReaction().getEmoji().toString();
                         final TextChannel pushChannel = HiveBot.mainGuild().getTextChannelById(this.streamQuestionChannelID);
 
                         if (reaction.equals("✅")) {
@@ -543,7 +714,7 @@ public class StreamHandler extends ListenerAdapter {
                                     embedBuilder.setColor(Color.GREEN);
                                     embedBuilder.setFooter("ANSWERED | " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
 
-                                    success.editMessageEmbeds(embedBuilder.build()).override(true).queue();
+                                    success.editMessageEmbeds(embedBuilder.build()).queue();
 
                                     //success.delete().queueAfter(60, TimeUnit.SECONDS);
                                     //keeperList.remove(messageID);
@@ -562,7 +733,7 @@ public class StreamHandler extends ListenerAdapter {
                                     embedBuilder.setDescription("**Question Removed by Moderator/Admin**\n\nPlease review our regulations for proper question etiquette.");
                                     embedBuilder.setFooter("Removed by: " + event.getMember().getEffectiveName(), event.getUser().getEffectiveAvatarUrl());
 
-                                    success.editMessageEmbeds(embedBuilder.build()).override(true).queue();
+                                    success.editMessageEmbeds(embedBuilder.build()).queue();
 
                                     //success.delete().queueAfter(60, TimeUnit.SECONDS);
                                     //keeperList.remove(messageID);
@@ -571,9 +742,6 @@ public class StreamHandler extends ListenerAdapter {
 
                         }
                     }
-                } else {
-                    event.getReaction().removeReaction(event.getUser()).queue();
-                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -587,9 +755,7 @@ public class StreamHandler extends ListenerAdapter {
      */
     @Override
     public void onMessageDelete(MessageDeleteEvent event) {
-        if (questionsList.contains(event.getMessageIdLong())) {
-            questionsList.remove(event.getMessageIdLong());
-        }
+        questionsList.remove(event.getMessageIdLong());
     }
 
     private void clearQuestions(Long channelID) {

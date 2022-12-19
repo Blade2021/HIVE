@@ -1,11 +1,10 @@
 package rsystems.events;
 
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageUpdateEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import rsystems.HiveBot;
 
 import java.sql.SQLException;
@@ -17,13 +16,12 @@ public class MessageEventListener extends ListenerAdapter {
     public void onMessageUpdate(final MessageUpdateEvent event) {
         if(event.isFromGuild()){
             if(event.getChannelType().isThread()){
-                return;
             } else {
                 if(event.getMessage().isPinned()){
-                    MessageBuilder messageBuilder = new MessageBuilder();
-                    messageBuilder.setActionRows(ActionRow.of(
+                    MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
+                    messageBuilder.addActionRow(
                             Button.primary(String.format("depin-7:%d:%d",event.getMessage().getIdLong(),event.getAuthor().getIdLong()),"7 Day De-Pin"),
-                            Button.primary(String.format("depin-30:%d:%d",event.getMessage().getIdLong(),event.getAuthor().getIdLong()),"30 Day De-Pin"))
+                            Button.primary(String.format("depin-30:%d:%d",event.getMessage().getIdLong(),event.getAuthor().getIdLong()),"30 Day De-Pin")
                     );
                     messageBuilder.setContent("Would you like to automatically De-Pin this message?");
 

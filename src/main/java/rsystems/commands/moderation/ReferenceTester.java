@@ -1,13 +1,12 @@
-package rsystems.commands.utility;
+package rsystems.commands.moderation;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.api.interactions.components.ActionRow;
 import net.dv8tion.jda.api.interactions.components.buttons.Button;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 
@@ -32,9 +31,9 @@ public class ReferenceTester extends Command {
 
         builder.setFooter("Requested by " + event.getMember().getEffectiveName(),event.getMember().getEffectiveAvatarUrl());
 
-        MessageBuilder messageBuilder = new MessageBuilder();
+        MessageCreateBuilder messageBuilder = new MessageCreateBuilder();
         messageBuilder.setEmbeds(builder.build());
-        messageBuilder.setActionRows(ActionRow.of(Button.primary("source","Source")));
+        messageBuilder.addActionRow(Button.primary("source","Source"));
 
         event.getChannel().sendMessage(messageBuilder.build()).queue(success -> {
             event.getMessage().delete().queue();

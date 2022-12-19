@@ -13,7 +13,7 @@ public class ChannelStateListener {
 
         HiveBot.streamHandler.setStreamActive(true,event.getStream().getTitle());
 
-        System.out.println(String.format("GO LIVE EVENT DETECTED! %s",event.getStream().getUserName()));
+        System.out.printf("GO LIVE EVENT DETECTED! %s%n",event.getStream().getUserName());
 
     }
 
@@ -23,7 +23,7 @@ public class ChannelStateListener {
         HiveBot.streamHandler.setStreamActive(false);
         HiveBot.streamHandler.setStreamTopic(null);
 
-        System.out.println(String.format("STREAM END EVENT DETECTED! %s",event.getChannel().getName()));
+        System.out.printf("STREAM END EVENT DETECTED! %s%n",event.getChannel().getName());
 
     }
 

@@ -13,9 +13,10 @@ import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.stream.*;
-import rsystems.slashCommands.generic.Help;
-import rsystems.slashCommands.generic.Led;
-import rsystems.slashCommands.generic.LedList;
+import rsystems.slashCommands.utility.GetPixelTubeList;
+import rsystems.slashCommands.utility.Help;
+import rsystems.slashCommands.utility.Led;
+import rsystems.slashCommands.utility.LedList;
 import rsystems.slashCommands.moderation.*;
 import rsystems.slashCommands.user.*;
 
@@ -31,30 +32,47 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     private final ExecutorService pool = Executors.newCachedThreadPool(newThreadFactory("slashCommand-runner", false));
     private final ScheduledExecutorService scheduledExecutorService = new ScheduledThreadPoolExecutor(10);
 
-    private String[] overrideCommands = {"LED"};
+    private final String[] overrideCommands = {"LED"};
 
     public SlashCommandDispatcher() {
-        registerCommand(new Here());
-        registerCommand(new StreamMode());
+
+        // User Commands
         registerCommand(new GetKarma());
         registerCommand(new Commands());
         registerCommand(new StreamPoints());
+        registerCommand(new Mini());
+        registerCommand(new Here());
+
+        // Utility Commands
         registerCommand(new Help());
         registerCommand(new Led());
-        registerCommand(new LedControl());
         registerCommand(new LedList());
+        registerCommand(new SetYoutubeLink());
+        registerCommand(new GetPixelTubeList());
+
+        // Moderation Commands
+        registerCommand(new LedControl());
         registerCommand(new Unpin());
         registerCommand(new Activity());
         registerCommand(new Who());
         registerCommand(new StreamMarker());
         registerCommand(new SubmitToken());
-        registerCommand(new Mini());
         registerCommand(new ChannelStats());
+        registerCommand(new Embed());
+
+        // Stream Commands
+        registerCommand(new StreamMode());
         registerCommand(new RegisterAnimation());
         registerCommand(new ListAnimations());
         registerCommand(new Animations());
         registerCommand(new StreamHandlerSlashCmd());
         registerCommand(new Devour());
+
+        // Dev Commands
+
+        //registerCommand(new Block());
+        registerCommand(new PullSourceData());
+
 
     }
 
@@ -163,11 +181,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         boolean authorized = false;
 
         if (c.isOwnerOnly()) {
-            if (member.getIdLong() == HiveBot.botOwnerID) {
-                return true;
-            } else {
-                return false;
-            }
+            return member.getIdLong() == HiveBot.botOwnerID;
         }
 
         if(member.hasPermission(Permission.ADMINISTRATOR)){
@@ -272,7 +286,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                     }
 
                     if(!cmdFound){
-                        System.out.println(String.format("REMOVING %s FROM GLOBAL (Command not found in SET)",command.getName()));
+                        System.out.printf("REMOVING %s FROM GLOBAL (Command not found in SET)%n",command.getName());
                         command.delete().queue();
                     }
                 }
@@ -282,7 +296,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
 
                     if(updateList.contains(slashCommand.getName())){
                         guild.upsertCommand(slashCommand.getCommandData()).queue(success -> {
-                            System.out.println(String.format("UPDATED COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
+                            System.out.printf("UPDATED COMMAND: %s FOR GLOBAL  NEW ID: %d%n", success.getName(), success.getIdLong());
                         });
                     } else {
 
@@ -295,10 +309,10 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                         }
 
                         if (!cmdFound) {
-                            System.out.println(String.format("DIDN'T FIND COMMAND: %s FOR GUILD: %d", slashCommand.getName(),guild.getIdLong()));
+                            System.out.printf("DIDN'T FIND COMMAND: %s FOR GUILD: %d%n", slashCommand.getName(),guild.getIdLong());
 
                             guild.upsertCommand(slashCommand.getCommandData()).queueAfter(5, TimeUnit.SECONDS, success -> {
-                                System.out.println(String.format("UPSERT COMMAND: %s FOR GUILD: %d  NEW ID: %d", success.getName(),guild.getIdLong(), success.getIdLong()));
+                                System.out.printf("UPSERT COMMAND: %s FOR GUILD: %d  NEW ID: %d%n", success.getName(),guild.getIdLong(), success.getIdLong());
                             });
                         }
                     }
@@ -333,7 +347,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                 }
 
                 if(!cmdFound){
-                    System.out.println(String.format("REMOVING %s FROM GLOBAL (Command not found in SET)",command.getName()));
+                    System.out.printf("REMOVING %s FROM GLOBAL (Command not found in SET)%n",command.getName());
                     command.delete().queue();
                 }
             }
@@ -343,7 +357,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
 
                 if(updateList.contains(slashCommand.getName())){
                     jda.upsertCommand(slashCommand.getCommandData()).queue(success -> {
-                        System.out.println(String.format("UPDATED COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
+                        System.out.printf("UPDATED COMMAND: %s FOR GLOBAL  NEW ID: %d%n", success.getName(), success.getIdLong());
                     });
                 } else {
 
@@ -356,10 +370,10 @@ public class SlashCommandDispatcher extends ListenerAdapter {
                     }
 
                     if (!cmdFound) {
-                        System.out.println(String.format("DIDN'T FIND COMMAND: %s FOR GLOBAL", slashCommand.getName()));
+                        System.out.printf("DIDN'T FIND COMMAND: %s FOR GLOBAL%n", slashCommand.getName());
 
                         jda.upsertCommand(slashCommand.getCommandData()).queueAfter(5, TimeUnit.SECONDS, success -> {
-                            System.out.println(String.format("UPSERT COMMAND: %s FOR GLOBAL  NEW ID: %d", success.getName(), success.getIdLong()));
+                            System.out.printf("UPSERT COMMAND: %s FOR GLOBAL  NEW ID: %d%n", success.getName(), success.getIdLong());
                         });
                     }
                 }

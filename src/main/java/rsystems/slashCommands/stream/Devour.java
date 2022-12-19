@@ -1,7 +1,8 @@
 package rsystems.slashCommands.stream;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageChannel;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.interaction.command.SlashCommandInteractionEvent;
 import net.dv8tion.jda.api.interactions.commands.OptionType;
@@ -30,6 +31,7 @@ public class Devour extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
+        // Check if a stream is active
         if(HiveBot.streamHandler.isStreamActive()){
 
             EmbedBuilder builder = new EmbedBuilder();
@@ -37,56 +39,81 @@ public class Devour extends SlashCommand {
             builder.setColor(HiveBot.getColor(HiveBot.colorType.USER));
             builder.setThumbnail(event.getGuild().getSelfMember().getEffectiveAvatarUrl());
 
-
+            // Check to see if user is already in the queue
             final Integer queuePosition = HiveBot.streamHandler.checkListForUser(sender.getIdLong());
             if(queuePosition != null){
                 // User already found
 
-                builder.setDescription("You are already in the queue.  Please wait a while and try again.");
-                builder.addField("Queue Position:",queuePosition.toString(),true);
-                builder.addBlankField(true);
+                builder.setDescription("You are already in the queue.  Please wait a while and try again.\n");
+                builder.appendDescription(getQueuePositionString(queuePosition));
                 reply(event,builder.build());
 
             } else {
-                // User not found
-
+                // User not found in the queue
 
                 try {
+                    // Grab the animation
                     final StreamAnimation animation = HiveBot.database.getAnimation(event.getOption("animation-id").getAsInt());
+
+                    // Grab the points the user has
                     Integer points = HiveBot.database.getInteger("EconomyTable","Points","UserID",sender.getIdLong());
 
-                    if(animation.isEnabled()){
-                        if(animation.getCost() <= points){
+                    // Check if animation exists, animations is enabled, and points do not exist
+                    if(animation != null && animation.isEnabled() && points != null) {
 
-                            final Integer requestResult = HiveBot.streamHandler.submitRequest(new DispatchRequest(sender.getIdLong(),animation.getId()));
+                        // Does the user have enough points
+                        if (animation.getCost() <= points) {
 
-                            if((requestResult != null) && (requestResult >= 0)){
+                            DispatchRequest request = new DispatchRequest(sender.getIdLong(), animation.getId());
+
+                            // Get the place in the queue
+                            final Integer requestResult = HiveBot.streamHandler.submitRequest(request);
+
+                            if ((requestResult != null) && (requestResult >= 0)) {
                                 // REQUEST ACCEPTED
 
+                                //Get the amount of points left AFTER the deduction for the animation request
                                 points = points - animation.getCost();
 
-                                builder.setDescription(String.format("Your request has been submitted!\nYou are currently `%d` in the queue.",requestResult));
-                                builder.addField("Available Cashews:",points.toString(),true);
+                                builder.setDescription("Your request has been submitted!\n");
+                                builder.appendDescription(getQueuePositionString(requestResult));
+                                builder.addField("Available Cashews:", points.toString(), true);
+                                builder.setFooter(request.getID_String());
                                 builder.addBlankField(true);
-                                reply(event,builder.build());
+                                reply(event, builder.build());
 
                             } else {
                                 // FULL QUEUE
-
-                                builder.setDescription(String.format("Sorry, looks like the queue is full right now.  Try again later.",requestResult));
+                                builder.setDescription("Sorry, looks like the queue is full right now.  Please try again later.");
+                                builder.setTitle("Stream Queue is Full");
+                                builder.setFooter("Error: 403");
+                                builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
                                 reply(event, builder.build());
                             }
                         } else {
                             // NOT ENOUGH POINTS
                             builder.setDescription("Sorry, it looks like you do not have enough points to call that one.");
-                            builder.addField("Available Cashews:",points.toString(),true);
-                            builder.addField("Required Cashews:",String.valueOf(animation.getCost()),true);
+                            builder.addField("Available Cashews:", points.toString(), true);
+                            builder.addField("Required Cashews:", String.valueOf(animation.getCost()), true);
+                            builder.setTitle("Not Enough Points");
+                            builder.setFooter("Error: 402");
+                            builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
 
                             reply(event, builder.build());
                         }
+                    } else if(animation != null && animation.isEnabled() && points == null){
+                        // Animation is not enabled
+                        builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
+                        builder.setTitle("No User Found");
+                        builder.setFooter("Error: 404");
+                        builder.setDescription("Looks like your not in our system yet.  \nHave you done `/Here` during a livestream?\n\nIf you believe this is an error. Please contact BLADE here on discord");
+                        reply(event, builder.build());
                     } else {
                         // Animation is not enabled
                         builder.setDescription("Sorry, looks like that animation is currently disabled.  Please try another.");
+                        builder.setTitle("Animation Disabled");
+                        builder.setFooter("Error: 401");
+                        builder.setColor(HiveBot.getColor(HiveBot.colorType.ERROR));
                         reply(event, builder.build());
                     }
 
@@ -98,7 +125,6 @@ public class Devour extends SlashCommand {
             builder.clear();
         } else {
             // Stream is not active
-
             reply(event,"There is no active stream at this time.");
         }
     }
@@ -106,5 +132,31 @@ public class Devour extends SlashCommand {
     @Override
     public String getDescription() {
         return "Devour your cashews!";
+    }
+
+    private String getQueuePositionString(int position){
+        String response = null;
+        switch(position){
+            case 0:
+                response = ("You are **first** in the queue.");
+                break;
+            case 1:
+                response = ("You are **second** in the queue.");
+                break;
+            case 2:
+                response = ("You are **third** in the queue.");
+                break;
+            case 3:
+                response = ("You are **forth** in the queue.");
+                break;
+            case 4:
+                response = ("You are **fifth** in the queue.");
+                break;
+            default:
+                response = (String.format("You are %d in the queue.",position));
+                break;
+        }
+
+        return response;
     }
 }

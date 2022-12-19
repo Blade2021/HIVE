@@ -1,35 +1,25 @@
 package rsystems;
 
-import com.github.philippheuer.credentialmanager.domain.OAuth2Credential;
-import com.github.philippheuer.events4j.api.IEventManager;
-import com.github.philippheuer.events4j.core.EventManager;
-import com.github.philippheuer.events4j.simple.SimpleEventHandler;
-import com.github.twitch4j.TwitchClient;
-import com.github.twitch4j.TwitchClientBuilder;
-import com.github.twitch4j.common.config.ProxyConfig;
+import io.obswebsocket.community.client.OBSRemoteController;
+import io.obswebsocket.community.client.message.event.Event;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.entities.Activity;
 import net.dv8tion.jda.api.entities.Guild;
-import net.dv8tion.jda.api.entities.ThreadChannel;
-import net.dv8tion.jda.api.interactions.commands.Command;
-import net.dv8tion.jda.api.interactions.commands.build.Commands;
+import net.dv8tion.jda.api.entities.channel.concrete.ThreadChannel;
 import net.dv8tion.jda.api.requests.GatewayIntent;
 import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
-import net.twasi.obsremotejava.OBSRemoteController;
-import org.slf4j.LoggerFactory;
+//import net.twasi.obsremotejava.OBSRemoteController;
 import rsystems.events.*;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
-import rsystems.handlers.Dispatcher;
 import rsystems.objects.StreamHandler;
 import rsystems.objects.TwitchBot;
 import rsystems.tasks.*;
-import rsystems.twitch.ChannelStateListener;
 
 import javax.security.auth.login.LoginException;
 import java.awt.*;
@@ -60,7 +50,7 @@ public class HiveBot {
 
     public static JDAImpl jda = null;
 
-    public static OBSRemoteController obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
+    public static OBSRemoteController obsRemoteController = null;
 
     public static Guild mainGuild() {
         return jda.getGuildById(Config.get("GUILD_ID"));
@@ -70,14 +60,14 @@ public class HiveBot {
 
     public static boolean debug = Boolean.parseBoolean(Config.get("DEBUG"));
 
-    private static Map<colorType, String> colorMap = new HashMap<>();
+    private static final Map<colorType, String> colorMap = new HashMap<>();
 
     //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
     public static void main(String[] args) throws LoginException {
         JDA api = JDABuilder.createDefault(Config.get("token"))
-                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES)
+                .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
                 .enableCache(CacheFlag.ACTIVITY)
                 .setChunkingFilter(ChunkingFilter.ALL)
@@ -107,7 +97,13 @@ public class HiveBot {
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            //obsRemoteController = new OBSRemoteController(String.format("ws://%s:%s",Config.get("OBS-ADDRESS"),Config.get("OBS-PORT")), false, Config.get("obs-key"));
+            obsRemoteController = OBSRemoteController.builder()
+                    .host(Config.get("OBS-ADDRESS"))
+                    .port(Integer.parseInt(Config.get("OBS-PORT")))
+                    .password(Config.get("OBS-KEY"))
+                    .connectionTimeout(30)
+                    .build();
+            //obsRemoteController.connect();
 
             referenceHandler.loadReferences();
 
@@ -137,7 +133,7 @@ public class HiveBot {
 
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);
             timer.schedule(new Newcomer(), 60000, 21600000);
-            timer.scheduleAtFixedRate(new CheckRequests(),60000,60000);
+            timer.scheduleAtFixedRate(new CheckRequests(),10000,1000);
             timer.scheduleAtFixedRate(new BotActivity(), 30000, 30000);
             timer.scheduleAtFixedRate(new CheckDatabase(), 60000, 300000);
             timer.scheduleAtFixedRate(new GrabKarmaTopThree(), 3000, 360000);

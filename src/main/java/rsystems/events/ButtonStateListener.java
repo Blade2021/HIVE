@@ -1,10 +1,10 @@
 package rsystems.events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.MessageBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.events.interaction.component.ButtonInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.dv8tion.jda.api.utils.messages.MessageEditBuilder;
 import rsystems.HiveBot;
 import rsystems.objects.Reference;
 
@@ -58,7 +58,7 @@ public class ButtonStateListener extends ListenerAdapter {
                         embedBuilder.setFooter("Reference: " + reference.getReferenceCommand());
                         embedBuilder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC));
 
-                        MessageBuilder builder = new MessageBuilder();
+                        MessageEditBuilder builder = new MessageEditBuilder();
 
                         builder.setEmbeds(embedBuilder.build());
 
