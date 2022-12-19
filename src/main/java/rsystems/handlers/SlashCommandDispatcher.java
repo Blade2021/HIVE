@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.stream.*;
+import rsystems.slashCommands.utility.GetPixelTubeList;
 import rsystems.slashCommands.utility.Help;
 import rsystems.slashCommands.utility.Led;
 import rsystems.slashCommands.utility.LedList;
@@ -46,6 +47,8 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new Help());
         registerCommand(new Led());
         registerCommand(new LedList());
+        registerCommand(new SetYoutubeLink());
+        registerCommand(new GetPixelTubeList());
 
         // Moderation Commands
         registerCommand(new LedControl());

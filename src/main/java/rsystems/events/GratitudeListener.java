@@ -206,7 +206,7 @@ public class GratitudeListener extends ListenerAdapter {
 
                                     if ((sendingUser != receivingUser) && (!receivingUser.isBot())) {
 
-                                        boolean direction = reactionEmote.equals(karmaPosReaction);
+                                        boolean direction = id.equals(karmaPosReaction);
 
 
                                         System.out.printf("Sending %s karma from %s to %s%n", direction, sendingUser.getAsTag(), receivingUser.getAsTag());

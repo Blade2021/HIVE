@@ -1,14 +1,14 @@
 package rsystems.handlers;
 
-import java.sql.*;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-
 import org.mariadb.jdbc.MariaDbPoolDataSource;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.objects.*;
+
+import java.sql.*;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class SQLHandler {
     protected static MariaDbPoolDataSource pool = null;
@@ -47,7 +47,7 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
 
         try {
-            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn,tableName,identifierColumn,identifier));
+            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn, tableName, identifierColumn, identifier));
             while (rs.next()) {
                 output = rs.getString(valueColumn);
             }
@@ -65,7 +65,7 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
 
         try {
-            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn,tableName,identifierColumn,identifier));
+            ResultSet rs = connection.createStatement().executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", valueColumn, tableName, identifierColumn, identifier));
             while (rs.next()) {
                 output = rs.getInt(valueColumn);
             }
@@ -147,14 +147,14 @@ public class SQLHandler {
         return date;
     }
 
-    public ArrayList<String> getList(String tableName,String columnName) throws SQLException {
+    public ArrayList<String> getList(String tableName, String columnName) throws SQLException {
         ArrayList<String> list = new ArrayList<>();
         Connection connection = pool.getConnection();
 
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s",columnName,tableName));
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s", columnName, tableName));
             while (rs.next()) {
                 list.add(rs.getString(columnName));
             }
@@ -168,14 +168,14 @@ public class SQLHandler {
         return list;
     }
 
-    public ArrayList<String> getList(Long guildID,String tableName,String columnName) throws SQLException {
+    public ArrayList<String> getList(Long guildID, String tableName, String columnName) throws SQLException {
         ArrayList<String> list = new ArrayList<>();
         Connection connection = pool.getConnection();
 
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE ChildGuildID = %d",columnName,tableName,guildID));
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE ChildGuildID = %d", columnName, tableName, guildID));
             while (rs.next()) {
                 list.add(rs.getString(columnName));
             }
@@ -189,17 +189,17 @@ public class SQLHandler {
         return list;
     }
 
-    public Map<Long, String> getMap(Long guildID,String tableName,String firstColumn,String secondColumn) throws SQLException {
+    public Map<Long, String> getMap(Long guildID, String tableName, String firstColumn, String secondColumn) throws SQLException {
         Map<Long, String> map = new HashMap<>();
         Connection connection = pool.getConnection();
 
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT %s, %s FROM %s WHERE ChildGuildID = %d",firstColumn,secondColumn,tableName,guildID));
+            ResultSet rs = st.executeQuery(String.format("SELECT %s, %s FROM %s WHERE ChildGuildID = %d", firstColumn, secondColumn, tableName, guildID));
             while (rs.next()) {
 
-                map.putIfAbsent(rs.getLong(firstColumn),rs.getString(secondColumn));
+                map.putIfAbsent(rs.getLong(firstColumn), rs.getString(secondColumn));
             }
 
         } catch (SQLException throwables) {
@@ -218,16 +218,16 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d",tablename,columnName,newValue,identifierColumn,identifier));
+            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = %d", tablename, columnName, newValue, identifierColumn, identifier));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
         }
 
-        return  result;
+        return result;
     }
 
     public Integer putKeyValue(String key, String value) throws SQLException {
@@ -237,16 +237,16 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE Bot_Settings SET Value = '%s' WHERE `Key` = '%s'",value,key));
+            st.execute(String.format("UPDATE Bot_Settings SET Value = '%s' WHERE `Key` = '%s'", value, key));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
         }
 
-        return  result;
+        return result;
     }
 
     public String getKeyValue(String key) throws SQLException {
@@ -256,7 +256,7 @@ public class SQLHandler {
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT Value FROM Bot_Settings WHERE `Key` = '%s'",key));
+            ResultSet rs = st.executeQuery(String.format("SELECT Value FROM Bot_Settings WHERE `Key` = '%s'", key));
             while (rs.next()) {
                 value = rs.getString("Value");
             }
@@ -277,20 +277,19 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = '%s'",tablename,columnName,newValue,identifierColumn,identifier));
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = '%s'", tablename, columnName, newValue, identifierColumn, identifier));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
         }
 
-        return  result;
+        return result;
     }
 
     /**
-     *
      * @param tablename
      * @param columnName
      * @param newValue
@@ -306,16 +305,16 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = %d",tablename,columnName,newValue,identifierColumn,identifier));
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = %d", tablename, columnName, newValue, identifierColumn, identifier));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
         }
 
-        return  result;
+        return result;
     }
 
     public Timestamp getTimestamp(String tableName, String columnName, String identifierColumn, Long identifier) throws SQLException {
@@ -326,7 +325,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d",columnName,tableName,identifierColumn,identifier));
+            ResultSet rs = st.executeQuery(String.format("SELECT %s FROM %s WHERE %s = %d", columnName, tableName, identifierColumn, identifier));
             while (rs.next()) {
                 output = rs.getTimestamp(columnName);
             }
@@ -347,16 +346,16 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = '%s'",tablename,columnName,value,identifierColumn,identifier));
+            st.execute(String.format("UPDATE %s SET %s = '%s' WHERE %s = '%s'", tablename, columnName, value, identifierColumn, identifier));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
         }
 
-        return  result;
+        return result;
     }
 
 
@@ -390,7 +389,7 @@ public class SQLHandler {
             connection.close();
         }
 
-        if(ledFound)
+        if (ledFound)
             return led;
         else
             return null;
@@ -423,6 +422,7 @@ public class SQLHandler {
 
     /**
      * INSERT AN LED INTO THE SYSTEM  (This will be useful for you PIXELHEADS!)
+     *
      * @param led - The LED with values set to be added.
      * @return <p>200 - Status OK</p>
      * @throws SQLException
@@ -432,7 +432,7 @@ public class SQLHandler {
 
         Integer output = null;
 
-        try{
+        try {
             Statement st = connection.createStatement();
 
             // text  (String)
@@ -450,7 +450,7 @@ public class SQLHandler {
                     led.getDescription())
             );
 
-            if(st.getUpdateCount() > 0){
+            if (st.getUpdateCount() > 0) {
                 output = 200;
             }
 
@@ -481,7 +481,7 @@ public class SQLHandler {
                 led.setWattagePerPixel_Theoretical(rs.getFloat("WattageTheory"));
                 led.setDescription(rs.getString("Description"));
 
-                ledList.putIfAbsent(led.getLedName(),led);
+                ledList.putIfAbsent(led.getLedName(), led);
             }
 
             connection.close();
@@ -523,7 +523,7 @@ public class SQLHandler {
         return output;
     }
 
-    
+
     public String getDate(String id, String table) throws SQLException {
         String date = "";
 
@@ -547,7 +547,7 @@ public class SQLHandler {
     }
 
     // Set the last seen date using id
-    
+
     public int setDate(String table, String id, String date) throws SQLException {
 
         int updateCount = 0;
@@ -690,7 +690,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
-    
+
     public HashMap<String, String> getAllUsers() {
         HashMap<String, String> idMap = new HashMap<>();
         try {
@@ -710,7 +710,7 @@ public class SQLHandler {
     }
 
     // Return an array list of all values in the DB
-    
+
     public HashMap<String, String> getAllUserDates() {
         HashMap<String, String> idMap = new HashMap<>();
 
@@ -731,7 +731,7 @@ public class SQLHandler {
         return idMap;
     }
 
-    
+
     public int getDBSize() {
         int output = 0;
         try {
@@ -788,8 +788,8 @@ public class SQLHandler {
     /**
      * Add a role to the database as as a role with permissions.  This database table controls what roles have what permissions to the bot.
      *
-     * @param roleID The role to be given mod permissions.
-     * @param roleName The name of the role.
+     * @param roleID    The role to be given mod permissions.
+     * @param roleName  The name of the role.
      * @param authLevel The permission index that the role will have.  This uses the binary system as before.
      * @return True - No errors | False - Errors occured on insert
      */
@@ -847,7 +847,7 @@ public class SQLHandler {
     /**
      * Update a role that is already in the auth table with a new name
      *
-     * @param roleID The role to be updated.
+     * @param roleID   The role to be updated.
      * @param roleName The new name of the role.
      * @return True - No errors | False - Errors occured on insert
      */
@@ -876,7 +876,7 @@ public class SQLHandler {
     /**
      * Update a role that is already in the auth table with a new permissions
      *
-     * @param roleID The role to be updated.
+     * @param roleID    The role to be updated.
      * @param authLevel The new permissions for the role.
      * @return True - No errors | False - Errors occured on insert
      */
@@ -905,19 +905,19 @@ public class SQLHandler {
     /**
      * Get a map of the roleID and Permissions for all roles in the auth table.
      *
-     * @return Map[RoleID,Role Permissions]
+     * @return Map[RoleID, Role Permissions]
      */
-    public Map<Long,Integer> getAuthRoles() throws SQLException {
+    public Map<Long, Integer> getAuthRoles() throws SQLException {
         Map<Long, Integer> authMap = new HashMap<>();
 
         Connection connection = pool.getConnection();
 
-        try{
+        try {
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT RoleID, AuthLevel FROM HIVE_AuthRole");
-            while(rs.next()){
-                authMap.putIfAbsent(rs.getLong("RoleID"),rs.getInt("AuthLevel"));
+            while (rs.next()) {
+                authMap.putIfAbsent(rs.getLong("RoleID"), rs.getInt("AuthLevel"));
             }
 
         } catch (SQLException throwables) {
@@ -932,7 +932,7 @@ public class SQLHandler {
     /**
      * Add an emoji alias to the Emoji Whitelist for a role.
      *
-     * @param roleID The roleID that is receiving the emoji to its whitelist.
+     * @param roleID       The roleID that is receiving the emoji to its whitelist.
      * @param emojiUnicode The emoji in ALIAS form that will get stored as a varchar in the database.
      * @return True = Successful insertion | False = Database Error
      */
@@ -969,8 +969,9 @@ public class SQLHandler {
 
     /**
      * Remove an emoji from the whitelist.  This will affect the users nicknames.
+     *
      * @param roleID The role to remove the emoji FROM
-     * @param emoji The emoji to be removed from the whitelist.
+     * @param emoji  The emoji to be removed from the whitelist.
      * @return True - Emoji found and removed | False - No matches found
      */
     public boolean removeEmojiFromWhitelist(Long roleID, String emoji) throws SQLException {
@@ -989,7 +990,6 @@ public class SQLHandler {
             }
 
 
-
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
@@ -1003,22 +1003,22 @@ public class SQLHandler {
 
         Connection connection = pool.getConnection();
 
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             HiveBot.emojiPerkMap.clear();
 
             ResultSet rs = st.executeQuery("SELECT RoleID, EmojiUnicode FROM HIVE_PerksEmoji");
-            while(rs.next()){
+            while (rs.next()) {
 
                 Long roleID = rs.getLong("RoleID");
                 String emoji = rs.getString("EmojiUnicode");
 
-                if(HiveBot.emojiPerkMap.containsKey(roleID)){
+                if (HiveBot.emojiPerkMap.containsKey(roleID)) {
                     HiveBot.emojiPerkMap.get(roleID).add(emoji);
                 } else {
-                    HiveBot.emojiPerkMap.putIfAbsent(roleID,new ArrayList<String>());
+                    HiveBot.emojiPerkMap.putIfAbsent(roleID, new ArrayList<String>());
                     HiveBot.emojiPerkMap.get(roleID).add(emoji);
                 }
 
@@ -1042,12 +1042,12 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT UsageCount, LastUsage FROM HIVE_CommandTracker WHERE Name = \"%s\"", commandName));
-            while(rs.next()){
+            while (rs.next()) {
 
                 output = rs.getInt("UsageCount");
 
@@ -1074,12 +1074,12 @@ public class SQLHandler {
         Boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT RoleID FROM HIVE_AssignRole WHERE RoleID = %d", roleID));
-            while(rs.next()){
+            while (rs.next()) {
                 output = true;
             }
 
@@ -1102,12 +1102,12 @@ public class SQLHandler {
         List<Long> output = new ArrayList<>();
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT RoleID FROM HIVE_AssignRole");
-            while(rs.next()){
+            while (rs.next()) {
                 output.add(rs.getLong("RoleID"));
             }
 
@@ -1124,7 +1124,6 @@ public class SQLHandler {
     /**
      * Store the channel and message IDs into a table to allow pulling the message in the future for edits.
      *
-     *
      * @param channelID The channelID is used in the future to know what channel to pull from.
      * @param messageID The messageID, to allow grabbing the message in the future.
      * @return true = Successful insert into database | false = Database insertion error
@@ -1133,12 +1132,12 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.execute(String.format("INSERT INTO HIVE_EmbedTable (ChannelID, MessageID) VALUES (%d, %d)",channelID,messageID));
-            if(st.getUpdateCount() >= 1){
+            st.execute(String.format("INSERT INTO HIVE_EmbedTable (ChannelID, MessageID) VALUES (%d, %d)", channelID, messageID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1155,7 +1154,6 @@ public class SQLHandler {
     /**
      * Get the channelID associated with a messageID from the database.
      *
-     *
      * @param messageID The ID of the message to lookup.
      * @return Returns channelID if messageID was found.  Otherwise returns null.
      */
@@ -1163,12 +1161,12 @@ public class SQLHandler {
         Long output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT ChannelID FROM HIVE_EmbedTable WHERE MessageID = %d",messageID));
-            while(rs.next()){
+            ResultSet rs = st.executeQuery(String.format("SELECT ChannelID FROM HIVE_EmbedTable WHERE MessageID = %d", messageID));
+            while (rs.next()) {
                 output = rs.getLong("ChannelID");
             }
 
@@ -1185,21 +1183,20 @@ public class SQLHandler {
     /**
      * Get the channelID associated with a messageID from the database.
      *
-     *
-     * @param tableName The name of the table to update.
+     * @param tableName        The name of the table to update.
      * @param identifierColumn The column name that holds the identifier to use to identify what row to delete.
-     * @param identifier The identifier that will determine what row to delete.
+     * @param identifier       The identifier that will determine what row to delete.
      * @return Returns how many rows were deleted.
      */
     public Integer deleteValue(String tableName, String identifierColumn, Long identifier) throws SQLException {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d", tableName, identifierColumn, identifier));
             output = st.getUpdateCount();
 
 
@@ -1214,20 +1211,21 @@ public class SQLHandler {
 
     /**
      * Delete a row(s) from the table with a identifier.
-     * @param tableName The table referencing the row(s) to be deleted
+     *
+     * @param tableName        The table referencing the row(s) to be deleted
      * @param identifierColumn The column name that holds the identifier
-     * @param identifier The identifier, this is used to query what rows to delete
+     * @param identifier       The identifier, this is used to query what rows to delete
      * @return The amount of rows deleted.
      */
     public Integer deleteValue(String tableName, String identifierColumn, Integer identifier) throws SQLException {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d", tableName, identifierColumn, identifier));
             output = st.getUpdateCount();
 
 
@@ -1244,11 +1242,11 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d", tableName, identifierColumn, identifier));
             output = st.getUpdateCount();
 
 
@@ -1265,11 +1263,11 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d",tableName,identifierColumn,identifier));
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = %d", tableName, identifierColumn, identifier));
             output = st.getUpdateCount();
 
         } catch (SQLException throwables) {
@@ -1285,11 +1283,11 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("DELETE FROM %s WHERE %s = '%s'",tableName,identifierColumn,identifier));
+            st.executeQuery(String.format("DELETE FROM %s WHERE %s = '%s'", tableName, identifierColumn, identifier));
             output = st.getUpdateCount();
 
         } catch (SQLException throwables) {
@@ -1303,6 +1301,7 @@ public class SQLHandler {
 
     /**
      * This method will place a string in the rolling queue of the activity pool.
+     *
      * @param activity What to add to the queue of messages that get displayed in the activity field.  Limit 32 characters
      * @return Returns the ID of the inserted row
      */
@@ -1310,15 +1309,15 @@ public class SQLHandler {
         Integer output = 0;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
 
-            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO HIVE_ActivityList (ActivityString) VALUES (\"%s\")",activity),new String[] {"ID"});
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO HIVE_ActivityList (ActivityString) VALUES (\"%s\")", activity), new String[]{"ID"});
             st.execute();
 
-            if(st.getUpdateCount() >= 1){
+            if (st.getUpdateCount() >= 1) {
                 ResultSet rs = st.getGeneratedKeys();
-                while(rs.next()) {
+                while (rs.next()) {
                     output = rs.getInt("ID");
                 }
             }
@@ -1336,19 +1335,20 @@ public class SQLHandler {
 
     /**
      * Get a TreeMap of the activities that are in the database pool.
+     *
      * @return TreeMap of entries
      */
     public TreeMap<Integer, String> getActivityMap() throws SQLException {
         TreeMap<Integer, String> activityMap = new TreeMap<>();
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT ID, ActivityString FROM HIVE_ActivityList");
-            while(rs.next()){
-                activityMap.putIfAbsent(rs.getInt("ID"),rs.getString("ActivityString"));
+            while (rs.next()) {
+                activityMap.putIfAbsent(rs.getInt("ID"), rs.getString("ActivityString"));
             }
 
 
@@ -1366,6 +1366,7 @@ public class SQLHandler {
 
     /**
      * This method pulls the next activity from the pool.  If the next activity is null, it returns back to the first row.
+     *
      * @param currentIndex The current activities ID
      * @return The next activity found in the database.
      */
@@ -1373,19 +1374,19 @@ public class SQLHandler {
         String output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT ID, ActivityString FROM HIVE_ActivityList WHERE ID > %d LIMIT 1",currentIndex));
-            while(rs.next()){
+            ResultSet rs = st.executeQuery(String.format("SELECT ID, ActivityString FROM HIVE_ActivityList WHERE ID > %d LIMIT 1", currentIndex));
+            while (rs.next()) {
                 output = rs.getString("ActivityString");
                 HiveBot.activityStatusIndex = rs.getInt("ID");
             }
 
-            if(output == null){
+            if (output == null) {
                 rs = st.executeQuery("SELECT ActivityString FROM HIVE_ActivityList WHERE ID = 1");
-                while(rs.next()){
+                while (rs.next()) {
                     output = rs.getString("ActivityString");
                 }
 
@@ -1405,6 +1406,7 @@ public class SQLHandler {
 
     /**
      * This method will check the database for any user authorization overrides.  This is used to add permissions to a certain user rather then a role.  Allowing more control of permissions.
+     *
      * @param userID The userid of the user to be checked
      * @return True - Authorized | False - Unauthorized
      */
@@ -1412,12 +1414,12 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT AuthLevel FROM HIVE_AuthUser WHERE UserID = %d LIMIT 1",userID));
-            while(rs.next()){
+            ResultSet rs = st.executeQuery(String.format("SELECT AuthLevel FROM HIVE_AuthUser WHERE UserID = %d LIMIT 1", userID));
+            while (rs.next()) {
                 output = rs.getInt("AuthLevel");
             }
 
@@ -1433,21 +1435,22 @@ public class SQLHandler {
 
     /**
      * Add a user to the authentication override table.
-     * @param userID The userID of the user to be added.
+     *
+     * @param userID    The userID of the user to be added.
      * @param authLevel The authentication level of the user.
-     * @param userTag The user's tag for reference purposes only.
+     * @param userTag   The user's tag for reference purposes only.
      * @return True - Insert transaction completed | False - Errors Occurred
      */
     public boolean insertAuthUser(Long userID, int authLevel, String userTag) throws SQLException {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("INSERT INTO HIVE_AuthUser (UserID, AuthLevel, UserTag) VALUES (%d, %d, '%s')",userID,authLevel,userTag));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("INSERT INTO HIVE_AuthUser (UserID, AuthLevel, UserTag) VALUES (%d, %d, '%s')", userID, authLevel, userTag));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1465,12 +1468,12 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("DELETE FROM HIVE_AuthUser WHERE UserID = %d",userID));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("DELETE FROM HIVE_AuthUser WHERE UserID = %d", userID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1488,12 +1491,12 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET AuthLevel = %d WHERE UserID = %d",newAuthLevel, userID));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET AuthLevel = %d WHERE UserID = %d", newAuthLevel, userID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1511,12 +1514,12 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET UserTag = '%s' WHERE UserID = %d",userTag, userID));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("UPDATE FROM HIVE_AuthUser SET UserTag = '%s' WHERE UserID = %d", userTag, userID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1553,7 +1556,8 @@ public class SQLHandler {
 
     /**
      * This method will add a string to the database to be pulled when a user uses the Mini command.
-     * @param userID The userid of the user requesting the insert
+     *
+     * @param userID  The userid of the user requesting the insert
      * @param message The message to be added
      * @return True - Successful Transaction | False - Error
      */
@@ -1561,13 +1565,13 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             st.execute("DELETE FROM HIVE_UserMessageTable WHERE UserID = " + userID);
-            st.executeQuery(String.format("INSERT INTO HIVE_UserMessageTable (UserID, Message) VALUES (%d, '%s')",userID,message));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("INSERT INTO HIVE_UserMessageTable (UserID, Message) VALUES (%d, '%s')", userID, message));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1583,7 +1587,8 @@ public class SQLHandler {
 
     /**
      * Update the user mini message
-     * @param userID The user's ID to be updated
+     *
+     * @param userID  The user's ID to be updated
      * @param message The updated message to overwrite the current one.
      * @return True - Successful Transaction | False - Errors
      */
@@ -1591,12 +1596,12 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Message = \"%s\" WHERE UserID = %d",message,userID));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Message = \"%s\" WHERE UserID = %d", message, userID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1612,7 +1617,8 @@ public class SQLHandler {
 
     /**
      * Update the user mini message color
-     * @param userID The user's ID to be updated
+     *
+     * @param userID    The user's ID to be updated
      * @param colorCode The updated color to overwrite the current one.
      * @return True - Successful Transaction | False - Errors
      */
@@ -1620,12 +1626,12 @@ public class SQLHandler {
         boolean output = false;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Color = \"%s\" WHERE UserID = %d",colorCode,userID));
-            if(st.getUpdateCount() >= 1){
+            st.executeQuery(String.format("UPDATE HIVE_UserMessageTable SET Color = \"%s\" WHERE UserID = %d", colorCode, userID));
+            if (st.getUpdateCount() >= 1) {
                 output = true;
             }
 
@@ -1643,12 +1649,12 @@ public class SQLHandler {
         String returnString = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT Message FROM HIVE_Greetings ORDER BY RAND() LIMIT 1");
-            while(rs.next()){
+            while (rs.next()) {
                 returnString = rs.getString("Message");
             }
 
@@ -1663,7 +1669,6 @@ public class SQLHandler {
     }
 
     /**
-     *
      * @param userID
      * @return <p>200 = User Added or User Updated</p>
      * <p>201 = Database error </p>
@@ -1675,7 +1680,7 @@ public class SQLHandler {
 
         Connection connection = pool.getConnection();
 
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
@@ -1684,25 +1689,25 @@ public class SQLHandler {
             Integer currentPoints = null;
             Instant previousTimestamp = null;
 
-            if(incrementAmount == null) {
+            if (incrementAmount == null) {
                 incrementAmount = Integer.parseInt(Config.get("HERE_INCREMENT_AMOUNT"));
             }
 
-            while(rs.next()){
+            while (rs.next()) {
                 currentPoints = rs.getInt("Points");
                 previousTimestamp = rs.getTimestamp("LastHereStatus").toInstant();
                 break;
             }
 
-            if(currentPoints != null) {
+            if (currentPoints != null) {
 
 
-                if(previousTimestamp.plus(12,ChronoUnit.HOURS).isBefore(Instant.now())){
+                if (previousTimestamp.plus(12, ChronoUnit.HOURS).isBefore(Instant.now())) {
 
-                //if (previousTimestamp.isAfter(Instant.now().minus(12, ChronoUnit.HOURS))) {
+                    //if (previousTimestamp.isAfter(Instant.now().minus(12, ChronoUnit.HOURS))) {
 
-                    st.execute(String.format("UPDATE EconomyTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d",Timestamp.from(Instant.now()),currentPoints + incrementAmount,userID));
-                    if(st.getUpdateCount() > 0){
+                    st.execute(String.format("UPDATE EconomyTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d", Timestamp.from(Instant.now()), currentPoints + incrementAmount, userID));
+                    if (st.getUpdateCount() > 0) {
                         output = 200;
                     } else {
                         output = 201;
@@ -1712,8 +1717,8 @@ public class SQLHandler {
                     output = 401;
                 }
             } else {
-                st.execute(String.format("INSERT INTO EconomyTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')",userID,incrementAmount,Timestamp.from(Instant.now())));
-                if(st.getUpdateCount() > 0){
+                st.execute(String.format("INSERT INTO EconomyTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')", userID, incrementAmount, Timestamp.from(Instant.now())));
+                if (st.getUpdateCount() > 0) {
                     output = 200;
                 } else {
                     output = 201;
@@ -1731,6 +1736,7 @@ public class SQLHandler {
 
     /**
      * Gets the amount of points a user has to spend on Animationisements, LED effects, and other stream luxuries.
+     *
      * @param userID The DISCORD UserID of the user to be verified
      * @return UserStreamObject
      * @throws SQLException
@@ -1740,13 +1746,13 @@ public class SQLHandler {
 
         Connection connection = pool.getConnection();
 
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM EconomyTable WHERE UserID = " + userID);
 
-            while(rs.next()){
+            while (rs.next()) {
                 output = new UserStreamObject();
                 output.setPoints(rs.getInt("Points"));
                 output.setSpentPoints(rs.getInt("SpentPoints"));
@@ -1764,9 +1770,10 @@ public class SQLHandler {
 
     /**
      * Insert a message action into the database for processing at a later time.
-     * @param timestamp The timestamp that the action will need to take place.  This should be any time in the future.
-     * @param channelID The channel ID that contains the message
-     * @param messageID The ID of the message that will be used for the action.
+     *
+     * @param timestamp  The timestamp that the action will need to take place.  This should be any time in the future.
+     * @param channelID  The channel ID that contains the message
+     * @param messageID  The ID of the message that will be used for the action.
      * @param actionType <p>The type of action.  </p>
      *                   <p>1 = Unpinning a message</p>
      * @return If successful, return a 1 (Updated row count)
@@ -1776,11 +1783,11 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
-            st.execute(String.format("INSERT INTO MessageTable (ActionDate, MessageID, ChannelID, ActionType) VALUES ('%s',%d,%d,%d)",timestamp,messageID,channelID,actionType));
+            st.execute(String.format("INSERT INTO MessageTable (ActionDate, MessageID, ChannelID, ActionType) VALUES ('%s',%d,%d,%d)", timestamp, messageID, channelID, actionType));
             output = st.getUpdateCount();
 
         } catch (SQLException throwables) {
@@ -1795,6 +1802,7 @@ public class SQLHandler {
 
     /**
      * This method is to retrieve the list of messages in the queue to be unpinned
+     *
      * @param timestamp The timestamp to compare against.  (Should be current time)
      * @return Returns an arrayList of all expired messageActions for processing.
      * @throws SQLException
@@ -1804,14 +1812,14 @@ public class SQLHandler {
         ArrayList<MessageAction> list = new ArrayList<>();
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT MessageID, ChannelID, ActionType FROM MessageTable WHERE ActionDate < '%s'", timestamp));
 
-            while(rs.next()){
-                list.add(new MessageAction(rs.getLong("MessageID"),rs.getLong("ChannelID"),rs.getInt("ActionType")));
+            while (rs.next()) {
+                list.add(new MessageAction(rs.getLong("MessageID"), rs.getLong("ChannelID"), rs.getInt("ActionType")));
             }
 
         } catch (SQLException throwables) {
@@ -1826,12 +1834,12 @@ public class SQLHandler {
 
     public void insertCredential(Integer tokenID, String accessToken, String refreshToken) throws SQLException {
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             st.execute(String.format("INSERT INTO TokenTable (tokenID, access_Token, refresh_Token) VALUES (%d, '%s', '%s')",
-                    tokenID,accessToken,refreshToken));
+                    tokenID, accessToken, refreshToken));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -1846,17 +1854,17 @@ public class SQLHandler {
 
         Credential credential = null;
 
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT access_Token, refresh_Token FROM TokenTable WHERE tokenID = %d", tokenID));
-            while(rs.next()){
+            while (rs.next()) {
 
                 String accessToken = rs.getString("access_Token");
                 String refreshToken = rs.getString("refresh_Token");
 
-                credential = new Credential(accessToken,refreshToken);
+                credential = new Credential(accessToken, refreshToken);
 
             }
 
@@ -1873,13 +1881,13 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
-            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamAnimations (Scene, Source) VALUES ('%s','%s')",sceneName,sourceName),Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamAnimations (Scene, Source) VALUES ('%s','%s')", sceneName, sourceName), Statement.RETURN_GENERATED_KEYS);
             st.execute();
 
             ResultSet resultSet = st.getGeneratedKeys();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 output = resultSet.getInt("ID");
             }
 
@@ -1894,6 +1902,7 @@ public class SQLHandler {
 
     /**
      * Updates an animation with new information if it already exists.  This relies on the source name!
+     *
      * @param scene
      * @param sourceName
      * @param sourceID
@@ -1909,19 +1918,19 @@ public class SQLHandler {
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery(String.format("SELECT Source FROM StreamAnimations WHERE SourceID = %d AND Scene = '%s'",sourceID,scene));
+            ResultSet rs = st.executeQuery(String.format("SELECT Source FROM StreamAnimations WHERE SourceID = %d AND Scene = '%s'", sourceID, scene));
 
             // Does a row already exist?
-            if(rs.first()){
-                st.execute(String.format("UPDATE StreamAnimations SET sourceID=%d WHERE Source = '%s'",sourceID,sourceName));
+            if (rs.first()) {
+                st.execute(String.format("UPDATE StreamAnimations SET sourceID=%d WHERE Source = '%s'", sourceID, sourceName));
                 result = st.getUpdateCount();
             } else {
                 // NO IT DOESN'T!  CREATE ONE!
-                st.execute(String.format("INSERT INTO StreamAnimations (Scene, Source, SourceID) VALUES ('%s','%s',%d)",scene,sourceName,sourceID));
+                st.execute(String.format("INSERT INTO StreamAnimations (Scene, Source, SourceID) VALUES ('%s','%s',%d)", scene, sourceName, sourceID));
                 result = st.getUpdateCount();
             }
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
@@ -1938,10 +1947,10 @@ public class SQLHandler {
         try {
             Statement st = connection.createStatement();
             st.execute(String.format("UPDATE StreamAnimations SET Scene = '%s', Source = '%s', Cost = %d, Cooldown = %d WHERE ID = %d",
-                    animation.getSceneName(),animation.getSourceName(),animation.getCost(),animation.getCooldown(),animation.getId()));
+                    animation.getSceneName(), animation.getSourceName(), animation.getCost(), animation.getCooldown(), animation.getId()));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
@@ -1954,13 +1963,13 @@ public class SQLHandler {
         Map<Integer, StreamAnimation> AnimationMap = new TreeMap<>();
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery("SELECT ID, Scene, Source, SourceID, Runtime, Cost, Cooldown FROM StreamAnimations WHERE Enabled = 1");
 
-            while(rs.next()){
+            while (rs.next()) {
 
                 int id = rs.getInt("ID");
                 String scene = rs.getString("Scene");
@@ -1970,7 +1979,7 @@ public class SQLHandler {
                 int cost = rs.getInt("Cost");
                 int cooldown = rs.getInt("Cooldown");
 
-                AnimationMap.putIfAbsent(id,new StreamAnimation(id,scene,source,sourceID,runtime,cost,cooldown,true));
+                AnimationMap.putIfAbsent(id, new StreamAnimation(id, scene, source, sourceID, runtime, cost, cooldown, true));
 
             }
 
@@ -1988,14 +1997,14 @@ public class SQLHandler {
 
         StreamAnimation Animation = null;
 
-        try{
+        try {
 
             Statement st = connection.createStatement();
 
             ResultSet rs = st.executeQuery(String.format("SELECT Scene, Source, SourceID, Cost, Cooldown, Runtime, Enabled FROM StreamAnimations WHERE ID = %d", ID));
-            while(rs.next()){
+            while (rs.next()) {
 
-                Animation = new StreamAnimation(ID,rs.getString("Scene"),rs.getString("Source"), rs.getInt("SourceID"), rs.getInt("Runtime"),rs.getInt("Cost"),rs.getInt("Cooldown"),rs.getBoolean("Enabled"));
+                Animation = new StreamAnimation(ID, rs.getString("Scene"), rs.getString("Source"), rs.getInt("SourceID"), rs.getInt("Runtime"), rs.getInt("Cost"), rs.getInt("Cooldown"), rs.getBoolean("Enabled"));
 
             }
 
@@ -2012,13 +2021,13 @@ public class SQLHandler {
         Integer output = null;
 
         Connection connection = pool.getConnection();
-        try{
+        try {
 
-            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamArchive (Start) VALUES ('%s')",Timestamp.from(Instant.now())),Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO StreamArchive (Start) VALUES ('%s')", Timestamp.from(Instant.now())), Statement.RETURN_GENERATED_KEYS);
             st.execute();
 
             ResultSet resultSet = st.getGeneratedKeys();
-            if(resultSet.next()){
+            if (resultSet.next()) {
                 output = resultSet.getInt("ID");
             }
 
@@ -2038,10 +2047,10 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d",amount,amount,userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d", amount, amount, userid));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
@@ -2057,10 +2066,10 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d",amount,amount,userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d", amount, amount, userid));
             result = st.getUpdateCount();
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
@@ -2075,13 +2084,71 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("INSERT INTO StreamAnimationLog (StreamID, RequestingUserID, RequestedAnimationID) VALUES (%d, %d, %d)",streamID,request.getRequestingUserID(),request.getSelectedAnimation().getId()));
+            st.execute(String.format("INSERT INTO StreamAnimationLog (StreamID, RequestingUserID, RequestedAnimationID) VALUES (%d, %d, %d)", streamID, request.getRequestingUserID(), request.getSelectedAnimation().getId()));
 
-        }  catch (SQLException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         } finally {
             connection.close();
         }
+    }
+
+    public Map<Long, String> getPixelTubeList() throws SQLException {
+
+        Connection connection = pool.getConnection();
+        Map<Long, String> pixelMap = new HashMap<>();
+
+        try {
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery(String.format("SELECT UserID, YouTubeLink FROM PixelheadYT"));
+            while (rs.next()) {
+
+                pixelMap.put(rs.getLong("UserID"), rs.getString("YouTubeLink"));
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return pixelMap;
+    }
+
+    public Integer putPixelTubeLink(Long userID, String link) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
+        Integer returnValue = null;
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT UserID FROM PixelheadYT WHERE UserID = " + userID);
+            Integer foundRows = 0;
+
+            while (rs.next()) {
+                foundRows++;
+                break;
+            }
+
+            if (foundRows > 0) {
+                st.execute(String.format("UPDATE PixelheadYT SET YouTubeLink='%s' WHERE UserID = %d", link, userID));
+            } else {
+                st.execute(String.format("INSERT INTO PixelheadYT (UserID, YouTubeLink) VALUES (%d, '%s')", userID, link));
+            }
+            returnValue = st.getUpdateCount();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
     }
 
 }
