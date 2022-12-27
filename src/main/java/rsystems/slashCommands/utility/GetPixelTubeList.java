@@ -23,17 +23,16 @@ public class GetPixelTubeList extends SlashCommand {
                 EmbedBuilder builder = new EmbedBuilder().setThumbnail(HiveBot.jda.getSelfUser().getEffectiveAvatarUrl()).setTitle("Pixelhead Youtube List").setColor(HiveBot.getColor(HiveBot.colorType.GENERIC));
 
                 StringBuilder userString = new StringBuilder();
-                StringBuilder linkString = new StringBuilder();
+                //StringBuilder linkString = new StringBuilder();
 
                 for(Map.Entry<Long,String> entry:pixelMap.entrySet()){
 
-                    userString.append(event.getGuild().getMemberById(entry.getKey()).getEffectiveName()).append("\n");
-                    linkString.append(String.format("[YouTube](%s)",entry.getValue())).append("\n");
-
+                    if(event.getGuild().getMemberById(entry.getKey()) != null) {
+                        userString.append(String.format("[%s](%s)", event.getGuild().getMemberById(entry.getKey()).getEffectiveName(), entry.getValue())).append("\n");
+                    }
                 }
 
-                builder.addField("User",userString.toString(),true);
-                builder.addField("Link",linkString.toString(),true);
+                builder.setDescription(userString.toString());
 
                 reply(event,builder.build());
                 builder.clear();
