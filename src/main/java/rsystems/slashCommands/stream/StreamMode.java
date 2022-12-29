@@ -25,6 +25,8 @@ public class StreamMode extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
+        reply(event,"We have moved over to StreamHook.  Please use /Here for that Bot instead");
+        /*
 
         Boolean streamMode = event.getOption("active").getAsBoolean();
 
@@ -71,6 +73,8 @@ public class StreamMode extends SlashCommand {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
+         */
 
     }
 

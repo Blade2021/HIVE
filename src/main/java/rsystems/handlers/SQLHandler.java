@@ -2151,4 +2151,243 @@ public class SQLHandler {
         return returnValue;
     }
 
+    /**
+     * Create a container in the database for the poll data
+     * @param starterID
+     * @param optionCount
+     * @return ID of the created Poll for processing
+     * @throws SQLException
+     */
+    public Integer createPoll(final Long starterID, final int optionCount, final int multipleChoice, final int hideResponses) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Integer returnValue = null;
+
+        try {
+
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO PollTracker (StarterID, OptionCount, MultipleChoice, HideResponses) VALUES (%d, %d, %d, %d)",starterID, optionCount, multipleChoice, hideResponses), Statement.RETURN_GENERATED_KEYS);
+            st.execute();
+
+            ResultSet resultSet = st.getGeneratedKeys();
+            if (resultSet.next()) {
+                returnValue = resultSet.getInt("id");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public Integer putLong(final String tableName, final String valueColumnName, final Long value, final String identifierColumnName, final int identifier) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Integer returnValue = null;
+
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = %d",tableName,valueColumnName,value,identifierColumnName,identifier));
+            returnValue = st.getUpdateCount();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    /**
+     *
+     * @param userID
+     * @param voteOption
+     * @param messageID
+     * @return
+     * @throws SQLException
+     */
+    public Integer addVote(Long userID, int voteOption, Long messageID) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
+        Integer returnValue = null;
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT id FROM PollTracker WHERE PollMessageID = " + messageID);
+            Integer pollID = null;
+
+            while (rs.next()) {
+                pollID = rs.getInt("id");
+                break;
+            }
+
+            if(pollID != null){
+                returnValue = addVote(pollID,userID,voteOption);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    /**
+     *
+     * @param pollID
+     * @param userID
+     * @param voteOption
+     * @return
+     * @throws SQLException
+     */
+    public Integer addVote(Integer pollID, Long userID, int voteOption) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
+        Integer returnValue = null;
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT MultipleChoice, AllowVoting FROM PollTracker WHERE id = " + pollID);
+
+            Boolean allowMultipleChoice = false;
+            Boolean allowVoting = false;
+
+            while(rs.next()){
+                if(rs.getInt("MultipleChoice") == 1){
+                    allowMultipleChoice = true;
+                }
+
+                if(rs.getInt("AllowVoting") == 1){
+                    allowVoting = true;
+                }
+            }
+
+            if(allowVoting){
+
+                rs = st.executeQuery(String.format("SELECT VoteOption FROM PollAudit WHERE fk_PollID = %d AND VoterID = %d",pollID,userID));
+                int rowCnt = 0;
+                Set<Integer> valueSet = new HashSet<>();
+
+                while(rs.next()){
+                    rowCnt++;
+                    valueSet.add(rs.getInt("VoteOption"));
+                }
+
+                if(rowCnt == 0){
+
+                    st.execute(String.format("INSERT INTO PollAudit (fk_PollID, VoterID, VoteOption) VALUES (%d, %d, %d)",pollID,userID,voteOption));
+                    st.execute(String.format("UPDATE PollTracker SET Option%d = Option%d+1 WHERE id = %d",voteOption,voteOption,pollID));
+
+                    // Vote was successful
+                    returnValue = 200;
+
+                } else {
+
+                    if(valueSet.contains(voteOption)) {
+                        // User already voted that option
+                        returnValue = 401;
+                    } else {
+                        // User voted an option that was not found.  Need to check multiple choice
+
+                        if(allowMultipleChoice){
+                            st.execute(String.format("INSERT INTO PollAudit (fk_PollID, VoterID, VoteOption) VALUES (%d, %d, %d)",pollID,userID,voteOption));
+                            st.execute(String.format("UPDATE PollTracker SET Option%d = Option%d+1 WHERE id = %d",voteOption,voteOption,pollID));
+
+                            returnValue = 200;
+                        } else {
+                               returnValue = 402;
+                        }
+                    }
+                }
+
+            } else {
+                // Voting is no longer allowed
+                returnValue = 404;
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public Poll getPoll(Long messageID) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
+        Poll returnValue = null;
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT id FROM PollTracker WHERE PollMessageID = " + messageID);
+            Integer pollID = null;
+
+            while (rs.next()) {
+                pollID = rs.getInt("id");
+                break;
+            }
+
+            if(pollID != null){
+                returnValue = getPoll(pollID);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public Poll getPoll(final Integer pollID) throws SQLException {
+
+        Connection connection = pool.getConnection();
+
+        Poll returnValue = null;
+
+        try {
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT id, StarterID, PollMessageID, ChannelID, OptionCount, AllowVoting, MultipleChoice, HideResponses, Option1, Option2, Option3, Option4 FROM PollTracker WHERE id = " + pollID);
+
+            while (rs.next()) {
+
+                returnValue = new Poll(rs.getInt("id"),
+                        rs.getInt("AllowVoting"),
+                        rs.getInt("MultipleChoice"),
+                        rs.getInt("HideResponses"),
+                        rs.getLong("StarterID"),
+                        rs.getLong("PollMessageID"),
+                        rs.getLong("ChannelID"),
+                        rs.getInt("OptionCount"),
+                        rs.getInt("Option1"),
+                        rs.getInt("Option2"),
+                        rs.getInt("Option3"),
+                        rs.getInt("Option4"));
+                break;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
 }

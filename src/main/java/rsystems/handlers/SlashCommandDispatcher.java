@@ -11,6 +11,7 @@ import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.HiveBot;
+import rsystems.slashCommands.utility.CreatePoll;
 import rsystems.objects.SlashCommand;
 import rsystems.slashCommands.stream.*;
 import rsystems.slashCommands.utility.GetPixelTubeList;
@@ -37,10 +38,11 @@ public class SlashCommandDispatcher extends ListenerAdapter {
     public SlashCommandDispatcher() {
 
         // User Commands
-        registerCommand(new GetKarma());
+        //registerCommand(new GetKarma());
         registerCommand(new Commands());
         registerCommand(new StreamPoints());
-        registerCommand(new Mini());
+        //registerCommand(new Mini());
+        registerCommand(new CreatePoll());
         registerCommand(new Here());
 
         // Utility Commands
@@ -54,24 +56,24 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new LedControl());
         registerCommand(new Unpin());
         registerCommand(new Activity());
-        registerCommand(new Who());
+        //registerCommand(new Who());
         registerCommand(new StreamMarker());
         registerCommand(new SubmitToken());
         registerCommand(new ChannelStats());
         registerCommand(new Embed());
 
         // Stream Commands
-        registerCommand(new StreamMode());
-        registerCommand(new RegisterAnimation());
-        registerCommand(new ListAnimations());
-        registerCommand(new Animations());
-        registerCommand(new StreamHandlerSlashCmd());
+        //registerCommand(new StreamMode());
+        //registerCommand(new RegisterAnimation());
+        //registerCommand(new ListAnimations());
+        //registerCommand(new Animations());
+        //registerCommand(new StreamHandlerSlashCmd());
         registerCommand(new Devour());
 
         // Dev Commands
 
         //registerCommand(new Block());
-        registerCommand(new PullSourceData());
+        //registerCommand(new PullSourceData());
 
 
     }

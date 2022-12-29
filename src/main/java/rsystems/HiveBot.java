@@ -42,7 +42,7 @@ public class HiveBot {
 
     public static Dispatcher dispatcher;
     public static SlashCommandDispatcher slashCommandDispatcher;
-    public static GratitudeListener gratitudeListener;
+    //public static GratitudeListener gratitudeListener;
     public static StreamHandler streamHandler;
     public static TwitchBot twitchBot;
 
@@ -78,9 +78,9 @@ public class HiveBot {
         api.addEventListener(slashCommandDispatcher = new SlashCommandDispatcher());
 
         // EVENT LISTENERS
-        api.addEventListener(gratitudeListener = new GratitudeListener());
+        //api.addEventListener(gratitudeListener = new GratitudeListener());
         api.addEventListener(streamHandler = new StreamHandler());
-        api.addEventListener(new GuildStateListener());
+        //api.addEventListener(new GuildStateListener());
         api.addEventListener(new ButtonStateListener());
         api.addEventListener(new MessageEventListener());
         api.addEventListener(new MemberStateListener());

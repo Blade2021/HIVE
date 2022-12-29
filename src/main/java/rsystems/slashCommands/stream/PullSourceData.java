@@ -26,7 +26,8 @@ public class PullSourceData extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
 
         event.deferReply(isEphemeral()).queue();
-
+        reply(event,"We have moved over to StreamHook.  Please use /Here for that Bot instead");
+/*
         final String sceneName = event.getOption("scene").getAsString();
         if(sceneName != null){
             try {
@@ -48,6 +49,8 @@ public class PullSourceData extends SlashCommand {
                 reply(event,"Test");
             }
         }
+
+ */
     }
 
     @Override

@@ -17,6 +17,9 @@ public class Here extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(this.isEphemeral()).queue();
 
+        reply(event,"We have moved over to StreamHook.  Please use /Here for that Bot instead");
+
+        /*
         if (HiveBot.streamHandler.isStreamActive()) {
 
             try {
@@ -49,6 +52,8 @@ public class Here extends SlashCommand {
         } else {
             reply(event, "There is no active stream at this time.", isEphemeral());
         }
+
+         */
     }
 
     @Override

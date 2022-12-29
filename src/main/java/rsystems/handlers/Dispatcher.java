@@ -44,12 +44,12 @@ public class Dispatcher extends ListenerAdapter {
         // User Commands
         registerCommand(new Commands());
         registerCommand(new Led());
-        registerCommand(new GetKarma());
+        //registerCommand(new GetKarma());
         registerCommand(new Order66());
         registerCommand(new Search());
         registerCommand(new Help());
         registerCommand(new ThreeLawsSafe());
-        registerCommand(new Mini());
+        //registerCommand(new Mini());
 
         // Utility Commands
         registerCommand(new Ping());
@@ -73,8 +73,8 @@ public class Dispatcher extends ListenerAdapter {
 
 
         // Dev Only
-        registerCommand(new Test());
-        registerCommand(new Test2());
+        //registerCommand(new Test());
+        //registerCommand(new Test2());
     }
 
     public Set<Command> getCommands() {
@@ -178,13 +178,15 @@ public class Dispatcher extends ListenerAdapter {
 
 
             //Check for Gratitude
-            for (String trigger : HiveBot.gratitudeListener.getTriggers()) {
+            /*for (String trigger : HiveBot.gratitudeListener.getTriggers()) {
                 if (event.getMessage().getContentDisplay().toLowerCase().contains(trigger)) {
                     GratitudeListener.gratitudeMessageReceived(event);
                     return;
                 }
             }
 
+
+             */
             // No gratitude triggers found
         }
     }

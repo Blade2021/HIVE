@@ -97,11 +97,8 @@ public class MemberStateListener extends ListenerAdapter {
         }
 
         checkNickname(event.getGuild(), event.getMember());
-
+        /*
         if (event.getNewOnlineStatus().equals(OnlineStatus.ONLINE)) {
-            /*
-            KARMA SYSTEM
-             */
 
             //Initiate the formatter for formatting the date into a set format
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
@@ -120,12 +117,7 @@ public class MemberStateListener extends ListenerAdapter {
 
             //Insert new user if not found in DB
             if (lastSeenKarma == null) {
-                /*if (karmaSQLHandler.insertUser(event.getMember().getId(), event.getUser().getAsTag(), formattedCurrentDate, "KARMA")) {
-                    System.out.println("Failed to add member to database");
-                } else {
-                    karmaSQLHandler.overrideKarmaPoints(event.getMember().getId(), 5);
-                }
-                 */
+
             } else {
                 long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
                 if (daysPassed >= 1) {
@@ -139,5 +131,6 @@ public class MemberStateListener extends ListenerAdapter {
                 }
             }
         }
+        */
     }
 }
