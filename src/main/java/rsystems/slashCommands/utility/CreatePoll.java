@@ -30,10 +30,10 @@ public class CreatePoll extends SlashCommand {
     @Override
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
 
-        TextInput pollQuery = TextInput.create("pollquery", "What are you voting on?", TextInputStyle.SHORT)
+        TextInput pollQuery = TextInput.create("pollquery", "What are you voting on?", TextInputStyle.PARAGRAPH)
                 .setPlaceholder("What are you voting for?")
                 .setMinLength(7)
-                .setMaxLength(50)
+                .setMaxLength(120)
                 .setRequired(true)
                 .build();
 
