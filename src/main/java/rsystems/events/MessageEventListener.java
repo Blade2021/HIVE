@@ -118,7 +118,7 @@ public class MessageEventListener extends ListenerAdapter {
                     }
                 }
 
-                event.getChannel().asTextChannel().retrieveMessageById(poll.getMessageID()).queue(foundMessage -> {
+                event.getChannel().asGuildMessageChannel().retrieveMessageById(poll.getMessageID()).queue(foundMessage -> {
                     //final Poll updatedPoll = HiveBot.database.getPoll(event.getMessageIdLong());
                     MessageEmbed originalEmbed = foundMessage.getEmbeds().get(0);
 
