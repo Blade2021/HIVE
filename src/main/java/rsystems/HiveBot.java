@@ -80,7 +80,7 @@ public class HiveBot {
         // EVENT LISTENERS
         api.addEventListener(gratitudeListener = new GratitudeListener());
         api.addEventListener(streamHandler = new StreamHandler());
-        //api.addEventListener(new GuildStateListener());
+        api.addEventListener(new GuildStateListener());
         api.addEventListener(new ButtonStateListener());
         api.addEventListener(new MessageEventListener());
         api.addEventListener(new MemberStateListener());
