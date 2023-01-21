@@ -2,22 +2,22 @@ package rsystems.handlers;
 
 import net.dv8tion.jda.api.entities.User;
 import org.mariadb.jdbc.MariaDbPoolDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import rsystems.objects.KarmaUserInfo;
 
 import java.sql.*;
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
 
 public class KarmaSQLHandler extends SQLHandler {
+
+    final Logger logger = LoggerFactory.getLogger(this.getClass().getName());
 
     public KarmaSQLHandler(MariaDbPoolDataSource pool) {
         super(pool);
     }
 
-    // Get date of last seen using ID
-    public Timestamp getTimestamp(String id) throws SQLException {
+    // Get date of last seen using UserID
+    public Timestamp getTimestamp(Long userID) throws SQLException {
         Timestamp timestamp = null;
 
         Connection connection = pool.getConnection();
@@ -25,12 +25,10 @@ public class KarmaSQLHandler extends SQLHandler {
         try {
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT LastPointIncrement FROM KARMA WHERE ID = " + id);
+            ResultSet rs = st.executeQuery("SELECT LastPointIncrement FROM KarmaUserTable WHERE UserID = " + userID);
             while (rs.next()) {
                 timestamp = rs.getTimestamp("LastPointIncrement");
             }
-
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -41,7 +39,7 @@ public class KarmaSQLHandler extends SQLHandler {
         return timestamp;
     }
 
-    public void addKarmaPoints(Long id, Timestamp datetime, boolean staff) throws SQLException {
+    public void addKarmaPoints(Long UserID, Timestamp datetime, boolean staff) throws SQLException {
 
         Connection connection = pool.getConnection();
         try {
@@ -53,25 +51,25 @@ public class KarmaSQLHandler extends SQLHandler {
              */
 
             int availablePoints = 0;
-            ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + id);
-            // ID was found, get available points
+            ResultSet rs = st.executeQuery("SELECT AvailablePoints FROM KarmaUserTable WHERE UserID = " + UserID);
+            // UserID was found, get available points
             while (rs.next()) {
-                availablePoints = rs.getInt("AV_POINTS");
+                availablePoints = rs.getInt("AvailablePoints");
             }
 
             if (availablePoints < 10) {
                 if (staff) {
                     System.out.println("Staff Found");
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = 5 WHERE ID = " + id);
+                    st.executeUpdate("UPDATE KarmaUserTable SET AvailablePoints = 5 WHERE UserID = " + UserID);
                 } else {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS + 1 WHERE ID = " + id);
+                    st.executeUpdate("UPDATE KarmaUserTable SET AvailablePoints = AvailablePoints + 1 WHERE UserID = " + UserID);
                 }
             }
 
             // SET DATE TO FINISH QUERY
 
             //todo fix this
-            st.executeUpdate(String.format("UPDATE KARMA SET LastPointIncrement = '%s' WHERE ID = %d",datetime,id));
+            st.executeUpdate(String.format("UPDATE KarmaUserTable SET LastPointIncrement = '%s' WHERE UserID = %d", datetime, UserID));
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -80,7 +78,7 @@ public class KarmaSQLHandler extends SQLHandler {
         }
     }
 
-    public Integer getKarma(String id) throws SQLException {
+    public Integer getKarma(Long userID) throws SQLException {
 
         Integer value = null;
         Connection connection = pool.getConnection();
@@ -90,13 +88,10 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT USER_KARMA FROM KARMA WHERE ID = " + id);
+            ResultSet rs = st.executeQuery(String.format("SELECT COUNT(fk_UserID) AS COUNT FROM Karma_Trackers WHERE (fk_UserID = %d AND LogTS > (current_date() - '90 days'))",userID));
             while (rs.next()) {
-                value = rs.getInt("USER_KARMA");
-                //System.out.println(value);
+                value = rs.getInt("COUNT");
             }
-
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
@@ -105,32 +100,6 @@ public class KarmaSQLHandler extends SQLHandler {
         }
 
         return value;
-    }
-
-    public String getUserTag(String id) throws SQLException {
-
-        String tag = null;
-        Connection connection = pool.getConnection();
-
-        try {
-
-
-            Statement st = connection.createStatement();
-
-            ResultSet rs = st.executeQuery("SELECT NAME FROM KARMA WHERE ID = " + id);
-            while (rs.next()) {
-                tag = rs.getString("NAME");
-            }
-
-            connection.close();
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-
-        return tag;
     }
 
     public KarmaUserInfo getKarmaUserInfo(Long userID) throws SQLException {
@@ -143,20 +112,29 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT LastPointIncrement, AV_POINTS, USER_KARMA, KSEND_POS, KSEND_NEG FROM KARMA WHERE ID = " + userID);
+            ResultSet rs = st.executeQuery("SELECT UserID, LastPointIncrement, AvailablePoints, KPosSent, KNegSent FROM KarmaUserTable WHERE UserID = " + userID);
 
             while (rs.next()) {
-                karmaUserInfo = new KarmaUserInfo();
-                karmaUserInfo.setKarma(rs.getInt("USER_KARMA"));
-                karmaUserInfo.setAvailable_points(rs.getInt("AV_POINTS"));
-                karmaUserInfo.setKsent_pos(rs.getInt("KSEND_POS"));
-                karmaUserInfo.setKsent_neg(rs.getInt("KSEND_NEG"));
+                karmaUserInfo = new KarmaUserInfo(rs.getLong("UserID"));
+                karmaUserInfo.setAvailable_points(rs.getInt("AvailablePoints"));
+                karmaUserInfo.setKsent_pos(rs.getInt("KPosSent"));
                 karmaUserInfo.setLastKarmaPoint(rs.getTimestamp("LastPointIncrement").toInstant());
                 break;
             }
 
+            if (karmaUserInfo != null) {
+                rs = st.executeQuery(String.format("SELECT COUNT(fk_UserID) AS COUNT FROM Karma_Trackers WHERE (fk_UserID = %d AND LogTS > (current_date() - '90 days'))",userID));
+
+                while(rs.next()){
+                    karmaUserInfo.setKarma(rs.getInt("COUNT"));
+                }
+
+
+            }
+
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+            ExceptionHandler.notifyException(throwables,this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -164,46 +142,56 @@ public class KarmaSQLHandler extends SQLHandler {
         return karmaUserInfo;
     }
 
-    public int updateKarma(final Long messageID, final User sender, final User receiver, final boolean direction) throws SQLException {
-        System.out.printf("DEBUG:\nSender:%s\nReceiver:%s%n", sender, receiver);
+    /**
+     * Send postive karma to a user
+     *
+     * @param messageID   The message that got the karma transaction
+     * @param sender      The user sending the karma
+     * @param receiver    The reciever of the karma
+     * @param fromPackage If the karma transaction was a result of the package emoji
+     * @return <p>200 = Process Completed OK<br>
+     * 400 = Sender did not have enough points</p>
+     * @throws SQLException
+     */
+    public Integer sendKarma(final Long messageID, final User sender, final User receiver, final boolean fromPackage) throws SQLException {
 
-        int output = 0;
+        this.logger.info(String.format("Sending Karma: %d -> %d | FromPkg: %b",sender.getIdLong(),receiver.getIdLong(),fromPackage));
+
+        Integer returnValue = null;
+        int fromPackageInteger = 0;
+
+        if (fromPackage) {
+            fromPackageInteger = 1;
+        }
+
         Connection connection = pool.getConnection();
         try {
 
             Statement st = connection.createStatement();
 
-            int availableKarma = 0;
+            int availablePoints = 0;
 
-            if (getKarma(receiver.getId()) == null) {
-                insertUser(receiver.getId(), receiver.getAsTag());
+            if (getKarma(receiver.getIdLong()) == null) {
+                createKarmaUser(receiver.getIdLong());
             }
 
-            ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + sender.getId());
+            ResultSet rs = st.executeQuery("SELECT AvailablePoints FROM KarmaUserTable WHERE UserID = " + sender.getId());
 
-            // ID was found, get available points
+            // UserID was found, get available points
             while (rs.next()) {
-                availableKarma = rs.getInt("AV_POINTS");
+                availablePoints = rs.getInt("AvailablePoints");
             }
 
             // User has enough points
-            if (availableKarma >= 1) {
+            if (availablePoints >= 1) {
 
+                st.execute(String.format("INSERT INTO Karma_Trackers (fk_UserID, SendingUserID, MessageID, FromPackage) VALUES (%d, %d, %d, %d)", receiver.getIdLong(), sender.getIdLong(), messageID, fromPackageInteger));
+                st.executeUpdate("UPDATE KarmaUserTable SET AvailablePoints = AvailablePoints - 1 WHERE UserID = " + sender.getId());
 
-                if (direction) {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_POS = KSEND_POS + 1 WHERE ID = " + sender.getId());
-                    st.execute("UPDATE KARMA SET USER_KARMA = USER_KARMA + 1, WeeklyKarma = WeeklyKarma + 1 WHERE ID = " + receiver.getId());
-                    st.execute(String.format("INSERT INTO KARMA_TrackerTable (MessageID, ReceivingUser, SendingUser, Timestamp) VALUES (%d, %d, %d, current_timestamp)", messageID, receiver.getIdLong(), sender.getIdLong()));
-
-                } else {
-                    st.executeUpdate("UPDATE KARMA SET AV_POINTS = AV_POINTS - 1, KSEND_NEG = KSEND_NEG + 1 WHERE ID = " + sender.getId());
-                    st.executeUpdate("UPDATE KARMA SET USER_KARMA = USER_KARMA - 1 WHERE ID = " + receiver.getId());
-                }
-
-                output = 4;
+                returnValue = 200;
             } else {
                 // User does not have enough points
-                output = 2;
+                returnValue = 400;
             }
 
 
@@ -215,33 +203,17 @@ public class KarmaSQLHandler extends SQLHandler {
             System.out.println("Could not find user");
         }
         // Return default
-        return output;
+        return returnValue;
     }
 
-    public boolean overrideKarma(String id, int value) throws SQLException {
-        Connection connection = pool.getConnection();
-        try {
-
-            Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE KARMA SET USER_KARMA = " + value + " WHERE ID = " + id);
-            connection.close();
-            return true;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return false;
-    }
-
-    public int checkKarmaRanking(String id) throws SQLException {
+    public int checkKarmaRanking(String UserID) throws SQLException {
         Connection connection = pool.getConnection();
         try {
 
             Statement st = connection.createStatement();
 
             int indexesFound = 0;
-            ResultSet rs = st.executeQuery(String.format("SELECT COUNT(ID) FROM karmaTracker WHERE (ID = %s AND DATE > (current_date() - '7 days'))", id));
+            ResultSet rs = st.executeQuery(String.format("SELECT COUNT(UserID) FROM karmaTracker WHERE (UserID = %s AND DATE > (current_date() - '7 days'))", UserID));
             while (rs.next()) {
                 indexesFound = rs.getInt(1);
             }
@@ -256,12 +228,12 @@ public class KarmaSQLHandler extends SQLHandler {
         return 0;
     }
 
-    public boolean masterOverrideKarma(String value) throws SQLException {
+    public boolean overrideKarmaPoints(String UserID, int value) throws SQLException {
         Connection connection = pool.getConnection();
         try {
 
             Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE KARMA SET USER_KARMA = " + value + " WHERE USER_KARMA <> " + value);
+            st.executeUpdate("UPDATE KarmaUserTable SET AvailablePoints = " + value + " WHERE UserID = " + UserID);
             connection.close();
             return true;
         } catch (SQLException throwables) {
@@ -272,41 +244,9 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
-    public boolean masterOverridePoints(String value) throws SQLException {
-        Connection connection = pool.getConnection();
-        try {
+    public Integer getAvailableKarmaPoints(Long userID) throws SQLException {
 
-            Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE KARMA SET AV_POINTS = " + value + " WHERE AV_POINTS <> " + value);
-            connection.close();
-            return true;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return false;
-    }
-
-    public boolean overrideKarmaPoints(String id, int value) throws SQLException {
-        Connection connection = pool.getConnection();
-        try {
-
-            Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE KARMA SET AV_POINTS = " + value + " WHERE ID = " + id);
-            connection.close();
-            return true;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return false;
-    }
-
-    public int getAvailableKarmaPoints(String id) throws SQLException {
-
-        int value = 0;
+        Integer returnValue = null;
 
         Connection connection = pool.getConnection();
         try {
@@ -314,48 +254,43 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT AV_POINTS FROM KARMA WHERE ID = " + id);
+            ResultSet rs = st.executeQuery("SELECT AvailablePoints FROM KarmaUserTable WHERE UserID = " + userID);
             while (rs.next()) {
-                value = rs.getInt("AV_POINTS");
+                returnValue = rs.getInt("AvailablePoints");
             }
-            connection.close();
 
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
             connection.close();
         }
-        return value;
+        return returnValue;
     }
 
-    public boolean insertUser(String id, String name) throws SQLException {
+    public Integer createKarmaUser(Long userID) throws SQLException {
         Connection connection = pool.getConnection();
+        Integer returnValue = null;
+
+        this.logger.info("CREATING KARMA USER: " + userID);
+
         try {
-
             Statement st = connection.createStatement();
-
-            //Initiate the formatter for formatting the date into a set format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            //Get the current date
-            LocalDate currentDate = LocalDate.now();
-            //Format the current date into a set format
-            String formattedCurrentDate = formatter.format(currentDate);
-
-            st.executeUpdate(String.format("INSERT INTO KARMA (ID,NAME,DATE) VALUES (\"%s\", \"%s\",\"%s\")", id, name, formattedCurrentDate));
-            connection.close();
-            return true;
+            st.executeUpdate(String.format("INSERT INTO KarmaUserTable (UserID) VALUE (%d)", userID));
+            returnValue = st.getUpdateCount();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
+        }finally {
+            connection.close();
         }
-        return false;
+        return returnValue;
     }
 
-    public boolean deleteUser(String id) throws SQLException {
+    public boolean deleteUser(String UserID) throws SQLException {
         Connection connection = pool.getConnection();
         try {
 
             Statement st = connection.createStatement();
-            st.executeUpdate("DELETE FROM KARMA WHERE ID = " + id);
+            st.executeUpdate("DELETE FROM KarmaUserTable WHERE UserID = " + UserID);
             connection.close();
             return true;
         } catch (SQLException throwables) {
@@ -366,15 +301,17 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
+    /*
     public LinkedHashMap<Long, Integer> getTopTen() throws SQLException {
+
         LinkedHashMap<Long, Integer> topRank = new LinkedHashMap<>();
         Connection connection = pool.getConnection();
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT ID, USER_KARMA FROM KARMA ORDER BY USER_KARMA DESC LIMIT 10");
+            ResultSet rs = st.executeQuery("SELECT UserID, USER_KARMA FROM KarmaUserTable ORDER BY USER_KARMA DESC LIMIT 10");
             while (rs.next()) {
-                topRank.put(rs.getLong("ID"), rs.getInt("USER_KARMA"));
+                topRank.put(rs.getLong("UserID"), rs.getInt("USER_KARMA"));
             }
 
             connection.close();
@@ -387,7 +324,9 @@ public class KarmaSQLHandler extends SQLHandler {
         return topRank;
     }
 
-    public int getInt(String column, String id) throws SQLException {
+
+     */
+    public int getInt(String column, String UserID) throws SQLException {
 
         int value = 0;
         Connection connection = pool.getConnection();
@@ -397,7 +336,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT " + column + " FROM KARMA WHERE ID = " + id);
+            ResultSet rs = st.executeQuery("SELECT " + column + " FROM KarmaUserTable WHERE UserID = " + UserID);
             while (rs.next()) {
                 value = rs.getInt(column);
             }
@@ -413,42 +352,12 @@ public class KarmaSQLHandler extends SQLHandler {
         return value;
     }
 
-    public int getRank(String id) throws SQLException {
-        int output = 0;
-        Connection connection = pool.getConnection();
-
-        try {
-
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT USER_KARMA FROM KARMA WHERE ID = " + id);
-
-            int currentKarma = 0;
-            while (rs.next()) {
-                currentKarma = rs.getInt("USER_KARMA");
-            }
-
-            rs = st.executeQuery("SELECT COUNT(USER_KARMA) FROM KARMA WHERE USER_KARMA > " + currentKarma);
-            while (rs.next()) {
-                output = rs.getInt(1);
-            }
-
-            connection.close();
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return output;
-
-    }
-
-    public boolean setInt(String id, String column, int value) throws SQLException {
+    public boolean setInt(String UserID, String column, int value) throws SQLException {
         Connection connection = pool.getConnection();
         try {
 
             Statement st = connection.createStatement();
-            st.executeUpdate("UPDATE KARMA SET " + column + " = " + value + " WHERE ID = " + id);
+            st.executeUpdate("UPDATE KarmaUserTable SET " + column + " = " + value + " WHERE UserID = " + UserID);
 
             connection.close();
             return true;
@@ -462,142 +371,6 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
-    public boolean setType(String id, int type) throws SQLException {
-        Connection connection = pool.getConnection();
-        try {
-
-            Statement st = connection.createStatement();
-
-            int currentType = 0;
-            ResultSet rs = st.executeQuery("SELECT KTYPE FROM KARMA WHERE ID = " + id);
-            while (rs.next()) {
-                currentType = rs.getInt("KTYPE");
-            }
-
-            connection.close();
-
-            if (currentType < 4) {
-                st.executeUpdate("UPDATE KARMA SET KTYPE = " + type + " WHERE ID = " + id);
-                return true;
-            } else {
-                return false;
-            }
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return false;
-    }
-
-    public void clearTracking() throws SQLException {
-        Connection connection = pool.getConnection();
-        try {
-
-            Statement st = connection.createStatement();
-            st.executeUpdate("DELETE FROM karmaTracker WHERE DATE < (SELECT TIMESTAMP('now', '-7 day'))");
-
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-    }
-
-    public ArrayList<String> getActive() throws SQLException {
-        ArrayList<String> members = new ArrayList<>();
-        Connection connection = pool.getConnection();
-
-        try {
-
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT ID FROM KARMA WHERE KTYPE >= 1");
-            while (rs.next()) {
-                members.add(String.valueOf(rs.getLong("ID")));
-            }
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-
-        return members;
-    }
-
-    public List<String> getAllKarmaSymbols() throws SQLException {
-        List<String> output = new ArrayList<>();
-        Connection connection = pool.getConnection();
-
-        try {
-
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT Symbol FROM KARMA_SymbolTable");
-            while (rs.next()) {
-                output.add(rs.getString("Symbol"));
-            }
-
-            connection.close();
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return output;
-    }
-
-    public String getKarmaSymbol(String userID) throws SQLException {
-        Integer karmaAmount = getKarma(userID);
-        String output = null;
-
-        Connection connection = pool.getConnection();
-        try {
-
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT Symbol FROM KARMA_SymbolTable WHERE %d >= Minimum ORDER BY Minimum DESC", karmaAmount));
-            while (rs.next()) {
-                output = rs.getString("Symbol");
-                break;
-            }
-
-            connection.close();
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-        return output;
-    }
-
-    public Map<String, Integer> getActiveUsers() throws SQLException {
-        Map<String, Integer> activeUsers = new HashMap<>();
-        Connection connection = pool.getConnection();
-
-        try {
-
-            Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT DISTINCT ID FROM karmaTracker WHERE (DATE > (current_date - '-7 days'))");
-            while (rs.next()) {
-                Statement nestedSt = connection.createStatement();
-                ResultSet nestedRs = nestedSt.executeQuery("SELECT ID, COUNT(ID) FROM karmaTracker WHERE (ID = " + rs.getLong("ID") + " AND DATE > (SELECT TIMESTAMP('now', '-7 day')))");
-                while (nestedRs.next()) {
-                    activeUsers.put(String.valueOf(rs.getLong("ID")), nestedRs.getInt(2));
-                }
-            }
-
-            connection.close();
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-
-        return activeUsers;
-    }
-
     public boolean insertStaging(Long channelID, Long messageID, Long memberID) throws SQLException {
         boolean output = false;
         Connection connection = pool.getConnection();
@@ -605,7 +378,7 @@ public class KarmaSQLHandler extends SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            st.execute(String.format("INSERT INTO KARMA_StagingTable (ChannelID,MessageID,OwnerID) VALUES (%d,%d,%d)", channelID, messageID, memberID));
+            st.execute(String.format("INSERT INTO Karma_PackageStaging (MessageID,ChannelID,OwnerID) VALUES (%d,%d,%d)", messageID, channelID, memberID));
 
             if (st.getUpdateCount() >= 1)
                 output = true;
@@ -629,7 +402,7 @@ public class KarmaSQLHandler extends SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT ChannelID, OwnerID FROM KARMA_StagingTable WHERE MessageID = %d AND OwnerID = %d", messageID, memberID));
+            ResultSet rs = st.executeQuery(String.format("SELECT ChannelID, OwnerID FROM Karma_PackageStaging WHERE MessageID = %d AND OwnerID = %d", messageID, memberID));
             while (rs.next()) {
                 output = true;
             }
@@ -653,7 +426,7 @@ public class KarmaSQLHandler extends SQLHandler {
 
             Statement st = connection.createStatement();
 
-            st.execute("DELETE FROM KARMA_StagingTable WHERE MessageID = " + messageID);
+            st.execute("DELETE FROM Karma_PackageStaging WHERE MessageID = " + messageID);
             if (st.getUpdateCount() >= 1)
                 output = true;
 
@@ -666,36 +439,5 @@ public class KarmaSQLHandler extends SQLHandler {
         }
 
         return output;
-    }
-
-    public LinkedHashMap<Integer, Long> getTopThree() throws SQLException {
-
-        Connection connection = pool.getConnection();
-        LinkedHashMap<Integer, Long> karmaMap = new LinkedHashMap<>();
-
-        try {
-
-            Statement st = connection.createStatement();
-
-            ResultSet rs = st.executeQuery("SELECT ID, WeeklyKarma FROM KARMA ORDER BY WeeklyKarma DESC LIMIT 3");
-
-            int index = 0;
-            while (rs.next()) {
-
-                    karmaMap.put(rs.getInt("WeeklyKarma"),rs.getLong("ID"));
-
-                    index++;
-
-            }
-
-            st.execute("UPDATE KARMA SET WeeklyKarma = 0");
-
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        } finally {
-            connection.close();
-        }
-
-        return karmaMap;
     }
 }

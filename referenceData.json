@@ -14,6 +14,20 @@
 		],
 		"keywords": []
 	},
+	"automation_test": {
+		"alias": [
+			"automation test",
+			"automation-test"
+		],
+		"title": "🗃 How do I test my Automation? 🧰",
+		"minRank": 0,
+		"description":"To test an automation there's three stages you can follow. Testing the action, the condition and action, and the whole automation:\n\n1) Use _Configuration_ -> _Automations_ to find the automation and then push _Run Actions_. If this fails your problem is in the `action:` section, and details should be found in your log file\n2) Use _Developer tools_ -> _Services_ and call `automation.trigger` on the automation with `skip_condition: false`. If the first passes but this fails then the problem is in your `condition:` block\n3) Use _Developer tools_ -> _States_ to find the trigger entity, click the name, then change the state (at the top) to something that'll trigger the automation before pushing _Set State_. If this fails then the problem is with your `trigger:` section, or the automation is turned off (you can check that in _Developer tools -> States_).\n\nYou can also see [this section in the docs](https://www.home-assistant.io/docs/automation/troubleshooting/) and with HA 2021.4 onwards [debug automations](https://www.home-assistant.io/blog/2021/04/07/release-20214/#automation-debugging).",
+		"category": [
+			"automation"
+		],
+		"keywords": [
+		]
+	},
 	"avatar": {
 		"alias": [
 			"icon"
@@ -48,7 +62,7 @@
 	},
 	"backup": {
 		"alias": [],
-		"title": "Home Assistant Backup",
+		"title": "Home Assistant Backup 🪃",
 		"minRank": 0,
 		"description": "Be sure to regularly, automatically, back up your Home Assistant install. There are various critical files and configuration options (like the Z-Wave network key), plus all your time. Hass.io has snapshots, and for unix type installs see <https://blog.ceard.tech/2017/10/backing-up-home-assistant.html>.  Oh, and most important of all **test your ability to restore regularly**.",
 		"category": [
@@ -189,7 +203,8 @@
 	"esphome": {
 		"alias": [
 			"esp-home",
-			"esp_home"
+			"esp_home",
+			"esp home"
 		],
 		"title": "ESPHome from Home Assistant",
 		"minRank": 0,
@@ -294,15 +309,17 @@
 			"helpdesk"
 		],
 		"keywords": [
-			"Helpdesk",
-			"Support",
-			"QuinDuo",
+			"Helpdesk", 
+			"Support", 
+			"QuinDuo", 
 			"QuinQuad"
 		]
 	},
 	"input_boolean": {
 		"alias": [
-			"boolean"
+			"boolean",
+			"input boolean",
+			"input-boolean"
 		],
 		"title": "Input Boolean",
 		"minRank": 0,
@@ -343,16 +360,55 @@
 			"ask"
 		]
 	},
+	"karma": {
+		"alias": [],
+		"title": "What is Karma?",
+		"minRank": 0,
+		"description": "If someone has helped you, be sure to thank them by sending them positive karma using the <:KU:717177145717424180> reaction on their message or by clicking the 📦 after replying thanks to their message.",
+		"category": [
+			"general"
+		],
+		"keywords": [
+			"karma"
+		]
+	},
+	"led_boost": {
+		"alias": [
+			"ledboost",
+			"led-boost",
+			"led boost",
+			"led_booster",
+			"ledbooster",
+			"led-booster",
+			"led booster",
+			"ledboosters",
+			"led-boosters",
+			"led boosters",
+			"led_boosters"
+		],
+		"title": "💫 LED Data Boosters",
+		"minRank": 0,
+		"description": "⚡QuinLED Data Booster: [DrZzs](https://drzzs.com/shop/3-wire-data-booster/) | [ALLNET](https://shop.allnetchina.cn/collections/quinled/products/quinled-data-booster) \n⚡xConnect Ends: [WiredWatts](https://www.wiredwatts.com/pixaboost3-pixel-data-booster-xconnect) | [Wallys](https://www.wallyslights.com/collections/data-boosters/products/data-booster-with-xconnect-pigtails) | [RGBMan](https://www.rgb-man.com/online-store/Xconnect-FAMP-p248004445) | [PixelController](https://www.pixelcontroller.com/store/controllers/54-falcon-picap.html) | [Your Pixel Store](https://www.yourpixelstore.com/all-products?store-page=F-Amp-with-xConnect-Pigtails-Pack-of-5-p403550735) \n⚡RayWu Ends: [WiredWatts](https://www.wiredwatts.com/pixaboost1-pixel-data-boosters-ray) | [Wallys](https://www.wallyslights.com/collections/data-boosters/products/data-boosters-with-ray-wu-pigtails-1) | [RGBMan](https://www.rgb-man.com/online-store/FAMP-with-13-5-Ends-Ray-Wu-p254604858) | [PixelController](https://www.pixelcontroller.com/store/controllers/55-falcon-picap.html) \n⚡Open Wire Ends: [PixelController](https://www.pixelcontroller.com/store/controllers/53-falcon-picap.html) \n⚡Long Range Data: [DrZzz](https://drzzs.com/shop/d3datamax/)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
 	"led_calc_power": {
 		"alias": [
 			"LED calcpower",
+			"LED calc power",
+			"LED-calc-power",
 			"led power",
 			"led_power",
+			"led-power",
 			"ledcalcpower"
 		],
 		"title": "💫 Calculate LED Power",
 		"minRank": 0,
-		"description": "What is Power Injection? At its lowest level power injection is nothing more than adding additional power to a string of lights at a point in which the voltage drop starts to affect the lights \n\n🦟 [More details here](http://spikerlights.com/pwrinjection.aspx) \n\n🦟 This is a great calculator to help with judging the size of wire, power supplies, distance, votage drop, and much more: [RGB Pixel Power Calculator.](http://spikerlights.com/calcpower.aspx) \n\n🦟 How much power do addressable LEDs use?, Digitally Addressable LED Sheet: [Quindor has the answer here.](https://quinled.info/2020/03/12/digital-led-power-usage/)",
+		"description": "What is Power Injection? At its lowest level power injection is nothing more than adding additional power to a string of lights at a point in which the voltage drop starts to affect the lights \n\n🦟 [More details here](http://spikerlights.com/pwrinjection.aspx) \n\n🦟 This is a great calculator to help with judging the size of wire, power supplies, distance, votage drop, and much more: [RGB Pixel Power Calculator.](http://spikerlights.com/calcpower.aspx)\n\n🦟 Quindor also has compiled tons of info on wire sizing that can be found [here.](https://quinled.info/2018/10/20/wire-thickness-needed/) \n\n🦟 How much power do addressable LEDs use? Quindor's Digitally Addressable LED Sheet can be found [here.](https://quinled.info/2020/03/12/digital-led-power-usage/)",
 		"category": [
 			"led"
 		],
@@ -362,12 +418,13 @@
 	},
 	"led_controller": {
 		"alias": [
-			"LED controller",
-			"led-controller"
+			"LED controller","led-controller","ledcontroller",
+			"led controllers","led-controllers","ledcontrollers","led_controllers",
+			"led control","led-control","ledcontrol","led_control"
 		],
 		"title": "💫 LED Controllers",
 		"minRank": 0,
-		"description": "🎮 [USA-Dig-Uno](https://drzzs.com/shop/dig-uno-diy-rgb-led-controller-w-wled-preassembled/) \n🎮 [USA-Dig-Quad](https://drzzs.com/shop/digquad/) \n🎮 [kulplights controllers](https://kulplights.com/) \n🎮 [Falcon Pixel controller](https://www.pixelcontroller.com/store/index.php) \n🎮 [Pixel2Things- Ac to pixel controller](https://www.pixel2things.com/)",
+		"description": "🎮 [QuinLED-Dig-Uno](https://quinled.info/quinled-dig-uno/)\n🎮 [QuinLED-Dig-Quad](https://quinled.info/quinled-dig-quad/)\n🎮 [Kulplights Controllers](https://kulplights.com/)\n🎮 [Falcon Pixel Controller](https://www.pixelcontroller.com/store/index.php)\n🎮 [Pixel2Things - Pixel to AC Controller](https://www.pixel2things.com/)",
 		"category": [
 			"led"
 		],
@@ -375,15 +432,41 @@
 			"LED"
 		]
 	},
-	"led_espdriver": {
+	"led_espDriver": {
 		"alias": [
-			"LED espdriver",
-			"led esp driver",
-			"led-espdriver"
+			"LED espdriver","led espdrivers",
+			"led esp driver","led esp drivers",
+			"led-espdriver","led-espdrivers",
+			"espdriver","espdrivers",
+			"esp driver","esp drivers",
+			"esp_driver","esp_drivers",
+			"leddriver","leddrivers",
+			"led driver","led drivers",
+			"led_driver","led_drivers"
 		],
-		"title": "💫 LED ESP Drivers",
+		"title": "ESP Drivers",
 		"minRank": 0,
-		"description": "WLED ESP Driver download [🏎️ click here](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers)",
+		"description": "When flashing an ESP chip your computer needs the proper driver to recognize the device. There are two versions that could be needed: \n🏎️ [CP210x Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) \n🏎️ [CH340 Driver](https://www.wemos.cc/en/latest/ch340_driver.html) \n🏎️ [CH9102 Driver](https://github.com/WCHSoftGroup/ch343ser_linux)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_essentials": {
+		"alias": [
+			"led-essentials",
+			"led essentials",
+			"drzzs led help",
+			"Quindors led help",
+			"led_essential",
+			"led-essential",
+			"led essential"
+		],
+		"title": "💫 LED YouTube Videos from DrZzs & Quindor",
+		"minRank": 0,
+		"description": "Here are DrZzs YouTube Playlists with all his LED configuration and wiring step by step examples.  \n\n😶‍🌫️ [LED Essentials](https://www.youtube.com/playlist?list=PLL02pNmOcO9kOgJYkwcv4c1ApVffxIN8d)  \n😶‍🌫️ [LEDs](https://www.youtube.com/playlist?list=PLL02pNmOcO9lmMIQXaxv0_3oXM_l-yb-8)  \n\nHere are [Quindor's](https://quinled.info/) YouTube Playlists with all his LED configuration and wiring step by step examples.  \n\n😶‍🌫️ [QuinLED](https://www.youtube.com/playlist?list=PL4b74vD-Uo-OdjNrwMCLtQjmEidsLYeu6)  \n😶‍🌫️ [ESP8266 LED Lighting](https://www.youtube.com/playlist?list=PL4b74vD-Uo-NrEv0RkJdh8M4dz8zxxMBb) \n",
 		"category": [
 			"led"
 		],
@@ -397,7 +480,35 @@
 		],
 		"title": "💫 LED Falcon Controllers",
 		"minRank": 0,
-		"description": "🦅 [pixelcontroller.com](https://www.pixelcontroller.com/store/index.php) -Home of the Falcon controllers that can drive 1024 lights per port can drive many different types of pixels ie.WS,TM,SM,INK,TL,CY,LPD,D705,ETC. \n🦅 [Falcon controller support page](https://www.pixelcontroller.com/store/index.php?id_cms_category=5&controller=cms) *you will run these from fpp or your computer through xSchedule* *new firmware might change this*. \n🦅 F16V3- 16 port Pixel Controller- 1024 pixels per output pixel controller [link](https://www.pixelcontroller.com/store/index.php?id_product=48&controller=product) \n🦅 F48 Differential Controller- Can drive up to 16384 pixels. 48 Differential Outputs no local ports-Can connect up to 12 Falcon Differential Receivers. [Link](https://www.pixelcontroller.com/store/index.php?id_product=52&controller=product) \n🦅 Falcon PiCap for a pi3 or pi4 Can control two strings 800+ WS2811 pixels with fused and buffered outputs. Dedicated RS-485 DMX Output (Renard, DMX, LOR selectable). Input voltage 5, or 12V selectable. [Link](https://www.pixelcontroller.com/store/index.php?id_product=47&controller=product) \n🦅 FPP releases can be found here newest is at top.[Github](https://github.com/FalconChristmas/fpp/releases) \n🦅 FPP Installing and Configuring Your Controller Step by Step - Rick Harris [YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0) \n🦅 VCS 2020 Falcon Controllers - Scott Hanson- [YouTube](https://www.youtube.com/watch?v=J9KDQvYBoe0)",
+		"description": "🦅 [PixelController.com](https://www.pixelcontroller.com/store/index.php) - Home of the Falcon controllers that can drive 1024 lights per port can drive many different types of pixels \n\n🦅 [Falcon Controller Support Page](https://www.pixelcontroller.com/store/index.php?id_cms_category=5&controller=cms) \n\n🦅 VCS 2020 Falcon Controllers - Scott Hanson- [YouTube](https://www.youtube.com/watch?v=J9KDQvYBoe0)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledflicker": {
+		"alias": [
+			"led flicker","led_flicker","led-flicker"
+		],
+		"title": "💫 LEDs Flickering?",
+		"minRank": 0,
+		"description": "Having issues with your LEDs flickering? There could be many causes, follow [this](https://drzzs.com/wp-content/uploads/2021/11/Pixel-Flickering-Algorithm.jpeg) flowchart from DrZzs to troubleshoot your issue. \n\n Links referenced: \n [Data Signal Condtioning](https://quinled.info/data-signal-cable-conditioning/) \n [QuinLED Data Booster](https://quinled.info/quinled-data-booster-for-sale/) \n [QuinLED Data Booster Power Injection](https://quinled.info/quinled-data-booster-maxi-power-injection/) \n\n Additional Resources:\n [DrZzs: How to Fix LED Flickering and Inject Power](https://youtu.be/2_saSAf8hgo)\n [VCS Presention: Why pixels flicker and how to fix it](https://youtu.be/9ttEAyiyTAI)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"ledfm": {
+		"alias": [
+			"led fm","led_fm","led-fm","fm","fm station"
+		],
+		"title": "💫 FM Station Finder",
+		"minRank": 0,
+		"description": "📻 Need to find an open FM station to broadcast music for you show? Check out [this](https://radio-locator.com/cgi-bin/vacant#) tool",
 		"category": [
 			"led"
 		],
@@ -409,7 +520,8 @@
 		"alias": [
 			"LED fpp",
 			"ledfpp",
-			"led-fpp"
+			"led-fpp",
+			"fpp"
 		],
 		"title": "💫 LED FPP",
 		"minRank": 0,
@@ -424,11 +536,20 @@
 	"led_hardware": {
 		"alias": [
 			"led hardware",
-			"led-hardware"
+			"led-hardware",
+			"ledhardware",
+			"led vendor",
+			"led-vendor",
+			"led_vendor",
+			"ledvendor",
+			"led vendors",
+			"led-vendors",
+			"led_vendors",
+			"ledvendors"
 		],
 		"title": "💫 LED Hardware",
 		"minRank": 0,
-		"description": "🔩 [RGBMan](https://www.rgb-man.com/) \n🔩 [wallyslights](https://www.wallyslights.com/) \n🔩 [wiredwatts](https://www.wiredwatts.com/) \n🔩 [Ray wu's store](https://www.aliexpress.com/store/701799?spm=a2g0s.9042311.0.0.40694c4db8oCxz) \n🔩 [PIXELHEADS](https://shop.pixelheads.info/) \n🔩 [Paul Zhang Direct-US](https://www.amazon.com/s?i=merchant-items&me=A1HD6W29M3RXPC&tag=drzzs0e-20) \n🔩 [Hanson Electronics](http://www.hansonelectronics.com.au/) \n🔩 [jboards](https://jboards.ecwid.com/) \n🔩 [mattosdesigns](https://mattosdesigns.com/)",
+		"description": "Global Vendors:\n🔩 [QuinLED ALLNET](https://shop.allnetchina.cn/collections/quinled) \n🔩 [BTF Lighting - AliExpress](https://btf-lighting.aliexpress.com/store/1051119) \n🔩 [ETOP Lighting - AliExpress](https://www.aliexpress.com/store/4478030) \n🔩 [Ray wu's store](https://www.aliexpress.com/store/701799?spm=a2g0s.9042311.0.0.40694c4db8oCxz) \n🔩 [Hanson Electronics](http://www.hansonelectronics.com.au/)  \n\n US:\n🔩 [DrZzs Shop](https://drzzs.com/shop/) \n🔩 [JBoards](https://jboards.ecwid.com/) \n🔩 [Mattos Designs](https://mattosdesigns.com/) \n🔩 [Paul Zhang Direct-US](https://www.amazon.com/s?i=merchant-items&me=A1HD6W29M3RXPC&tag=drzzs0e-20) \n🔩 [RGBMan](https://www.rgb-man.com/) \n🔩 [Wired Watts](https://www.wiredwatts.com/) \n🔩 [Wally's Lights](https://www.wallyslights.com/) \n🔩 [Your Pixel Store](https://www.yourpixelstore.com/) \n\n EU/UK LED Vendors:\n🔩 [Build A Light Show located in the UK](https://buildalightshow.com/) \n🔩 [Propixeler located in the Netherlands](https://propixeler.nl/index.php?route=common/home) \n🔩 [Xmas-land located in Germany](https://www.xmas-land.de/) \n\n AU LED Vendors:\n🔩 [Extreme Lighting Displays](https://www.extremelightingdisplays.com.au/)",
 		"category": [
 			"led"
 		],
@@ -439,7 +560,14 @@
 	"led_inject": {
 		"alias": [
 			"LED inject",
-			"led-inject"
+			"led-inject",
+			"led_injection",
+			"led injection",
+			"led-injection",
+			"power_injection",
+			"powerinjection",
+			"power-injection",
+			"power injection"
 		],
 		"title": "💫 LED Inject Help",
 		"minRank": 0,
@@ -456,9 +584,9 @@
 			"LED kulp","ledkulp",
 			"led-kulp"
 		],
-		"title": "💫 LED Kulp Controllers",
+		"title": "💫 Kulp LED Controllers",
 		"minRank": 0,
-		"description": "🌈 kulplights.com -Home of FPP based pixel controllers that can each drive 800 Pixels at 40FPS 1500 Pixels at 20fps per port ws281x ONLY [Link](https://kulplights.com/) \n🌈 FPP releases can be found [here](https://github.com/FalconChristmas/fpp/releases) newest is at top \n🌈 Kulp k16- A 16 port controller that runs FPP Input voltage 5, or 12V selectable. *ADD-ONS NEEDED SCREEN,SDCARD,BEAGLEBONE,fm-transmitter* [Link](https://kulplights.com/product/k16a-b/) \n🌈 Kulp 32 port controller Input voltage 5, or 12V selectable. *ADD-ONS NEEDED SCREEN,SDCARD,BEAGLEBONE,fm-transmitter* [Link](https://kulplights.com/product/k32a-b/) \n🌈 Kulp k8-8 port controller Input voltage 5, or 12V selectable. *ADD-ONS NEEDED SCREEN,SDCARD,BEAGLEBONE*[Link](https://kulplights.com/product/k8-b/) \n🌈 IF RUNNING WIFI YOU WILL NEED THIS ADAPTER. [Link](https://kulplights.com/product/1200mbs-antenna-wifi/) \n🌈 You might also need this usb hub. [Link](https://kulplights.com/product/usb-gigabit-ethernet-adapter/) \n🌈 The 4-String Differential Smart Receiver Board can be connected to many different controller options allowing 4 strings to be placed up to 300+ feet from the controllers . Input voltage 5, or 12V . The Smart Receiver can be daisy-chained together up to three.[Link](https://kulplights.com/product/smart-receiver/) \n🌈 Kulp's user manual *listed as f8-b but works for all boards*. [Link](https://kulplights.com/manuals/F8-B-Manual.pdf) \n🌈 FPP Installing and Configuring Your Controller Step by Step - [Rick Harris YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0) \n🌈 VCS 2020 Kulp Boards - [Daniel Kulp YouTube](https://www.youtube.com/watch?v=sceGQMZ0dHw&t=2720s) \n🌈 FPP Plugins & Scripts - [Daniel Kulp YouTube](https://www.youtube.com/watch?v=pE4I5igbAuE&t=2s)",
+		"description": "🌈 [KulpLights.com](https://kulplights.com/) - Home of FPP based pixel controllers that can each drive 800 Pixels at 40FPS or 1500 Pixels at 20fps per port and work with ws281x only \n\n🌈 [Wifi Adatpter](https://kulplights.com/product/1200mbs-antenna-wifi/) - Guaranteed to work, not all options available other places will work \n\n🌈 [USB Hub](https://kulplights.com/product/usb-gigabit-ethernet-adapter/) - Need if plugging multiple USB items into the controller (ie. Soundblaster, Wifi Adapter, Ethernet Adapter) \n\n🌈 [Kulp User Manual](https://kulplights.com/manuals/F8-B-Manual.pdf) - Listed as f8-b but works for all boards \n\n🌈 [VCS 2020 Kulp Boards](https://youtu.be/sceGQMZ0dHw) - Kulp Board Overview and History",
 		"category": [
 			"led"
 		],
@@ -472,17 +600,17 @@
 		],
 		"title": "💫 PIXELHEADS 3D Print Collection 🚀 ",
 		"minRank": 0,
-		"description": "[🏗 Pixelheads Collection ](https://shop.pixelheads.info/pixelheads-3d-print-collection/) \n[🏗 Viperts Creations 3d Models](https://cults3d.com/en/users/Viperts/creations) ",
+		"description": "Our Pixelheads have compiled a collection of LED related 3D prints for easy access: \n [🏗 Pixelheads 3D Print Collection](https://thepixelheads.github.io/) \n\n These designers have LED prints and more that we also really like: \n [🏗 Viperts Creations 3D Models](https://cults3d.com/en/users/Viperts/creations) \n[🏗 Pjotr's 3D Models](https://www.thingiverse.com/pjotrr/designs) \n[🏗 Jason Sisk 3D Models](https://www.thingiverse.com/phoenlx/designs) ",
 		"category": [
 			"led"
 		],
 		"keywords": [
 			"LED"
 		]
-	},
+	},	
 	"led_props": {
 		"alias": [
-			"LED Props","led-props"
+			"LED Props","led-props","ledprops"
 		],
 		"title": "💫 LED Props",
 		"minRank": 0,
@@ -494,13 +622,82 @@
 			"LED"
 		]
 	},
+	"led_reference": {
+		"alias": [
+			"led reference","led-reference","ledreference",
+			"led references","led-references","ledreferences","led_references",
+			"led ref","led_ref","led-ref","ledref",
+			"led guide","led_guide","led-guide","ledguide",
+			"led help","led_help","led-help","ledhelp"
+		],
+		"title": "💫 LED Related References",
+		"minRank": 0,
+		"description": "**How Do I Use These?**\nJust type {prefix} and the reference you would like to display.\n\n**References**\n`esp32` - Information About ESP32 Boards\n`esp8266` - Information About ESP8266 Boards\n`ETA` - Availability of Dig-Uno and Dig-Quad Boards\n`led_boost` - LED Data Boosters\n`led_calc_power` - Calculate LED Power\n`led_controller` - Listing of Popular LED Controllers\n`led_espDriver` - Drivers for ESP Boards\n`led_essentials` - LED Related YouTube Videos From DrZzs and Quindor\n`led_falcon` - Falcon LED Controllers\n`led_flicker` - Help With Flickering LEDs\n`led_fm` - FM Radio Station Search\n`led_fpp`- Falcon Pi Player Information\n`led_hardware` - Hardware Vendors Specializing In LED Products\n`led_inject` - Power Injection And Data Boosting Solutions\n`led_kulp` - Kulp Light Controllers\n`led_prints` - Collection Of 3D Prints For Use With LEDs\n`led_props` - Collection Of Popular LED Prop Vendors\n`led_sequences` - Collection Of Popular xLights Sequence Vendors\n`led_trouble` - LED Issue Troubleshooting Pages\n`led_vcs` - Virtual Christmas Summit YouTube Videos\n`led_xlights` - xLights Light Show Creation Software\n`neoPixel` - Information about WS28x And Similar LEDs\n`nodeMCU` - Information about NodeMCU Boards\n`quad_pinout` - Dig-Quad Default Pinout Settings\n`uno_pinout` - Dig-Uno Default Pinout Settings\n`wled` - Information About WLED LED Control Firmware\n`wled_update` - Updating WLED Version Information",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"led"
+		]
+	},
 	"led_sequences": {
 		"alias": [
-			"LED sequences", "led seq","led_seq","led-sequences"
+			"LED sequences",
+			"led-sequences",
+			"led seq",
+			"led_seq",
+			"led sequence",
+			"led_sequence",
+			"led-sequence"
 		],
 		"title": "💫 LED Display Sequences",
 		"minRank": 0,
-		"description": "☄️ [Xlights Free Sequences (Google Drive)](https://drive.google.com/drive/folders/0B2ozCEidtWh3MUVzX0ZMc1pzY00?fref=gc&dti=628061113896314) \n☄️ [Pixel Pro Displays](https://www.pixelprodisplays.com/) \n☄️ [Xtreme Sequences](https://www.xtremesequences.com/) \n☄️ [ShowStopperSequences](https://showstoppersequences-com.3dcartstores.com/) \n☄️ [Magical Light Shows](https://magicallightshows.com/) \n☄️ [Animated Lumination Sequences](http://animatedillumination.com/) \n☄️ [SyracuseLights](https://www.syracuselights.org/sequences) \n☄️ [VCS 2020 xLights: Basic Sequencing Michael Stoffregen - VIDEO](https://www.youtube.com/watch?v=EvK7AUJ1Nrk)",
+		"description": "Free Sequences and How to: \n☄️ [xLights Free Sequences (Google Drive)](http://share.xlights.org/) \n☄️ [xlights Around the World](http://xlightsaroundtheworld.com/) \n☄️ [VCS 2020 xLights: Basic Sequencing Michael Stoffregen - VIDEO](https://www.youtube.com/watch?v=EvK7AUJ1Nrk) \n\n Paid and Subscription Vendors: \n☄️ [Animated Lumination Sequences](http://animatedillumination.com/) \n☄️ [Bostick Family Light Shows](https://bostickfamilylightshow.com/collections/sequences) \n☄️ [Fairy Pixel Dust](https://www.fairypixeldust.com/) \n☄️ [Lightshow 101](https://www.lightshow101.com/sequences) \n☄️ [Magical Light Shows](https://magicallightshows.com/) \n☄️ [Pixel Perfect Sequences](https://pixelperfectsequences.com/) \n☄️ [Pixel Pro Displays](https://www.pixelprodisplays.com/) \n☄️ [Pixel Sequence Pros](https://pixelsequencepros.com/) \n☄️ [RGB Sequences](https://rgbsequences.net/) \n☄️ [Sequence Armory](https://holidaylightingthinktank.net/sequence-armory/) \n☄️ [Showstopper Sequences](https://showstoppersequences-com.3dcartstores.com/) \n☄️ [Syracuse Lights](https://www.syracuselights.org/sequences) \n☄️ [Xtreme Sequences](https://www.xtremesequences.com/)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_tools": {
+		"alias": [
+			"led tools",
+			"led-tools",
+			"ledtools"
+		],
+		"title": "🛠️ LED Tools",
+		"minrank": 0,
+		"description": "Here are some helpful links to some of our favorite tools to assist in creating your LED light show: \n\n🛠️ Creating Lyric tracks for use in xLights: \n [AutoLyrics at LightingFanatics](https://autolyrics.lightingfanatics.com/) \n [Auto Lyrix Align](https://autolyrixalign.hltnus.org/) \n\n🛠️ Normalize your MP3 audio volume across songs: \n [MP3 Gain](http://mp3gain.sourceforge.net/) \n\n🛠️ Calculate needs for building a MegaTree:\n [Mega Tree Calculator by LightShowHub](https://www.lightshowhub.com/tools/mega-tree-calculator) \n\n🛠️ Calculate needs for building a Panel Matrix:\n [Build a Custom Panel Matrix by Wired Watts](https://www.wiredwatts.com/build-a-matrix-kit) \n\n🛠️ Custom Mounting Solution Design: \n [jdeation Mounting Kit Designs](https://www.jdeation.com/) \n\n🛠️ xLights Custom Model Builder: \n [Custom Model Builder](https://www.lightshowhub.com/tools/xlights-custom-model-builder)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"led",
+			"tools"
+		]
+	},
+	"led_trouble": {
+		"alias": [
+			"led trouble","led_trouble","led-trouble","ledTrouble"
+		],
+		"title": "💫 LEDs Not Turning on?",
+		"minRank": 0,
+		"description": "Having issues with your LEDs not turning from a Dig-Uno or Dig-Quad? There could be many causes, follow [this](https://drzzs.com/wp-content/uploads/2021/11/Dig-Troubleshooting-Algorithm-e1635881454100.jpeg) flowchart from DrZzs to troubleshoot your issue. \n\n Links referenced: \n [Dig-Uno Pinout Guide](https://quinled.info/quinled-dig-uno-pinout-guide/) \n [Dig-Quad Pinout Guide](https://quinled.info/quinled-dig-quad-pinout-guide/) \n [Dig-Uno WLED Manual](https://quinled.info/2020/02/11/pre-assembled-quinled-dig-uno-wled-manual/)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"LED"
+		]
+	},
+	"led_vcs": {
+		"alias": [
+			"led vcs","led-vcs","vcs"
+		],
+		"title": "💫 Virtual Christmas Summit",
+		"minRank": 0,
+		"description": "The Virtual Christmas Summit is a weekend of presentations by some of the smartest people in the LED Holiday Hobby and Vendors. Thankfully if you weren't able to attend or were in a different session they are recorded and available to take in the large amount of knowledge \n\n [VCS Youtube](https://www.youtube.com/c/VirtualChristmasSummit) ",
 		"category": [
 			"led"
 		],
@@ -510,11 +707,11 @@
 	},
 	"led_xlights": {
 		"alias": [
-			"LED xlights","led-xlights"
+			"LED xlights","led-xlights","xlights"
 		],
-		"title": "💫 LED XLights",
+		"title": "💫 LED xLights",
 		"minRank": 0,
-		"description": "🔹 [xlights website-xLights](https://xlights.org/) is a free and open source program that enables you to design, create and play amazing lighting displays through the use of DMX controllers, E1.31 Ethernet controllers and more. \n\n🔹 [Xlights download page](https://xlights.org/releases/) ",
+		"description": "🔹 [xLights](https://xlights.org/) is a free and open source program that enables you to design, create and play amazing lighting displays through the use of DMX controllers, E1.31 Ethernet controllers and more. \n\n🔹 [xLights Download Page](https://xlights.org/releases/) \n\n🔹 Need assistance with xLights? Join the xLights Zoom room and put your hand up, someone will assist you. [xLights Zoom Room](https://xlights.org/download/1944/)",
 		"category": [
 			"led"
 		],
@@ -537,6 +734,23 @@
 		],
 		"keywords": []
 	},
+	"lights": {
+		"alias": [
+		"light",
+		"light project",
+		"lighting"
+		],
+		"title": "💫 Need assistance with a lighting project?!",
+		"minRank": 0,
+		"description": "Have an LED or light related question?  Head over to the proper lighting channel and ask your question: \n\n <#511947803115913217> \n Having trouble with LEDs or a question? post it here.  We cover wLED, Kulp boards, Falcon, xLights and everything needed to make your life brighter.\n\n <#691043294397857843> \n TV and monitor ambient lighting that match the screen image.  \n\n <#838500659938197546> \n Whole House DC Lighting Solution. \n\n <#885593663344898139> \n This channel is set aside specifically for collecting pictures of your PermaTrack from DrZzs! Show off the beautiful LED installation and display!",
+		"category": [
+			"lights"
+		],
+		"keywords": [
+		"led",
+		"lights"
+		]
+	},
 	"mariaDB": {
 		"alias": [
 			"No State History",
@@ -558,9 +772,9 @@
 			"Mosquitto",
 			"Paho"
 		],
-		"title": "MQTT: The Standard for IoT Messaging",
+		"title": "MQTT: The Standard for IoT Messaging 🖇",
 		"minRank": 0,
-		"description": "To install MQTT with Home Assistant, Check out this link:  🚧 https://www.home-assistant.io/integrations/mqtt/  \n\n🚧 [MQTT Homepage](http://mqtt.org/)  \n🚧 [MQTT WIKI](https://en.wikipedia.org/wiki/MQTT)  \n🚧 [HA Official MQTT Docs](https://www.home-assistant.io/integrations/mqtt/)  \n🚧 [MQTT-Explorer Homepage](http://mqtt-explorer.com/)  \n🚧 [The Hook Up's MQTT Video](https://tinyurl.com/thehookupmqtt)  \n\n🇲 🇶 🇹 🇹, or Message Queuing Telemetry Transport, is a light-weight protocol used in many situations where small message size and/or low bandwidth usage are important.  It was developed by IBM in 1999, and was initially used to monitor oil pipeline sensors and communicate with satellites. It became very popular, and is used extensively in SCADA control systems and smarthome products.\n\nMQTT utilizes a central service called a Broker that can be installed on just about any computer or server.  Clients connect to the Broker to monitor and update various Topics.  Subscriber Clients connect to the Broker and monitor a Topic; Publisher Clients connect to the Broker and update a Topic's value.  A Client can fill either role or both.\n\nHome Assistant and other home automation packages fill both roles, as do most Wifi connected smart plugs and devices.\n\nThere are libraries available in many programming languages (e.g. Arduino and Python) which can be used in custom sensor applications.\n\nWhen troubleshooting MQTT issues, it is useful to use a utility such as MQTT Explorer.",
+		"description": "To install MQTT with Home Assistant, Check out this link:  🎡 https://www.home-assistant.io/integrations/mqtt/  \n\n🎡 [MQTT Homepage](http://mqtt.org/)  \n🎡 [MQTT WIKI](https://en.wikipedia.org/wiki/MQTT)  \n🎡 [HA Official MQTT Docs](https://www.home-assistant.io/integrations/mqtt/)  \n🎡 [MQTT-Explorer Homepage](http://mqtt-explorer.com/)  \n🎡 [The Hook Up's MQTT Video](https://tinyurl.com/thehookupmqtt)  \n\n🇲 🇶 🇹 🇹, or Message Queuing Telemetry Transport, is a light-weight protocol used in many situations where small message size and/or low bandwidth usage are important.  It was developed by IBM in 1999, and was initially used to monitor oil pipeline sensors and communicate with satellites. It became very popular, and is used extensively in SCADA control systems and smarthome products.\n\nMQTT utilizes a central service called a Broker that can be installed on just about any computer or server.  Clients connect to the Broker to monitor and update various Topics.  Subscriber Clients connect to the Broker and monitor a Topic; Publisher Clients connect to the Broker and update a Topic's value.  A Client can fill either role or both.\n\nHome Assistant and other home automation packages fill both roles, as do most Wifi connected smart plugs and devices.\n\nThere are libraries available in many programming languages (e.g. Arduino and Python) which can be used in custom sensor applications.\n\nWhen troubleshooting MQTT issues, it is useful to use a utility such as MQTT Explorer.",
 		"category": [
 			"infrastructure",
 			"applications",
@@ -598,9 +812,10 @@
 		],
 		"title": "NEOPixels 🚦 LED Lights etal...",
 		"minRank": 0,
-		"description": "DrZzs has a lot of great videos!  Check out this one to get started: 🚦 https://youtu.be/tXvtxwK3jRk  \n\nAlso in DrZzs Discord check out the <#511947803115913217> channel and page the @PixelHeads for one on one help.  \n\n🚦 [Beginner's Guide to Christmas Lights](https://youtu.be/tXvtxwK3jRk)  \n🚦 [The Hook Up's video on LED Strips](https://youtu.be/QnvircC22hU)  \n🚦 [`<#511947803115913217>` Discord Channel](https://discord.gg/8gvF67h)  \n\nIndividually Addressable LEDs come in many varieties; you may find them referred to as NeoPixels, or by their part numbers, which include WS2811, WS2812b, WS2813, WS2815, SK9822, SK9812, or APA106.  You will need a microcontroller of some kind to run them; the most popular in the home automation space are the ESP8266 and ESP32 Boards.  Depending upon the length of your installation, you may also need to procure a high-amperage power supply and additional wire for power injection.\n\nSee also {prefix}WLED",
+		"description": "Individually Addressable LEDs come in many varieties; you may find them referred to as NeoPixels, or by their part numbers, which include WS2811, WS2812b, WS2813, WS2815, SK9822, SK9812, or APA106.\n\nYou will need a microcontroller of some kind to run them; popular examples are an ESP8266 and ESP32 based board running WLED, like the Dig-Uno and Dig-Quad, or a BeagleBone based board running FPP like a Kulp Controller. \n\nDrZzs has a lot of great videos!  Check out his LED Playlist to get started:\n🚦 [DrZzs LED YouTube Playlist](https://www.youtube.com/watch?v=ZDQGDmtZ3zY&list=PLL02pNmOcO9kOgJYkwcv4c1ApVffxIN8d)  \n\nSee also: \n {prefix}WLED\n {prefix}LED_Controller",
 		"category": [
-			"microcontroller"
+			"microcontroller",
+			"led"
 		],
 		"keywords": []
 	},
@@ -633,7 +848,7 @@
 		"alias": [],
 		"title": "PACKAGE!",
 		"minRank": 0,
-		"description":"\uD83D\uDCE6\uD83D\uDCE6\uD83D\uDCE6 Did someone recently help you?  If you Thank them using a reply or mention them HIVE will put a package emoji on the message.  If YOU click this reaction.  It will send them positive karma, increasing their \"helpfullness\" rating.  So be a good sport.  CLICK THE PACKAGE! \uD83D\uDCE6",
+		"description":"\uD83D\uDCE6\uD83D\uDCE6\uD83D\uDCE6 Did someone recently help you?  If you Thank them using a reply or mention them HIVE will put a package emoji on the message.  If YOU click this reaction.  It will send them positive karma, increasing their \"helpfulness\" rating.  So be a good sport.  CLICK THE PACKAGE! \uD83D\uDCE6",
 		"category": [
 			"general"
 		],
@@ -664,7 +879,7 @@
 		"minRank": 0,
 		"description": "Power Over Ethernet requires a POE capable device (Wifi Hotspot or Camera), as well as a power supply such as a POE Switch or a POE Power injector.  \n\n🗲 [Reference: PoE WIKI](https://en.wikipedia.org/wiki/Power_over_Ethernet)  \n\nPower Over Ethernet is a way to supply power to devices over the network cable from a central point.  It enables us to use electronics where there are no electrical outlets nearby and increases ease of management by having power supplies centrally located for devices in hard-to-reach locations.  \n\nPOE comes in three standard flavors:  \n\n1) POE (802.3af) Delivers 15W @ 48V \n2)POE+ (802.3at) Delivers 30W @ 48V\n3)POE++ or 4PPoE (802.3bt) Delivers 60W-100W @ 48V (Depending upon type of 802.3bt used)  \n\nBe certain to review the power requirements of any POE Device prior to purchase to ensure that you're getting everything you need.  \n\nPOE will work with CAT5e, CAT6, and CAT7. As for non-POE installations, care should be taken to not kink or bed the cable too sharply as it will create problems.  \n\nDevices do not need to have ethernet ports!  There are POE Converters that can go from 48V DC to 5V DC or 12V DC, and can be plugged into ESP Wifi chips, or Single Board Computers. ",
 		"category": [
-			"infrastructure"
+		"infrastructure"
 		],
 		"keywords": []
 	},
@@ -707,9 +922,19 @@
 	},
 	"reply": {
 		"alias": [],
-		"title": "Who Are You Respoding To?",
+		"title": "Who Are You Responding To? ⟹",
 		"minRank": 0,
-		"description": "If there are multiple conversations going at once, try using the reply feature in discord.  This helps everyone know who they are replying to and from.  PLUS, if a package shows up when you reply, give it a click to show youe appreciation.",
+		"description": "If there are multiple conversations going at once, try using the reply feature or start a Thread in discord.  This helps everyone know who they are replying to and from.  PLUS, if a package shows up when you reply, give it a click to show you're appreciation.",
+		"category": [
+			"general"
+		],
+		"keywords": []
+	},
+	"Thread It": {
+		"alias": ["thread"],
+		"title": "WE SUPPORT THREADS!",
+		"minRank": 0,
+		"description": "Channels can get messy when multiple people are discussing different topics at once.  If this happens, please consider starting a thread in the channel so that each conversation can go uninterrupted.",
 		"category": [
 			"general"
 		],
@@ -737,9 +962,9 @@
 			"RFBridge",
 			"Slampher"
 		],
-		"title": "Help with RF433 / RF315 Devices",
+		"title": "📡 Help with RF433 / RF315 Devices 📻",
 		"minRank": 0,
-		"description": "There is a lot of information on this subject.  Check out the links section and the Community can lead your journey here. \n\n📶 [How RF433 Works](https://bit.ly/DrZzsHow433Works) \n📶 [Flashing the RFBridge](https://bit.ly/DrZzsFlashRFBridgeTasmota) \n📶 [DrZzs Video](https://youtu.be/OfSbIFIJPuc) \n📶 [Digiblur Video](https://youtu.be/w_CchtI-oK0) \n📶 [WhatAreWeFixing.Today Video](https://whatarewefixing.today/?p=134) \n📶 [Multiple sensor setup](https://bit.ly/DrZzsRFBridgeMultiSensorSetup) \n\nThe 433 mhz RF (radio frequency) band and the 315 mhz RF band, depending on the country you live in, is designated for the same purpose. Low power RF transmitters are allowed to broadcast within these frequency ranges. These small transmitters are usually binary type sensors because only a small message is able to be transmitted during an event. Door/Window sensors, PIR sensors, push button transmitters, remote controls and the like are the typical devices using these frequencies. There needs to be a receiver nearby to pick up these signals and act on the message received.\n\nDevices such as the [Itead RFBridge](http://drzzs.com/RF_Bridge) and the [Bond Bridge](https://bit.ly/DrZzsBondBridge) act as reciever hubs to collect data from these sensors and feed the data back to a program such as Home Assistant for further action.  With some devices like the [Itead Sonoff Slampher](https://bit.ly/DrZzsSlampher), the device can ‘pair’ with a matching RF transmitter bought separately and act on the information provided. Devices are not tied to a common standard (like Zwave) which 1, keeps the price very low, but 2, causes incompatibility between manufacturers.",
+		"description": "There is a lot of information on this subject.  Check out the links section and the Community can lead your journey here. \n\n📶 [How RF433 Works](https://bit.ly/DrZzsHow433Works) \n📶 [Flashing the RFBridge](https://bit.ly/DrZzsFlashRFBridgeTasmota) \n📶 [DrZzs Video](https://youtu.be/OfSbIFIJPuc) \n📶 [Digiblur Video](https://youtu.be/w_CchtI-oK0) \n📶 [WhatAreWeFixing.Today Video](https://whatarewefixing.today/?p=134) \n📶 [Multiple sensor setup](https://bit.ly/DrZzsRFBridgeMultiSensorSetup) \n📶 [RM3 & RM4 Broadlink programming from Everything Smart Home](https://www.youtube.com/watch?v=jEOyTGaKwaQ&t=184s) \n\nThe 433 mhz RF (radio frequency) band and the 315 mhz RF band, depending on the country you live in, is designated for the same purpose. Low power RF transmitters are allowed to broadcast within these frequency ranges. These small transmitters are usually binary type sensors because only a small message is able to be transmitted during an event. Door/Window sensors, PIR sensors, push button transmitters, remote controls and the like are the typical devices using these frequencies. There needs to be a receiver nearby to pick up these signals and act on the message received.\n\nDevices such as the [Itead RFBridge](http://drzzs.com/RF_Bridge) and the [Bond Bridge](https://bit.ly/DrZzsBondBridge) act as reciever hubs to collect data from these sensors and feed the data back to a program such as Home Assistant for further action.  With some devices like the [Itead Sonoff Slampher](https://bit.ly/DrZzsSlampher), the device can ‘pair’ with a matching RF transmitter bought separately and act on the information provided. Devices are not tied to a common standard (like Zwave) which 1, keeps the price very low, but 2, causes incompatibility between manufacturers.",
 		"category": [
 			"microcontroller",
 			"infrastructure"
@@ -748,7 +973,7 @@
 	},
 	"secrets": {
 		"alias": [],
-		"title": "👁️‍🗨️ How Do HA Secrets Work?",
+		"title": "👁️‍🗨️ How Do HA Secrets Work? 𓀅",
 		"minRank": 0,
 		"description": "Rather than putting sensitive information (passwords, locations, etc) into your configuration, you can store them in secrets to make sharing easier. Secrets DO NOT work in Blueprints, however. \n👁️‍🗨️See <https://home-assistant.io/docs/configuration/secrets/> for more.",
 		"category": [
@@ -787,7 +1012,7 @@
 		],
 		"title": "Sorting out the Sonoff DIY Firmware",
 		"minRank": 0,
-		"description": "Sonoff has come up with a version of firmware that does not require soldering or an FTDI adapter.  This is nice, but the process is a bit complicated and involved.  There are articles and videos attached here to help you be sucessful in your attempt.  \n🏷️ [WhatAreWeFixing.Today Video](https://whatarewefixing.today/?p=589)  \n🏷️ [DrZzs Video](https://www.youtube.com/watch?v=fsrT5o1C1w0)  \n🏷️ [Flash Tasmota on a Sonoff in DIY mode in Linux](https://sigmdel.ca/michel/ha/sonoff/sonoff_mini_en.html)  \n🏷️ [Sonoff-ITead GIT](https://github.com/itead/Sonoff_Devices_DIY_Tools/blob/master/other/SONOFF%20DIY%20MODE%20Protocol%20Doc%20v1.4.md)  \n🏷️ [Tasmota Documentation](https://tasmota.github.io/docs/Sonoff-DIY/)",
+		"description": "Sonoff has come up with a version of firmware that does not require soldering or an FTDI adapter.  This is nice, but the process is a bit complicated and involved.  There are articles and videos attached here to help you be successful in your attempt.  \n🏷️ [WhatAreWeFixing.Today Video](https://whatarewefixing.today/?p=589)  \n🏷️ [DrZzs Video](https://www.youtube.com/watch?v=fsrT5o1C1w0)  \n🏷️ [Flash Tasmota on a Sonoff in DIY mode in Linux](https://sigmdel.ca/michel/ha/sonoff/sonoff_mini_en.html)  \n🏷️ [Sonoff-ITead GIT](https://github.com/itead/Sonoff_Devices_DIY_Tools/blob/master/other/SONOFF%20DIY%20MODE%20Protocol%20Doc%20v1.4.md)  \n🏷️ [Tasmota Documentation](https://tasmota.github.io/docs/Sonoff-DIY/)",
 		"category": [
 			"switching-applications"
 		],
@@ -806,7 +1031,7 @@
 			"spin",
 			"spinningButtonCard"
 		],
-		"title": "Spinning Button Card",
+		"title": "Spinning Button Card 🔄 🔃",
 		"minRank": 0,
 		"description": "Install the custom button card using HACS.  \n\n🎰 [Custom Button Card Innstall](https://github.com/custom-cards/button-card)  \n🎰 [Spinning Lovelace Button.YAML code](https://gist.github.com/Snipercaine/ddd8e57625f703958db7ba150ecb4be2)  \n\nThe spinning button is a very frequently asked for topic from the Doc.  Check out the links included for the source for the Lovelace configuration and download.  Please note the card is also available through HACS which would be a preferred method of installation.",
 		"category": [
@@ -823,7 +1048,7 @@
 		],
 		"title": "Making Your configuration.yaml Easier to Use",
 		"minRank": 0,
-		"description": "🔀 [Split Configuration HA Official Instructions](https://home-assistant.io/docs/configuration/splitting_configuration/)  \n\n🔀 [Doc and Frenck with a live Demo](https://youtu.be/FfjSA2o_0KA)",
+		"description": "🔀 [Split Configuration HA Official Instructions](https://home-assistant.io/docs/configuration/splitting_configuration/)  \n\n🔀 [Doc and Frenck with a live Demo](https://youtu.be/FfjSA2o_0KA) \n\nAND if you want to split your scripts up so that the script UI editor works and your files are split, [look here](https://community.home-assistant.io/t/script-editor-and-split-up-files/40459/20) or go into a terminal in HA and do this: ```ln -f /config/scripts.yaml /config/#path_to_your_subfolder/scripts.yaml ``` and in configuration.yaml do this: ```script: !include_dir_merge_named /config/#path_to_your_subfolder```.  Then put your split folders here for scripts.",
 		"category": [
 			"home-assistant"
 		],
@@ -889,7 +1114,7 @@
 		],
 		"title": "🦧 Tasmota Device Manager 🇹 🇩 🇲 🇬 🇷",
 		"minRank": 0,
-		"description":"Managing multiple Tasmota devices can be confusing.  TDMgr is a configuration and management GUI for your Tasmota network of devices.  It can help you access, configure, and manage all the Tasmotas on your Broker!  \n\n🦧 [TDMGR base software](https://github.com/jziolkowski/tdm) \n🐋   Install TDMgr in a Docker Container [TDMDock](https://github.com/SirGoodenough/TDMDock) \n🏠   TDMgr as a Supervised Addon [Addon Store link](https://github.com/ikifar2012/ha-addons​) \n🐋🏠 WhatAreWeFixing.Today Docker & Addon Install Video [Blog & Video](https://www.youtube.com/watch?v=yjMVnjfEp-g)  ",
+		"description":"Managing multiple Tasmota devices can be confusing.  TDMGR is a configuration and management GUI for your Tasmota network of devices.  It can help you access, configure, and manage all the Tasmotas on your Broker!  \n\n🦧 [TDMGR base software](https://github.com/jziolkowski/tdm) \n🐋   Install TDMGR in a Docker Container [TDMDock](https://github.com/SirGoodenough/TDMDock) \n🏠   TDMGR as a Supervised Addon [Addon Store link](https://github.com/ikifar2012/ha-addons) \n🐋🏠 WhatAreWeFixing.Today Docker & Addon Install Video [Blog & Video](https://www.youtube.com/watch?v=yjMVnjfEp-g)  ",
 		"category": [
 			"integrations"
 		],
@@ -912,7 +1137,7 @@
 		],
 		"title": "🧩 Tasmota Light Templates in Home Assistant 🧩",
 		"minRank": 0,
-		"description":"Building light templates from scratch can be a bit puzzling. 😕 \nHere is an article from Blakadder explaining the options and requirements from basic to advanced with great examples. \nI have also includes other information about Light Templates and Templating in general. \n\n🧩 [Tasmota Lights in Home Assistant Using Template Schema](https://blakadder.com/template_schema_lights/) \n🧩 [Home Assistant Template Lights - Official Docs](https://www.home-assistant.io/integrations/light.template/) \n🧩 Video from: 'Will Surridge Tech' explaining HA Templates in general](https://www.youtube.com/watch?v=lPKiCjifX5w) ",
+		"description":"Building light templates from scratch can be a bit puzzling. 😕 \nHere is an article from Blakadder explaining the options and requirements from basic to advanced with great examples. \nI have also includes other information about Light Templates and Templating in general. \n\n🧩 [Tasmota Lights in Home Assistant Using Template Schema](https://blakadder.com/template_schema_lights/) \n🧩 [Home Assistant Template Lights - Official Docs](https://www.home-assistant.io/integrations/light.template/) \n🧩 [Video from: 'Will Surridge Tech' explaining HA Templates in general](https://www.youtube.com/watch?v=lPKiCjifX5w) ",
 		"category": [
 			"integrations"
 		],
@@ -920,21 +1145,6 @@
 			"template",
 			"lights",
 			"tasmota"
-		]
-	},
-	"test": {
-		"alias": [
-			"automation_test",
-			"automation test",
-			"automation-test"
-		],
-		"title": "How do I test my Automation?",
-		"minRank": 0,
-		"description":"To test an automation there's three stages you can follow. Testing the action, the condition and action, and the whole automation:\n\n1) Use _Configuration_ -> _Automations_ to find the automationand then push _Run Actions_. If this fails your problem is in the `action:` section, and details should be found in your log file\n2) Use _Developer tools_ -> _Services_ and call `automation.trigger` on the automation with `skip_condition: false`. If the first passes but this fails then the problem is in your `condition:` block\n3) Use _Developer tools_ -> _States_ to find the trigger entity, click the name, then change the state (at the top) to something that'll trigger the automation before pushing _Set State_. If this fails then the problem is with your `trigger:` section, or the automation is turned off (you can check that in _Developer tools -> States_).\n\nYou can also see [this section in the docs](https://www.home-assistant.io/docs/automation/troubleshooting/) and with HA 2021.4 onwards [debug automations](https://www.home-assistant.io/blog/2021/04/07/release-20214/#automation-debugging).",
-		"category": [
-			"automation"
-		],
-		"keywords": [
 		]
 	},
 	"tips": {
@@ -946,7 +1156,7 @@
 		],
 		"title": "BOT Wrangling 101 on DrZzs Discord",
 		"minRank": 0,
-		"description":"There is a whole reference library in here to help you sort out things.  All contributions are from people on the channel.  \n\nType `{prefix}reflist` in the chat and you see the list.  Then (tilde) {prefix}topic will bring up that topic.  Also you can type `{prefix}commands` and get a list of BOT commands you nave access to.  \n\nWe tend to go to `<#717069963357323326>` channel to activate those things so as to not fill up the topic channels with info just for you.",
+		"description":"There is a whole reference library in here to help you sort out things.  All contributions are from people on the channel.  \n\nType `{prefix}reflist` in the chat and you see the list.  Then (tilde) {prefix}topic will bring up that topic.  Also you can type `{prefix}commands` and get a list of BOT commands you nave access to.  \n\nWe tend to go to <#717069963357323326> channel to activate those things so as to not fill up the topic channels with info just for you.",
 		"category": [
 			"information",
 			"general"
@@ -988,7 +1198,7 @@
 	},
 	"tuya_convert": {
 		"alias": [
-			"TuyaConvert",
+			"Tuya Convert",
 			"Tuya-Convert"
 		],
 		"title": "Tuya Convert",
@@ -1000,7 +1210,12 @@
 		"keywords": []
 	},
 	"twitchSub": {
-		"alias": [],
+		"alias": [
+			"twitch",
+			"twitch_sub",
+			"twitch-sub",
+			"twitch sub"
+		],
 		"title": "Twitch Subscription",
 		"minRank": 0,
 		"description":"To receive the twitch sub role, you **MUST** be a subscriber to the DrZzz's Twitch Channel.  This is **100% Free** if you have Amazon Prime. \n\nFind out more about [Twitch Prime Here](https://www.twitch.tv/subs/drzzs)  \n[Visit DrZzz's Twitch Channel](https://www.twitch.tv/drzzs)  \n\n**Please remember to link your discord account to twitch to receive this role.**  \n[->Twitch Integration Help link<-](https://support.discordapp.com/hc/en-us/articles/212112068-Twitch-Integration-FAQ) Scroll down to the `For Viewers` section.  \n\nNote: The Twitch subscriber roles are updated every hour automatically, so be patient...",
@@ -1029,11 +1244,26 @@
 	},
 	"wled": {
 		"alias": [],
-		"title": "WLED - ESP32/ESP8266 webserver to control NeoPixel +",
+		"title": "WLED - LED light controller firmware.",
 		"minRank": 0,
-		"description": "Check out this link to get started: \n\n🚥 [WLED WIKI](https://github.com/Aircoookie/WLED/wiki)  \n\nWLED is a firmware that can be loaded onto ESP8266 and ESP32 microcontrollers and is used to control lengths of connected addressable LEDs.  It has many built-in features, is compatible with Home Assistant via an integration, and with DMX-based Light Controller protocols.\n\nSee also: {prefix}NeoPixel. \n\n[Sound Reactive WLED WIKI](https://github.com/atuline/WLED/wiki) \n[WLED Latest Release](https://github.com/Aircoookie/WLED/releases/latest)",
+		"description": "Check out this link to get started: \n\n🚥 [WLED FAQ](https://kno.wled.ge/basics/faq/)  \n\nWLED is a firmware that can be loaded onto ESP8266 and ESP32 microcontrollers, such as the Dig-Uno and Dig-Quad, and is used to control addressable LEDs. \nWLED has many built-in features, has an app for convenient conrol, is compatible with Home Assistant via an integration, DMX-based Light Controller protocols, and can be used with xLights for advanced lighting effects.\n\n[WLED Discord](https://discord.gg/hyAzVMASsu)\n[WLED App on Google Play Store](https://play.google.com/store/apps/details?id=com.aircoookie.WLED)\n[WLED App on Apple App Store](https://apps.apple.com/us/app/wled/id1475695033)\n\nSee also: \n {prefix}NeoPixel\n {prefix}wled_update \n\n[Sound Reactive WLED WIKI](https://github.com/atuline/WLED/wiki) \n[WLED Latest Release](https://github.com/Aircoookie/WLED/releases/latest)",
 		"category": [
 			"lights",
+			"applications"
+		],
+		"keywords": []
+	},
+	"wled_update": {
+		"alias": [
+			"wled update",
+			"wled_update"
+		],
+		"title": "Update to the latest WLED version.",
+		"minRank": 0,
+		"description": "Connect your WLED Controller to your computer and use this site to easily install the latest WLED firmware version. \n\n🚥 [WLED Update](https://install.wled.me/v2.htm)",
+		"category": [
+			"lights",
+			"led",
 			"applications"
 		],
 		"keywords": []
@@ -1059,6 +1289,7 @@
 		],
 		"title": "Zigbee Wireless Mesh Protocol",
 		"minRank": 0,
+		"description": "Zigbee requires a hub to communicate so be sure to have one ready!  \n\n🐝 [Amazon Buy ConBee II](https://www.amazon.com/dresden-elektronik-ConBee-Universal-Gateway/dp/B07PZ7ZHG5/)  \n🐝 [List of approved Zigbee2MQTT Adapters](https://www.zigbee2mqtt.io/information/supported_adapters.html)  \n🐝 [ZigBee2MQTT Firmware and Installation](https://www.zigbee2mqtt.io/)  \n🐝 [Sonoff Zigbee & ZHA HA Integration](https://www.youtube.com/watch?v=xc_HGvrOxp8)  \n🐝 [Blakadder's ZigBee Page](https://zigbee.blakadder.com/)  \n🐝 [ZigBee Alliance Homepage](https://zigbeealliance.org/zigbee_products/)  \n\nOH THE ZIGBEE!\n\nZigbee is a communication protocol that has flourished in the home automation community.  Zigbee is often preferred to Wifi-based technologies due to its low power consumption and long battery life.  The downside to using zigbee is you need to have a HUB to communicate with all of your devices.  In some ways this is advantageous as it requires fewer devices connect to your wifi network.\n\nOne zigbee hub that has a high approval is the conbee 2.  It is not the cheapest option, but it is fairly easy to configure.  Another great option is Zigbee2MQTT which will relay zigbee data thru your mqtt broker.  Whichever hub you select, be sure to verify that devices are supported by your hub before buying as most hubs do not support every device.\n\nIf nothing else, Zigbee is a very powerful protocol that opens the horizon to many types of sensors, switches, and other types of home automation devices.\n\n🛑**CAUTION**🛑 Zigbee operates in the 2.4 GHz Spectrum, which is shared with Wifi, Bluetooth, Microwave Ovens, and other things.  If you have a lot of 2.4 GHz at your location, your Zigbee may be unreliable.",
 		"category": [
 			"infrastructure",
 			"bridge",
@@ -1080,6 +1311,101 @@
 			"EZSP",
 			"Z-Bee",
 			"zig-a-zag-ah!"
+		]
+	},
+	"pixelheads": {
+		"alias": [
+		"ph",
+		"ledph",
+		"led_ph",
+		"led ph"
+		],
+		"title": "💫 THE PIXELHEADS!",
+		"minRank": 0,
+		"description": "Have an LED related question?  Be sure to ask your question in <#511947803115913217> Channel here on discord!  Our LED masterminds, the PixelHeads, generally hang out there and can answer your question(s) swiftly.",
+		"category": [
+			"lights"
+		],
+		"keywords": [
+		"led",
+		"pixelHeads"
+		]
+	},
+	"post it here": {
+		"alias": [
+			"nodm",
+			"posthere"
+		],
+		"title": "Ask your question here",
+		"minRank": 0,
+		"description": "It is best to ask general questions in the channel versus DM'ing (Direct message) a user/staff member.  This allows everyone in the channel to help or get information reducing repetitive questions.",
+		"category": [
+			"general"
+		],
+		"keywords": [
+			"question"
+		]
+	},
+	"quad_pinout": {
+		"alias": [
+			"quad pinout",
+			"quadpinout",
+			"quad-pinout"
+		],
+		"title": "Dig-Quad Default Pinout",
+		"minRank": 0,
+		"description": "The Default Pinout for a Dig-Quad with an ESP32. \n\n LED 1 Output = Pin 16 \n LED 2 Output = Pin 3 \n LED 3 Output = Pin 1 \n LED 4 Output = Pin 4 \n LED 5 Output = Pin 15 \n\n Additional detail is available here: [QuinLed Dig-Quad Pinout Guide](https://quinled.info/quinled-dig-quad-pinout-guide/)",
+		"category": [
+			"lights",
+			"led"
+		],
+		"keywords": [
+			"led"
+		]
+	},
+	"uno_pinout": {
+		"alias": [
+			"uno pinout",
+			"uno-pinout",
+			"unopinout"
+		],
+		"title": "Dig-Uno Default Pinout",
+		"minrank": 0,
+		"description": "The Default Pinout for a Dig-Uno with an ESP32. \n\n LED 1 Output = Pin 16 \n LED 2 Output = Pin 3 \n\n Additional detail is available here: [QuinLed Dig-Uno Pinout Guide](https://quinled.info/quinled-dig-uno-pinout-guide/)",
+		"category": [
+			"lights",
+			"led"
+		],
+		"keywords": [
+			"led"
+		]
+	},
+	"resvsreg": {
+		"alias": [
+			"regvsres",
+			"regulated",
+			"resistor"
+		],
+		"title": "Resistor versus Regulated - Whats the diff!",
+		"minRank": 0,
+		"description": "Check out the difference between resistor driven versus regulated pixels here: [Wired Watts Link](https://www.wiredwatts.com/learn-regulators/)",
+		"category": [
+			"lights"
+		],
+		"keywords": [
+			"led"
+		]
+	},
+	"eta": {
+		"alias":[],
+		"title": "When can I order a DigUno or DigQuad!",
+		"minRank": 0,
+		"description": "Have you subscribed to the notification roles on discord?🤔\nIf not check this link: [Discord Post](https://discord.com/channels/469330414121517056/603029526141861907/911052700228157460)",
+		"category": [
+			"lights"
+		],
+		"keywords": [
+			"led"
 		]
 	}
 }

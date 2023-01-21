@@ -42,7 +42,7 @@ public class HiveBot {
 
     public static Dispatcher dispatcher;
     public static SlashCommandDispatcher slashCommandDispatcher;
-    //public static GratitudeListener gratitudeListener;
+    public static GratitudeListener gratitudeListener;
     public static StreamHandler streamHandler;
     public static TwitchBot twitchBot;
 
@@ -78,7 +78,7 @@ public class HiveBot {
         api.addEventListener(slashCommandDispatcher = new SlashCommandDispatcher());
 
         // EVENT LISTENERS
-        //api.addEventListener(gratitudeListener = new GratitudeListener());
+        api.addEventListener(gratitudeListener = new GratitudeListener());
         api.addEventListener(streamHandler = new StreamHandler());
         //api.addEventListener(new GuildStateListener());
         api.addEventListener(new ButtonStateListener());
@@ -136,7 +136,7 @@ public class HiveBot {
             timer.scheduleAtFixedRate(new CheckRequests(),10000,1000);
             timer.scheduleAtFixedRate(new BotActivity(), 30000, 30000);
             timer.scheduleAtFixedRate(new CheckDatabase(), 60000, 300000);
-            timer.scheduleAtFixedRate(new GrabKarmaTopThree(), 3000, 360000);
+            //timer.scheduleAtFixedRate(new GrabKarmaTopThree(), 3000, 360000);
 
         } catch (InterruptedException e) {
             e.printStackTrace();

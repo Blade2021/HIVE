@@ -31,9 +31,9 @@ public class Devour extends SlashCommand {
     public void dispatch(User sender, MessageChannel channel, String content, SlashCommandInteractionEvent event) {
         event.deferReply(isEphemeral()).queue();
 
-        reply(event,"We have moved over to StreamHook.  Please use /Here for that Bot instead");
+        //reply(event,"We have moved over to StreamHook.  Please use /Here for that Bot instead");
 
-/*
+
         // Check if a stream is active
         if(HiveBot.streamHandler.isStreamActive()){
 
@@ -131,7 +131,7 @@ public class Devour extends SlashCommand {
             reply(event,"There is no active stream at this time.");
         }
 
- */
+
     }
 
     @Override

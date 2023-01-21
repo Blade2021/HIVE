@@ -11,7 +11,8 @@ public class KarmaUserInfo {
     private int ksent_neg;
     private Instant lastKarmaPoint;
 
-    public KarmaUserInfo() {
+    public KarmaUserInfo(Long userID) {
+        this.userID = userID;
     }
 
     public int getAvailable_points() {

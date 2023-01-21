@@ -223,6 +223,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -242,6 +243,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -282,6 +284,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -310,6 +313,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -351,6 +355,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -456,6 +461,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -1932,6 +1938,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -1952,6 +1959,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2052,6 +2060,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2071,6 +2080,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2088,6 +2098,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2111,6 +2122,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2144,6 +2156,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2153,6 +2166,7 @@ public class SQLHandler {
 
     /**
      * Create a container in the database for the poll data
+     *
      * @param starterID
      * @param optionCount
      * @return ID of the created Poll for processing
@@ -2165,7 +2179,7 @@ public class SQLHandler {
 
         try {
 
-            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO PollTracker (StarterID, OptionCount, MultipleChoice, HideResponses) VALUES (%d, %d, %d, %d)",starterID, optionCount, multipleChoice, hideResponses), Statement.RETURN_GENERATED_KEYS);
+            PreparedStatement st = connection.prepareStatement(String.format("INSERT INTO PollTracker (StarterID, OptionCount, MultipleChoice, HideResponses) VALUES (%d, %d, %d, %d)", starterID, optionCount, multipleChoice, hideResponses), Statement.RETURN_GENERATED_KEYS);
             st.execute();
 
             ResultSet resultSet = st.getGeneratedKeys();
@@ -2175,6 +2189,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2189,11 +2204,12 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = %d",tableName,valueColumnName,value,identifierColumnName,identifier));
+            st.execute(String.format("UPDATE %s SET %s = %d WHERE %s = %d", tableName, valueColumnName, value, identifierColumnName, identifier));
             returnValue = st.getUpdateCount();
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2202,7 +2218,6 @@ public class SQLHandler {
     }
 
     /**
-     *
      * @param userID
      * @param voteOption
      * @param messageID
@@ -2226,12 +2241,13 @@ public class SQLHandler {
                 break;
             }
 
-            if(pollID != null){
-                returnValue = addVote(pollID,userID,voteOption);
+            if (pollID != null) {
+                returnValue = addVote(pollID, userID, voteOption);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2240,7 +2256,6 @@ public class SQLHandler {
     }
 
     /**
-     *
      * @param pollID
      * @param userID
      * @param voteOption
@@ -2260,50 +2275,50 @@ public class SQLHandler {
             Boolean allowMultipleChoice = false;
             Boolean allowVoting = false;
 
-            while(rs.next()){
-                if(rs.getInt("MultipleChoice") == 1){
+            while (rs.next()) {
+                if (rs.getInt("MultipleChoice") == 1) {
                     allowMultipleChoice = true;
                 }
 
-                if(rs.getInt("AllowVoting") == 1){
+                if (rs.getInt("AllowVoting") == 1) {
                     allowVoting = true;
                 }
             }
 
-            if(allowVoting){
+            if (allowVoting) {
 
-                rs = st.executeQuery(String.format("SELECT VoteOption FROM PollAudit WHERE fk_PollID = %d AND VoterID = %d",pollID,userID));
+                rs = st.executeQuery(String.format("SELECT VoteOption FROM PollAudit WHERE fk_PollID = %d AND VoterID = %d", pollID, userID));
                 int rowCnt = 0;
                 Set<Integer> valueSet = new HashSet<>();
 
-                while(rs.next()){
+                while (rs.next()) {
                     rowCnt++;
                     valueSet.add(rs.getInt("VoteOption"));
                 }
 
-                if(rowCnt == 0){
+                if (rowCnt == 0) {
 
-                    st.execute(String.format("INSERT INTO PollAudit (fk_PollID, VoterID, VoteOption) VALUES (%d, %d, %d)",pollID,userID,voteOption));
-                    st.execute(String.format("UPDATE PollTracker SET Option%d = Option%d+1 WHERE id = %d",voteOption,voteOption,pollID));
+                    st.execute(String.format("INSERT INTO PollAudit (fk_PollID, VoterID, VoteOption) VALUES (%d, %d, %d)", pollID, userID, voteOption));
+                    st.execute(String.format("UPDATE PollTracker SET Option%d = Option%d+1 WHERE id = %d", voteOption, voteOption, pollID));
 
                     // Vote was successful
                     returnValue = 200;
 
                 } else {
 
-                    if(valueSet.contains(voteOption)) {
+                    if (valueSet.contains(voteOption)) {
                         // User already voted that option
                         returnValue = 401;
                     } else {
                         // User voted an option that was not found.  Need to check multiple choice
 
-                        if(allowMultipleChoice){
-                            st.execute(String.format("INSERT INTO PollAudit (fk_PollID, VoterID, VoteOption) VALUES (%d, %d, %d)",pollID,userID,voteOption));
-                            st.execute(String.format("UPDATE PollTracker SET Option%d = Option%d+1 WHERE id = %d",voteOption,voteOption,pollID));
+                        if (allowMultipleChoice) {
+                            st.execute(String.format("INSERT INTO PollAudit (fk_PollID, VoterID, VoteOption) VALUES (%d, %d, %d)", pollID, userID, voteOption));
+                            st.execute(String.format("UPDATE PollTracker SET Option%d = Option%d+1 WHERE id = %d", voteOption, voteOption, pollID));
 
                             returnValue = 200;
                         } else {
-                               returnValue = 402;
+                            returnValue = 402;
                         }
                     }
                 }
@@ -2316,6 +2331,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2340,12 +2356,13 @@ public class SQLHandler {
                 break;
             }
 
-            if(pollID != null){
+            if (pollID != null) {
                 returnValue = getPoll(pollID);
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
@@ -2383,6 +2400,7 @@ public class SQLHandler {
 
         } catch (SQLException e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }

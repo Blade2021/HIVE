@@ -4,19 +4,15 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.Permission;
 import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageDeleteEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.commands.development.Test;
-import rsystems.commands.development.Test2;
 import rsystems.commands.moderation.Shutdown;
 import rsystems.commands.moderation.*;
 import rsystems.commands.stream.StreamMode;
@@ -44,12 +40,12 @@ public class Dispatcher extends ListenerAdapter {
         // User Commands
         registerCommand(new Commands());
         registerCommand(new Led());
-        //registerCommand(new GetKarma());
+        registerCommand(new GetKarma());
         registerCommand(new Order66());
         registerCommand(new Search());
         registerCommand(new Help());
         registerCommand(new ThreeLawsSafe());
-        //registerCommand(new Mini());
+        registerCommand(new Mini());
 
         // Utility Commands
         registerCommand(new Ping());
@@ -178,7 +174,7 @@ public class Dispatcher extends ListenerAdapter {
 
 
             //Check for Gratitude
-            /*for (String trigger : HiveBot.gratitudeListener.getTriggers()) {
+            for (String trigger : HiveBot.gratitudeListener.getTriggers()) {
                 if (event.getMessage().getContentDisplay().toLowerCase().contains(trigger)) {
                     GratitudeListener.gratitudeMessageReceived(event);
                     return;
@@ -186,7 +182,7 @@ public class Dispatcher extends ListenerAdapter {
             }
 
 
-             */
+
             // No gratitude triggers found
         }
     }
@@ -215,6 +211,7 @@ public class Dispatcher extends ListenerAdapter {
                         authorized = isAuthorized(c, event.getGuild().getIdLong(), event.getMember(), c.getPermissionIndex());
                     } catch (SQLException e) {
                         e.printStackTrace();
+                        ExceptionHandler.notifyException(e,this.getClass().getName());
                     }
                 }
             }
@@ -234,8 +231,8 @@ public class Dispatcher extends ListenerAdapter {
                     //messageOwner(numberFormatException, c, event);
                 } catch (final Exception e) {
                     e.printStackTrace();
+                    ExceptionHandler.notifyException(e,this.getClass().getName());
                     event.getChannel().sendMessage("**There was an error processing your command!**").queue();
-                    //messageOwner(e, c, event);
                 }
             } else {
 

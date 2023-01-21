@@ -56,7 +56,7 @@ public class Who extends SlashCommand {
         KarmaUserInfo karmaUserInfo = null;
 
         try {
-            karmaUserInfo = HiveBot.karmaSQLHandler.getKarmaUserInfo(member.getIdLong());
+            //karmaUserInfo = HiveBot.karmaSQLHandler.getKarmaUserInfo(member.getIdLong());
 
 
             EmbedBuilder builder = new EmbedBuilder();
@@ -67,6 +67,7 @@ public class Who extends SlashCommand {
             builder.setColor(HiveBot.getColor(HiveBot.colorType.NOVA));
             builder.addField("\uD83D\uDC65 User Tag: ", member.getEffectiveName(), true);
 
+            /*
             if(!member.getUser().isBot()) {
                 builder.addField("✨ Current Karma: ", String.format("\uD83D\uDD39 %d", karmaUserInfo.getKarma()), true);
                 builder.addField("\uD83D\uDC51 Current Rank: ", String.valueOf(HiveBot.karmaSQLHandler.getRank(member.getId()) + 1), true);
@@ -76,6 +77,8 @@ public class Who extends SlashCommand {
             } else {
                 builder.addField("Karma","BOTs don't get Karma",false);
             }
+
+             */
             builder.addField("Joined Server",member.getTimeJoined().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
             builder.addField("Joined Discord",member.getTimeCreated().format(DateTimeFormatter.ISO_LOCAL_DATE),true);
 
@@ -83,7 +86,7 @@ public class Who extends SlashCommand {
 
             reply(event,builder.build());
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 

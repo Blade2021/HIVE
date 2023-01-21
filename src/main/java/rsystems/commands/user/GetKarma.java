@@ -32,7 +32,18 @@ public class GetKarma extends Command {
                 builder.addField("Your Points",String.valueOf(karmaUserInfo.getAvailable_points()),true);
 
             } else {
-                builder.appendDescription("Sorry,\n\nLooks like your not in our database yet.  Help others to earn some karma!");
+                if(HiveBot.karmaSQLHandler.createKarmaUser(sender.getIdLong()) >= 1) {
+                    karmaUserInfo = HiveBot.karmaSQLHandler.getKarmaUserInfo(sender.getIdLong());
+
+
+                    builder.appendDescription("Points are used to give others karma to help show their helpfulness.  **ONE point is earned per day** that you are active here on discord.");
+
+                    builder.addField("Your Karma:", String.valueOf(karmaUserInfo.getKarma()), true);
+                    //builder.addBlankField(true);
+                    builder.addField("Your Points", String.valueOf(karmaUserInfo.getAvailable_points()), true);
+                } else {
+                    builder.setDescription("Looks like something isn't working right now.  Try again later");
+                }
             }
 
             reply(event,builder.build());

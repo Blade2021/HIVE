@@ -9,12 +9,14 @@ import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.api.events.guild.member.update.GuildMemberUpdateNicknameEvent;
 import net.dv8tion.jda.api.events.user.update.UserUpdateOnlineStatusEvent;
+import net.dv8tion.jda.api.exceptions.HierarchyException;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.handlers.ExceptionHandler;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -28,8 +30,9 @@ public class MemberStateListener extends ListenerAdapter {
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
         checkNickname(event.getGuild(), event.getMember());
-
+        /*
         try {
+
             if(HiveBot.karmaSQLHandler.getKarma(event.getMember().getId()) == null){
                 System.out.println("Adding member: " + event.getMember().getId());
                 if(HiveBot.karmaSQLHandler.insertUser(event.getMember().getId(),event.getMember().getUser().getAsTag())){
@@ -38,9 +41,13 @@ public class MemberStateListener extends ListenerAdapter {
                     System.out.println("failed to add member");
                 }
             }
-        } catch (SQLException e) {
+
+
+        } catch (Exception e) {
             e.printStackTrace();
+            ExceptionHandler.notifyException(e,this.getClass().getName());
         }
+        */
 
         String greetingMessage = null;
         try {
@@ -72,7 +79,7 @@ public class MemberStateListener extends ListenerAdapter {
     }
 
     @Override
-    public void onGuildMemberUpdateNickname(@NotNull GuildMemberUpdateNicknameEvent event) {
+    public void onGuildMemberUpdateNickname(final GuildMemberUpdateNicknameEvent event) {
         checkNickname(event.getGuild(), event.getMember());
     }
 
@@ -84,53 +91,40 @@ public class MemberStateListener extends ListenerAdapter {
                 if(!newNickname.equalsIgnoreCase(nickname)) {
                     guild.modifyNickname(member, newNickname).reason("Removing emoji's per server TOS").queue();
                 }
-            } catch (Exception e){
+            } catch(HierarchyException e) {
+                // do nothing
+            }catch (Exception e){
+                ExceptionHandler.notifyException(e,this.getClass().getName());
                 System.out.println("An error occurred when trying to edit nickname for: " + member.getUser().getAsTag());
             }
         }
     }
 
     @Override
-    public void onUserUpdateOnlineStatus(UserUpdateOnlineStatusEvent event) {
+    public void onUserUpdateOnlineStatus(final UserUpdateOnlineStatusEvent event) {
         if (event.getUser().isBot()) {
             return;
         }
 
         checkNickname(event.getGuild(), event.getMember());
-        /*
+
         if (event.getNewOnlineStatus().equals(OnlineStatus.ONLINE)) {
-
-            //Initiate the formatter for formatting the date into a set format
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            //Get the current date
-            LocalDate currentDate = LocalDate.now();
-            //Format the current date into a set format
-            String formattedCurrentDate = formatter.format(currentDate);
-
-            //Get the last date of karma increment
-            Timestamp lastSeenKarma = null;
             try {
-                lastSeenKarma = HiveBot.karmaSQLHandler.getTimestamp(event.getMember().getId());
+                //Get the last date of karma increment
+                Timestamp lastSeenKarma = HiveBot.karmaSQLHandler.getTimestamp(event.getMember().getIdLong());
+
+                if(lastSeenKarma != null){
+                    long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
+                    if (daysPassed >= 1) {
+                            Logger logger = LoggerFactory.getLogger(this.getClass());
+                            logger.info("Incrementing karma point for User: {}  ID:{}",event.getMember().getUser().getAsTag(),event.getMember().getUser().getId());
+                            HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getIdLong(), Timestamp.from(Instant.now()), false);
+
+                    }
+                }
             } catch (SQLException e) {
                 e.printStackTrace();
             }
-
-            //Insert new user if not found in DB
-            if (lastSeenKarma == null) {
-
-            } else {
-                long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
-                if (daysPassed >= 1) {
-                    try {
-                        Logger logger = LoggerFactory.getLogger(this.getClass());
-                        logger.info("Incrementing karma point for User: {}  ID:{}",event.getMember().getUser().getAsTag(),event.getMember().getUser().getId());
-                        HiveBot.karmaSQLHandler.addKarmaPoints(event.getMember().getIdLong(), Timestamp.from(Instant.now()), false);
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
         }
-        */
     }
 }

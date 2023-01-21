@@ -9,66 +9,38 @@ import rsystems.HiveBot;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.TimerTask;
-
-import static rsystems.HiveBot.*;
-import static rsystems.HiveBot.karmaSQLHandler;
 
 public class AddKarmaPoints extends TimerTask {
 
     @Override
     public void run() {
 
-        for (Member member : HiveBot.mainGuild().getMembers()) {
-
+        for (final Member member : HiveBot.mainGuild().getMembers()) {
             if (member.getUser().isBot()) {
                 return;
             }
 
-            if (member.getOnlineStatus().equals(OnlineStatus.ONLINE)) {
 
-                //Get the last date of karma increment
-                Timestamp lastSeenKarma = null;
+            if (member.getOnlineStatus().equals(OnlineStatus.ONLINE)) {
                 try {
-                    lastSeenKarma = karmaSQLHandler.getTimestamp(member.getId());
+                    //Get the last date of karma increment
+                    Timestamp lastSeenKarma = HiveBot.karmaSQLHandler.getTimestamp(member.getIdLong());
+
+                    if (lastSeenKarma != null) {
+                        long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
+                        if (daysPassed >= 1) {
+                            Logger logger = LoggerFactory.getLogger(this.getClass());
+                            logger.info("Incrementing karma point for User: {}  ID:{}", member.getUser().getAsTag(), member.getIdLong());
+                            HiveBot.karmaSQLHandler.addKarmaPoints(member.getIdLong(), Timestamp.from(Instant.now()), false);
+
+                        }
+                    }
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-
-                //Insert new user if not found in DB
-                if (lastSeenKarma == null) {
-                    try {
-                        if (karmaSQLHandler.insertUser(member.getId(), member.getUser().getAsTag(), null, "KARMA")) {
-                            LOGGER.severe("Failed to add " + member.getUser().getAsTag() + " to honeyCombDB");
-                        } else {
-                            LOGGER.info("Added " + member.getUser().getAsTag() + " to honeyCombDB. Table: KARMA");
-                            karmaSQLHandler.overrideKarmaPoints(member.getId(), 5);
-                        }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
-                } else {
-
-                    long daysPassed = ChronoUnit.DAYS.between(lastSeenKarma.toInstant(), Instant.now());
-                    if (daysPassed >= 1) {
-                        try {
-                            Logger logger = LoggerFactory.getLogger(this.getClass());
-                            logger.info("Incrementing karma point for User: {}  ID:{}",member.getUser().getAsTag(),member.getUser().getId());
-                            HiveBot.karmaSQLHandler.addKarmaPoints(member.getIdLong(), Timestamp.from(Instant.now()), false);
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
-                    }
-
-                }
             }
-
         }
-
     }
-
-
 }
