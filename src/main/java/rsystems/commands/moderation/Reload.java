@@ -19,7 +19,7 @@ public class Reload extends Command {
     public void dispatch(User sender, MessageChannel channel, Message message, String content, MessageReceivedEvent event) {
         reply(event, "Reloading all data...\nPlease standby.");
 
-        HiveBot.referenceHandler.loadReferences();
+        //HiveBot.referenceHandler.loadReferences();
     }
 
     @Override

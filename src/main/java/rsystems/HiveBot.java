@@ -105,7 +105,7 @@ public class HiveBot {
                     .build();
             //obsRemoteController.connect();
 
-            referenceHandler.loadReferences();
+            //referenceHandler.loadReferences();
 
             api.getGuilds().forEach(guild -> {
                 slashCommandDispatcher.submitGuildCommands(guild);

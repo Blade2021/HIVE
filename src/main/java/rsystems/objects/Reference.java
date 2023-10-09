@@ -1,5 +1,9 @@
 package rsystems.objects;
 
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
+
+import java.awt.*;
 import java.util.ArrayList;
 
 public class Reference {
@@ -73,5 +77,17 @@ public class Reference {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public MessageEmbed createEmbed(){
+        EmbedBuilder embedBuilder = new EmbedBuilder();
+        embedBuilder.setColor(Color.CYAN)
+                .setDescription(this.getDescription());
+
+        if(this.getTitle() != null){
+            embedBuilder.setTitle(this.getTitle());
+        }
+
+        return embedBuilder.build();
     }
 }

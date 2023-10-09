@@ -8,6 +8,7 @@ import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.api.utils.messages.MessageCreateBuilder;
 import net.dv8tion.jda.api.utils.messages.MessageCreateData;
 
 import java.sql.SQLException;
@@ -98,6 +99,7 @@ public abstract class Command {
     }
 
     protected void channelReply(MessageReceivedEvent event, MessageCreateData message, Consumer<Message> successConsumer){
+
         event.getChannel().sendMessage(message).queue(msg ->
         {
             linkMessage(event.getMessageIdLong(), msg.getIdLong());

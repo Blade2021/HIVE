@@ -2408,4 +2408,248 @@ public class SQLHandler {
         return returnValue;
     }
 
+    public boolean checkForReference(String trigger) throws SQLException {
+
+        Connection connection = pool.getConnection();
+        boolean triggerFound = false;
+
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT ReferenceTrigger FROM HIVE_Library WHERE ReferenceTrigger = '%s'",trigger));
+
+            while (rs.next()) {
+                triggerFound = true;
+                break;
+            }
+
+            if(!triggerFound){
+                rs = st.executeQuery(String.format("SELECT child_ReferenceTrigger FROM HIVE_Library_Aliases WHERE Aliases = '%s'",trigger));
+
+                while(rs.next()){
+                    triggerFound = true;
+                    break;
+                }
+            }
+
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+        return triggerFound;
+    }
+
+    public Integer insertReference(final Reference ref) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Integer returnCount = null;
+
+        try {
+
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("INSERT INTO HIVE_Library (ReferenceTrigger, ReferenceBody) VALUES (\"%s\", \"%s\")", ref.getReferenceCommand(), ref.getDescription()));
+
+            if (st.getUpdateCount() > 0) {
+                returnCount = 200;
+            }
+
+            if (returnCount > 0 && ref.getTitle() != null && !ref.getTitle().isEmpty()) {
+                st.execute(String.format("UPDATE HIVE_Library SET ReferenceTitle = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getTitle(), ref.getReferenceCommand()));
+            }
+
+            if(returnCount > 0 && ref.getAliases() != null && !ref.getAliases().isEmpty()){
+                for(String s:ref.getAliases()){
+                    st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger, Aliases) VALUES ('%s', \"%s\")",ref.getReferenceCommand(),s));
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnCount;
+    }
+
+    public Integer modifyReference(final Reference ref) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        Integer returnCount = null;
+
+        try {
+
+            Statement st = connection.createStatement();
+
+            st.execute(String.format("UPDATE HIVE_Library SET ReferenceBody = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getDescription(),ref.getReferenceCommand()));
+
+            if (st.getUpdateCount() > 0) {
+                returnCount = 200;
+            }
+
+            if (returnCount > 0 && ref.getTitle() != null && !ref.getTitle().isEmpty()) {
+                st.execute(String.format("UPDATE HIVE_Library SET ReferenceTitle = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getTitle(), ref.getReferenceCommand()));
+            }
+
+            if(returnCount > 0 && ref.getAliases() != null && !ref.getAliases().isEmpty()){
+
+                ArrayList<String> currentAliases = getReferenceAliases(ref.getReferenceCommand());
+
+                for(String s:currentAliases){
+                    if(!ref.getAliases().contains(s)){
+                        st.execute(String.format("DELETE FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\" and Aliases = \"%s\"",ref.getReferenceCommand(),s));
+                    }
+                }
+
+                for(String s:ref.getAliases()){
+                    if((currentAliases != null && !currentAliases.contains(s)) || currentAliases == null){
+                        st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger, Aliases) VALUES ('%s', \"%s\")",ref.getReferenceCommand(),s));
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnCount;
+    }
+
+
+    public void oneTimeInsertReference(final Reference reference) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        try {
+
+            Statement st = connection.createStatement();
+            st.execute(String.format("INSERT INTO HIVE_Library (ReferenceTrigger, ReferenceTitle, ReferenceBody) VALUES (\"%s\",\"%s\",\"%s\")", reference.getReferenceCommand(), reference.getTitle(), reference.getDescription()));
+
+            if (reference.getAliases() != null && !reference.getAliases().isEmpty()) {
+                for (String alias : reference.getAliases()) {
+                    st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger,Aliases) VALUES (\"%s\", \"%s\")", reference.getReferenceCommand(), alias));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+    }
+
+    public ArrayList<String> getReferenceList() throws SQLException {
+
+        Connection connection = pool.getConnection();
+        ArrayList<String> returnArray = new ArrayList<>();
+
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery("SELECT ReferenceTrigger FROM HIVE_Library");
+
+            while (rs.next()) {
+                returnArray.add(rs.getString("ReferenceTrigger"));
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnArray;
+
+    }
+
+    public Reference getReference(final String lookup) throws SQLException {
+
+        Connection connection = pool.getConnection();
+        Reference returnReference = null;
+
+        try {
+
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT ReferenceTrigger,ReferenceTitle, ReferenceBody FROM HIVE_Library WHERE ReferenceTrigger = '%s'", lookup));
+
+            boolean foundReference = false;
+
+            while (rs.next()) {
+                foundReference = true;
+                returnReference = new Reference(rs.getString("ReferenceTrigger"), rs.getString("ReferenceBody"));
+
+                if (rs.getString("ReferenceTitle") != null && !rs.getString("ReferenceTitle").isEmpty()) {
+                    returnReference.setTitle(rs.getString("ReferenceTitle"));
+                }
+            }
+
+            if (!foundReference) {
+                //Reference was not found in main library, check for aliases
+
+                rs = st.executeQuery(String.format("SELECT child_ReferenceTrigger FROM HIVE_Library_Aliases WHERE Aliases = '%s'", lookup));
+
+                while (rs.next()) {
+
+                    rs = st.executeQuery(String.format("SELECT ReferenceTrigger,ReferenceTitle,ReferenceBody FROM HIVE_Library WHERE ReferenceTrigger = '%s'", rs.getString("child_ReferenceTrigger")));
+
+                    while (rs.next()) {
+                        foundReference = true;
+                        returnReference = new Reference(rs.getString("ReferenceTrigger"), rs.getString("ReferenceBody"));
+
+                        if (rs.getString("ReferenceTitle") != null && !rs.getString("ReferenceTitle").isEmpty()) {
+                            returnReference.setTitle(rs.getString("ReferenceTitle"));
+                        }
+                    }
+                }
+            }
+
+            return returnReference;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnReference;
+
+    }
+
+    public ArrayList<String> getReferenceAliases(String referenceTrigger) throws SQLException {
+
+        ArrayList<String> returnArray = new ArrayList<>();
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT Aliases FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\"",referenceTrigger));
+
+            while (rs.next()) {
+                returnArray.add(rs.getString(1));
+            }
+        }
+        catch(SQLException e){
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+            } finally {
+            connection.close();
+        }
+
+        if(returnArray.size() > 0){
+            return returnArray;
+        } else {
+            return null;
+        }
+    }
+
+
 }

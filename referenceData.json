@@ -83,16 +83,6 @@
 			"check"
 		]
 	},
-	"code": {
-		"alias": ["share"],
-		"title": "Formatting code in Discord",
-		"minRank": 0,
-		"description": "Paste your code in the following format Replacing `json` with your desired language:\n \\`\\`\\``json` \nCode Here\n\\`\\`\\`\n`Before:`\n{\"greeting\":\"Hello World\"}\n\n`After:` ```json\n{\"greeting\":\"Hello World\"}```[More information](https://github.com/Blade2021/HIVE/wiki/Code-Formatting-&-Validation)",
-		"category": [
-			"general"
-		],
-		"keywords": []
-	},
 	"codeshare": {
 		"alias": [],
 		"title": "Code Share",
@@ -105,16 +95,6 @@
 			"code",
 			"code share"
 		]
-	},
-	"config": {
-		"alias": [],
-		"title": "Where's My Configuration?",
-		"minRank": 0,
-		"description": "Enable the \"Configuration\" section of the UI by adding `config:` to your configuration.yaml file, docs: <https://home-assistant.io/integrations/config/>",
-		"category": [
-			"home-assistant"
-		],
-		"keywords": []
 	},
 	"deconz": {
 		"alias": [],
@@ -302,7 +282,7 @@
 		],
 		"title": "Help Desk",
 		"minRank": 0,
-		"description": "Need help with an order from [DrZzs.com](https://drzzs.com)?  Submit a ticket to the HelpDesk. [https://helpdesk.drzzs.com](https://helpdesk.drzzs.com)",
+		"description": "Need help with an order from [DrZzs.com](https://drzzs.com/shop/)? \n\n🛟 - Submit a ticket to the Product Issue Resolution Form [here](https://drzzs.com/contact/) \n\n🛟 - If you have an order question or product issue for PermaTrack, email sales@permatrack.us or fill out the contact form [here](https://www.permatrack.us/contact/) \n\n🛟 - If you just have questions about if or how your device is working, PLEASE check first on the Discord [#led-lighting-diy-🚥-🚥](https://discord.gg/AxhpqH3jRr) channel.",
 		"category": [
 			"information",
 			"led",
@@ -311,8 +291,8 @@
 		"keywords": [
 			"Helpdesk", 
 			"Support", 
-			"QuinDuo", 
-			"QuinQuad"
+			"DigUno", 
+			"DigQuad"
 		]
 	},
 	"input_boolean": {
@@ -361,7 +341,7 @@
 		]
 	},
 	"karma": {
-		"alias": [],
+		"alias": ["ks"],
 		"title": "What is Karma?",
 		"minRank": 0,
 		"description": "If someone has helped you, be sure to thank them by sending them positive karma using the <:KU:717177145717424180> reaction on their message or by clicking the 📦 after replying thanks to their message.",
@@ -388,7 +368,7 @@
 		],
 		"title": "💫 LED Data Boosters",
 		"minRank": 0,
-		"description": "⚡QuinLED Data Booster: [DrZzs](https://drzzs.com/shop/3-wire-data-booster/) | [ALLNET](https://shop.allnetchina.cn/collections/quinled/products/quinled-data-booster) \n⚡xConnect Ends: [WiredWatts](https://www.wiredwatts.com/pixaboost3-pixel-data-booster-xconnect) | [Wallys](https://www.wallyslights.com/collections/data-boosters/products/data-booster-with-xconnect-pigtails) | [RGBMan](https://www.rgb-man.com/online-store/Xconnect-FAMP-p248004445) | [PixelController](https://www.pixelcontroller.com/store/controllers/54-falcon-picap.html) | [Your Pixel Store](https://www.yourpixelstore.com/all-products?store-page=F-Amp-with-xConnect-Pigtails-Pack-of-5-p403550735) \n⚡RayWu Ends: [WiredWatts](https://www.wiredwatts.com/pixaboost1-pixel-data-boosters-ray) | [Wallys](https://www.wallyslights.com/collections/data-boosters/products/data-boosters-with-ray-wu-pigtails-1) | [RGBMan](https://www.rgb-man.com/online-store/FAMP-with-13-5-Ends-Ray-Wu-p254604858) | [PixelController](https://www.pixelcontroller.com/store/controllers/55-falcon-picap.html) \n⚡Open Wire Ends: [PixelController](https://www.pixelcontroller.com/store/controllers/53-falcon-picap.html) \n⚡Long Range Data: [DrZzz](https://drzzs.com/shop/d3datamax/)",
+		"description": "⚡QuinLED Data Booster: [DrZzs](https://drzzs.com/shop/3-wire-data-booster/) | [ALLNET](https://shop.allnetchina.cn/collections/quinled/products/quinled-data-booster) \n⚡xConnect Ends: [WiredWatts](https://www.wiredwatts.com/pixaboost3-pixel-data-booster-xconnect) | [Wallys](https://wallyslights.com/collections/data-boosters/products/5-pack-data-booster-with-xconnect-pigtails) | [RGBMan](https://www.rgb-man.com/online-store/Xconnect-FAMP-p248004445) | [PixelController](https://pixelcontroller.com/store/products/54-falcon-picap.html) | [Your Pixel Store](https://www.yourpixelstore.com/all-products?store-page=F-Amp-with-xConnect-Pigtails-Pack-of-5-p403550735) \n⚡RayWu Ends: [WiredWatts](https://www.wiredwatts.com/pixaboost1-pixel-data-boosters-ray) | [Wallys](https://wallyslights.com/collections/data-boosters/products/5-pack-data-booster-with-ray-wu-pigtails) | [RGBMan](https://www.rgb-man.com/online-store/FAMP-with-13-5-Ends-Ray-Wu-p254604858) | [PixelController](https://pixelcontroller.com/store/products/55-falcon-picap.html) \n⚡Open Wire Ends: [PixelController](https://pixelcontroller.com/store/products/53-falcon-picap.html)",
 		"category": [
 			"led"
 		],
@@ -424,7 +404,7 @@
 		],
 		"title": "💫 LED Controllers",
 		"minRank": 0,
-		"description": "🎮 [QuinLED-Dig-Uno](https://quinled.info/quinled-dig-uno/)\n🎮 [QuinLED-Dig-Quad](https://quinled.info/quinled-dig-quad/)\n🎮 [Kulplights Controllers](https://kulplights.com/)\n🎮 [Falcon Pixel Controller](https://www.pixelcontroller.com/store/index.php)\n🎮 [Pixel2Things - Pixel to AC Controller](https://www.pixel2things.com/)",
+		"description": "🎮 [QuinLED-Dig-Uno](https://quinled.info/quinled-dig-uno/)\n🎮 [QuinLED-Dig-Quad](https://quinled.info/quinled-dig-quad/)\n🎮 [QuinLED-Dig-Octa](https://quinled.info/quinled-dig-octa/)\n🎮 [Kulplights Controllers](https://kulplights.com/)\n🎮 [Falcon Pixel Controller](https://pixelcontroller.com/store/7-pixel-controllers)\n🎮 [Experience Lights Controllers](https://experiencelights.com/genius-pixel-controllers/)\n🎮 [Mattos Dragon Controllers](https://mattosdesigns.com/collections/dragon-controllers)\n🎮 [Wallys Lights Controllers](https://wallyslights.com/collections/boards-and-controllers)\n🎮 [Pixel2Things - Pixel to AC Controller](https://experiencelights.com/pixel2things/)",
 		"category": [
 			"led"
 		],
@@ -446,7 +426,7 @@
 		],
 		"title": "ESP Drivers",
 		"minRank": 0,
-		"description": "When flashing an ESP chip your computer needs the proper driver to recognize the device. There are two versions that could be needed: \n🏎️ [CP210x Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) \n🏎️ [CH340 Driver](https://www.wemos.cc/en/latest/ch340_driver.html) \n🏎️ [CH9102 Driver](https://github.com/WCHSoftGroup/ch343ser_linux)",
+		"description": "When flashing an ESP chip your computer needs the proper driver to recognize the device. There are these versions that could be needed: \n🏎️ [CP210x Driver](https://www.silabs.com/developers/usb-to-uart-bridge-vcp-drivers) \n🏎️ [CH340 Driver](https://www.wemos.cc/en/latest/ch340_driver.html) \n🏎️ [CH9102 Driver](https://github.com/WCHSoftGroup/ch343ser_linux)",
 		"category": [
 			"led"
 		],
@@ -525,7 +505,7 @@
 		],
 		"title": "💫 LED FPP",
 		"minRank": 0,
-		"description": "✈️ FPP Manual can be found [here](https://falconchristmas.github.io/FPP_Manual.pdf) \n✈️ FPP releases can be found [here](https://github.com/FalconChristmas/fpp/releases) \n✈️ The Falcon [Christmas Forum](http://falconchristmas.com/forum/) - support for fpp, kulp and falcon \n\n✈️ FPP Installing and Configuring Your Controller Step by Step - Rick Harris [YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0) \n✈️ FPP In Detail Master / Remote / Schedule / Playlist - Rick Harris - [YouTube](https://www.youtube.com/watch?v=y27EarxYW6Y) \n✈️ FPP Plugins & Scripts - Daniel Kulp [YouTube](https://www.youtube.com/watch?v=pE4I5igbAuE&t=2s)",
+		"description": "✈️ FPP Manual can be found [here](https://falconchristmas.github.io/FPP_Manual(6.0).pdf) \n✈️ FPP releases can be found [here](https://github.com/FalconChristmas/fpp/releases) \n✈️ The Falcon [Christmas Forum](http://falconchristmas.com/forum/) - support for fpp, kulp and falcon \n\n✈️ FPP Installing and Configuring Your Controller Step by Step - Rick Harris [YouTube](https://www.youtube.com/watch?v=ZV4o11XiaU0) \n✈️ FPP In Detail Master / Remote / Schedule / Playlist - Rick Harris - [YouTube](https://www.youtube.com/watch?v=y27EarxYW6Y) \n✈️ FPP Plugins & Scripts - Daniel Kulp [YouTube](https://www.youtube.com/watch?v=pE4I5igbAuE&t=2s)",
 		"category": [
 			"led"
 		],
@@ -549,7 +529,7 @@
 		],
 		"title": "💫 LED Hardware",
 		"minRank": 0,
-		"description": "Global Vendors:\n🔩 [QuinLED ALLNET](https://shop.allnetchina.cn/collections/quinled) \n🔩 [BTF Lighting - AliExpress](https://btf-lighting.aliexpress.com/store/1051119) \n🔩 [ETOP Lighting - AliExpress](https://www.aliexpress.com/store/4478030) \n🔩 [Ray wu's store](https://www.aliexpress.com/store/701799?spm=a2g0s.9042311.0.0.40694c4db8oCxz) \n🔩 [Hanson Electronics](http://www.hansonelectronics.com.au/)  \n\n US:\n🔩 [DrZzs Shop](https://drzzs.com/shop/) \n🔩 [JBoards](https://jboards.ecwid.com/) \n🔩 [Mattos Designs](https://mattosdesigns.com/) \n🔩 [Paul Zhang Direct-US](https://www.amazon.com/s?i=merchant-items&me=A1HD6W29M3RXPC&tag=drzzs0e-20) \n🔩 [RGBMan](https://www.rgb-man.com/) \n🔩 [Wired Watts](https://www.wiredwatts.com/) \n🔩 [Wally's Lights](https://www.wallyslights.com/) \n🔩 [Your Pixel Store](https://www.yourpixelstore.com/) \n\n EU/UK LED Vendors:\n🔩 [Build A Light Show located in the UK](https://buildalightshow.com/) \n🔩 [Propixeler located in the Netherlands](https://propixeler.nl/index.php?route=common/home) \n🔩 [Xmas-land located in Germany](https://www.xmas-land.de/) \n\n AU LED Vendors:\n🔩 [Extreme Lighting Displays](https://www.extremelightingdisplays.com.au/)",
+		"description": "Global Vendors:\n🔩 [QuinLED ALLNET](https://shop.allnetchina.cn/collections/quinled) \n🔩 [BTF Lighting - AliExpress](https://btf-lighting.aliexpress.com/store/1051119) \n🔩 [ETOP Lighting - AliExpress](https://www.aliexpress.com/store/4478030) \n🔩 [Ray wu's store](https://www.aliexpress.com/store/701799?spm=a2g0s.9042311.0.0.40694c4db8oCxz) \n🔩 [Hanson Electronics](http://www.hansonelectronics.com.au/)  \n\n US:\n🔩 [DrZzs Shop](https://drzzs.com/shop/) \n🔩 [HPixePower](https://hpixelpower.com/) \n🔩 [JBoards](https://jboards.ecwid.com/) \n🔩 [Kulp Lights](https://kulplights.com/) \n🔩 [Mattos Designs](https://mattosdesigns.com/) \n🔩 [MICROCYB](https://microcyb.com) \n🔩 [Paul Zhang Direct-US](https://www.amazon.com/s?i=merchant-items&me=A1HD6W29M3RXPC&tag=drzzs0e-20) \n🔩 [PixelController](https://pixelcontroller.com/store/) \n🔩 [Pixel Parts](https://pixel-parts.com/) \n🔩 [RGBMan](https://www.rgb-man.com/) \n🔩 [Turtle Plates](https://turtleplates.com/) \n🔩 [Wired Watts](https://www.wiredwatts.com/) \n🔩 [Wally's Lights](https://www.wallyslights.com/) \n🔩 [Wizard of Wire](https://www.wizardofwire.com/) \n🔩 [Your Pixel Store](https://www.yourpixelstore.com/) \n\n EU/UK LED Vendors:\n🔩 [Build A Light Show located in the UK](https://buildalightshow.com/) \n🔩 [Propixeler located in the Netherlands](https://propixeler.nl/index.php?route=common/home) \n🔩 [Xmas-land located in Germany](https://www.xmas-land.de/) \n\n AU LED Vendors:\n🔩 [Extreme Lighting Displays](https://www.extremelightingdisplays.com.au/)",
 		"category": [
 			"led"
 		],
@@ -652,7 +632,7 @@
 		],
 		"title": "💫 LED Display Sequences",
 		"minRank": 0,
-		"description": "Free Sequences and How to: \n☄️ [xLights Free Sequences (Google Drive)](http://share.xlights.org/) \n☄️ [xlights Around the World](http://xlightsaroundtheworld.com/) \n☄️ [VCS 2020 xLights: Basic Sequencing Michael Stoffregen - VIDEO](https://www.youtube.com/watch?v=EvK7AUJ1Nrk) \n\n Paid and Subscription Vendors: \n☄️ [Animated Lumination Sequences](http://animatedillumination.com/) \n☄️ [Bostick Family Light Shows](https://bostickfamilylightshow.com/collections/sequences) \n☄️ [Fairy Pixel Dust](https://www.fairypixeldust.com/) \n☄️ [Lightshow 101](https://www.lightshow101.com/sequences) \n☄️ [Magical Light Shows](https://magicallightshows.com/) \n☄️ [Pixel Perfect Sequences](https://pixelperfectsequences.com/) \n☄️ [Pixel Pro Displays](https://www.pixelprodisplays.com/) \n☄️ [Pixel Sequence Pros](https://pixelsequencepros.com/) \n☄️ [RGB Sequences](https://rgbsequences.net/) \n☄️ [Sequence Armory](https://holidaylightingthinktank.net/sequence-armory/) \n☄️ [Showstopper Sequences](https://showstoppersequences-com.3dcartstores.com/) \n☄️ [Syracuse Lights](https://www.syracuselights.org/sequences) \n☄️ [Xtreme Sequences](https://www.xtremesequences.com/)",
+		"description": "Sequence Search: \n☄️ [xLights Sequence Search](https://xlights.info/) \n\n Free Sequences: \n☄️ [Sequence Armory](https://holidaylightingthinktank.net/sequence-armory/) \n☄️ [xLights Free Sequences (Google Drive)](http://share.xlights.org/) \n☄️ [xLights Around the World](http://xlightsaroundtheworld.com/) \n\n Paid and Subscription Vendors: \n☄️ [Animated Lumination Sequences](http://animatedillumination.com/) \n☄️ [Bostick Family Light Shows](https://bostickfamilylightshow.com/collections/sequences) \n☄️ [EFL Sequences](https://eflsequences.com/) \n☄️ [Fairy Pixel Dust](https://www.fairypixeldust.com/) \n☄️ [Lights on Abby](https://www.lightsonabby.com/) \n☄️ [Lightshow 101](https://www.lightshow101.com/sequences) \n☄️ [Magical Light Shows](https://magicallightshows.com/) \n☄️ [Pixel Perfect Sequences](https://pixelperfectsequences.com/) \n☄️ [Pixel Pro Displays](https://www.pixelprodisplays.com/) \n☄️ [Pixel Sequence Pros](https://pixelsequencepros.com/) \n☄️ [RGB Sequences](https://rgb-sequences.com/) \n☄️ [Showstopper Sequences](https://showstoppersequences-com.3dcartstores.com/) \n☄️ [Syracuse Lights](https://www.syracuselights.org/sequences) \n☄️ [Vivid Sequences](https://vividsequences.com/sequences-all/) \n☄️ [Xtreme Sequences](https://www.xtremesequences.com/)",
 		"category": [
 			"led"
 		],
@@ -668,7 +648,7 @@
 		],
 		"title": "🛠️ LED Tools",
 		"minrank": 0,
-		"description": "Here are some helpful links to some of our favorite tools to assist in creating your LED light show: \n\n🛠️ Creating Lyric tracks for use in xLights: \n [AutoLyrics at LightingFanatics](https://autolyrics.lightingfanatics.com/) \n [Auto Lyrix Align](https://autolyrixalign.hltnus.org/) \n\n🛠️ Normalize your MP3 audio volume across songs: \n [MP3 Gain](http://mp3gain.sourceforge.net/) \n\n🛠️ Calculate needs for building a MegaTree:\n [Mega Tree Calculator by LightShowHub](https://www.lightshowhub.com/tools/mega-tree-calculator) \n\n🛠️ Calculate needs for building a Panel Matrix:\n [Build a Custom Panel Matrix by Wired Watts](https://www.wiredwatts.com/build-a-matrix-kit) \n\n🛠️ Custom Mounting Solution Design: \n [jdeation Mounting Kit Designs](https://www.jdeation.com/) \n\n🛠️ xLights Custom Model Builder: \n [Custom Model Builder](https://www.lightshowhub.com/tools/xlights-custom-model-builder)",
+		"description": "Here are some helpful links to some of our favorite tools to assist in creating your LED light show: \n\n🛠️ Basic Sequencing: \n[VCS 2020 xLights: Basic Sequencing Michael Stoffregen - VIDEO](https://www.youtube.com/watch?v=EvK7AUJ1Nrk) \n\n🛠️ Creating Lyric tracks for use in xLights: \n [AutoLyrics at LightingFanatics](https://autolyrics.lightingfanatics.com/) \n [Auto Lyrix Align](https://autolyrixalign.hltnus.org/)\n [Singing Faces Tutorial](https://youtu.be/MBbI95lS5Tw) \n\n🛠️ Normalize your MP3 audio volume across songs: \n [MP3 Gain](http://mp3gain.sourceforge.net/) \n\n🛠️ Calculate needs for building a MegaTree:\n [Mega Tree Calculator by LightShowHub](https://www.lightshowhub.com/tools/mega-tree-calculator) \n\n🛠️ Calculate needs for building a Panel Matrix:\n [Build a Custom Panel Matrix by Wired Watts](https://www.wiredwatts.com/build-a-matrix-kit) \n\n🛠️ Custom Mounting Solution Design: \n [jdeation Mounting Kit Designs](https://www.jdeation.com/) \n\n🛠️ xLights Custom Model Builder: \n [Custom Model Builder](https://www.lightshowhub.com/tools/xlights-custom-model-builder)",
 		"category": [
 			"led"
 		],
@@ -728,7 +708,7 @@
 		],
 		"title": "Let's Encrypt SSL Certificates",
 		"minRank": 0,
-		"description":"💯 The best *How-to* for setting up Encryption and Home Assistant: \n[Juan M. Tech Video](<https://youtu.be/XdiGdC7K4sI>)",
+		"description":"The best *How-to* for setting up Encryption and Home Assistant: \n[Juan M. Tech Video](<https://youtu.be/XdiGdC7K4sI>)",
 		"category": [
 			"integrations"
 		],
@@ -848,7 +828,7 @@
 		"alias": [],
 		"title": "PACKAGE!",
 		"minRank": 0,
-		"description":"\uD83D\uDCE6\uD83D\uDCE6\uD83D\uDCE6 Did someone recently help you?  If you Thank them using a reply or mention them HIVE will put a package emoji on the message.  If YOU click this reaction.  It will send them positive karma, increasing their \"helpfulness\" rating.  So be a good sport.  CLICK THE PACKAGE! \uD83D\uDCE6",
+		"description":"\uD83D\uDCE6\uD83D\uDCE6\uD83D\uDCE6 Did someone recently help you?  If you Thank them using a reply or mention them HIVE will put a package emoji on the message.  If YOU click this reaction.  It will send them positive karma, increasing their helpfulness rating.  So be a good sport.  CLICK THE PACKAGE! \uD83D\uDCE6",
 		"category": [
 			"general"
 		],
@@ -930,8 +910,8 @@
 		],
 		"keywords": []
 	},
-	"Thread It": {
-		"alias": ["thread"],
+	"thread": {
+		"alias": ["threads"],
 		"title": "WE SUPPORT THREADS!",
 		"minRank": 0,
 		"description": "Channels can get messy when multiple people are discussing different topics at once.  If this happens, please consider starting a thread in the channel so that each conversation can go uninterrupted.",
@@ -1095,8 +1075,7 @@
 			"tasmota upgrade",
 			"tasmota-upgrade",
 			"Upgrade_Flow",
-			"UpgradeFlow",
-			"tasmota-upgrade"
+			"UpgradeFlow"
 		],
 		"title": "Tasmota Upgrade Path",
 		"minRank": 0,
@@ -1258,9 +1237,9 @@
 			"wled update",
 			"wled_update"
 		],
-		"title": "Update to the latest WLED version.",
+		"title": "Update to the latest WLED version",
 		"minRank": 0,
-		"description": "Connect your WLED Controller to your computer and use this site to easily install the latest WLED firmware version. \n\n🚥 [WLED Update](https://install.wled.me/v2.htm)",
+		"description": "Connect your WLED Controller to your computer and use one of the below sites to easily install the latest WLED firmware version \n\n🚥[QuinLED Controllers](https://install.quinled.info/) \n🚥[Other WLED Controllers](https://install.wled.me/v2.htm)",
 		"category": [
 			"lights",
 			"led",
@@ -1354,7 +1333,7 @@
 		],
 		"title": "Dig-Quad Default Pinout",
 		"minRank": 0,
-		"description": "The Default Pinout for a Dig-Quad with an ESP32. \n\n LED 1 Output = Pin 16 \n LED 2 Output = Pin 3 \n LED 3 Output = Pin 1 \n LED 4 Output = Pin 4 \n LED 5 Output = Pin 15 \n\n Additional detail is available here: [QuinLed Dig-Quad Pinout Guide](https://quinled.info/quinled-dig-quad-pinout-guide/)",
+		"description": "The Default Pinout for a Dig-Quad with an ESP32. \n\n LED 1 Output = Pin 16 \n LED 2 Output = Pin 3 \n LED 3 Output = Pin 1 \n LED 4 Output = Pin 4 \n LED 5 Output = Pin 15 \n\nAdditional Outputs with AE+ \n\n LED 6 Output = Pin 21 \n LED 7 Output = Pin 17 \n LED 8 Output = Pin 22 \n\n Additional detail is available here: \n [QuinLed Dig-Quad Pinout Guide](https://quinled.info/quinled-dig-quad-pinout-guide/) \n [QuinLED-ESP32-AE+ Pinout Guide](https://quinled.info/quinled-esp32-ae-pinout-guide/)",
 		"category": [
 			"lights",
 			"led"
@@ -1371,7 +1350,24 @@
 		],
 		"title": "Dig-Uno Default Pinout",
 		"minrank": 0,
-		"description": "The Default Pinout for a Dig-Uno with an ESP32. \n\n LED 1 Output = Pin 16 \n LED 2 Output = Pin 3 \n\n Additional detail is available here: [QuinLed Dig-Uno Pinout Guide](https://quinled.info/quinled-dig-uno-pinout-guide/)",
+		"description": "The Default Pinout for a Dig-Uno with an ESP32. \n\n LED 1 Output = Pin 16 \n LED 2 Output = Pin 3 \n\nAdditional Outputs with AE+ \n\n LED 6 Output = Pin 21 \n LED 7 Output = Pin 17 \n LED 8 Output = Pin 22 \n\n Additional detail is available here: \n [QuinLed Dig-Uno Pinout Guide](https://quinled.info/quinled-dig-uno-pinout-guide/) \n [QuinLED-ESP32-AE+ Pinout Guide](https://quinled.info/quinled-esp32-ae-pinout-guide/)",
+		"category": [
+			"lights",
+			"led"
+		],
+		"keywords": [
+			"led"
+		]
+	},
+	"octa_pinout": {
+		"alias": [
+			"octa pinout",
+			"octa-pinout",
+			"octapinout"
+		],
+		"title": "Dig-Octa Default Pinout",
+		"minrank": 0,
+		"description": "The Default Pinout for a Dig-Octa. \n\n LED 1 Output = Pin 0 \n LED 2 Output = Pin 1 \n LED 3 Output = Pin 2 \n LED 4 Output = Pin 3 \n LED 5 Output = Pin 4 \n LED 6 Output = Pin 5 \n LED 7 Output = Pin 12 \n LED 8 Output = Pin 13 \n\n Additional detail is available here: \n [QuinLed Dig-Octa Pinout Guide](https://quinled.info/quinled-dig-octa-brainboard-32-8l-pinout-guide/)",
 		"category": [
 			"lights",
 			"led"
@@ -1398,14 +1394,38 @@
 	},
 	"eta": {
 		"alias":[],
-		"title": "When can I order a DigUno or DigQuad!",
+		"title": "When can I order?!",
 		"minRank": 0,
-		"description": "Have you subscribed to the notification roles on discord?🤔\nIf not check this link: [Discord Post](https://discord.com/channels/469330414121517056/603029526141861907/911052700228157460)",
+		"description": "Have you subscribed to the notification roles on discord?🤔\nIf not check this link: [Discord Post](https://discord.com/channels/469330414121517056/469332542433132574/1038897173045190656)",
 		"category": [
 			"lights"
 		],
 		"keywords": [
 			"led"
+		]
+	},
+	"cashews": {
+		"alias":["sp","streampoints","nuts"],
+		"title": "What are cashews???🌰",
+		"minRank": 0,
+		"description": "Cashews are our way of rewarding everyone who attends during a livestream.  You can collect points which we call cashews then spend them to trigger sounds and animations on the stream.\n\nSo get nutty and start collecting those cashews by typing /Here DURING a livestream.\n\nAlso check out [THIS POST](https://discord.com/channels/469330414121517056/469332542433132574/1057128373337477161) for more information.",
+		"category": [
+			"stream"
+		],
+		"keywords": [
+			"stream","points"
+		]
+	},
+	"led_connectors": {
+		"alias":["connectors","connector"],
+		"title": "How do you connect these LED connectors??",
+		"minRank": 0,
+		"description": "While these connectors can seem very complicated.😤  Its actually quite simple.😁  \n\nJust follow the helpful tips over at [Wired Watts](https://www.wiredwatts.com/learn-connectors)",
+		"category": [
+			"led"
+		],
+		"keywords": [
+			"led","connector"
 		]
 	}
 }

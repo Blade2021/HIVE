@@ -70,6 +70,9 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         registerCommand(new StreamHandlerSlashCmd());
         registerCommand(new Devour());
 
+        registerCommand(new LibraryAdd());
+        registerCommand(new LibraryModify());
+
         // Dev Commands
 
         //registerCommand(new Block());

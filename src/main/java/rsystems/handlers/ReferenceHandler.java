@@ -8,11 +8,14 @@ import rsystems.HiveBot;
 import rsystems.objects.Reference;
 
 import java.awt.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ReferenceHandler {
+
+    private static ArrayList<String> referenceList = new ArrayList<>();
 
     private static final Map<String, Reference> refMap = new HashMap<>();
 
@@ -20,6 +23,7 @@ public class ReferenceHandler {
         return refMap;
     }
 
+    /*
     public void loadReferences(){
         refMap.clear();
 
@@ -66,6 +70,23 @@ public class ReferenceHandler {
             refMap.putIfAbsent(keyStr.toString(), tempReference);
 
         });
+    }
+
+
+     */
+
+    public void loadReferences(){
+        referenceList = new ArrayList<>();
+        try {
+            referenceList = HiveBot.database.getReferenceList();
+        } catch(SQLException e){
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        }
+    }
+
+    public boolean checkList(final String criteria){
+        return referenceList.contains(criteria.toLowerCase());
     }
 
     private ArrayList<String> getArrayList(JSONObject parsedValue, String key){

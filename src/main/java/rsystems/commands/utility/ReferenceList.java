@@ -5,12 +5,14 @@ import net.dv8tion.jda.api.entities.Message;
 import net.dv8tion.jda.api.entities.channel.middleman.MessageChannel;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import org.checkerframework.checker.units.qual.A;
 import rsystems.HiveBot;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
 
 import java.awt.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.TreeMap;
 
 public class ReferenceList extends Command {
@@ -24,19 +26,22 @@ public class ReferenceList extends Command {
         StringBuilder output5 = new StringBuilder();
         StringBuilder output6 = new StringBuilder();
 
-        TreeMap<String, Reference> sortedRefMap = new TreeMap<>(HiveBot.referenceHandler.getRefMap());
+        ArrayList<String> refList = HiveBot.database.getReferenceList();
+        refList.sort(String::compareToIgnoreCase);
+
+        //TreeMap<String, Reference> sortedRefMap = new TreeMap<>(HiveBot.referenceHandler.getRefMap());
 
         //Iterate through each Reference and grab the main ref code
-        for (Reference r : sortedRefMap.values()) {
+        for (String r : refList) {
             switch (index) {
                 case 0:
-                    output4.append(r.getReferenceCommand()).append("\n");
+                    output4.append(r).append("\n");
                     break;
                 case 1:
-                    output5.append(r.getReferenceCommand()).append("\n");
+                    output5.append(r).append("\n");
                     break;
                 case 2:
-                    output6.append(r.getReferenceCommand()).append("\n");
+                    output6.append(r).append("\n");
                     break;
             }
             index++;

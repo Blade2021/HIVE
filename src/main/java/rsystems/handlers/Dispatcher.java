@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
+import rsystems.commands.development.Meltdown;
 import rsystems.commands.moderation.Shutdown;
 import rsystems.commands.moderation.*;
 import rsystems.commands.stream.StreamMode;
@@ -42,7 +43,7 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new Led());
         registerCommand(new GetKarma());
         registerCommand(new Order66());
-        registerCommand(new Search());
+        //registerCommand(new Search());
         registerCommand(new Help());
         registerCommand(new ThreeLawsSafe());
         registerCommand(new Mini());
@@ -66,6 +67,8 @@ public class Dispatcher extends ListenerAdapter {
         // Stream Commands
         registerCommand(new StreamMode());
         registerCommand(new StreamVerify());
+
+        //registerCommand(new Meltdown());
 
 
         // Dev Only
@@ -135,36 +138,24 @@ public class Dispatcher extends ListenerAdapter {
 
 
                 //CHECK FOR REFERENCES
-                for (Map.Entry<String, Reference> entry : HiveBot.referenceHandler.getRefMap().entrySet()) {
 
-                    final Reference r = entry.getValue();
+                try {
+                    if(HiveBot.database.checkForReference(message.toLowerCase().substring(1))){
+                        //Reference was found
 
-                    if (message.toLowerCase().startsWith(prefix.toLowerCase() + r.getReferenceCommand().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + r.getReferenceCommand().toLowerCase())) {
+                        Reference foundReference = HiveBot.database.getReference(message.toLowerCase().substring(1));
                         if(event.getMessage().getMessageReference() != null) {
 
                             Message originalMessage = event.getMessage().getReferencedMessage();
-                            originalMessage.replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
+                            originalMessage.replyEmbeds(foundReference.createEmbed()).queue();
 
                         } else {
-                            event.getMessage().replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
-                        }
-                        return;
-                    } else {
-                        for (final String alias : r.getAliases()) {
-                            if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
-
-                                if(event.getMessage().getMessageReference() != null) {
-
-                                    Message originalMessage = event.getMessage().getReferencedMessage();
-                                    originalMessage.replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
-
-                                } else {
-                                    event.getMessage().replyEmbeds(HiveBot.referenceHandler.createEmbed(r)).queue();
-                                }
-                                return;
-                            }
+                            event.getMessage().replyEmbeds(foundReference.createEmbed()).queue();
                         }
                     }
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    ExceptionHandler.notifyException(e, this.getClass().getName());
                 }
 
                 //References not found

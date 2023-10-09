@@ -49,7 +49,7 @@ public class ButtonStateListener extends ListenerAdapter {
 
             if (event.getUser().getId().equalsIgnoreCase(originalPoster)) {
 
-                for (Map.Entry<String, Reference> referenceEntity : HiveBot.referenceHandler.getRefMap().entrySet()) {
+                /*for (Map.Entry<String, Reference> referenceEntity : HiveBot.referenceHandler.getRefMap().entrySet()) {
 
                     if (referenceEntity.getKey().equalsIgnoreCase(refKey)) {
                         Reference reference = HiveBot.referenceHandler.getRefMap().get(refKey);
@@ -66,6 +66,8 @@ public class ButtonStateListener extends ListenerAdapter {
                         break;
                     }
                 }
+
+                 */
             } else {
                 event.deferEdit().queue();
             }
