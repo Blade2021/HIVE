@@ -2500,9 +2500,11 @@ public class SQLHandler {
 
                 ArrayList<String> currentAliases = getReferenceAliases(ref.getReferenceCommand());
 
-                for(String s:currentAliases){
-                    if(!ref.getAliases().contains(s)){
-                        st.execute(String.format("DELETE FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\" and Aliases = \"%s\"",ref.getReferenceCommand(),s));
+                if(currentAliases != null) {
+                    for (String s : currentAliases) {
+                        if (!ref.getAliases().contains(s)) {
+                            st.execute(String.format("DELETE FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\" and Aliases = \"%s\"", ref.getReferenceCommand(), s));
+                        }
                     }
                 }
 
