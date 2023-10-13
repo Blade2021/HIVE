@@ -64,7 +64,7 @@ public class ThreadIt extends SlashCommand {
 
     @Override
     public String getDescription() {
-        return "Start a thread";
+        return "Start a thread for a user and tag them!";
     }
 
     @Override
