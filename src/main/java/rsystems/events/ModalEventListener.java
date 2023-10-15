@@ -239,30 +239,6 @@ public class ModalEventListener extends ListenerAdapter {
                 }
             }
 
-            String currentBodyStrings[] = currentReference.getDescription().split("\\R");
-            String newBodyStrings[] = tempReference.getDescription().split("\\R");
-
-            ArrayList<String> currentBodyArray = new ArrayList<>(Arrays.asList(currentBodyStrings));
-            ArrayList<String> newBodyArray = new ArrayList<>(Arrays.asList(newBodyStrings));
-
-            for(String s:currentBodyArray){
-                if(!newBodyArray.contains(s)){
-                    //bodyDifferences.append("- ").append(s).append("\n");
-
-                    System.out.println("Didn't find: " + s);
-                }
-            }
-
-            //bodyDifferences.append("\n");
-
-            for(String s:newBodyArray){
-                if(!currentBodyArray.contains(s)){
-                    //bodyDifferences.append("+ ").append(s).append("\n");
-
-                    System.out.println("Didn't find: " + s);
-                }
-            }
-
             if(currentReference.getAliases() != null && tempReference.getAliases() != null){
                 String difference = StringUtils.difference(currentReference.getAliases().toString(),tempReference.getAliases().toString());
                 if(difference != null && !difference.isEmpty()){
