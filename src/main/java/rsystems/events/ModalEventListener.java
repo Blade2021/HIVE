@@ -2,6 +2,7 @@ package rsystems.events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -314,6 +315,12 @@ public class ModalEventListener extends ListenerAdapter {
 
             try {
                 if (HiveBot.database.modifyReference(tempReference) > 0) {
+
+                    if(event.getGuild().getId().equalsIgnoreCase("469330414121517056")){
+                        TextChannel logChannel = event.getGuild().getTextChannelById("469914813540204545");
+                        logChannel.sendMessageEmbeds(outputBuilder.build()).queue();
+                    }
+
                     event.getHook().editOriginalEmbeds(outputBuilder.build()).queue();
                 } else {
                     event.getHook().editOriginal("Something went wrong").queue();
