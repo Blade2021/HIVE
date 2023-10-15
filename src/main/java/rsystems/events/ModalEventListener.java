@@ -293,15 +293,21 @@ public class ModalEventListener extends ListenerAdapter {
                     } else if(s.operation.equals(Diff_match_patch.Operation.INSERT)){
 
                         String[] strings = s.text.split("\\R");
-                        for(String string: strings){
-                            bodyDifferences.append("+ ").append(string).append("\n");
+                        for(int x = 0; x < strings.length; x++){
+                            if(x < strings.length) {
+                                bodyDifferences.append("+ ").append(strings[x]).append("\n");
+                            } else {
+                                bodyDifferences.append("+ ").append(strings[x]);
+                            }
                         }
-
-                        //bodyDifferences.append("+ ").append(s.text);
                     } else if(s.operation.equals(Diff_match_patch.Operation.DELETE)){
                         String[] strings = s.text.split("\\R");
-                        for(String string: strings){
-                            bodyDifferences.append("- ").append(string).append("\n");
+                        for(int x = 0; x < strings.length; x++){
+                            if(x < strings.length) {
+                                bodyDifferences.append("- ").append(strings[x]).append("\n");
+                            } else {
+                                bodyDifferences.append("- ").append(strings[x]);
+                            }
                         }
                     }
                 }
