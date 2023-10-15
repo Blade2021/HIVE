@@ -2591,6 +2591,11 @@ public class SQLHandler {
                 if (rs.getString("ReferenceTitle") != null && !rs.getString("ReferenceTitle").isEmpty()) {
                     returnReference.setTitle(rs.getString("ReferenceTitle"));
                 }
+
+                ArrayList<String> aliasList = getReferenceAliases(returnReference.getReferenceCommand());
+                if(aliasList != null && aliasList.size() > 0) {
+                    returnReference.setAliases(aliasList);
+                }
             }
 
             if (!foundReference) {
@@ -2608,6 +2613,11 @@ public class SQLHandler {
 
                         if (rs.getString("ReferenceTitle") != null && !rs.getString("ReferenceTitle").isEmpty()) {
                             returnReference.setTitle(rs.getString("ReferenceTitle"));
+                        }
+
+                        ArrayList<String> aliasList = getReferenceAliases(returnReference.getReferenceCommand());
+                        if(aliasList != null && aliasList.size() > 0) {
+                            returnReference.setAliases(aliasList);
                         }
                     }
                 }

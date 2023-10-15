@@ -54,7 +54,7 @@ public class LibraryModify extends SlashCommand {
                 TextInput libAliases = null;
                 String modalId = "libm-" + reference.getReferenceCommand().toLowerCase();
 
-                ArrayList<String> AliasList = HiveBot.database.getReferenceAliases(reference.getReferenceCommand().toLowerCase());
+                ArrayList<String> AliasList = reference.getAliases();
 
                 if(AliasList != null && !AliasList.isEmpty()) {
                     libAliases = TextInput.create("lib-aliases", "Reference Aliases", TextInputStyle.SHORT)
