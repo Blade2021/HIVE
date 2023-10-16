@@ -204,6 +204,7 @@ public class ModalEventListener extends ListenerAdapter {
 
     private void handleLibraryModificationEvent(final ModalInteractionEvent event) {
         event.deferReply().setEphemeral(false).queue();
+        boolean responded = false;
 
         // Get the Reference Lookup ID
         final String lookup = event.getModalId().substring(5);
@@ -300,10 +301,20 @@ public class ModalEventListener extends ListenerAdapter {
 
                     if(event.getGuild().getId().equalsIgnoreCase("469330414121517056")){
                         TextChannel logChannel = event.getGuild().getTextChannelById("469914813540204545");
-                        logChannel.sendMessageEmbeds(outputBuilder.build()).queue();
+
+                        if(outputBuilder.build().getDescription().length() < 1024){
+                            logChannel.sendMessageEmbeds(outputBuilder.build()).queue();
+                        } else {
+                            logChannel.sendMessageEmbeds(outputBuilder.setDescription("Return too long").build());
+                        }
                     }
 
-                    event.getHook().editOriginalEmbeds(outputBuilder.build()).queue();
+                    if(outputBuilder.build().getDescription().length() < 1024){
+                        event.getHook().editOriginalEmbeds(outputBuilder.build()).queue();
+                    } else {
+                        event.getHook().editOriginalEmbeds(outputBuilder.setDescription("Return too long").build()).queue();
+                    }
+
                 } else {
                     event.getHook().editOriginal("Something went wrong").queue();
                 }
