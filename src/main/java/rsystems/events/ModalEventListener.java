@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import org.apache.commons.lang.StringUtils;
+import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.handlers.Diff_match_patch;
 import rsystems.objects.Reference;
@@ -230,19 +231,25 @@ public class ModalEventListener extends ListenerAdapter {
         } else {
 
             StringBuilder titleDifferences = new StringBuilder();
-            StringBuilder bodyDifferences = new StringBuilder();
+            ArrayList<StringBuilder> bodyDifferences = new ArrayList<>();
+            //StringBuilder bodyDifferences = new StringBuilder();
             StringBuilder aliasDifferences = new StringBuilder();
 
-            if(currentReference.getTitle() != null && tempReference.getTitle() != null) {
-                String difference = StringUtils.difference(currentReference.getTitle(),tempReference.getTitle());
-                if(difference != null && !difference.isEmpty()) {
+            bodyDifferences.add(new StringBuilder());
+            bodyDifferences.get(0).append("```diff\n");
+
+            int bodyIndex = 0;
+
+            if (currentReference.getTitle() != null && tempReference.getTitle() != null) {
+                String difference = StringUtils.difference(currentReference.getTitle(), tempReference.getTitle());
+                if (difference != null && !difference.isEmpty()) {
                     titleDifferences.append(difference);
                 }
             }
 
-            if(currentReference.getAliases() != null && tempReference.getAliases() != null){
-                String difference = StringUtils.difference(currentReference.getAliases().toString(),tempReference.getAliases().toString());
-                if(difference != null && !difference.isEmpty()){
+            if (currentReference.getAliases() != null && tempReference.getAliases() != null) {
+                String difference = StringUtils.difference(currentReference.getAliases().toString(), tempReference.getAliases().toString());
+                if (difference != null && !difference.isEmpty()) {
                     aliasDifferences.append(difference);
                 }
             }
@@ -252,68 +259,115 @@ public class ModalEventListener extends ListenerAdapter {
                     .setThumbnail(HiveBot.jda.getSelfUser().getEffectiveAvatarUrl())
                     .setFooter("Reference: " + currentReference.getReferenceCommand());
 
-            if(titleDifferences != null && !titleDifferences.toString().isEmpty()) {
-                outputBuilder.addField("Title Difference",titleDifferences.toString(),false);
+            if (titleDifferences != null && !titleDifferences.toString().isEmpty()) {
+                outputBuilder.addField("Title Difference", titleDifferences.toString(), false);
             }
 
 
-                Diff_match_patch dmp = new Diff_match_patch();
-                LinkedList<Diff_match_patch.Diff> diff = dmp.diff_main(currentReference.getDescription(),tempReference.getDescription(),false);
+            Diff_match_patch dmp = new Diff_match_patch();
+            LinkedList<Diff_match_patch.Diff> diff = dmp.diff_main(currentReference.getDescription(), tempReference.getDescription(), false);
 
-                dmp.Diff_EditCost = 4;
-                dmp.diff_cleanupEfficiency(diff);
+            dmp.Diff_EditCost = 4;
+            dmp.diff_cleanupEfficiency(diff);
 
 
-                for(Diff_match_patch.Diff s:diff){
-                    if(s.operation.equals(Diff_match_patch.Operation.EQUAL)){
-                        bodyDifferences.append(s.text);
-                    } else if(s.operation.equals(Diff_match_patch.Operation.INSERT)){
+            for (Diff_match_patch.Diff s : diff) {
+                if (s.operation.equals(Diff_match_patch.Operation.EQUAL)) {
 
-                        String[] strings = s.text.split("\\R");
-                        for(int x = 0; x < strings.length; x++){
-                            if(x < strings.length) {
-                                bodyDifferences.append("+ ").append(strings[x]).append("\n");
-                            } else {
-                                bodyDifferences.append("+ ").append(strings[x]);
+                    if (bodyDifferences.get(bodyIndex).toString().length() + s.text.length() > 1019) {
+                        bodyDifferences.get(bodyIndex).append("\n```");
+                        bodyIndex++;
+                        bodyDifferences.add(bodyIndex,new StringBuilder());
+                        bodyDifferences.get(bodyIndex).append("```diff\n");
+                    }
+
+                    bodyDifferences.get(bodyIndex).append(s.text);
+                } else if (s.operation.equals(Diff_match_patch.Operation.INSERT)) {
+
+                    String[] strings = s.text.split("\\R");
+                    for (int x = 0; x < strings.length; x++) {
+                        if (x < strings.length) {
+                            // Another string is in the array don't escape with a new line
+
+                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 6 > 1019) {
+                                bodyDifferences.get(bodyIndex).append("\n```");
+                                bodyIndex++;
+                                bodyDifferences.add(bodyIndex,new StringBuilder());
+                                bodyDifferences.get(bodyIndex).append("```diff\n");
                             }
+
+                            bodyDifferences.get(bodyIndex).append("+ ").append(strings[x]).append("\n");
+                            //bodyDifferences.append("+ ").append(strings[x]).append("\n");
+                        } else {
+
+                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 3 > 1019) {
+                                bodyDifferences.get(bodyIndex).append("\n```");
+                                bodyIndex++;
+                                bodyDifferences.add(bodyIndex,new StringBuilder());
+                                bodyDifferences.get(bodyIndex).append("```diff\n");
+                            }
+
+                            bodyDifferences.get(bodyIndex).append("+ ").append(strings[x]);
+                            //bodyDifferences.append("+ ").append(strings[x]);
                         }
-                    } else if(s.operation.equals(Diff_match_patch.Operation.DELETE)){
-                        String[] strings = s.text.split("\\R");
-                        for(int x = 0; x < strings.length; x++){
-                            if(x < strings.length) {
-                                bodyDifferences.append("- ").append(strings[x]).append("\n");
-                            } else {
-                                bodyDifferences.append("- ").append(strings[x]);
+                    }
+                } else if (s.operation.equals(Diff_match_patch.Operation.DELETE)) {
+                    String[] strings = s.text.split("\\R");
+                    for (int x = 0; x < strings.length; x++) {
+                        if (x < strings.length) {
+
+                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 6 > 1019) {
+                                bodyDifferences.get(bodyIndex).append("\n```");
+                                bodyIndex++;
+                                bodyDifferences.add(bodyIndex,new StringBuilder());
+                                bodyDifferences.get(bodyIndex).append("```diff\n");
                             }
+
+                            bodyDifferences.get(bodyIndex).append("- ").append(strings[x]).append("\n");
+
+                            //bodyDifferences.append("- ").append(strings[x]).append("\n");
+                        } else {
+                            //bodyDifferences.append("- ").append(strings[x]);
+
+                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 6 > 1019) {
+                                bodyDifferences.get(bodyIndex).append("\n```");
+                                bodyIndex++;
+                                bodyDifferences.add(bodyIndex,new StringBuilder());
+                                bodyDifferences.get(bodyIndex).append("```diff\n");
+                            }
+
+                            bodyDifferences.get(bodyIndex).append("- ").append(strings[x]);
                         }
                     }
                 }
+            }
 
-                outputBuilder.addField("Body Differences","```diff\n" +bodyDifferences.toString() + "\n```",false);
+            bodyDifferences.get(bodyIndex).append("\n```");
+            //outputBuilder.addField("Body Differences","```diff\n" +bodyDifferences.toString() + "\n```",false);
             //}
 
-            if(aliasDifferences != null && !aliasDifferences.toString().isEmpty()){
-                outputBuilder.addField("Alias Differences",aliasDifferences.toString(),false);
+            if (aliasDifferences != null && !aliasDifferences.toString().isEmpty()) {
+                outputBuilder.addField("Alias Differences", aliasDifferences.toString(), false);
             }
 
             try {
                 if (HiveBot.database.modifyReference(tempReference) > 0) {
 
-                    if(event.getGuild().getId().equalsIgnoreCase("469330414121517056")){
-                        TextChannel logChannel = event.getGuild().getTextChannelById("469914813540204545");
+                    if(!Config.get("LOGCHANNEL").isEmpty()){
+                        TextChannel logChannel = event.getGuild().getTextChannelById(Config.get("LOGCHANNEL"));
 
-                        if(outputBuilder.build().getDescription().length() < 1024){
+                        for (int x = 0; x < bodyDifferences.size(); x++) {
+                            if(x != 0){
+                                outputBuilder.setTitle("Library Modification " + x);
+                            }
+                            outputBuilder.setDescription(bodyDifferences.get(x));
                             logChannel.sendMessageEmbeds(outputBuilder.build()).queue();
-                        } else {
-                            logChannel.sendMessageEmbeds(outputBuilder.setDescription("Return too long").build());
                         }
                     }
 
-                    if(outputBuilder.build().getDescription().length() < 1024){
-                        event.getHook().editOriginalEmbeds(outputBuilder.build()).queue();
-                    } else {
-                        event.getHook().editOriginalEmbeds(outputBuilder.setDescription("Return too long").build()).queue();
-                    }
+                    outputBuilder.setDescription(bodyDifferences.get(0));
+                    event.getHook().editOriginalEmbeds(outputBuilder.build()).queue();
+
 
                 } else {
                     event.getHook().editOriginal("Something went wrong").queue();
