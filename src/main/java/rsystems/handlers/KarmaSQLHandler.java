@@ -123,7 +123,7 @@ public class KarmaSQLHandler extends SQLHandler {
             }
 
             if (karmaUserInfo != null) {
-                rs = st.executeQuery(String.format("SELECT COUNT(fk_UserID) AS COUNT FROM Karma_Trackers WHERE (fk_UserID = %d AND LogTS > (current_date() - '90 days'))",userID));
+                rs = st.executeQuery(String.format("SELECT COUNT(fk_UserID) AS COUNT FROM Karma_Trackers WHERE fk_UserID = %d AND LogTS >= CURDATE() - INTERVAL 1 MONTH and CURDATE()",userID));
 
                 while(rs.next()){
                     karmaUserInfo.setKarma(rs.getInt("COUNT"));

@@ -230,143 +230,145 @@ public class ModalEventListener extends ListenerAdapter {
             returnMessage.append("No Reference found with that command");
         } else {
 
-            StringBuilder titleDifferences = new StringBuilder();
-            ArrayList<StringBuilder> bodyDifferences = new ArrayList<>();
-            //StringBuilder bodyDifferences = new StringBuilder();
-            StringBuilder aliasDifferences = new StringBuilder();
+            ArrayList<EmbedBuilder> returnList = new ArrayList<>();
+            StringBuilder bodyString = new StringBuilder();
 
-            bodyDifferences.add(new StringBuilder());
-            bodyDifferences.get(0).append("```diff\n");
+            bodyString.append("```diff\n");
+            int returnIndex = 0;
 
-            int bodyIndex = 0;
+            final String title = currentReference.getTitle();
+
+            returnList.add(new EmbedBuilder());
 
             if (currentReference.getTitle() != null && tempReference.getTitle() != null) {
                 String difference = StringUtils.difference(currentReference.getTitle(), tempReference.getTitle());
                 if (difference != null && !difference.isEmpty()) {
-                    titleDifferences.append(difference);
+                    returnList.get(returnIndex).addField("Title:", difference, false);
                 }
             }
 
             if (currentReference.getAliases() != null && tempReference.getAliases() != null) {
                 String difference = StringUtils.difference(currentReference.getAliases().toString(), tempReference.getAliases().toString());
                 if (difference != null && !difference.isEmpty()) {
-                    aliasDifferences.append(difference);
+                    returnList.get(returnIndex).addField("Aliases:", difference, false);
                 }
             }
-
-            EmbedBuilder outputBuilder = new EmbedBuilder().setTitle("Library Modification")
-                    .setColor(HiveBot.getColor(HiveBot.colorType.FRUIT))
-                    .setThumbnail(HiveBot.jda.getSelfUser().getEffectiveAvatarUrl())
-                    .setFooter("Reference: " + currentReference.getReferenceCommand());
-
-            if (titleDifferences != null && !titleDifferences.toString().isEmpty()) {
-                outputBuilder.addField("Title Difference", titleDifferences.toString(), false);
-            }
-
 
             Diff_match_patch dmp = new Diff_match_patch();
             LinkedList<Diff_match_patch.Diff> diff = dmp.diff_main(currentReference.getDescription(), tempReference.getDescription(), false);
 
-            dmp.Diff_EditCost = 4;
+            dmp.Diff_EditCost = 5;
             dmp.diff_cleanupEfficiency(diff);
 
 
             for (Diff_match_patch.Diff s : diff) {
                 if (s.operation.equals(Diff_match_patch.Operation.EQUAL)) {
 
-                    if (bodyDifferences.get(bodyIndex).toString().length() + s.text.length() > 1019) {
-                        bodyDifferences.get(bodyIndex).append("\n```");
-                        bodyIndex++;
-                        bodyDifferences.add(bodyIndex,new StringBuilder());
-                        bodyDifferences.get(bodyIndex).append("```diff\n");
+                    String[] strings = s.text.split("\\R");
+                    for (int x = 0; x < strings.length; x++) {
+                        if (x < strings.length) {
+                            if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                // If current string is added, return value will be too big
+                                bodyString.append("\n```");
+                                returnList.get(returnIndex).setDescription(bodyString.toString());
+                                bodyString = new StringBuilder();
+                                bodyString.append("```diff\n").append(strings[x]).append("\n");
+                                returnIndex++;
+                            } else {
+                                bodyString.append(strings[x]).append("\n");
+                            }
+                        } else {
+                            if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                // If current string is added, return value will be too big
+                                bodyString.append("\n```");
+                                returnList.get(returnIndex).setDescription(bodyString.toString());
+                                bodyString = new StringBuilder();
+                                bodyString.append("```diff\n").append(strings[x]).append("\n");
+                                returnIndex++;
+                            } else {
+                                bodyString.append(strings[x]);
+                            }
+                        }
                     }
 
-                    bodyDifferences.get(bodyIndex).append(s.text);
                 } else if (s.operation.equals(Diff_match_patch.Operation.INSERT)) {
 
                     String[] strings = s.text.split("\\R");
                     for (int x = 0; x < strings.length; x++) {
                         if (x < strings.length) {
-                            // Another string is in the array don't escape with a new line
-
-                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 6 > 1019) {
-                                bodyDifferences.get(bodyIndex).append("\n```");
-                                bodyIndex++;
-                                bodyDifferences.add(bodyIndex,new StringBuilder());
-                                bodyDifferences.get(bodyIndex).append("```diff\n");
+                            if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                // If current string is added, return value will be too big
+                                bodyString.append("\n```");
+                                returnList.get(returnIndex).setDescription(bodyString.toString());
+                                bodyString = new StringBuilder();
+                                bodyString.append("```diff\n").append("+ ").append(strings[x]).append("\n");
+                                returnIndex++;
+                            } else {
+                                bodyString.append("+ ").append(strings[x]).append("\n");
                             }
-
-                            bodyDifferences.get(bodyIndex).append("+ ").append(strings[x]).append("\n");
-                            //bodyDifferences.append("+ ").append(strings[x]).append("\n");
                         } else {
-
-                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 3 > 1019) {
-                                bodyDifferences.get(bodyIndex).append("\n```");
-                                bodyIndex++;
-                                bodyDifferences.add(bodyIndex,new StringBuilder());
-                                bodyDifferences.get(bodyIndex).append("```diff\n");
+                            if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                // If current string is added, return value will be too big
+                                bodyString.append("\n```");
+                                returnList.get(returnIndex).setDescription(bodyString.toString());
+                                bodyString = new StringBuilder();
+                                bodyString.append("```diff\n").append("+ ").append(strings[x]).append("\n");
+                                returnIndex++;
+                            } else {
+                                bodyString.append("+ ").append(strings[x]);
                             }
-
-                            bodyDifferences.get(bodyIndex).append("+ ").append(strings[x]);
-                            //bodyDifferences.append("+ ").append(strings[x]);
                         }
                     }
+
                 } else if (s.operation.equals(Diff_match_patch.Operation.DELETE)) {
+
                     String[] strings = s.text.split("\\R");
                     for (int x = 0; x < strings.length; x++) {
                         if (x < strings.length) {
-
-                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 6 > 1019) {
-                                bodyDifferences.get(bodyIndex).append("\n```");
-                                bodyIndex++;
-                                bodyDifferences.add(bodyIndex,new StringBuilder());
-                                bodyDifferences.get(bodyIndex).append("```diff\n");
+                            if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                // If current string is added, return value will be too big
+                                bodyString.append("\n```");
+                                returnList.get(returnIndex).setDescription(bodyString.toString());
+                                bodyString = new StringBuilder();
+                                bodyString.append("```diff\n").append("- ").append(strings[x]).append("\n");
+                                returnIndex++;
+                            } else {
+                                bodyString.append("- ").append(strings[x]).append("\n");
                             }
-
-                            bodyDifferences.get(bodyIndex).append("- ").append(strings[x]).append("\n");
-
-                            //bodyDifferences.append("- ").append(strings[x]).append("\n");
                         } else {
-                            //bodyDifferences.append("- ").append(strings[x]);
-
-                            if (bodyDifferences.get(bodyIndex).toString().length() + strings[x].length() + 6 > 1019) {
-                                bodyDifferences.get(bodyIndex).append("\n```");
-                                bodyIndex++;
-                                bodyDifferences.add(bodyIndex,new StringBuilder());
-                                bodyDifferences.get(bodyIndex).append("```diff\n");
+                            if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                // If current string is added, return value will be too big
+                                bodyString.append("\n```");
+                                returnList.get(returnIndex).setDescription(bodyString.toString());
+                                bodyString = new StringBuilder();
+                                bodyString.append("```diff\n").append("- ").append(strings[x]).append("\n");
+                                returnIndex++;
+                            } else {
+                                bodyString.append("- ").append(strings[x]);
                             }
-
-                            bodyDifferences.get(bodyIndex).append("- ").append(strings[x]);
                         }
                     }
                 }
             }
-
-            bodyDifferences.get(bodyIndex).append("\n```");
-            //outputBuilder.addField("Body Differences","```diff\n" +bodyDifferences.toString() + "\n```",false);
-            //}
-
-            if (aliasDifferences != null && !aliasDifferences.toString().isEmpty()) {
-                outputBuilder.addField("Alias Differences", aliasDifferences.toString(), false);
+            if (bodyString.toString().length() > 6) {
+                bodyString.append("\n```");
+                returnList.get(returnIndex).setDescription(bodyString.toString());
             }
 
             try {
                 if (HiveBot.database.modifyReference(tempReference) > 0) {
 
-                    if(!Config.get("LOGCHANNEL").isEmpty()){
+                    if (!Config.get("LOGCHANNEL").isEmpty()) {
                         TextChannel logChannel = event.getGuild().getTextChannelById(Config.get("LOGCHANNEL"));
-
-                        for (int x = 0; x < bodyDifferences.size(); x++) {
-                            if(x != 0){
-                                outputBuilder.setTitle("Library Modification " + x);
-                            }
-                            outputBuilder.setDescription(bodyDifferences.get(x));
-                            logChannel.sendMessageEmbeds(outputBuilder.build()).queue();
+                        for (EmbedBuilder builder : returnList) {
+                            builder.setTitle("Reference Modification - " + tempReference.getReferenceCommand());
+                            builder.setColor(HiveBot.getColor(HiveBot.colorType.FRUIT));
+                            builder.setFooter("Requested by: " + event.getInteraction().getUser().getEffectiveName());
+                            logChannel.sendMessageEmbeds(builder.build()).queue();
                         }
                     }
 
-                    outputBuilder.setDescription(bodyDifferences.get(0));
-                    event.getHook().editOriginalEmbeds(outputBuilder.build()).queue();
+                    event.getHook().editOriginal(String.format("Success!\n`%s` has been modified.", tempReference.getReferenceCommand())).queue();
 
 
                 } else {
