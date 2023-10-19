@@ -27,7 +27,7 @@ public class LibraryAdd extends SlashCommand {
 
                 TextInput libTrigger = TextInput.create("lib-name", "Reference Trigger", TextInputStyle.SHORT)
                         .setPlaceholder("Insert trigger here")
-                        .setMinLength(5)
+                        .setMinLength(3)
                         .setMaxLength(25)
                         .setRequired(true)
                         .build();
