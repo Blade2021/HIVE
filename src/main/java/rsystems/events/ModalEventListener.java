@@ -248,111 +248,141 @@ public class ModalEventListener extends ListenerAdapter {
             }
 
             if (currentReference.getAliases() != null && tempReference.getAliases() != null) {
-                String difference = StringUtils.difference(currentReference.getAliases().toString(), tempReference.getAliases().toString());
-                if (difference != null && !difference.isEmpty()) {
-                    returnList.get(returnIndex).addField("Aliases:", difference, false);
+                StringBuilder aliasDiff = new StringBuilder();
+                aliasDiff.append("```diff\n");
+
+                for(int x = 0;x < currentReference.getAliases().size();x++){
+
+                    final String alias = currentReference.getAliases().get(x);
+
+                    if(!tempReference.getAliases().contains(alias)){
+                        aliasDiff.append("- ").append(alias).append("\n");
+                    }
+                }
+
+                for(int x = 0;x < tempReference.getAliases().size();x++){
+
+                    final String alias = tempReference.getAliases().get(x);
+
+                    if(!currentReference.getAliases().contains(alias)){
+                        aliasDiff.append("+ ").append(alias).append("\n");
+                    }
+                }
+
+                if(aliasDiff.toString().length() > 9){
+                    aliasDiff.append("```");
+                    returnList.get(returnIndex).addField("Aliases:",aliasDiff.toString(),false);
                 }
             }
 
             Diff_match_patch dmp = new Diff_match_patch();
             LinkedList<Diff_match_patch.Diff> diff = dmp.diff_main(currentReference.getDescription(), tempReference.getDescription(), false);
 
-            dmp.Diff_EditCost = 5;
+            dmp.Diff_EditCost = 4;
             dmp.diff_cleanupEfficiency(diff);
 
+            if(diff.size() > 1) {
 
-            for (Diff_match_patch.Diff s : diff) {
-                if (s.operation.equals(Diff_match_patch.Operation.EQUAL)) {
 
-                    String[] strings = s.text.split("\\R");
-                    for (int x = 0; x < strings.length; x++) {
-                        if (x < strings.length) {
-                            if (bodyString.toString().length() + strings[x].length() > 1000) {
-                                // If current string is added, return value will be too big
-                                bodyString.append("\n```");
-                                returnList.get(returnIndex).setDescription(bodyString.toString());
-                                bodyString = new StringBuilder();
-                                bodyString.append("```diff\n").append(strings[x]).append("\n");
-                                returnIndex++;
-                            } else {
-                                bodyString.append(strings[x]).append("\n");
-                            }
-                        } else {
-                            if (bodyString.toString().length() + strings[x].length() > 1000) {
-                                // If current string is added, return value will be too big
-                                bodyString.append("\n```");
-                                returnList.get(returnIndex).setDescription(bodyString.toString());
-                                bodyString = new StringBuilder();
-                                bodyString.append("```diff\n").append(strings[x]).append("\n");
-                                returnIndex++;
-                            } else {
-                                bodyString.append(strings[x]);
-                            }
-                        }
-                    }
+                for (Diff_match_patch.Diff s : diff) {
+                    if (s.operation.equals(Diff_match_patch.Operation.EQUAL)) {
 
-                } else if (s.operation.equals(Diff_match_patch.Operation.INSERT)) {
-
-                    String[] strings = s.text.split("\\R");
-                    for (int x = 0; x < strings.length; x++) {
-                        if (x < strings.length) {
-                            if (bodyString.toString().length() + strings[x].length() > 1000) {
-                                // If current string is added, return value will be too big
-                                bodyString.append("\n```");
-                                returnList.get(returnIndex).setDescription(bodyString.toString());
-                                bodyString = new StringBuilder();
-                                bodyString.append("```diff\n").append("+ ").append(strings[x]).append("\n");
-                                returnIndex++;
+                        String[] strings = s.text.split("\\R");
+                        for (int x = 0; x < strings.length; x++) {
+                            if (x < strings.length) {
+                                if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                    // If current string is added, return value will be too big
+                                    bodyString.append("\n```");
+                                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                                    bodyString = new StringBuilder();
+                                    returnList.add(new EmbedBuilder());
+                                    bodyString.append("```diff\n").append(strings[x]).append("\n");
+                                    returnIndex++;
+                                } else {
+                                    bodyString.append(strings[x]).append("\n");
+                                }
                             } else {
-                                bodyString.append("+ ").append(strings[x]).append("\n");
-                            }
-                        } else {
-                            if (bodyString.toString().length() + strings[x].length() > 1000) {
-                                // If current string is added, return value will be too big
-                                bodyString.append("\n```");
-                                returnList.get(returnIndex).setDescription(bodyString.toString());
-                                bodyString = new StringBuilder();
-                                bodyString.append("```diff\n").append("+ ").append(strings[x]).append("\n");
-                                returnIndex++;
-                            } else {
-                                bodyString.append("+ ").append(strings[x]);
+                                if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                    // If current string is added, return value will be too big
+                                    bodyString.append("\n```");
+                                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                                    bodyString = new StringBuilder();
+                                    returnList.add(new EmbedBuilder());
+                                    bodyString.append("```diff\n").append(strings[x]).append("\n");
+                                    returnIndex++;
+                                } else {
+                                    bodyString.append(strings[x]);
+                                }
                             }
                         }
-                    }
 
-                } else if (s.operation.equals(Diff_match_patch.Operation.DELETE)) {
+                    } else if (s.operation.equals(Diff_match_patch.Operation.INSERT)) {
 
-                    String[] strings = s.text.split("\\R");
-                    for (int x = 0; x < strings.length; x++) {
-                        if (x < strings.length) {
-                            if (bodyString.toString().length() + strings[x].length() > 1000) {
-                                // If current string is added, return value will be too big
-                                bodyString.append("\n```");
-                                returnList.get(returnIndex).setDescription(bodyString.toString());
-                                bodyString = new StringBuilder();
-                                bodyString.append("```diff\n").append("- ").append(strings[x]).append("\n");
-                                returnIndex++;
+                        String[] strings = s.text.split("\\R");
+                        for (int x = 0; x < strings.length; x++) {
+                            if (x < strings.length) {
+                                if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                    // If current string is added, return value will be too big
+                                    bodyString.append("\n```");
+                                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                                    bodyString = new StringBuilder();
+                                    returnList.add(new EmbedBuilder());
+                                    bodyString.append("```diff\n").append("+ ").append(strings[x]).append("\n");
+                                    returnIndex++;
+                                } else {
+                                    bodyString.append("+ ").append(strings[x]).append("\n");
+                                }
                             } else {
-                                bodyString.append("- ").append(strings[x]).append("\n");
+                                if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                    // If current string is added, return value will be too big
+                                    bodyString.append("\n```");
+                                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                                    bodyString = new StringBuilder();
+                                    returnList.add(new EmbedBuilder());
+                                    bodyString.append("```diff\n").append("+ ").append(strings[x]).append("\n");
+                                    returnIndex++;
+                                } else {
+                                    bodyString.append("+ ").append(strings[x]);
+                                }
                             }
-                        } else {
-                            if (bodyString.toString().length() + strings[x].length() > 1000) {
-                                // If current string is added, return value will be too big
-                                bodyString.append("\n```");
-                                returnList.get(returnIndex).setDescription(bodyString.toString());
-                                bodyString = new StringBuilder();
-                                bodyString.append("```diff\n").append("- ").append(strings[x]).append("\n");
-                                returnIndex++;
+                        }
+
+                    } else if (s.operation.equals(Diff_match_patch.Operation.DELETE)) {
+
+                        String[] strings = s.text.split("\\R");
+                        for (int x = 0; x < strings.length; x++) {
+                            if (x < strings.length) {
+                                if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                    // If current string is added, return value will be too big
+                                    bodyString.append("\n```");
+                                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                                    returnList.add(new EmbedBuilder());
+                                    bodyString = new StringBuilder();
+                                    bodyString.append("```diff\n").append("- ").append(strings[x]).append("\n");
+                                    returnIndex++;
+                                } else {
+                                    bodyString.append("- ").append(strings[x]).append("\n");
+                                }
                             } else {
-                                bodyString.append("- ").append(strings[x]);
+                                if (bodyString.toString().length() + strings[x].length() > 1000) {
+                                    // If current string is added, return value will be too big
+                                    bodyString.append("\n```");
+                                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                                    bodyString = new StringBuilder();
+                                    returnList.add(new EmbedBuilder());
+                                    bodyString.append("```diff\n").append("- ").append(strings[x]).append("\n");
+                                    returnIndex++;
+                                } else {
+                                    bodyString.append("- ").append(strings[x]);
+                                }
                             }
                         }
                     }
                 }
-            }
-            if (bodyString.toString().length() > 6) {
-                bodyString.append("\n```");
-                returnList.get(returnIndex).setDescription(bodyString.toString());
+                if (bodyString.toString().length() > 6) {
+                    bodyString.append("\n```");
+                    returnList.get(returnIndex).setDescription(bodyString.toString());
+                }
             }
 
             try {
