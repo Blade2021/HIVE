@@ -78,6 +78,7 @@ public class SlashCommandDispatcher extends ListenerAdapter {
         //registerCommand(new Block());
         registerCommand(new PullSourceData());
         registerCommand(new ThreadIt());
+        registerCommand(new SendACoffee());
 
 
     }

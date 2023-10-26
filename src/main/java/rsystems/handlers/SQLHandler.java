@@ -1690,7 +1690,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT LastHereStatus, Points FROM EconomyTable WHERE UserID = " + userID);
+            ResultSet rs = st.executeQuery("SELECT LastHereStatus, Points FROM HIVE_UserTable WHERE UserID = " + userID);
 
             Integer currentPoints = null;
             Instant previousTimestamp = null;
@@ -1712,7 +1712,7 @@ public class SQLHandler {
 
                     //if (previousTimestamp.isAfter(Instant.now().minus(12, ChronoUnit.HOURS))) {
 
-                    st.execute(String.format("UPDATE EconomyTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d", Timestamp.from(Instant.now()), currentPoints + incrementAmount, userID));
+                    st.execute(String.format("UPDATE HIVE_UserTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d", Timestamp.from(Instant.now()), currentPoints + incrementAmount, userID));
                     if (st.getUpdateCount() > 0) {
                         output = 200;
                     } else {
@@ -1723,7 +1723,7 @@ public class SQLHandler {
                     output = 401;
                 }
             } else {
-                st.execute(String.format("INSERT INTO EconomyTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')", userID, incrementAmount, Timestamp.from(Instant.now())));
+                st.execute(String.format("INSERT INTO HIVE_UserTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')", userID, incrementAmount, Timestamp.from(Instant.now())));
                 if (st.getUpdateCount() > 0) {
                     output = 200;
                 } else {
@@ -1756,7 +1756,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM EconomyTable WHERE UserID = " + userID);
+            ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM HIVE_UserTable WHERE UserID = " + userID);
 
             while (rs.next()) {
                 output = new UserStreamObject();
@@ -2055,7 +2055,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d", amount, amount, userid));
+            st.execute(String.format("UPDATE HIVE_UserTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d", amount, amount, userid));
             result = st.getUpdateCount();
 
         } catch (SQLException e) {
@@ -2075,7 +2075,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d", amount, amount, userid));
+            st.execute(String.format("UPDATE HIVE_UserTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d", amount, amount, userid));
             result = st.getUpdateCount();
 
         } catch (SQLException e) {
@@ -2416,17 +2416,17 @@ public class SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT ReferenceTrigger FROM HIVE_Library WHERE ReferenceTrigger = '%s'",trigger));
+            ResultSet rs = st.executeQuery(String.format("SELECT ReferenceTrigger FROM HIVE_Library WHERE ReferenceTrigger = '%s'", trigger));
 
             while (rs.next()) {
                 triggerFound = true;
                 break;
             }
 
-            if(!triggerFound){
-                rs = st.executeQuery(String.format("SELECT child_ReferenceTrigger FROM HIVE_Library_Aliases WHERE Aliases = '%s'",trigger));
+            if (!triggerFound) {
+                rs = st.executeQuery(String.format("SELECT child_ReferenceTrigger FROM HIVE_Library_Aliases WHERE Aliases = '%s'", trigger));
 
-                while(rs.next()){
+                while (rs.next()) {
                     triggerFound = true;
                     break;
                 }
@@ -2461,9 +2461,9 @@ public class SQLHandler {
                 st.execute(String.format("UPDATE HIVE_Library SET ReferenceTitle = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getTitle(), ref.getReferenceCommand()));
             }
 
-            if(returnCount > 0 && ref.getAliases() != null && !ref.getAliases().isEmpty()){
-                for(String s:ref.getAliases()){
-                    st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger, Aliases) VALUES ('%s', \"%s\")",ref.getReferenceCommand(),s));
+            if (returnCount > 0 && ref.getAliases() != null && !ref.getAliases().isEmpty()) {
+                for (String s : ref.getAliases()) {
+                    st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger, Aliases) VALUES ('%s', \"%s\")", ref.getReferenceCommand(), s));
                 }
             }
 
@@ -2486,7 +2486,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            st.execute(String.format("UPDATE HIVE_Library SET ReferenceBody = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getDescription(),ref.getReferenceCommand()));
+            st.execute(String.format("UPDATE HIVE_Library SET ReferenceBody = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getDescription(), ref.getReferenceCommand()));
 
             if (st.getUpdateCount() > 0) {
                 returnCount = 200;
@@ -2496,11 +2496,11 @@ public class SQLHandler {
                 st.execute(String.format("UPDATE HIVE_Library SET ReferenceTitle = \"%s\" WHERE ReferenceTrigger = \"%s\"", ref.getTitle(), ref.getReferenceCommand()));
             }
 
-            if(returnCount > 0 && ref.getAliases() != null && !ref.getAliases().isEmpty()){
+            if (returnCount > 0 && ref.getAliases() != null && !ref.getAliases().isEmpty()) {
 
                 ArrayList<String> currentAliases = getReferenceAliases(ref.getReferenceCommand());
 
-                if(currentAliases != null) {
+                if (currentAliases != null) {
                     for (String s : currentAliases) {
                         if (!ref.getAliases().contains(s)) {
                             st.execute(String.format("DELETE FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\" and Aliases = \"%s\"", ref.getReferenceCommand(), s));
@@ -2508,9 +2508,9 @@ public class SQLHandler {
                     }
                 }
 
-                for(String s:ref.getAliases()){
-                    if((currentAliases != null && !currentAliases.contains(s)) || currentAliases == null){
-                        st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger, Aliases) VALUES ('%s', \"%s\")",ref.getReferenceCommand(),s));
+                for (String s : ref.getAliases()) {
+                    if ((currentAliases != null && !currentAliases.contains(s)) || currentAliases == null) {
+                        st.execute(String.format("INSERT INTO HIVE_Library_Aliases (child_ReferenceTrigger, Aliases) VALUES ('%s', \"%s\")", ref.getReferenceCommand(), s));
                     }
                 }
             }
@@ -2593,7 +2593,7 @@ public class SQLHandler {
                 }
 
                 ArrayList<String> aliasList = getReferenceAliases(returnReference.getReferenceCommand());
-                if(aliasList != null && aliasList.size() > 0) {
+                if (aliasList != null && aliasList.size() > 0) {
                     returnReference.setAliases(aliasList);
                 }
             }
@@ -2616,7 +2616,7 @@ public class SQLHandler {
                         }
 
                         ArrayList<String> aliasList = getReferenceAliases(returnReference.getReferenceCommand());
-                        if(aliasList != null && aliasList.size() > 0) {
+                        if (aliasList != null && aliasList.size() > 0) {
                             returnReference.setAliases(aliasList);
                         }
                     }
@@ -2643,24 +2643,132 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
         try {
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT Aliases FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\"",referenceTrigger));
+            ResultSet rs = st.executeQuery(String.format("SELECT Aliases FROM HIVE_Library_Aliases WHERE child_ReferenceTrigger = \"%s\"", referenceTrigger));
 
             while (rs.next()) {
                 returnArray.add(rs.getString(1));
             }
-        }
-        catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
             ExceptionHandler.notifyException(e, this.getClass().getName());
-            } finally {
+        } finally {
             connection.close();
         }
 
-        if(returnArray.size() > 0){
+        if (returnArray.size() > 0) {
             return returnArray;
         } else {
             return null;
         }
+    }
+
+    public Integer getCashews(final Long userID) throws SQLException {
+
+        Integer returnValue = null;
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT Points FROM HIVE_UserTable WHERE UserID = %d",userID));
+
+            while(rs.next()){
+                returnValue = rs.getInt("Points");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public boolean deductCashews(final Long userID, final int amount) throws SQLException {
+
+        boolean returnValue = false;
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            st.executeQuery(String.format("UPDATE HIVE_UserTable SET Points = Points - %d WHERE UserID = %d",amount,userID));
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public int setOptStatus(final Long userID) throws SQLException {
+
+        boolean currentStatus = checkOptStatus(userID);
+        int returnValue = 0;
+
+
+        int finalStatus = 1;
+        if(currentStatus){
+            finalStatus = 0;
+        }
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE HIVE_CoffeeShop SET OptStatus = %d WHERE UserID = %d",finalStatus,userID));
+
+            if(st.getUpdateCount() == 0){
+
+                st.execute(String.format("INSERT INTO HIVE_CoffeeShop (UserID, OptStatus) VALUES (%d, %d)",userID,finalStatus));
+                returnValue = finalStatus;
+
+            } else {
+                returnValue = finalStatus;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    /**
+     * Check the opt-out status of a user
+     * @param userID
+     * @return True = OptOut
+     * False = Allowed to send messages
+     * @throws SQLException
+     */
+    public boolean checkOptStatus(final Long userID) throws SQLException {
+
+        boolean returnValue = false;
+        Connection connection = pool.getConnection();
+
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("SELECT OptStatus FROM HIVE_CoffeeShop WHERE UserID = %d",userID));
+
+            while(rs.next()){
+                if(rs.getInt("OptStatus") == 1){
+                    returnValue = true;
+                }
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
     }
 
 
