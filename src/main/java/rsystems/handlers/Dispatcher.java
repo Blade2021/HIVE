@@ -63,6 +63,8 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new ReferenceTester());
         registerCommand(new Shutdown());
 
+        registerCommand(new GetTopTen());
+
 
         // Stream Commands
         registerCommand(new StreamMode());
@@ -172,9 +174,31 @@ public class Dispatcher extends ListenerAdapter {
                 }
             }
 
+            //Check for AutoForwardTriggers
+
+
 
 
             // No gratitude triggers found
+        } else {
+            // Message did not come from Guild
+
+            if(event.getMessage().toString().toLowerCase().contains(HiveBot.prefix + "optout")){
+                try {
+                    Integer optStatus = HiveBot.database.setOptStatus(event.getAuthor().getIdLong());
+
+                    if(optStatus != null){
+
+                        if(optStatus == 0){
+                            event.getMessage().reply("You will now be able to be messaged by me when someone sends you a Coffee").queue();
+                        } else {
+                            event.getMessage().reply("You will no longer receive any more messages from me.  Warm Regards.").queue();
+                        }
+                    }
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
     }
 

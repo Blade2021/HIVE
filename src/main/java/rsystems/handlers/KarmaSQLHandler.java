@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import rsystems.objects.KarmaUserInfo;
 
 import java.sql.*;
+import java.util.LinkedHashMap;
 
 public class KarmaSQLHandler extends SQLHandler {
 
@@ -301,7 +302,7 @@ public class KarmaSQLHandler extends SQLHandler {
         return false;
     }
 
-    /*
+
     public LinkedHashMap<Long, Integer> getTopTen() throws SQLException {
 
         LinkedHashMap<Long, Integer> topRank = new LinkedHashMap<>();
@@ -309,12 +310,11 @@ public class KarmaSQLHandler extends SQLHandler {
         try {
 
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery("SELECT UserID, USER_KARMA FROM KarmaUserTable ORDER BY USER_KARMA DESC LIMIT 10");
+            ResultSet rs = st.executeQuery("SELECT distinct fk_UserID, count(fk_UserID) as karmaCount from Karma_Trackers left join honey.KarmaUserTable KUT on Karma_Trackers.fk_UserID = KUT.UserID group by fk_UserID order by karmaCount desc limit 10");
             while (rs.next()) {
-                topRank.put(rs.getLong("UserID"), rs.getInt("USER_KARMA"));
+                topRank.put(rs.getLong("fk_UserID"), rs.getInt("karmaCount"));
             }
 
-            connection.close();
         } catch (SQLException throwables) {
             throwables.printStackTrace();
         } finally {
@@ -324,8 +324,6 @@ public class KarmaSQLHandler extends SQLHandler {
         return topRank;
     }
 
-
-     */
     public int getInt(String column, String UserID) throws SQLException {
 
         int value = 0;
