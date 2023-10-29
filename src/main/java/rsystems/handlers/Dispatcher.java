@@ -164,7 +164,7 @@ public class Dispatcher extends ListenerAdapter {
 
             } else {
                 try{
-                    AutoResponse ar = HiveBot.database.checkForAutoResponse(event.getMessage().getContentDisplay());
+                    AutoResponse ar = HiveBot.database.checkForAutoResponse(event.getMessage().getContentDisplay(),event.getChannel().getIdLong());
                     if(ar != null){
 
                         EmbedBuilder builder = new EmbedBuilder();

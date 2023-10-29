@@ -2663,7 +2663,7 @@ public class SQLHandler {
         }
     }
 
-    public AutoResponse checkForAutoResponse(final String message) throws SQLException {
+    public AutoResponse checkForAutoResponse(final String message, final Long channelID) throws SQLException {
 
         Connection connection = pool.getConnection();
         String autoResponseName = null;
@@ -2704,7 +2704,7 @@ public class SQLHandler {
                             Instant lastTrigger = null;
                             boolean channelFound = false;
 
-                            rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s' AND WhiteListChannelID = ", autoResponseName));
+                            rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s' AND WhiteListChannelID = %d", autoResponseName, channelID));
                             while (rs.next()) {
                                 channelFound = true;
                                 response.getWatchChannelList().add(rs.getLong("WhitelistChannelID"));
