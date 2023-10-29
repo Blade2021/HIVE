@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import rsystems.Config;
 import rsystems.HiveBot;
-import rsystems.commands.development.Meltdown;
 import rsystems.commands.moderation.Shutdown;
 import rsystems.commands.moderation.*;
 import rsystems.commands.stream.StreamMode;
@@ -21,6 +20,7 @@ import rsystems.commands.stream.StreamVerify;
 import rsystems.commands.user.*;
 import rsystems.commands.utility.*;
 import rsystems.events.GratitudeListener;
+import rsystems.objects.AutoResponse;
 import rsystems.objects.Command;
 import rsystems.objects.Reference;
 
@@ -142,11 +142,11 @@ public class Dispatcher extends ListenerAdapter {
                 //CHECK FOR REFERENCES
 
                 try {
-                    if(HiveBot.database.checkForReference(message.toLowerCase().substring(1))){
+                    if (HiveBot.database.checkForReference(message.toLowerCase().substring(1))) {
                         //Reference was found
 
                         Reference foundReference = HiveBot.database.getReference(message.toLowerCase().substring(1));
-                        if(event.getMessage().getMessageReference() != null) {
+                        if (event.getMessage().getMessageReference() != null) {
 
                             Message originalMessage = event.getMessage().getReferencedMessage();
                             originalMessage.replyEmbeds(foundReference.createEmbed()).queue();
@@ -162,9 +162,25 @@ public class Dispatcher extends ListenerAdapter {
 
                 //References not found
 
+            } else {
+                try{
+                    AutoResponse ar = HiveBot.database.checkForAutoResponse(event.getMessage().getContentDisplay());
+                    if(ar != null){
+
+                        EmbedBuilder builder = new EmbedBuilder();
+                        builder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC))
+                                        .setDescription(ar.getResponse());
+                        event.getMessage().replyEmbeds(builder.build()).queue();
+                        HiveBot.database.autoResponse_setTimestamp(ar.getName(),event.getChannel().getIdLong());
+                        return;
+                    }
+
+                } catch (SQLException e) {
+                    ExceptionHandler.notifyException(e, this.getClass().getName());
+                    e.printStackTrace();
+                }
             }
             // Prefix not found
-
 
             //Check for Gratitude
             for (String trigger : HiveBot.gratitudeListener.getTriggers()) {
@@ -174,22 +190,18 @@ public class Dispatcher extends ListenerAdapter {
                 }
             }
 
-            //Check for AutoForwardTriggers
-
-
-
 
             // No gratitude triggers found
         } else {
             // Message did not come from Guild
 
-            if(event.getMessage().toString().toLowerCase().contains(HiveBot.prefix + "optout")){
+            if (event.getMessage().toString().toLowerCase().contains(HiveBot.prefix + "optout")) {
                 try {
                     Integer optStatus = HiveBot.database.setOptStatus(event.getAuthor().getIdLong());
 
-                    if(optStatus != null){
+                    if (optStatus != null) {
 
-                        if(optStatus == 0){
+                        if (optStatus == 0) {
                             event.getMessage().reply("You will now be able to be messaged by me when someone sends you a Coffee").queue();
                         } else {
                             event.getMessage().reply("You will no longer receive any more messages from me.  Warm Regards.").queue();
@@ -226,7 +238,7 @@ public class Dispatcher extends ListenerAdapter {
                         authorized = isAuthorized(c, event.getGuild().getIdLong(), event.getMember(), c.getPermissionIndex());
                     } catch (SQLException e) {
                         e.printStackTrace();
-                        ExceptionHandler.notifyException(e,this.getClass().getName());
+                        ExceptionHandler.notifyException(e, this.getClass().getName());
                     }
                 }
             }
@@ -246,7 +258,7 @@ public class Dispatcher extends ListenerAdapter {
                     //messageOwner(numberFormatException, c, event);
                 } catch (final Exception e) {
                     e.printStackTrace();
-                    ExceptionHandler.notifyException(e,this.getClass().getName());
+                    ExceptionHandler.notifyException(e, this.getClass().getName());
                     event.getChannel().sendMessage("**There was an error processing your command!**").queue();
                 }
             } else {

@@ -8,6 +8,7 @@ import rsystems.objects.*;
 import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class SQLHandler {
@@ -2662,6 +2663,107 @@ public class SQLHandler {
         }
     }
 
+    public AutoResponse checkForAutoResponse(final String message) throws SQLException {
+
+        Connection connection = pool.getConnection();
+        String autoResponseName = null;
+        AutoResponse response = null;
+        int triggerCount = 0;
+        boolean timeLimitSatisfied = false;
+
+        try {
+            Statement st = connection.createStatement();
+
+            String[] args = message.split("\\s+");
+            for (String s : args) {
+                s = s.trim();
+                if (autoResponseName == null) {
+                    ResultSet rs = st.executeQuery(String.format("SELECT fk_Name FROM AutoResponse_Triggers WHERE Trig = '%s'", s));
+
+                    // Find the AutoResponse related to the first trigger found
+                    while (rs.next()) {
+                        autoResponseName = rs.getString("fk_Name");
+                        triggerCount = 1;
+
+                        // Load the AutoResponse
+                        rs = st.executeQuery(String.format("SELECT Name, Response, MinTriggerCount, MinHours, MinMinutes FROM HIVE_AutoResponse WHERE Name = '%s'", autoResponseName));
+                        while (rs.next()) {
+                            response = new AutoResponse(
+                                    rs.getString("Name"),
+                                    rs.getString("Response"),
+                                    rs.getInt("MinTriggerCount"),
+                                    rs.getInt("MinHours"),
+                                    rs.getInt("MinMinutes"),
+                                    rs.getString("Title")
+                            );
+                        }
+
+                        Instant lastTrigger = null;
+
+                        rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s'", autoResponseName));
+                        while (rs.next()) {
+                            response.getWatchChannelList().add(rs.getLong("WhitelistChannelID"));
+                            if(rs.getTimestamp("LastTrigger") != null) {
+                                lastTrigger = rs.getTimestamp("LastTrigger").toInstant();
+                            }
+                        }
+
+                        if((lastTrigger == null) || (Instant.now().isAfter(lastTrigger.plus(response.getMinHoursBetweenResponse(),ChronoUnit.HOURS).plus(response.getMinMinutesBetweenResponse(),ChronoUnit.MINUTES)))){
+                            timeLimitSatisfied = true;
+                        }
+
+                        rs = st.executeQuery(String.format("SELECT Trig FROM AutoResponse_Triggers WHERE fk_Name = '%s'", autoResponseName));
+                        while (rs.next()) {
+                            response.getTriggerWords().add(rs.getString("Trig"));
+                        }
+                    }
+                } else {
+                    // AutoResponse is already defined, check arg for trigger words
+                    for (String triggerWord : response.getTriggerWords()) {
+                        if (triggerCount < response.getMinTriggerCount()) {
+                            if (s.trim().toLowerCase().contains(triggerWord.toLowerCase())) {
+                                triggerCount++;
+                            }
+                        } else {
+                            break;
+                        }
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        if (response != null && triggerCount >= response.getMinTriggerCount() && timeLimitSatisfied) {
+            return response;
+        } else {
+            return null;
+        }
+    }
+
+    public Integer autoResponse_setTimestamp(final String autoResponseName, final Long channelID) throws SQLException {
+
+        Connection connection = pool.getConnection();
+        Integer updateCount = null;
+
+        try {
+            Statement st = connection.createStatement();
+            st.executeQuery(String.format("UPDATE AutoResponse_WhitelistTable SET LastTrigger = '%s' WHERE fk_Name = '%s' AND WhitelistChannelID = %d", Timestamp.from(Instant.now()), autoResponseName, channelID));
+
+            updateCount = st.getUpdateCount();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return updateCount;
+    }
+
     public Integer getCashews(final Long userID) throws SQLException {
 
         Integer returnValue = null;
@@ -2669,9 +2771,9 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
         try {
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT Points FROM HIVE_UserTable WHERE UserID = %d",userID));
+            ResultSet rs = st.executeQuery(String.format("SELECT Points FROM HIVE_UserTable WHERE UserID = %d", userID));
 
-            while(rs.next()){
+            while (rs.next()) {
                 returnValue = rs.getInt("Points");
             }
 
@@ -2692,7 +2794,7 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
         try {
             Statement st = connection.createStatement();
-            st.executeQuery(String.format("UPDATE HIVE_UserTable SET Points = Points - %d WHERE UserID = %d",amount,userID));
+            st.executeQuery(String.format("UPDATE HIVE_UserTable SET Points = Points - %d WHERE UserID = %d", amount, userID));
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -2711,18 +2813,18 @@ public class SQLHandler {
 
 
         int finalStatus = 1;
-        if(currentStatus){
+        if (currentStatus) {
             finalStatus = 0;
         }
 
         Connection connection = pool.getConnection();
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE HIVE_CoffeeShop SET OptStatus = %d WHERE UserID = %d",finalStatus,userID));
+            st.execute(String.format("UPDATE HIVE_CoffeeShop SET OptStatus = %d WHERE UserID = %d", finalStatus, userID));
 
-            if(st.getUpdateCount() == 0){
+            if (st.getUpdateCount() == 0) {
 
-                st.execute(String.format("INSERT INTO HIVE_CoffeeShop (UserID, OptStatus) VALUES (%d, %d)",userID,finalStatus));
+                st.execute(String.format("INSERT INTO HIVE_CoffeeShop (UserID, OptStatus) VALUES (%d, %d)", userID, finalStatus));
                 returnValue = finalStatus;
 
             } else {
@@ -2741,6 +2843,7 @@ public class SQLHandler {
 
     /**
      * Check the opt-out status of a user
+     *
      * @param userID
      * @return True = OptOut
      * False = Allowed to send messages
@@ -2753,10 +2856,10 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT OptStatus FROM HIVE_CoffeeShop WHERE UserID = %d",userID));
+            ResultSet rs = st.executeQuery(String.format("SELECT OptStatus FROM HIVE_CoffeeShop WHERE UserID = %d", userID));
 
-            while(rs.next()){
-                if(rs.getInt("OptStatus") == 1){
+            while (rs.next()) {
+                if (rs.getInt("OptStatus") == 1) {
                     returnValue = true;
                 }
             }
