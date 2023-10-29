@@ -169,7 +169,8 @@ public class Dispatcher extends ListenerAdapter {
 
                         EmbedBuilder builder = new EmbedBuilder();
                         builder.setColor(HiveBot.getColor(HiveBot.colorType.GENERIC))
-                                        .setDescription(ar.getResponse());
+                                        .setDescription(ar.getResponse())
+                                .setTitle(ar.getTitle());
                         event.getMessage().replyEmbeds(builder.build()).queue();
                         HiveBot.database.autoResponse_setTimestamp(ar.getName(),event.getChannel().getIdLong());
                         return;
