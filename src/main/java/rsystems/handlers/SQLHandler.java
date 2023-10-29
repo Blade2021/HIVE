@@ -2686,7 +2686,7 @@ public class SQLHandler {
                         triggerCount = 1;
 
                         // Load the AutoResponse
-                        rs = st.executeQuery(String.format("SELECT Name, Response, MinTriggerCount, MinHours, MinMinutes FROM HIVE_AutoResponse WHERE Name = '%s'", autoResponseName));
+                        rs = st.executeQuery(String.format("SELECT Name, Title, Response, MinTriggerCount, MinHours, MinMinutes FROM HIVE_AutoResponse WHERE Name = '%s'", autoResponseName));
                         while (rs.next()) {
                             response = new AutoResponse(
                                     rs.getString("Name"),
