@@ -1691,7 +1691,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT LastHereStatus, Points FROM HIVE_UserTable WHERE UserID = " + userID);
+            ResultSet rs = st.executeQuery("SELECT LastHereStatus, Points FROM EconomyTable WHERE UserID = " + userID);
 
             Integer currentPoints = null;
             Instant previousTimestamp = null;
@@ -1713,7 +1713,7 @@ public class SQLHandler {
 
                     //if (previousTimestamp.isAfter(Instant.now().minus(12, ChronoUnit.HOURS))) {
 
-                    st.execute(String.format("UPDATE HIVE_UserTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d", Timestamp.from(Instant.now()), currentPoints + incrementAmount, userID));
+                    st.execute(String.format("UPDATE EconomyTable SET LastHereStatus = '%s', Points = %d WHERE UserID = %d", Timestamp.from(Instant.now()), currentPoints + incrementAmount, userID));
                     if (st.getUpdateCount() > 0) {
                         output = 200;
                     } else {
@@ -1724,7 +1724,7 @@ public class SQLHandler {
                     output = 401;
                 }
             } else {
-                st.execute(String.format("INSERT INTO HIVE_UserTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')", userID, incrementAmount, Timestamp.from(Instant.now())));
+                st.execute(String.format("INSERT INTO EconomyTable (UserID, Points, LastHereStatus) VALUES (%d,%d,'%s')", userID, incrementAmount, Timestamp.from(Instant.now())));
                 if (st.getUpdateCount() > 0) {
                     output = 200;
                 } else {
@@ -1757,7 +1757,7 @@ public class SQLHandler {
 
             Statement st = connection.createStatement();
 
-            ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM HIVE_UserTable WHERE UserID = " + userID);
+            ResultSet rs = st.executeQuery("SELECT Points, SpentPoints FROM EconomyTable WHERE UserID = " + userID);
 
             while (rs.next()) {
                 output = new UserStreamObject();
@@ -2056,7 +2056,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE HIVE_UserTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d", amount, amount, userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points - %d), SpentPoints = (SpentPoints + %d) WHERE UserID = %d", amount, amount, userid));
             result = st.getUpdateCount();
 
         } catch (SQLException e) {
@@ -2076,7 +2076,7 @@ public class SQLHandler {
 
         try {
             Statement st = connection.createStatement();
-            st.execute(String.format("UPDATE HIVE_UserTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d", amount, amount, userid));
+            st.execute(String.format("UPDATE EconomyTable SET Points = (Points + %d), SpentPoints = (SpentPoints - %d) WHERE UserID = %d", amount, amount, userid));
             result = st.getUpdateCount();
 
         } catch (SQLException e) {
@@ -2702,16 +2702,18 @@ public class SQLHandler {
                             }
 
                             Instant lastTrigger = null;
+                            boolean channelFound = false;
 
-                            rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s'", autoResponseName));
+                            rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s' AND WhiteListChannelID = ", autoResponseName));
                             while (rs.next()) {
+                                channelFound = true;
                                 response.getWatchChannelList().add(rs.getLong("WhitelistChannelID"));
                                 if (rs.getTimestamp("LastTrigger") != null) {
                                     lastTrigger = rs.getTimestamp("LastTrigger").toInstant();
                                 }
                             }
 
-                            if ((lastTrigger == null) || (Instant.now().isAfter(lastTrigger.plus(response.getMinHoursBetweenResponse(), ChronoUnit.HOURS).plus(response.getMinMinutesBetweenResponse(), ChronoUnit.MINUTES)))) {
+                            if (channelFound && ((lastTrigger == null) || (Instant.now().isAfter(lastTrigger.plus(response.getMinHoursBetweenResponse(), ChronoUnit.HOURS).plus(response.getMinMinutesBetweenResponse(), ChronoUnit.MINUTES))))) {
                                 timeLimitSatisfied = true;
                             }
 
@@ -2775,7 +2777,7 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
         try {
             Statement st = connection.createStatement();
-            ResultSet rs = st.executeQuery(String.format("SELECT Points FROM HIVE_UserTable WHERE UserID = %d", userID));
+            ResultSet rs = st.executeQuery(String.format("SELECT Points FROM EconomyTable WHERE UserID = %d", userID));
 
             while (rs.next()) {
                 returnValue = rs.getInt("Points");
@@ -2798,7 +2800,7 @@ public class SQLHandler {
         Connection connection = pool.getConnection();
         try {
             Statement st = connection.createStatement();
-            st.executeQuery(String.format("UPDATE HIVE_UserTable SET Points = Points - %d WHERE UserID = %d", amount, userID));
+            st.executeQuery(String.format("UPDATE EconomyTable SET Points = Points - %d WHERE UserID = %d", amount, userID));
 
         } catch (SQLException e) {
             e.printStackTrace();
