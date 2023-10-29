@@ -2677,44 +2677,48 @@ public class SQLHandler {
             String[] args = message.split("\\s+");
             for (String s : args) {
                 s = s.trim();
+                s = s.replaceAll("[^a-zA-Z0-9 -]", "");
                 if (autoResponseName == null) {
-                    ResultSet rs = st.executeQuery(String.format("SELECT fk_Name FROM AutoResponse_Triggers WHERE Trig = '%s'", s));
 
-                    // Find the AutoResponse related to the first trigger found
-                    while (rs.next()) {
-                        autoResponseName = rs.getString("fk_Name");
-                        triggerCount = 1;
+                    if (!s.isEmpty() && !s.isBlank()) {
+                        ResultSet rs = st.executeQuery(String.format("SELECT fk_Name FROM AutoResponse_Triggers WHERE Trig = '%s'", s));
 
-                        // Load the AutoResponse
-                        rs = st.executeQuery(String.format("SELECT Name, Title, Response, MinTriggerCount, MinHours, MinMinutes FROM HIVE_AutoResponse WHERE Name = '%s'", autoResponseName));
+                        // Find the AutoResponse related to the first trigger found
                         while (rs.next()) {
-                            response = new AutoResponse(
-                                    rs.getString("Name"),
-                                    rs.getString("Response"),
-                                    rs.getInt("MinTriggerCount"),
-                                    rs.getInt("MinHours"),
-                                    rs.getInt("MinMinutes"),
-                                    rs.getString("Title")
-                            );
-                        }
+                            autoResponseName = rs.getString("fk_Name");
+                            triggerCount = 1;
 
-                        Instant lastTrigger = null;
-
-                        rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s'", autoResponseName));
-                        while (rs.next()) {
-                            response.getWatchChannelList().add(rs.getLong("WhitelistChannelID"));
-                            if(rs.getTimestamp("LastTrigger") != null) {
-                                lastTrigger = rs.getTimestamp("LastTrigger").toInstant();
+                            // Load the AutoResponse
+                            rs = st.executeQuery(String.format("SELECT Name, Title, Response, MinTriggerCount, MinHours, MinMinutes FROM HIVE_AutoResponse WHERE Name = '%s'", autoResponseName));
+                            while (rs.next()) {
+                                response = new AutoResponse(
+                                        rs.getString("Name"),
+                                        rs.getString("Response"),
+                                        rs.getInt("MinTriggerCount"),
+                                        rs.getInt("MinHours"),
+                                        rs.getInt("MinMinutes"),
+                                        rs.getString("Title")
+                                );
                             }
-                        }
 
-                        if((lastTrigger == null) || (Instant.now().isAfter(lastTrigger.plus(response.getMinHoursBetweenResponse(),ChronoUnit.HOURS).plus(response.getMinMinutesBetweenResponse(),ChronoUnit.MINUTES)))){
-                            timeLimitSatisfied = true;
-                        }
+                            Instant lastTrigger = null;
 
-                        rs = st.executeQuery(String.format("SELECT Trig FROM AutoResponse_Triggers WHERE fk_Name = '%s'", autoResponseName));
-                        while (rs.next()) {
-                            response.getTriggerWords().add(rs.getString("Trig"));
+                            rs = st.executeQuery(String.format("SELECT WhitelistChannelID, LastTrigger FROM AutoResponse_WhitelistTable WHERE fk_Name = '%s'", autoResponseName));
+                            while (rs.next()) {
+                                response.getWatchChannelList().add(rs.getLong("WhitelistChannelID"));
+                                if (rs.getTimestamp("LastTrigger") != null) {
+                                    lastTrigger = rs.getTimestamp("LastTrigger").toInstant();
+                                }
+                            }
+
+                            if ((lastTrigger == null) || (Instant.now().isAfter(lastTrigger.plus(response.getMinHoursBetweenResponse(), ChronoUnit.HOURS).plus(response.getMinMinutesBetweenResponse(), ChronoUnit.MINUTES)))) {
+                                timeLimitSatisfied = true;
+                            }
+
+                            rs = st.executeQuery(String.format("SELECT Trig FROM AutoResponse_Triggers WHERE fk_Name = '%s'", autoResponseName));
+                            while (rs.next()) {
+                                response.getTriggerWords().add(rs.getString("Trig"));
+                            }
                         }
                     }
                 } else {
@@ -2732,7 +2736,7 @@ public class SQLHandler {
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            ExceptionHandler.notifyException(e, this.getClass().getName());
+            //ExceptionHandler.notifyException(e, this.getClass().getName());
         } finally {
             connection.close();
         }
