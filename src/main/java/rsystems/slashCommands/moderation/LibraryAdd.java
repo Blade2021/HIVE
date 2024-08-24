@@ -54,7 +54,7 @@ public class LibraryAdd extends SlashCommand {
                         .build();
 
                 Modal modal = Modal.create("lib-add", "Library Submission")
-                        .addActionRows(ActionRow.of(libTrigger), ActionRow.of(libAliases), ActionRow.of(libTitle), ActionRow.of(libBody))
+                        .addComponents(ActionRow.of(libTrigger), ActionRow.of(libAliases), ActionRow.of(libTitle), ActionRow.of(libBody))
                         .build();
 
                 event.replyModal(modal).queue();

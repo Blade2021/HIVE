@@ -1,7 +1,5 @@
 package rsystems;
 
-import io.obswebsocket.community.client.OBSRemoteController;
-import io.obswebsocket.community.client.message.event.Event;
 import net.dv8tion.jda.api.JDA;
 import net.dv8tion.jda.api.JDABuilder;
 import net.dv8tion.jda.api.OnlineStatus;
@@ -13,12 +11,10 @@ import net.dv8tion.jda.api.utils.ChunkingFilter;
 import net.dv8tion.jda.api.utils.MemberCachePolicy;
 import net.dv8tion.jda.api.utils.cache.CacheFlag;
 import net.dv8tion.jda.internal.JDAImpl;
-//import net.twasi.obsremotejava.OBSRemoteController;
 import rsystems.events.*;
 import rsystems.handlers.*;
 import rsystems.objects.DBPool;
 import rsystems.objects.StreamHandler;
-import rsystems.objects.TwitchBot;
 import rsystems.tasks.*;
 
 import javax.security.auth.login.LoginException;
@@ -44,13 +40,10 @@ public class HiveBot {
     public static SlashCommandDispatcher slashCommandDispatcher;
     public static GratitudeListener gratitudeListener;
     public static StreamHandler streamHandler;
-    public static TwitchBot twitchBot;
 
     public static ReferenceHandler referenceHandler = new ReferenceHandler();
 
     public static JDAImpl jda = null;
-
-    public static OBSRemoteController obsRemoteController = null;
 
     public static Guild mainGuild() {
         return jda.getGuildById(Config.get("GUILD_ID"));
@@ -65,7 +58,8 @@ public class HiveBot {
     //Initiate Loggers
     public final static Logger LOGGER = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME);
 
-    public static void main(String[] args) throws LoginException {
+    public static void main(String[] args) {
+
         JDA api = JDABuilder.createDefault(Config.get("token"))
                 .enableIntents(GatewayIntent.GUILD_MEMBERS, GatewayIntent.GUILD_PRESENCES, GatewayIntent.MESSAGE_CONTENT)
                 .setMemberCachePolicy(MemberCachePolicy.ALL)
@@ -85,6 +79,7 @@ public class HiveBot {
         api.addEventListener(new MessageEventListener());
         api.addEventListener(new MemberStateListener());
         api.addEventListener(new ModalEventListener());
+        api.addEventListener(new ChannelEventListener());
 
         api.getPresence().setStatus(OnlineStatus.ONLINE);
         api.getPresence().setActivity(Activity.playing(Config.get("activity")));
@@ -97,15 +92,6 @@ public class HiveBot {
             api.awaitReady();
             jda = (JDAImpl) api;
 
-            obsRemoteController = OBSRemoteController.builder()
-                    .host(Config.get("OBS-ADDRESS"))
-                    .port(Integer.parseInt(Config.get("OBS-PORT")))
-                    .password(Config.get("OBS-KEY"))
-                    .connectionTimeout(30)
-                    .build();
-            //obsRemoteController.connect();
-
-            //referenceHandler.loadReferences();
 
             api.getGuilds().forEach(guild -> {
                 slashCommandDispatcher.submitGuildCommands(guild);
@@ -133,7 +119,7 @@ public class HiveBot {
 
             timer.schedule(new AddKarmaPoints(), 600000, 21600000);
             timer.schedule(new Newcomer(), 60000, 21600000);
-            timer.scheduleAtFixedRate(new CheckRequests(),10000,1000);
+            //timer.scheduleAtFixedRate(new CheckRequests(),10000,1000);
             timer.scheduleAtFixedRate(new BotActivity(), 30000, 30000);
             timer.scheduleAtFixedRate(new CheckDatabase(), 60000, 300000);
             //timer.scheduleAtFixedRate(new GrabKarmaTopThree(), 3000, 360000);
@@ -144,7 +130,7 @@ public class HiveBot {
 
 
         if (Config.get("TWITCH_ENABLED").equalsIgnoreCase("TRUE")) {
-            twitchBot = new TwitchBot();
+            //twitchBot = new TwitchBot();
         }
 
     }

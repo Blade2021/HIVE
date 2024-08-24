@@ -1,26 +1,30 @@
 package rsystems.events;
 
 import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.Permission;
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.dv8tion.jda.api.entities.channel.concrete.TextChannel;
 import net.dv8tion.jda.api.entities.emoji.Emoji;
 import net.dv8tion.jda.api.events.interaction.ModalInteractionEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import rsystems.Config;
 import rsystems.HiveBot;
 import rsystems.handlers.Diff_match_patch;
 import rsystems.objects.Reference;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.*;
 
 public class ModalEventListener extends ListenerAdapter {
 
     @Override
-    public void onModalInteraction(ModalInteractionEvent event) {
+    public void onModalInteraction(final ModalInteractionEvent event) {
 
         if (event.getModalId().contains("newpoll")) {
 
@@ -122,6 +126,8 @@ public class ModalEventListener extends ListenerAdapter {
             }
         } else if (event.getModalId().startsWith("libm-")) {
             handleLibraryModificationEvent(event);
+        } else if (event.getModalId().startsWith("ticket-")) {
+            handleTicketRequest(event);
         }
     }
 
@@ -146,6 +152,69 @@ public class ModalEventListener extends ListenerAdapter {
 
     private Reference buildReference(final ModalInteractionEvent event) {
         return buildReference(event, event.getValue("lib-name").getAsString().toLowerCase());
+    }
+
+    private void handleTicketRequest(final ModalInteractionEvent event){
+
+        event.deferReply().setEphemeral(false).queue();
+
+        final Member author = event.getMember();
+
+        final String openTicketCategoryID = Config.get("OPEN_TICKET_CATEGORY_ID");
+        event.getGuild().createTextChannel(author.getEffectiveName(), event.getGuild().getCategoryById(openTicketCategoryID)).queue(Success -> {
+            // Channel was successfully created
+
+            final String ticketID = event.getModalId().substring(7);
+
+            StringBuilder response = new StringBuilder();
+            try {
+                HiveBot.database.createTicketData(ticketID, event.getUser().getIdLong(), Success.getIdLong());
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+
+            // Add permissions for member for channel
+            Success.upsertPermissionOverride(author).grant(Permission.VIEW_CHANNEL, Permission.MESSAGE_ADD_REACTION, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_HISTORY, Permission.MESSAGE_SEND).queue();
+
+            // Send message in newly created channel
+
+            EmbedBuilder builder = new EmbedBuilder();
+            builder.setTitle("Ticket Information")
+                    .setDescription("**Ticket ID:** " + ticketID + "\n" +
+                            "\n" +
+                            "Please note this channel is __private and only visible to yourself and staff members__.\n" +
+                            "\n" +
+                            "Only **ONE** ticket may be opened at a time.\n" +
+                            "Please be patient when waiting for a response.\n" +
+                            "Thank you, -HIVE")
+                    .setColor(HiveBot.getColor(HiveBot.colorType.NOTIFICATION))
+                    .setThumbnail(author.getEffectiveAvatarUrl())
+                    .addField("Ticket Created",DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.US).withZone(ZoneId.systemDefault()).format(Instant.now()),false);
+
+            Success.sendMessageEmbeds(builder.build()).queue();
+
+            Success.sendMessage("`Original Ticket Body from: ` " +
+                    author.getAsMention() + "\n\n" +
+                    event.getValue("ticket-body").getAsString()).queue();
+
+            response = new StringBuilder();
+
+            // Send response to trigger
+            response.append("Hello " + author.getAsMention() + "\n" +
+                    "You have successfully opened a ticket.\n" +
+                    "Please continue your discussion here:\n" +
+                    Success.getAsMention() + "\n" +
+                    "\n" +
+                    "Please note that your conversation will be limited to __staff members and yourself__ only."
+            );
+
+            event.getHook().editOriginal(response.toString()).queue();
+        }, failure -> {
+            // Channel was not successfully created
+            event.getHook().editOriginal("Were very sorry but something has gone wrong.\n" +
+                    "Please contact Blade for assistance.").queue();
+        });
+
     }
 
     private Reference buildReference(final ModalInteractionEvent event, final String referenceTrigger) {

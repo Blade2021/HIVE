@@ -63,12 +63,12 @@ public class Dispatcher extends ListenerAdapter {
         registerCommand(new ReferenceTester());
         registerCommand(new Shutdown());
 
-        registerCommand(new GetTopTen());
+        //registerCommand(new GetTopTen());
 
 
         // Stream Commands
-        registerCommand(new StreamMode());
-        registerCommand(new StreamVerify());
+        //registerCommand(new StreamMode());
+        //registerCommand(new StreamVerify());
 
         //registerCommand(new Meltdown());
 

@@ -75,7 +75,7 @@ public class CreatePoll extends SlashCommand {
         }
 
         Modal modal = Modal.create(id, "HIVE Poll Creation")
-                .addActionRows(ActionRow.of(pollQuery), ActionRow.of(pollOption1), ActionRow.of(pollOption2), ActionRow.of(pollOption3), ActionRow.of(pollOption4))
+                .addComponents(ActionRow.of(pollQuery), ActionRow.of(pollOption1), ActionRow.of(pollOption2), ActionRow.of(pollOption3), ActionRow.of(pollOption4))
                 .build();
 
         event.replyModal(modal).queue();

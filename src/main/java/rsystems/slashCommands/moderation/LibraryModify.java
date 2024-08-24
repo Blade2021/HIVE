@@ -90,7 +90,7 @@ public class LibraryModify extends SlashCommand {
                         .build();
 
                 Modal modal = Modal.create(modalId, "Library Modification")
-                        .addActionRows(ActionRow.of(libAliases), ActionRow.of(libTitle), ActionRow.of(libBody))
+                        .addComponents(ActionRow.of(libAliases), ActionRow.of(libTitle), ActionRow.of(libBody))
                         .build();
 
                 event.replyModal(modal).queue();

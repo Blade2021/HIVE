@@ -174,7 +174,7 @@ public class Embed extends SlashCommand {
                 .build();
 
         Modal modal = Modal.create(String.format("mid-%s-%s", channelID, messageID), "Embedded Message Builder")
-                .addActionRows(ActionRow.of(title),ActionRow.of(message),ActionRow.of(color))
+                .addComponents(ActionRow.of(title),ActionRow.of(message),ActionRow.of(color))
                 .build();
 
         return modal;

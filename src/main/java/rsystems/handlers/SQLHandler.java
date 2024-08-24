@@ -8,7 +8,6 @@ import rsystems.objects.*;
 import java.sql.*;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.*;
 
 public class SQLHandler {
@@ -2880,5 +2879,146 @@ public class SQLHandler {
         return returnValue;
     }
 
+    public Integer createTicketData(final String ticketID, final Long userID, final Long channelID) throws SQLException {
+        Integer returnValue = null;
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            ResultSet rs = st.executeQuery(String.format("INSERT INTO HIVE_TicketData (TicketID, AuthorID, Status, TicketChannelID) VALUES ('%s', %d, %d, %d)", ticketID,userID,1,channelID));
+
+            while (rs.next()) {
+                returnValue = rs.getInt("Points");
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public Map<Long, TicketObject> getTickets() throws SQLException {
+        Connection connection = pool.getConnection();
+        Map<Long, TicketObject> ticketMap = new HashMap<>();
+
+        try {
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT TicketID, AuthorID, StartDatetime, TicketChannelID FROM HIVE_TicketData WHERE Status >= 1");
+            while (rs.next()) {
+
+                TicketObject newTicket = new TicketObject(UUID.fromString(rs.getString("TicketID")),rs.getLong("AuthorID"),rs.getLong("TicketChannelID"));
+
+                ticketMap.put(rs.getLong("TicketChannelID"),newTicket);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return ticketMap;
+    }
+
+    public Map<Long, TicketObject> getTickets(final Long userID) throws SQLException {
+        Connection connection = pool.getConnection();
+        Map<Long, TicketObject> ticketMap = new HashMap<>();
+
+        try {
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT TicketID, Status, TicketChannelID FROM HIVE_TicketData WHERE AuthorID = " + userID);
+            while (rs.next()) {
+
+                TicketObject newTicket = new TicketObject(UUID.fromString(rs.getString("TicketID")),userID);
+                if(rs.getInt("Status") == 0){
+                    newTicket.setOpenStatus(false);
+                }
+
+                ticketMap.put(rs.getLong("TicketChannelID"),newTicket);
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return ticketMap;
+    }
+
+    public TicketObject getTicketViaChannelID(final Long channelID) throws SQLException {
+        Connection connection = pool.getConnection();
+
+        TicketObject returnValue = null;
+
+        try {
+
+            Statement st = connection.createStatement();
+
+            ResultSet rs = st.executeQuery("SELECT TicketID, Status, AuthorID FROM HIVE_TicketData WHERE TicketChannelID = " + channelID);
+            while (rs.next()) {
+
+                returnValue = new TicketObject(UUID.fromString(rs.getString("TicketID")),rs.getLong("AuthorID"));
+                if(rs.getInt("Status") == 0){
+                    returnValue.setOpenStatus(false);
+                }
+
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public int closeTicket(final UUID ticketID) throws SQLException {
+        Integer returnValue = null;
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE HIVE_TicketData SET Status = 0, CloseDatetime = NOW() WHERE TicketID = '%s'", ticketID.toString()));
+
+            returnValue = st.getUpdateCount();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+
+        return returnValue;
+    }
+
+    public void ticketChannelCheck(final Long channelID) throws SQLException {
+
+        Connection connection = pool.getConnection();
+        try {
+            Statement st = connection.createStatement();
+            st.execute(String.format("UPDATE HIVE_TicketData SET Status = 0 WHERE TicketChannelID = %d", channelID));
+        } catch (SQLException e) {
+            e.printStackTrace();
+            ExceptionHandler.notifyException(e, this.getClass().getName());
+        } finally {
+            connection.close();
+        }
+    }
 
 }
